@@ -72,7 +72,10 @@ const DigiServicesSlider = () => {
     const next = ((dragRef.current.startActive + steps) % total + total) % total;
     if (next !== active) setActive(next);
   };
-  const onPointerUp = () => { dragRef.current = null; };
+  const onPointerUp = () => {
+    dragRef.current = null;
+    setTimeout(() => setPaused(false), 1500);
+  };
 
   const next = () => setActive((a) => (a + 1) % total);
   const prev = () => setActive((a) => (a - 1 + total) % total);
