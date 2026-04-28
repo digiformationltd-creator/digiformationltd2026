@@ -91,7 +91,7 @@ body p, body span, body li, body label, body small, body div {
 .bg-gradient-brand *,
 .bg-primary *,
 .bg-accent * { color: hsl(var(--primary-foreground)) !important; }
-.logo-card span { color: rgba(255,255,255,0.92) !important; }
+.logo-card span { color: #1a1d22 !important; }
 
 @layer utilities {
   .text-gradient {
