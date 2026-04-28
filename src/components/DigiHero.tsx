@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroBg from "@/assets/hero-bg.jpg";
 
 const headlines = [
   { pre: "Establish Your", accent: "UK or US", post: "Business in Days" },
@@ -20,12 +19,6 @@ const DigiHero = () => {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-hero">
-      {/* hero bg image, source-spec: opacity-40 + screen blend */}
-      <div
-        className="absolute inset-0 opacity-40 mix-blend-screen"
-        aria-hidden
-        style={{ backgroundImage: `url(${heroBg})`, backgroundSize: "cover", backgroundPosition: "center" }}
-      />
       <div className="absolute inset-0 grid-pattern opacity-50 pointer-events-none" />
 
       {/* floating orbs — source spec */}
