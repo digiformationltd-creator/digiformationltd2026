@@ -50,10 +50,19 @@ const DigiServicesSlider = () => {
   const rotation = -active * angleStep;
 
   const dragRef = useRef<{ startX: number; startActive: number; moved: boolean } | null>(null);
+  const [paused, setPaused] = useState(false);
+
+  // Auto-rotate: advance one card every 4s, pause on hover/drag
+  useEffect(() => {
+    if (paused) return;
+    const id = setInterval(() => setActive((a) => (a + 1) % total), 4000);
+    return () => clearInterval(id);
+  }, [paused]);
 
   const onPointerDown = (e: React.PointerEvent) => {
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
     dragRef.current = { startX: e.clientX, startActive: active, moved: false };
+    setPaused(true);
   };
   const onPointerMove = (e: React.PointerEvent) => {
     if (!dragRef.current) return;
@@ -63,7 +72,10 @@ const DigiServicesSlider = () => {
     const next = ((dragRef.current.startActive + steps) % total + total) % total;
     if (next !== active) setActive(next);
   };
-  const onPointerUp = () => { dragRef.current = null; };
+  const onPointerUp = () => {
+    dragRef.current = null;
+    setTimeout(() => setPaused(false), 1500);
+  };
 
   const next = () => setActive((a) => (a + 1) % total);
   const prev = () => setActive((a) => (a - 1 + total) % total);
@@ -101,13 +113,15 @@ const DigiServicesSlider = () => {
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerUp}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
         >
           <div
             className="relative w-full h-full"
             style={{
               transformStyle: "preserve-3d",
-              transform: `translateZ(-${radius}px) rotateY(${rotation}deg)`,
-              transition: "transform 0.8s cubic-bezier(0.23, 1, 0.32, 1)",
+              transform: `translateZ(-${radius}px) rotateX(-8deg) rotateY(${rotation}deg)`,
+              transition: "transform 1.2s cubic-bezier(0.23, 1, 0.32, 1)",
             }}
           >
             {services.map((s, idx) => {
