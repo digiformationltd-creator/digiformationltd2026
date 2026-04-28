@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 90" role="img" aria-label="ZionPe">
+  <title>ZionPe</title>
+  <!-- Yellow stylized Z mark -->
+  <g fill="#FCD34D">
+    <path d="M14 14 H78 L74 30 H40 L72 60 H10 L14 44 H46 L14 14 Z"/>
+  </g>
+  <!-- White wordmark -->
+  <text x="96" y="60" font-family="Space Grotesk, Inter, system-ui, sans-serif"
+        font-size="46" font-weight="700" fill="#FFFFFF" letter-spacing="-1">ZionPe</text>
+</svg>

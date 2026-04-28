@@ -1,31 +1,33 @@
-import stripe from "@/assets/partners/stripe.svg";
-import paypal from "@/assets/partners/paypal.svg";
-import wise from "@/assets/partners/wise.svg";
+import stripe from "@/assets/partners/stripe.png";
+import paypal from "@/assets/partners/paypal.png";
+import wise from "@/assets/partners/wise.png";
 import payoneer from "@/assets/partners/payoneer.png";
 import shopify from "@/assets/partners/shopify.png";
 import ebay from "@/assets/partners/ebay.svg";
 import wallester from "@/assets/partners/wallester.png";
-import zionpe from "@/assets/partners/zionpe.png";
+import zionpe from "@/assets/partners/zionpe.svg";
 import companiesHouse from "@/assets/partners/companies-house.png";
 import airwallex from "@/assets/partners/airwallex.png";
 import tide from "@/assets/partners/tide.png";
+import hmrc from "@/assets/partners/hmrc.png";
+import sunrate from "@/assets/partners/sunrate.png";
 
-type Partner = { name: string; logo?: string };
+type Partner = { name: string; logo?: string; dark?: boolean };
 
 const partners: Partner[] = [
   { name: "Companies House", logo: companiesHouse },
-  { name: "IRS" },
+  { name: "HMRC", logo: hmrc },
   { name: "Stripe", logo: stripe },
   { name: "PayPal", logo: paypal },
   { name: "Wise", logo: wise },
   { name: "Payoneer", logo: payoneer },
   { name: "Tide", logo: tide },
-  { name: "Sunrate" },
+  { name: "Sunrate", logo: sunrate },
   { name: "WorldFirst" },
   { name: "eBay", logo: ebay },
   { name: "Shopify", logo: shopify },
   { name: "Airwallex", logo: airwallex },
-  { name: "ZionPe", logo: zionpe },
+  { name: "ZionPe", logo: zionpe, dark: true },
   { name: "Wallester", logo: wallester },
 ];
 
@@ -41,7 +43,7 @@ const DigiTrustBar = () => {
         <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
         <div className="flex gap-6 animate-partner-slide" style={{ width: "max-content" }}>
           {loop.map((p, i) => (
-            <div key={i} className="logo-card" title={p.name}>
+            <div key={i} className={`logo-card ${p.dark ? "logo-card--dark" : ""}`} title={p.name}>
               {p.logo ? (
                 <img
                   src={p.logo}
