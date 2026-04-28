@@ -143,6 +143,10 @@ body p, body span, body li, body label, body small, body div {
     justify-content: center;
     padding: 14px 20px;
   }
+  .logo-card--dark {
+    background: #0f1216;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
   .logo-card:hover { transform: translateY(-5px) scale(1.04); }
   .logo-card span {
     font-family: 'Space Grotesk', sans-serif;
