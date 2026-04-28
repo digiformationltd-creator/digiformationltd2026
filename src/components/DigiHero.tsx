@@ -20,20 +20,17 @@ const DigiHero = () => {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-hero">
-      {/* hero bg image, dimmed */}
-      <img
-        src={heroBg}
-        alt=""
-        width={1920}
-        height={1080}
-        className="absolute inset-0 w-full h-full object-cover opacity-25 mix-blend-luminosity"
+      {/* hero bg image, source-spec: opacity-40 + screen blend */}
+      <div
+        className="absolute inset-0 opacity-40 mix-blend-screen"
+        aria-hidden
+        style={{ backgroundImage: `url(${heroBg})`, backgroundSize: "cover", backgroundPosition: "center" }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/40 to-background" />
-      <div className="absolute inset-0 grid-pattern opacity-60 pointer-events-none" />
+      <div className="absolute inset-0 grid-pattern opacity-50 pointer-events-none" />
 
-      {/* floating orbs */}
-      <div className="absolute top-20 right-10 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
-      <div className="absolute bottom-10 left-0 w-[400px] h-[400px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" style={{ animationDelay: "1.5s" }} />
+      {/* floating orbs — source spec */}
+      <div className="absolute -top-32 -left-32 w-[480px] h-[480px] rounded-full bg-primary/20 blur-3xl animate-float" aria-hidden />
+      <div className="absolute -bottom-40 -right-20 w-[520px] h-[520px] rounded-full bg-accent/20 blur-3xl animate-float" aria-hidden style={{ animationDelay: "2s" }} />
 
       <div className="container mx-auto px-4 py-20 relative z-10 text-center">
         <div className="inline-flex glass rounded-full px-5 py-2 mb-10 animate-fade-up">
