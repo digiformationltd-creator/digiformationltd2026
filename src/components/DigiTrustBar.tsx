@@ -1,27 +1,32 @@
 import stripe from "@/assets/partners/stripe.svg";
 import paypal from "@/assets/partners/paypal.svg";
 import wise from "@/assets/partners/wise.svg";
-import payoneer from "@/assets/partners/payoneer.svg";
-import shopify from "@/assets/partners/shopify.svg";
+import payoneer from "@/assets/partners/payoneer.png";
+import shopify from "@/assets/partners/shopify.png";
 import ebay from "@/assets/partners/ebay.svg";
+import wallester from "@/assets/partners/wallester.png";
+import zionpe from "@/assets/partners/zionpe.png";
+import companiesHouse from "@/assets/partners/companies-house.png";
+import airwallex from "@/assets/partners/airwallex.png";
+import tide from "@/assets/partners/tide.png";
 
 type Partner = { name: string; logo?: string };
 
 const partners: Partner[] = [
-  { name: "Companies House" },
+  { name: "Companies House", logo: companiesHouse },
   { name: "IRS" },
   { name: "Stripe", logo: stripe },
   { name: "PayPal", logo: paypal },
   { name: "Wise", logo: wise },
   { name: "Payoneer", logo: payoneer },
-  { name: "Tide" },
+  { name: "Tide", logo: tide },
   { name: "Sunrate" },
   { name: "WorldFirst" },
   { name: "eBay", logo: ebay },
   { name: "Shopify", logo: shopify },
-  { name: "Airwallex" },
-  { name: "Zionpe" },
-  { name: "Wallester" },
+  { name: "Airwallex", logo: airwallex },
+  { name: "ZionPe", logo: zionpe },
+  { name: "Wallester", logo: wallester },
 ];
 
 const DigiTrustBar = () => {
@@ -29,7 +34,7 @@ const DigiTrustBar = () => {
   return (
     <section className="py-20 border-y border-border/60 bg-secondary/20 overflow-hidden relative">
       <div className="container mx-auto px-4 mb-10 text-center">
-        <p className="text-xs uppercase tracking-[0.18em]">Trusted Partners & Official Integrations</p>
+        <p className="text-xs uppercase tracking-[0.18em] text-white">Trusted Partners & Official Integrations</p>
       </div>
       <div className="relative">
         <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
@@ -41,7 +46,7 @@ const DigiTrustBar = () => {
                 <img
                   src={p.logo}
                   alt={`${p.name} logo`}
-                  className="max-h-9 max-w-[110px] w-auto h-auto object-contain opacity-90"
+                  className="max-h-12 max-w-[130px] w-auto h-auto object-contain"
                   loading="lazy"
                 />
               ) : (

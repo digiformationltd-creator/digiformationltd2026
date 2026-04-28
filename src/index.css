@@ -91,7 +91,7 @@ body p, body span, body li, body label, body small, body div {
 .bg-gradient-brand *,
 .bg-primary *,
 .bg-accent * { color: hsl(var(--primary-foreground)) !important; }
-.logo-card span { color: rgba(255,255,255,0.92) !important; }
+.logo-card span { color: #1a1d22 !important; }
 
 @layer utilities {
   .text-gradient {
@@ -124,45 +124,35 @@ body p, body span, body li, body label, body small, body div {
     background-size: 48px 48px;
   }
 
-  /* Neumorphic dark-grey logo card (Trust bar) */
+  /* Clean white logo card (Trust bar) — lets colorful brand logos pop */
   .logo-card {
-    width: 160px;
-    height: 78px;
+    width: 170px;
+    height: 84px;
     flex-shrink: 0;
-    border-radius: 18px;
+    border-radius: 16px;
     position: relative;
     cursor: pointer;
     transition: transform .22s ease, box-shadow .22s ease;
-    background: linear-gradient(160deg, #3a3f47 0%, #2a2e34 50%, #1d2024 100%);
+    background: #ffffff;
     box-shadow:
-      inset 1px 1px 1px rgba(255,255,255,0.08),
-      inset -1px -1px 1px rgba(0,0,0,0.5),
-      0 6px 18px rgba(0,0,0,0.55),
-      0 18px 44px rgba(0,0,0,0.45);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-top: 1px solid rgba(255,255,255,0.12);
+      0 4px 14px rgba(0,0,0,0.35),
+      0 12px 32px rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.10);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 12px 18px;
-  }
-  .logo-card::before {
-    content: "";
-    position: absolute;
-    top: 5px; left: 10px; right: 10px;
-    height: 36%;
-    border-radius: 14px 14px 50% 50%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 70%, transparent 100%);
-    pointer-events: none;
+    padding: 14px 20px;
   }
   .logo-card:hover { transform: translateY(-5px) scale(1.04); }
   .logo-card span {
     font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 14px;
     position: relative;
     z-index: 1;
     text-align: center;
+    color: #1a1d22 !important;
+    letter-spacing: 0.02em;
   }
 }
 
