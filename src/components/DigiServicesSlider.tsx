@@ -113,13 +113,15 @@ const DigiServicesSlider = () => {
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerUp}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
         >
           <div
             className="relative w-full h-full"
             style={{
               transformStyle: "preserve-3d",
-              transform: `translateZ(-${radius}px) rotateY(${rotation}deg)`,
-              transition: "transform 0.8s cubic-bezier(0.23, 1, 0.32, 1)",
+              transform: `translateZ(-${radius}px) rotateX(-8deg) rotateY(${rotation}deg)`,
+              transition: "transform 1.2s cubic-bezier(0.23, 1, 0.32, 1)",
             }}
           >
             {services.map((s, idx) => {
