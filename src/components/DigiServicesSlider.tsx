@@ -50,10 +50,19 @@ const DigiServicesSlider = () => {
   const rotation = -active * angleStep;
 
   const dragRef = useRef<{ startX: number; startActive: number; moved: boolean } | null>(null);
+  const [paused, setPaused] = useState(false);
+
+  // Auto-rotate: advance one card every 4s, pause on hover/drag
+  useEffect(() => {
+    if (paused) return;
+    const id = setInterval(() => setActive((a) => (a + 1) % total), 4000);
+    return () => clearInterval(id);
+  }, [paused]);
 
   const onPointerDown = (e: React.PointerEvent) => {
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
     dragRef.current = { startX: e.clientX, startActive: active, moved: false };
+    setPaused(true);
   };
   const onPointerMove = (e: React.PointerEvent) => {
     if (!dragRef.current) return;
