@@ -46,7 +46,7 @@ const DigiTrustBar = () => {
         <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
         <div className="flex gap-6 animate-partner-slide" style={{ width: "max-content" }}>
           {loop.map((p, i) => (
-            <div key={i} className={`logo-card ${p.dark ? "logo-card--dark" : ""}`} title={p.name}>
+            <div key={i} className="logo-card" title={p.name}>
               {p.logo ? (
                 <img
                   src={p.logo}
