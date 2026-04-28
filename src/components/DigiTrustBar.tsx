@@ -11,23 +11,26 @@ import airwallex from "@/assets/partners/airwallex.png";
 import tide from "@/assets/partners/tide.png";
 import hmrc from "@/assets/partners/hmrc.png";
 import sunrate from "@/assets/partners/sunrate.png";
+import irs from "@/assets/partners/irs.png";
+import worldfirst from "@/assets/partners/worldfirst.png";
 
-type Partner = { name: string; logo?: string; dark?: boolean };
+type Partner = { name: string; logo?: string };
 
 const partners: Partner[] = [
   { name: "Companies House", logo: companiesHouse },
   { name: "HMRC", logo: hmrc },
+  { name: "IRS", logo: irs },
   { name: "Stripe", logo: stripe },
   { name: "PayPal", logo: paypal },
   { name: "Wise", logo: wise },
   { name: "Payoneer", logo: payoneer },
   { name: "Tide", logo: tide },
   { name: "Sunrate", logo: sunrate },
-  { name: "WorldFirst" },
+  { name: "WorldFirst", logo: worldfirst },
   { name: "eBay", logo: ebay },
   { name: "Shopify", logo: shopify },
   { name: "Airwallex", logo: airwallex },
-  { name: "ZionPe", logo: zionpe, dark: true },
+  { name: "ZionPe", logo: zionpe },
   { name: "Wallester", logo: wallester },
 ];
 
