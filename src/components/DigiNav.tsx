@@ -32,7 +32,7 @@ const DigiNav = () => {
   return (
     <header className="fixed top-0 inset-x-0 z-50">
       <div className="container mx-auto mt-4 px-4">
-        <nav className="glass rounded-full flex items-center justify-between pl-6 pr-3 py-2.5">
+        <nav className="flex items-center justify-between pl-2 pr-3 py-2.5">
           {/* Logo */}
           <Link to="/" className="flex items-center" aria-label="Digiformation home">
             <img src={logo} alt="Digiformation" className="h-28 md:h-32 w-auto object-contain" />
