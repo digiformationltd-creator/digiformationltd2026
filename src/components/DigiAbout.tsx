@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { Award, Building2, ShieldCheck, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import founderImg from "@/assets/founder-haroon.png";
 
 const stats = [
-  { icon: Building2, value: "71+", label: "UK Companies Registered Under My Name" },
+  { icon: Building2, value: "71+", label: "UK Companies Registered Under His Name" },
   { icon: Award, value: "8+", label: "Years of Industry Experience" },
   { icon: ShieldCheck, value: "300+", label: "Clients Served Worldwide" },
 ];
@@ -15,15 +16,18 @@ const DigiAbout = () => (
 
     <div className="container mx-auto px-4 relative z-10">
       <div className="grid lg:grid-cols-[auto,1fr] gap-12 lg:gap-16 items-center max-w-6xl mx-auto">
-        {/* Founder portrait — monogram placeholder */}
+        {/* Founder portrait */}
         <div className="relative mx-auto lg:mx-0">
-          <div className="relative w-56 h-56 md:w-72 md:h-72 rounded-3xl glass overflow-hidden grid place-items-center group">
-            <div className="absolute inset-0 bg-gradient-brand opacity-30" />
-            <div className="absolute inset-0 grid-pattern opacity-30" />
-            <div className="relative z-10 text-center">
-              <div className="font-display text-7xl md:text-8xl font-bold text-gradient leading-none">DF</div>
-              <div className="mt-3 text-[10px] uppercase tracking-[0.22em] opacity-80">Founder</div>
-            </div>
+          <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-3xl glass overflow-hidden group">
+            <img
+              src={founderImg}
+              alt="Muhammad Haroon — Founder of Digiformation Ltd"
+              className="w-full h-full object-cover object-top"
+              loading="lazy"
+              width={320}
+              height={320}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent pointer-events-none" />
             <div className="absolute -inset-px rounded-3xl border border-primary/20 pointer-events-none" />
           </div>
           {/* Floating credential chip */}
@@ -42,25 +46,27 @@ const DigiAbout = () => (
         <div>
           <div className="inline-flex items-center gap-3 mb-5">
             <span className="h-px w-7 bg-primary" />
-            <span className="text-xs uppercase tracking-[0.18em] font-semibold">About Digiformation</span>
+            <span className="text-xs uppercase tracking-[0.18em] font-semibold">About Digiformation Owner</span>
           </div>
 
-          <h2 className="text-4xl md:text-5xl font-bold leading-[1.08] mb-6">
-            Built by a founder who has registered{" "}
-            <em className="not-italic text-gradient">71+ UK companies</em> under his own name.
+          <h2 className="text-4xl md:text-5xl font-bold leading-[1.08] mb-3">
+            Meet <em className="not-italic text-gradient">Muhammad Haroon</em>
           </h2>
+          <p className="text-lg md:text-xl font-display opacity-90 mb-6">
+            Founder &amp; Director of Digiformation Ltd — Director of <strong>71+ active UK companies</strong>.
+          </p>
 
-          <p className="text-lg leading-relaxed opacity-90 mb-5">
-            I started Digiformation Ltd to solve a problem I lived through myself — entrepreneurs
-            outside the UK and US struggle to form a company, open a bank account and stay compliant
-            without paying premium agency fees or getting lost in paperwork.
+          <p className="text-base md:text-lg leading-relaxed opacity-90 mb-5">
+            Muhammad Haroon is a UK company formation and compliance specialist who built Digiformation Ltd
+            to make global business setup transparent, fast, and genuinely accessible to entrepreneurs
+            across the world.
           </p>
 
           <p className="text-base leading-relaxed opacity-80 mb-8">
-            Today, with <strong>71+ UK companies</strong> registered directly under my name with
-            Companies House, and hundreds of clients served across the UK, USA and beyond — every
-            formation, banking and compliance case I handle is backed by years of hands-on experience,
-            not outsourced guesswork.
+            With over <strong>71 active UK companies</strong> registered directly under his name with
+            Companies House, and hundreds of international clients successfully launched in the UK and USA,
+            Muhammad combines hands-on industry expertise with a personal commitment to every case
+            Digiformation handles — from formation and banking to long-term compliance.
           </p>
 
           {/* Mini stats */}
@@ -81,7 +87,7 @@ const DigiAbout = () => (
               </Link>
             </Button>
             <Button asChild variant="ghostGlow" size="lg" className="rounded-full">
-              <Link to="/contact">Talk to the Founder</Link>
+              <Link to="/contact">Get in Touch</Link>
             </Button>
           </div>
         </div>
