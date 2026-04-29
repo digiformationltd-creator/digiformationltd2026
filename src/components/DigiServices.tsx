@@ -9,7 +9,7 @@ import heroPackages from "@/assets/card-hero-packages.jpg";
 
 const items = [
   {
-    tag: "UK · 01",
+    tag: "UK",
     title: "UK LTD Formation",
     desc: "Establish your UK Limited Company with Companies House, including UTR, Registered Office, and full compliance support.",
     cta: "Learn more",
@@ -17,7 +17,7 @@ const items = [
     image: heroUkLtd,
   },
   {
-    tag: "USA · 02",
+    tag: "USA",
     title: "US LLC Formation",
     desc: "Start a compliant US LLC in any state, complete with EIN, ITIN (if applicable), registered agent, and BOI report.",
     cta: "Learn more",
@@ -25,7 +25,7 @@ const items = [
     image: heroUsLlc,
   },
   {
-    tag: "TAX · 03",
+    tag: "TAX",
     title: "Tax & Compliance",
     desc: "UTR, EIN, ITIN, VAT registration, BOI reports and annual filings — all handled by our specialists.",
     cta: "Learn more",
@@ -33,7 +33,7 @@ const items = [
     image: heroTax,
   },
   {
-    tag: "BANK · 04",
+    tag: "BANK",
     title: "Business Banking",
     desc: "Activate multi-currency business accounts with Tide, Sunrate, WorldFirst, Wise, and more — fast and fully verified.",
     cta: "Learn more",
@@ -41,7 +41,7 @@ const items = [
     image: heroBanking,
   },
   {
-    tag: "PAY · 05",
+    tag: "PAY",
     title: "Payment Gateway Setup",
     desc: "Start accepting payments worldwide using Stripe, PayPal, and Mollie. Verified merchant accounts ready for your business.",
     cta: "Learn more",
@@ -49,7 +49,7 @@ const items = [
     image: heroPayments,
   },
   {
-    tag: "WEB · 06",
+    tag: "WEB",
     title: "Web Development",
     desc: "Establish your online presence with custom websites and landing pages, fully SEO-ready and business-ready.",
     cta: "Learn more",
@@ -57,7 +57,7 @@ const items = [
     image: heroWeb,
   },
   {
-    tag: "PACK · 07",
+    tag: "PACK",
     title: "Packages",
     desc: "Explore our all-in-one bundles — formation, banking, compliance and web combined at transparent, value-driven prices.",
     cta: "View packages",
