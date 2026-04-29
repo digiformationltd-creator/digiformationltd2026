@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const DigiCTA = () => (
-  <section id="contact" className="py-32">
+  <section id="contact" className="py-20">
     <div className="container mx-auto px-4">
       <div className="relative overflow-hidden rounded-3xl glass p-12 md:p-20 text-center">
         <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-gradient-accent opacity-20 blur-3xl pointer-events-none" />

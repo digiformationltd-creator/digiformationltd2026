@@ -10,7 +10,7 @@ const reasons = [
 ];
 
 const DigiWhyChoose = () => (
-  <section className="py-24 md:py-32 relative overflow-hidden">
+  <section className="py-14 md:py-20 relative overflow-hidden">
     <div className="absolute inset-0 grid-pattern opacity-20 pointer-events-none" />
     <div className="absolute -left-40 top-1/3 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl" />
 

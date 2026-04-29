@@ -10,7 +10,7 @@ const stats = [
 ];
 
 const DigiAbout = () => (
-  <section className="py-24 md:py-32 relative overflow-hidden">
+  <section className="py-14 md:py-20 relative overflow-hidden">
     <div className="absolute inset-0 grid-pattern opacity-20 pointer-events-none" />
     <div className="absolute top-1/3 -left-32 w-[420px] h-[420px] rounded-full bg-primary/10 blur-3xl pointer-events-none" />
 

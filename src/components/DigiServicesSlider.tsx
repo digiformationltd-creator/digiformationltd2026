@@ -97,7 +97,7 @@ const DigiServicesSlider = () => {
   };
 
   return (
-    <section id="services" className="relative py-20 md:py-28 overflow-hidden">
+    <section id="services" className="relative py-12 md:py-16 overflow-hidden">
       <div className="absolute inset-0 grid-pattern opacity-30 pointer-events-none" />
       <div className="absolute -right-32 top-1/4 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
 
