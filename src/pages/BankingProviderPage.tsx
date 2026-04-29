@@ -24,7 +24,7 @@ const BankingProviderPage = () => {
   if (!provider) {
     return (
       <Layout>
-        <div className="container mx-auto px-4 py-32 text-center">
+        <div className="container mx-auto px-4 py-16 text-center">
           <h1 className="font-display text-5xl font-bold">Provider not found</h1>
           <Link to="/banks-payment-solutions" className="inline-block mt-8 px-6 py-3 rounded-full bg-gradient-brand">View all providers</Link>
         </div>
@@ -39,7 +39,7 @@ const BankingProviderPage = () => {
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
-        <div className="container mx-auto px-4 py-24 md:py-28 relative">
+        <div className="container mx-auto px-4 py-12 md:py-14 relative">
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-3 mb-6">
               <span className="h-px w-7 bg-primary" />
@@ -63,7 +63,7 @@ const BankingProviderPage = () => {
         </div>
       </section>
 
-      <section className="py-20 border-t border-border/60">
+      <section className="py-10 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-5xl">
           <div className="text-xs uppercase tracking-[0.18em] opacity-70 mb-3">Key Features</div>
           <h2 className="text-4xl font-bold mb-10">Why choose {provider.name}</h2>
@@ -78,7 +78,7 @@ const BankingProviderPage = () => {
         </div>
       </section>
 
-      <section className="py-20 border-t border-border/60 bg-muted/10">
+      <section className="py-10 border-t border-border/60 bg-muted/10">
         <div className="container mx-auto px-4 max-w-5xl">
           <div className="text-xs uppercase tracking-[0.18em] opacity-70 mb-3">Application Requirements</div>
           <h2 className="text-4xl font-bold mb-4">What you'll need to apply</h2>
@@ -94,7 +94,7 @@ const BankingProviderPage = () => {
         </div>
       </section>
 
-      <section id="apply" className="py-20 bg-muted/20 border-t border-border/60">
+      <section id="apply" className="py-10 bg-muted/20 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-3xl text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">Apply for {provider.name}</h2>
           <p className="opacity-80 mb-8">Setup fee <span className="text-gradient font-bold">{provider.setupPrice}</span> — we handle the application end-to-end and keep you updated.</p>
@@ -104,7 +104,7 @@ const BankingProviderPage = () => {
         </div>
       </section>
 
-      <section className="py-20 border-t border-border/60">
+      <section className="py-10 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-6xl">
           <h2 className="text-3xl font-bold mb-8">Other Payment Providers</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">

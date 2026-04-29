@@ -157,7 +157,7 @@ const UKChangeServices = () => {
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
-        <div className="container mx-auto px-4 py-24 md:py-28 relative">
+        <div className="container mx-auto px-4 py-12 md:py-14 relative">
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-3 mb-6">
               <span className="h-px w-7 bg-primary" />
@@ -179,7 +179,7 @@ const UKChangeServices = () => {
       </section>
 
       {/* Zig-Zag cards */}
-      <section id="packages" className="py-20 border-t border-border/60">
+      <section id="packages" className="py-10 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-6xl space-y-8">
           {cards.map((c) => (
             <div
@@ -216,7 +216,7 @@ const UKChangeServices = () => {
       </section>
 
       {/* Requirements summary */}
-      <section id="requirements" className="py-20 bg-muted/20 border-t border-border/60">
+      <section id="requirements" className="py-10 bg-muted/20 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="inline-flex items-center gap-3 mb-5">
             <span className="h-px w-7 bg-primary" />
@@ -241,7 +241,7 @@ const UKChangeServices = () => {
       </section>
 
       {/* Order form */}
-      <section id="order-form" className="py-24 border-t border-border/60">
+      <section id="order-form" className="py-12 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="text-center mb-10">
             <h2 className="text-4xl md:text-5xl font-bold mb-3">Place Your Order</h2>
@@ -285,7 +285,7 @@ const UKChangeServices = () => {
       </section>
 
       {/* Related */}
-      <section className="py-20 bg-muted/20 border-t border-border/60">
+      <section className="py-10 bg-muted/20 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-6xl">
           <h2 className="text-3xl font-bold mb-8">Related Services</h2>
           <div className="grid sm:grid-cols-3 gap-5">

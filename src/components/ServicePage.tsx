@@ -31,7 +31,7 @@ const ServicePage = ({ eyebrow, title, description, highlights, children }: Serv
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
-        <div className="container mx-auto px-4 py-24 md:py-32 relative">
+        <div className="container mx-auto px-4 py-12 md:py-16 relative">
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-3 mb-6">
               <span className="h-px w-7 bg-primary" />
@@ -54,7 +54,7 @@ const ServicePage = ({ eyebrow, title, description, highlights, children }: Serv
         </div>
       </section>
 
-      <section className="py-24 border-t border-border/60">
+      <section className="py-12 border-t border-border/60">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
             <div>
@@ -92,7 +92,7 @@ const ServicePage = ({ eyebrow, title, description, highlights, children }: Serv
         </div>
       </section>
 
-      <section className="py-24">
+      <section className="py-12">
         <div className="container mx-auto px-4">
           <div className="glass rounded-3xl p-14 text-center max-w-3xl mx-auto">
             <h3 className="text-3xl md:text-4xl font-bold">

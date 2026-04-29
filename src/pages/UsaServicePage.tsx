@@ -24,7 +24,7 @@ const UsaServicePage = () => {
   if (!page) {
     return (
       <Layout>
-        <div className="container mx-auto px-4 py-32 text-center">
+        <div className="container mx-auto px-4 py-16 text-center">
           <h1 className="font-display text-5xl font-bold">Service not found</h1>
           <Link to="/usa-services" className="inline-block mt-8 px-6 py-3 rounded-full bg-gradient-brand">Back to USA Services</Link>
         </div>
@@ -39,7 +39,7 @@ const UsaServicePage = () => {
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
-        <div className="container mx-auto px-4 py-24 md:py-28 relative">
+        <div className="container mx-auto px-4 py-12 md:py-14 relative">
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-3 mb-6">
               <span className="h-px w-7 bg-primary" />
@@ -56,7 +56,7 @@ const UsaServicePage = () => {
         </div>
       </section>
 
-      <section className="py-20 border-t border-border/60">
+      <section className="py-10 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-5xl">
           <div className="text-xs uppercase tracking-[0.18em] opacity-70 mb-3">Service Features</div>
           <h2 className="text-4xl font-bold mb-10">What's included</h2>
@@ -71,7 +71,7 @@ const UsaServicePage = () => {
         </div>
       </section>
 
-      <section id="requirements" className="py-20 bg-muted/20 border-t border-border/60">
+      <section id="requirements" className="py-10 bg-muted/20 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-3xl text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">Ready to get started?</h2>
           <p className="opacity-80 mb-8">Submit your details and our team will be in touch within one business day.</p>
@@ -81,7 +81,7 @@ const UsaServicePage = () => {
         </div>
       </section>
 
-      <section className="py-20 border-t border-border/60">
+      <section className="py-10 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-6xl">
           <h2 className="text-3xl font-bold mb-8">Other USA Services</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">

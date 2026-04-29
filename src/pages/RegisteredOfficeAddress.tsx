@@ -145,7 +145,7 @@ const RegisteredOfficeAddress = () => {
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
-        <div className="container mx-auto px-4 py-24 md:py-28 relative">
+        <div className="container mx-auto px-4 py-12 md:py-14 relative">
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-3 mb-6">
               <span className="h-px w-7 bg-primary" />
@@ -170,7 +170,7 @@ const RegisteredOfficeAddress = () => {
       </section>
 
       {/* Why you need it */}
-      <section className="py-20 border-t border-border/60">
+      <section className="py-10 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="inline-flex items-center gap-3 mb-5">
             <span className="h-px w-7 bg-primary" />
@@ -191,7 +191,7 @@ const RegisteredOfficeAddress = () => {
       </section>
 
       {/* Packages */}
-      <section id="packages" className="py-24 bg-muted/20 border-t border-border/60">
+      <section id="packages" className="py-12 bg-muted/20 border-t border-border/60">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <div className="inline-flex items-center gap-3 mb-5">
@@ -243,7 +243,7 @@ const RegisteredOfficeAddress = () => {
       </section>
 
       {/* Related */}
-      <section className="py-20 border-t border-border/60">
+      <section className="py-10 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-6xl">
           <h2 className="text-3xl md:text-4xl font-bold mb-10">Related Services</h2>
           <div className="grid sm:grid-cols-3 gap-5">
@@ -258,7 +258,7 @@ const RegisteredOfficeAddress = () => {
       </section>
 
       {/* FAQ */}
-      <section className="py-20 bg-muted/20 border-t border-border/60">
+      <section className="py-10 bg-muted/20 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-3xl">
           <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
           <Accordion type="single" collapsible className="glass rounded-2xl px-6">

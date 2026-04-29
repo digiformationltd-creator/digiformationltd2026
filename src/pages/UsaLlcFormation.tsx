@@ -102,7 +102,7 @@ const UsaLlcFormation = () => {
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
-        <div className="container mx-auto px-4 py-24 md:py-28 relative">
+        <div className="container mx-auto px-4 py-12 md:py-14 relative">
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-3 mb-6">
               <span className="h-px w-7 bg-primary" />
@@ -157,7 +157,7 @@ const UsaLlcFormation = () => {
       </section>
 
       {/* Packages */}
-      <section id="packages" className="py-20 border-t border-border/60">
+      <section id="packages" className="py-10 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
             <div className="text-xs uppercase tracking-[0.18em] opacity-70 mb-3">Step 2 — Choose Your Package</div>
@@ -199,7 +199,7 @@ const UsaLlcFormation = () => {
       </section>
 
       {/* Requirements */}
-      <section id="requirements" className="py-20 bg-muted/20 border-t border-border/60">
+      <section id="requirements" className="py-10 bg-muted/20 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="inline-flex items-center gap-3 mb-5">
             <span className="h-px w-7 bg-primary" />
@@ -224,7 +224,7 @@ const UsaLlcFormation = () => {
       </section>
 
       {/* Related */}
-      <section className="py-20 border-t border-border/60">
+      <section className="py-10 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-6xl">
           <h2 className="text-3xl font-bold mb-8">Related USA Services</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">

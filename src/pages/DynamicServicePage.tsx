@@ -19,7 +19,7 @@ export const DynamicServicePage = () => {
   if (!match) {
     return (
       <Layout>
-        <div className="container mx-auto px-4 py-32 text-center">
+        <div className="container mx-auto px-4 py-16 text-center">
           <div className="text-xs uppercase tracking-[0.18em] mb-5 opacity-80">Service</div>
           <h1 className="font-display text-5xl font-bold">Page coming soon</h1>
           <Link to="/" className="inline-block mt-8 px-6 py-3 rounded-full bg-gradient-brand">Back to Home</Link>
