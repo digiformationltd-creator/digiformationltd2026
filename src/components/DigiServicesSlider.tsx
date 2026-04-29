@@ -197,8 +197,10 @@ const DigiServicesSlider = () => {
                     if (dragRef.current?.moved) { e.preventDefault(); return; }
                     setActive(idx);
                   }}
-                  className={`absolute top-1/2 left-1/2 rounded-2xl p-5 md:p-6 glass flex flex-col ${
-                    isActive ? "border-primary/45 shadow-glow" : "border-border/30"
+                  className={`absolute top-1/2 left-1/2 rounded-2xl p-5 md:p-6 glass flex flex-col border ${
+                    isActive
+                      ? "border-border/30"
+                      : "border-primary/40 shadow-[0_0_24px_hsl(var(--primary)/0.45),inset_0_0_12px_hsl(var(--primary)/0.18)]"
                   }`}
                   style={{
                     width: cardW,
