@@ -35,10 +35,10 @@ const Index = () => {
       "keywords",
       "Digiformation, Digiformation Ltd, Digiformation UK, UK LTD formation, US LLC formation, register UK company, register US LLC, Companies House registration, Delaware LLC, Wyoming LLC, EIN number, ITIN number, BOI report, UK UTR, VAT registration, PayPal account, Payoneer account, Stripe account, Wise business account, WorldFirst account, Tide business banking, Airwallex, PingPong, Mollie, Wallester Visa card, Sunrate, ZionPe, payment gateway setup UK, payment gateway setup Pakistan, Amazon seller LLC, eBay seller LTD, Shopify Stripe setup"
     );
-    setMeta("og:title", "Digiformation Ltd | UK & US Company Formation & Banking Solutions", "property");
+    setMeta("og:title", "Digiformation Ltd | UK LTD & US LLC Formation • PayPal, Stripe, Payoneer, Wise, WorldFirst, Tide", "property");
     setMeta("og:description", description, "property");
     setMeta("og:type", "website", "property");
-    setMeta("twitter:title", "Digiformation Ltd | UK & US Company Formation & Banking Solutions");
+    setMeta("twitter:title", "Digiformation Ltd | UK LTD & US LLC Formation • PayPal, Stripe, Payoneer, Wise");
     setMeta("twitter:description", description);
 
     // Canonical
