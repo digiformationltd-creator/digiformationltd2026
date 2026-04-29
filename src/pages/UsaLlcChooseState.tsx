@@ -228,44 +228,6 @@ const UsaLlcChooseState = () => {
   );
 };
 
-const StateCard = ({
-  state,
-  active,
-  compact,
-  onSelect,
-}: {
-  state: StatePricing;
-  active: boolean;
-  compact?: boolean;
-  onSelect: () => void;
-}) => (
-  <button
-    onClick={onSelect}
-    className={`group text-left glass rounded-2xl p-4 md:p-5 transition-all border hover:-translate-y-0.5 hover:shadow-elegant ${
-      active ? "border-primary shadow-glow ring-2 ring-primary/40" : "border-border/40 hover:border-primary/40"
-    }`}
-  >
-    <div className="flex items-start justify-between gap-2">
-      <div>
-        <div className="text-[10px] uppercase tracking-[0.16em] opacity-70">{state.state_code}</div>
-        <div className={`font-semibold ${compact ? "text-base" : "text-lg"}`}>{state.state_name}</div>
-      </div>
-      {state.is_popular && !compact && (
-        <span className="text-[9px] uppercase tracking-[0.14em] px-2 py-0.5 rounded-full bg-primary/15 text-primary font-semibold">
-          Popular
-        </span>
-      )}
-    </div>
-    <div className="mt-3 flex items-baseline gap-1">
-      <span className="text-xs opacity-70">from</span>
-      <span className="text-lg font-bold text-gradient">{formatUSD(Number(state.starter_price_usd))}</span>
-    </div>
-    <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-      Select <ArrowRight className="w-3 h-3" />
-    </div>
-  </button>
-);
-
 const PackageCard = ({
   name,
   price,
