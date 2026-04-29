@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import statsBg from "@/assets/stats-bg-companies.jpg";
 
 const stats = [
   { value: 300, suffix: "+", label: "Companies Registered (UK & US)" },
