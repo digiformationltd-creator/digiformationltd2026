@@ -129,6 +129,54 @@ const DigiServicesSlider = () => {
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
+          {/* Ambient light aura around the ring */}
+          <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+            {/* Soft pulsing halo behind the ring */}
+            <div
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl animate-pulse-glow"
+              style={{
+                width: radius * 2.2,
+                height: radius * 2.2,
+                background:
+                  "radial-gradient(circle, hsl(var(--primary) / 0.35) 0%, hsl(var(--primary) / 0.12) 35%, transparent 70%)",
+              }}
+            />
+            {/* Rotating conic light beams that follow the ring */}
+            <div
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-60 mix-blend-screen blur-2xl"
+              style={{
+                width: radius * 2.4,
+                height: radius * 2.4,
+                background:
+                  "conic-gradient(from 0deg, transparent 0deg, hsl(var(--primary) / 0.55) 25deg, transparent 60deg, transparent 180deg, hsl(var(--primary) / 0.4) 205deg, transparent 240deg, transparent 360deg)",
+                transform: `rotate(${-rotation}deg)`,
+                transition: "transform 1.2s cubic-bezier(0.23, 1, 0.32, 1)",
+                maskImage: "radial-gradient(circle, black 35%, transparent 72%)",
+                WebkitMaskImage: "radial-gradient(circle, black 35%, transparent 72%)",
+              }}
+            />
+            {/* Inner glowing core */}
+            <div
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
+              style={{
+                width: radius * 0.9,
+                height: radius * 0.9,
+                background:
+                  "radial-gradient(circle, hsl(var(--primary) / 0.5) 0%, transparent 70%)",
+              }}
+            />
+            {/* Bottom floor reflection */}
+            <div
+              className="absolute left-1/2 bottom-2 -translate-x-1/2 rounded-[50%] blur-2xl opacity-70"
+              style={{
+                width: radius * 1.8,
+                height: 60,
+                background:
+                  "radial-gradient(ellipse, hsl(var(--primary) / 0.5) 0%, transparent 70%)",
+              }}
+            />
+          </div>
+
           <div
             className="relative w-full h-full"
             style={{
