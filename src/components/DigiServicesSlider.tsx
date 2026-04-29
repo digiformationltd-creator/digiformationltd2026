@@ -153,9 +153,6 @@ const DigiServicesSlider = () => {
                   {isActive && (
                     <span className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent rounded-t-2xl" />
                   )}
-                  <span className="absolute top-3 right-4 font-display font-bold text-4xl md:text-5xl text-primary/10 leading-none pointer-events-none">
-                    {s.num}
-                  </span>
 
                   <div className="text-3xl md:text-4xl mb-3">{s.flag}</div>
                   <div className="text-[10px] font-semibold uppercase tracking-[0.14em] mb-2 opacity-80">
