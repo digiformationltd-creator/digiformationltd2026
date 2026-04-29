@@ -103,6 +103,10 @@ export const Contact = () => {
       "Contact Digiformation Ltd – UK Company Formation & Business Services",
       "Contact Digiformation Ltd for UK LTD & LLC formation, address services, ID verification and annual compliance. Reach us via email, WhatsApp or our inquiry form."
     );
+    // Pre-fill service from query string e.g. /contact?service=PayPal
+    const params = new URLSearchParams(window.location.search);
+    const svc = params.get("service");
+    if (svc) setForm((f) => ({ ...f, service: svc }));
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
