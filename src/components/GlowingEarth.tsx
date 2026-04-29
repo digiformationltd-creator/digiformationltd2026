@@ -9,7 +9,7 @@ const GlowingEarth = () => {
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-0 flex items-start sm:items-center justify-center overflow-hidden pt-52 sm:pt-0"
+      className="pointer-events-none absolute inset-0 flex items-start sm:items-center justify-center overflow-hidden pt-60 sm:pt-0"
     >
       <div className="earth-wrap">
         {/* Outer atmospheric glow */}
@@ -37,9 +37,14 @@ const GlowingEarth = () => {
       <style>{`
         .earth-wrap {
           position: relative;
-          width: clamp(300px, 58vw, 680px);
+          width: clamp(250px, 72vw, 300px);
           aspect-ratio: 1 / 1;
           opacity: 0.35;
+        }
+        @media (min-width: 640px) {
+          .earth-wrap {
+            width: clamp(300px, 58vw, 680px);
+          }
         }
         .earth-halo {
           position: absolute;
