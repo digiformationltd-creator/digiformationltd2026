@@ -32,7 +32,7 @@ const partners: Partner[] = [
   { name: "Shopify", logo: shopify },
   { name: "Airwallex", logo: airwallex },
   
-  { name: "Wallester", logo: wallester },
+  
 ];
 
 const DigiTrustBar = () => {
