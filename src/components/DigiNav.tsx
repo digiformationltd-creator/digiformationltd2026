@@ -11,7 +11,6 @@ const topLinks = [
 
 const moreLinks = [
   { name: "Web Dev", path: "/web-development" },
-  { name: "Pricing", path: "/pricing" },
   { name: "About", path: "/about" },
   { name: "Blog", path: "/blog" },
   { name: "FAQ", path: "/faq" },
