@@ -14,7 +14,7 @@ import sunrate from "@/assets/partners/sunrate.png";
 import irs from "@/assets/partners/irs.png";
 import worldfirst from "@/assets/partners/worldfirst.png";
 
-type Partner = { name: string; logo?: string; whiten?: boolean };
+type Partner = { name: string; logo?: string; whiten?: boolean; lightBg?: boolean };
 
 const partners: Partner[] = [
   { name: "Companies House", logo: companiesHouse, whiten: true },
