@@ -259,7 +259,7 @@ type PriceGroup = { title: string; tag: string; intro: string; items: PriceItem[
 const priceGroups: PriceGroup[] = [
   {
     title: "UK Company Formation",
-    tag: "01 — UK Formation",
+    tag: "UK Formation",
     intro: "All-inclusive UK LTD incorporation packages with Companies House registration.",
     items: [
       { name: "Starter Package", price: "£140", note: "3–5 business days", link: "/uk-services/uk-ltd-formation#packages" },
@@ -270,7 +270,7 @@ const priceGroups: PriceGroup[] = [
   },
   {
     title: "UK Compliance Services",
-    tag: "02 — UK Compliance",
+    tag: "UK Compliance",
     intro: "Keep your UK company fully compliant — Companies House and HMRC filings.",
     items: compliancePages.map((p) => ({
       name: p.title.replace(" Service", ""),
@@ -280,7 +280,7 @@ const priceGroups: PriceGroup[] = [
   },
   {
     title: "USA Company Formation",
-    tag: "03 — USA Services",
+    tag: "USA Services",
     intro: "Form your US LLC or C-Corp with EIN, registered agent, and full compliance.",
     items: [
       { name: "USA LLC Formation", price: "From $299", note: "EIN + Registered Agent included", link: "/usa-services/us-llc-formation#packages" },
@@ -291,7 +291,7 @@ const priceGroups: PriceGroup[] = [
   },
   {
     title: "Banking & Payment Gateways",
-    tag: "04 — Banking",
+    tag: "Banking & Payments",
     intro: "Account creation & setup service charges for leading payment gateways and business banks.",
     items: [
       { name: "PayPal Account Creation", price: "£20", link: "/banks-payment-solutions/paypal" },
@@ -490,7 +490,7 @@ export const FAQ = () => {
               >
                 <div className="flex items-start justify-between gap-4">
                   <h3 className="font-display text-lg md:text-xl font-semibold leading-snug">
-                    {i + 1}. {f.q}
+                    {f.q}
                   </h3>
                   <ChevronDown className={`w-5 h-5 mt-1 flex-shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`} />
                 </div>
@@ -741,7 +741,7 @@ export const WebDevelopment = () => {
       <section className="py-20 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="mb-12 max-w-2xl">
-            <span className="text-[10px] uppercase tracking-[0.22em] opacity-70 font-mono">01 — Services</span>
+            <span className="text-[10px] uppercase tracking-[0.22em] opacity-70 font-mono">Services</span>
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight mt-3">Our web services</h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -760,13 +760,13 @@ export const WebDevelopment = () => {
       <section className="py-20 bg-muted/20 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="mb-12 max-w-2xl">
-            <span className="text-[10px] uppercase tracking-[0.22em] opacity-70 font-mono">02 — Process</span>
+            <span className="text-[10px] uppercase tracking-[0.22em] opacity-70 font-mono">Process</span>
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight mt-3">Our design process</h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
             {webProcess.map(({ icon: Icon, label }, i) => (
               <div key={label} className="glass rounded-2xl p-5 text-center">
-                <div className="text-[10px] font-mono opacity-60 mb-2">0{i + 1}</div>
+                
                 <Icon className="w-6 h-6 text-primary mx-auto mb-2" />
                 <div className="text-sm font-semibold">{label}</div>
               </div>
@@ -779,7 +779,7 @@ export const WebDevelopment = () => {
       <section className="py-20 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="mb-12 max-w-2xl">
-            <span className="text-[10px] uppercase tracking-[0.22em] opacity-70 font-mono">03 — Portfolio</span>
+            <span className="text-[10px] uppercase tracking-[0.22em] opacity-70 font-mono">Portfolio</span>
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight mt-3">Selected work</h2>
             <p className="opacity-80 mt-3">A glimpse of recent projects. Full case studies available on request.</p>
           </div>
@@ -803,7 +803,7 @@ export const WebDevelopment = () => {
       <section className="py-20 bg-muted/20 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="mb-10 max-w-2xl">
-            <span className="text-[10px] uppercase tracking-[0.22em] opacity-70 font-mono">04 — Tech Stack</span>
+            <span className="text-[10px] uppercase tracking-[0.22em] opacity-70 font-mono">Tech Stack</span>
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight mt-3">Modern, proven tools</h2>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -818,7 +818,7 @@ export const WebDevelopment = () => {
       <section className="py-20 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="mb-10">
-            <span className="text-[10px] uppercase tracking-[0.22em] opacity-70 font-mono">05 — FAQ</span>
+            <span className="text-[10px] uppercase tracking-[0.22em] opacity-70 font-mono">FAQ</span>
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight mt-3">Web design FAQ</h2>
           </div>
           <div className="space-y-3">
