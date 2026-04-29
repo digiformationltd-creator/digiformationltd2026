@@ -14,7 +14,7 @@ import sunrate from "@/assets/partners/sunrate.png";
 import irs from "@/assets/partners/irs.png";
 import worldfirst from "@/assets/partners/worldfirst.png";
 
-type Partner = { name: string; logo?: string; whiten?: boolean };
+type Partner = { name: string; logo?: string; whiten?: boolean; lightBg?: boolean };
 
 const partners: Partner[] = [
   { name: "Companies House", logo: companiesHouse, whiten: true },
@@ -22,14 +22,14 @@ const partners: Partner[] = [
   { name: "IRS", logo: irs },
   { name: "Stripe", logo: stripe },
   { name: "PayPal", logo: paypal },
-  { name: "Wise", logo: wise, whiten: true },
-  { name: "Payoneer", logo: payoneer, whiten: true },
+  { name: "Wise", logo: wise, lightBg: true },
+  { name: "Payoneer", logo: payoneer, lightBg: true },
   { name: "Tide", logo: tide },
-  { name: "Sunrate", logo: sunrate, whiten: true },
+  { name: "Sunrate", logo: sunrate, lightBg: true },
   { name: "WorldFirst", logo: worldfirst },
   { name: "eBay", logo: ebay },
   { name: "Shopify", logo: shopify },
-  { name: "Airwallex", logo: airwallex, whiten: true },
+  { name: "Airwallex", logo: airwallex, lightBg: true },
 ];
 
 const DigiTrustBar = () => {
@@ -46,13 +46,15 @@ const DigiTrustBar = () => {
           {loop.map((p, i) => (
             <div key={i} className="logo-card" title={p.name}>
               {p.logo ? (
-                <img
-                  src={p.logo}
-                  alt={`${p.name} logo`}
-                  loading="lazy"
-                  className={`object-contain ${p.name === "WorldFirst" ? "h-24 w-[200px]" : "h-16 w-[150px]"}`}
-                  style={p.whiten ? { filter: "brightness(0) invert(1)" } : undefined}
-                />
+                <div className={p.lightBg ? "bg-white rounded-md px-3 py-2 flex items-center justify-center" : "flex items-center justify-center"}>
+                  <img
+                    src={p.logo}
+                    alt={`${p.name} logo`}
+                    loading="lazy"
+                    className={`object-contain ${p.name === "WorldFirst" ? "h-24 w-[200px]" : "h-16 w-[150px]"}`}
+                    style={p.whiten ? { filter: "brightness(0) invert(1)" } : undefined}
+                  />
+                </div>
               ) : (
                 <span>{p.name}</span>
               )}
