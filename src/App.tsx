@@ -17,6 +17,8 @@ import UtrCodes from "./pages/UtrCodes";
 import CompliancePage from "./pages/CompliancePage";
 import UKChangeServices from "./pages/UKChangeServices";
 import UsaLlcFormation from "./pages/UsaLlcFormation";
+import UsaLlcChooseState from "./pages/UsaLlcChooseState";
+import UsaLlcCheckout from "./pages/UsaLlcCheckout";
 import UsaServicePage from "./pages/UsaServicePage";
 import BankingProviderPage from "./pages/BankingProviderPage";
 import WhatsAppFloat from "./components/WhatsAppFloat";
@@ -60,6 +62,8 @@ const App = () => (
           <Route path="/uk-compliance/:slug" element={<CompliancePage />} />
 
           {/* USA dedicated pages (must come before dynamic route) */}
+          <Route path="/usa-services/us-llc-formation/choose-state" element={<UsaLlcChooseState />} />
+          <Route path="/usa-services/us-llc-formation/checkout" element={<UsaLlcCheckout />} />
           <Route path="/usa-services/us-llc-formation" element={<UsaLlcFormation />} />
           <Route path="/usa-services/usa-llc-formation" element={<UsaLlcFormation />} />
           <Route path="/llc-formation-services" element={<UsaLlcFormation />} />

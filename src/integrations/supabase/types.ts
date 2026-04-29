@@ -80,6 +80,48 @@ export type Database = {
         }
         Relationships: []
       }
+      us_llc_state_pricing: {
+        Row: {
+          created_at: string
+          display_order: number
+          gold_price_usd: number
+          id: string
+          is_popular: boolean
+          notes: string | null
+          silver_price_usd: number
+          starter_price_usd: number
+          state_code: string
+          state_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          gold_price_usd?: number
+          id?: string
+          is_popular?: boolean
+          notes?: string | null
+          silver_price_usd?: number
+          starter_price_usd?: number
+          state_code: string
+          state_name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          gold_price_usd?: number
+          id?: string
+          is_popular?: boolean
+          notes?: string | null
+          silver_price_usd?: number
+          starter_price_usd?: number
+          state_code?: string
+          state_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       whatsapp_clicks: {
         Row: {
           created_at: string
