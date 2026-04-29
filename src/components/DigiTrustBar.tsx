@@ -1,4 +1,3 @@
-import AdaptiveLogo from "@/components/AdaptiveLogo";
 import stripe from "@/assets/partners/stripe.png";
 import paypal from "@/assets/partners/paypal.png";
 import wise from "@/assets/partners/wise.png";
@@ -49,10 +48,10 @@ const DigiTrustBar = () => {
           {loop.map((p, i) => (
             <div key={i} className="logo-card" title={p.name}>
               {p.logo ? (
-                <AdaptiveLogo
+                <img
                   src={p.logo}
                   alt={`${p.name} logo`}
-                  cardBg="#1c1f25"
+                  loading="lazy"
                   className={`object-contain ${p.name === "WorldFirst" ? "h-24 w-[200px]" : "h-16 w-[150px]"}`}
                 />
               ) : (
