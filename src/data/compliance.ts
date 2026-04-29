@@ -5,6 +5,7 @@ export type CompliancePage = {
   price: string;
   eyebrow: string;
   overview: string[];
+  requirements: string[];
   description: string;
   metaTitle: string;
   metaDescription: string;
@@ -24,6 +25,7 @@ export const compliancePages: CompliancePage[] = [
       "Special resolution document drafted for you",
       "Full compliance with Companies House filing rules",
     ],
+    requirements: ["Company Number (CRN)", "Company Authentication Code", "New Company Name"],
     description: "Officially change your UK company name with a fully managed Companies House filing — certificate and resolution document included.",
     metaTitle: "UK Company Name Change Service | Companies House Filing | Digiformation LTD",
     metaDescription: "Officially change your UK company name with Digiformation LTD. Includes Companies House filing, certificate, and resolution document.",
@@ -41,6 +43,7 @@ export const compliancePages: CompliancePage[] = [
       "Email notifications when post is received",
       "Optional mail scanning available",
     ],
+    requirements: ["Company Number (CRN)", "Company Authentication Code", "New Registered Address"],
     description: "Update your UK registered office address quickly and stay fully compliant with Companies House.",
     metaTitle: "UK Company Address Change | Registered Office Update | Digiformation LTD",
     metaDescription: "Change your UK registered office address with Digiformation LTD. Fast filing with Companies House and optional mail handling.",
@@ -57,6 +60,11 @@ export const compliancePages: CompliancePage[] = [
       "Submission to Companies House and HMRC",
       "Micro-entity, small company and dormant accounts",
       "Avoid late filing penalties",
+    ],
+    requirements: [
+      "Company Number (CRN)",
+      "Company Authentication Code",
+      "Business Financial Statement (income, expenses, budget — full year figures)",
     ],
     description: "Stay compliant with UK statutory filing — full preparation and submission of annual accounts to Companies House and HMRC.",
     metaTitle: "UK Annual Accounts Filing | Companies House & HMRC | Digiformation LTD",
@@ -75,6 +83,7 @@ export const compliancePages: CompliancePage[] = [
       "Director identity verification details collected",
       "Avoid strike-off and compliance issues",
     ],
+    requirements: ["Company Number (CRN)", "Company Authentication Code"],
     description: "Stay compliant with UK company law by filing your annual confirmation statement with Companies House.",
     metaTitle: "UK Company Annual Filing – Confirmation Statement | DiGiFormation LTD",
     metaDescription: "File your UK company's Confirmation Statement quickly with DiGiFormation LTD. Annual Filing, Directors' Verification, and compliant submission.",
@@ -92,6 +101,7 @@ export const compliancePages: CompliancePage[] = [
       "Companies House filing handled end-to-end",
       "Optional ID verification add-on available",
     ],
+    requirements: ["Company Number (CRN)", "Company Authentication Code", "Director's Personal Code"],
     description: "Appoint or remove UK company directors with a fully managed Companies House filing.",
     metaTitle: "UK Company Director Change | Appoint & Remove Directors | Digiformation LTD",
     metaDescription: "Appoint or remove UK company directors with Digiformation LTD. Fast Companies House filing with optional ID verification.",
@@ -109,6 +119,7 @@ export const compliancePages: CompliancePage[] = [
       "Ownership structure management",
       "Compliance filing support",
     ],
+    requirements: ["Company Number (CRN)", "Company Authentication Code", "Shareholder's Personal Code"],
     description: "Easily add or remove shareholders and manage your UK company's ownership structure.",
     metaTitle: "UK Shareholder Change | Add or Remove Shareholders | Digiformation LTD",
     metaDescription: "Add or remove shareholders in your UK company with Digiformation LTD. Companies House compliant and fully managed.",
@@ -126,6 +137,7 @@ export const compliancePages: CompliancePage[] = [
       "Legal compliance updates handled",
       "Official Companies House filing",
     ],
+    requirements: ["Company Number (CRN)", "Company Authentication Code", "PSC / Secretary Personal Code"],
     description: "Manage PSC and Company Secretary appointments and removals with full Companies House compliance.",
     metaTitle: "PSC & Secretary Change | UK Companies House Filing | Digiformation LTD",
     metaDescription: "Appoint or remove PSCs and Company Secretaries with Digiformation LTD. Compliant Companies House filing.",
@@ -143,6 +155,7 @@ export const compliancePages: CompliancePage[] = [
       "Companies House and HMRC notifications",
       "Full compliance support",
     ],
+    requirements: ["Company Number (CRN)", "Company Authentication Code", "New Country of Residence"],
     description: "Update your UK company's country of residence with full Companies House and HMRC compliance.",
     metaTitle: "UK Company Residence Change | Country Update | Digiformation LTD",
     metaDescription: "Change your UK company's country of residence with Digiformation LTD. Compliant filing with Companies House and HMRC.",
@@ -160,6 +173,7 @@ export const compliancePages: CompliancePage[] = [
       "Postal handling support",
       "Companies House submission",
     ],
+    requirements: ["Company Number (CRN)", "Company Authentication Code", "New Registered Address"],
     description: "Official AD01 filing service to update your UK registered office address with full postal and Companies House handling.",
     metaTitle: "AD01 Form Filing Service | Registered Office Update | Digiformation LTD",
     metaDescription: "Official AD01 filing service from Digiformation LTD. Update your UK registered office address with full postal handling.",

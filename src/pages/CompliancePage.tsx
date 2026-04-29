@@ -129,6 +129,27 @@ const CompliancePage = () => {
         </div>
       </section>
 
+      <section className="py-20 bg-muted/20 border-t border-border/60">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="inline-flex items-center gap-3 mb-5">
+            <span className="h-px w-7 bg-primary" />
+            <span className="text-xs uppercase tracking-[0.18em] font-semibold">Requirements</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-4">
+            What we'll <em className="not-italic text-gradient">need from you</em>
+          </h2>
+          <p className="opacity-80 mb-10 max-w-2xl">Please have the following details ready so we can complete your filing quickly with Companies House.</p>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {page.requirements.map((r, i) => (
+              <div key={r} className="glass rounded-xl p-5 flex gap-4 items-start">
+                <div className="w-7 h-7 rounded-full bg-gradient-brand grid place-items-center text-xs font-bold flex-shrink-0">{i + 1}</div>
+                <span className="font-medium">{r}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="py-24">
         <div className="container mx-auto px-4">
           <div className="glass rounded-3xl p-14 text-center max-w-3xl mx-auto">
