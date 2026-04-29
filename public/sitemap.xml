@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://digiformation.uk/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://digiformation.uk/about</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://digiformation.uk/contact</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://digiformation.uk/pricing</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://digiformation.uk/faq</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://digiformation.uk/blog</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://digiformation.uk/web-development</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <!-- UK Services -->
+  <url><loc>https://digiformation.uk/uk-services</loc><priority>0.9</priority></url>
+  <url><loc>https://digiformation.uk/uk-services/uk-ltd-formation</loc><priority>1.0</priority></url>
+  <url><loc>https://digiformation.uk/uk-services/ltd-id-verification</loc><priority>0.9</priority></url>
+  <url><loc>https://digiformation.uk/uk-services/registered-office-address</loc><priority>0.9</priority></url>
+  <url><loc>https://digiformation.uk/uk-services/utr-codes</loc><priority>0.9</priority></url>
+  <url><loc>https://digiformation.uk/uk-services/company-annual-filing</loc><priority>0.8</priority></url>
+  <url><loc>https://digiformation.uk/uk-services/utr-number</loc><priority>0.8</priority></url>
+  <url><loc>https://digiformation.uk/uk-services/auth-code</loc><priority>0.7</priority></url>
+  <url><loc>https://digiformation.uk/uk-services/activation-code</loc><priority>0.7</priority></url>
+  <url><loc>https://digiformation.uk/uk-services/uk-vat-registration</loc><priority>0.8</priority></url>
+
+  <!-- UK Compliance -->
+  <url><loc>https://digiformation.uk/uk-compliance</loc><priority>0.8</priority></url>
+  <url><loc>https://digiformation.uk/uk-compliance/company-name-change</loc><priority>0.8</priority></url>
+  <url><loc>https://digiformation.uk/uk-compliance/company-address-change</loc><priority>0.8</priority></url>
+  <url><loc>https://digiformation.uk/uk-compliance/annual-accounts-filing</loc><priority>0.8</priority></url>
+  <url><loc>https://digiformation.uk/uk-compliance/confirmation-statement</loc><priority>0.8</priority></url>
+  <url><loc>https://digiformation.uk/uk-compliance/director-appoint-remove</loc><priority>0.8</priority></url>
+  <url><loc>https://digiformation.uk/uk-compliance/shareholder-appoint-remove</loc><priority>0.8</priority></url>
+  <url><loc>https://digiformation.uk/uk-compliance/psc-secretary-appoint-remove</loc><priority>0.8</priority></url>
+  <url><loc>https://digiformation.uk/uk-compliance/company-residence-change</loc><priority>0.7</priority></url>
+  <url><loc>https://digiformation.uk/uk-compliance/ad01-form-post</loc><priority>0.7</priority></url>
+
+  <!-- USA Services -->
+  <url><loc>https://digiformation.uk/usa-services</loc><priority>0.9</priority></url>
+  <url><loc>https://digiformation.uk/usa-services/us-llc-formation</loc><priority>1.0</priority></url>
+  <url><loc>https://digiformation.uk/usa-services/ein-number</loc><priority>0.9</priority></url>
+  <url><loc>https://digiformation.uk/usa-services/itin-number</loc><priority>0.9</priority></url>
+  <url><loc>https://digiformation.uk/usa-services/annual-tax-filing</loc><priority>0.8</priority></url>
+  <url><loc>https://digiformation.uk/usa-services/bio-report</loc><priority>0.8</priority></url>
+
+  <!-- Banking & Payment Solutions -->
+  <url><loc>https://digiformation.uk/banks-payment-solutions</loc><priority>0.9</priority></url>
+  <url><loc>https://digiformation.uk/banks-payment-solutions/paypal</loc><priority>0.9</priority></url>
+  <url><loc>https://digiformation.uk/banks-payment-solutions/payoneer</loc><priority>0.9</priority></url>
+  <url><loc>https://digiformation.uk/banks-payment-solutions/stripe</loc><priority>0.9</priority></url>
+  <url><loc>https://digiformation.uk/banks-payment-solutions/wise</loc><priority>0.9</priority></url>
+  <url><loc>https://digiformation.uk/banks-payment-solutions/worldfirst</loc><priority>0.9</priority></url>
+  <url><loc>https://digiformation.uk/banks-payment-solutions/tide</loc><priority>0.9</priority></url>
+  <url><loc>https://digiformation.uk/banks-payment-solutions/airwallex</loc><priority>0.8</priority></url>
+  <url><loc>https://digiformation.uk/banks-payment-solutions/pingpong</loc><priority>0.8</priority></url>
+  <url><loc>https://digiformation.uk/banks-payment-solutions/mollie</loc><priority>0.8</priority></url>
+  <url><loc>https://digiformation.uk/banks-payment-solutions/wallester</loc><priority>0.8</priority></url>
+  <url><loc>https://digiformation.uk/banks-payment-solutions/sunrate</loc><priority>0.8</priority></url>
+  <url><loc>https://digiformation.uk/banks-payment-solutions/zionpe</loc><priority>0.8</priority></url>
+  <url><loc>https://digiformation.uk/banks-payment-solutions/zyla</loc><priority>0.7</priority></url>
+  <url><loc>https://digiformation.uk/banks-payment-solutions/grey</loc><priority>0.7</priority></url>
+  <url><loc>https://digiformation.uk/banks-payment-solutions/taptap</loc><priority>0.7</priority></url>
+  <url><loc>https://digiformation.uk/banks-payment-solutions/nsave-business</loc><priority>0.7</priority></url>
+</urlset>
