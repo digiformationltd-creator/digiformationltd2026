@@ -14,6 +14,9 @@ import RegisteredOfficeAddress from "./pages/RegisteredOfficeAddress";
 import UtrCodes from "./pages/UtrCodes";
 import CompliancePage from "./pages/CompliancePage";
 import UKChangeServices from "./pages/UKChangeServices";
+import UsaLlcFormation from "./pages/UsaLlcFormation";
+import UsaServicePage from "./pages/UsaServicePage";
+import BankingProviderPage from "./pages/BankingProviderPage";
 
 const queryClient = new QueryClient();
 
@@ -53,10 +56,26 @@ const App = () => (
           {/* UK Compliance dedicated data-driven pages */}
           <Route path="/uk-compliance/:slug" element={<CompliancePage />} />
 
-          {/* Dynamic service sub-pages */}
+          {/* USA dedicated pages (must come before dynamic route) */}
+          <Route path="/usa-services/us-llc-formation" element={<UsaLlcFormation />} />
+          <Route path="/usa-services/usa-llc-formation" element={<UsaLlcFormation />} />
+          <Route path="/llc-formation-services" element={<UsaLlcFormation />} />
+          <Route path="/llc-formation-services/usa-llc-formation" element={<UsaLlcFormation />} />
+          <Route path="/usa-services/ein-number" element={<UsaServicePage />} />
+          <Route path="/usa-services/itin-number" element={<UsaServicePage />} />
+          <Route path="/usa-services/annual-tax-filing" element={<UsaServicePage />} />
+          <Route path="/usa-services/bio-report" element={<UsaServicePage />} />
+          <Route path="/llc-formation-services/ein-number" element={<UsaServicePage />} />
+          <Route path="/llc-formation-services/itin-number" element={<UsaServicePage />} />
+          <Route path="/llc-formation-services/annual-tax-filing" element={<UsaServicePage />} />
+          <Route path="/llc-formation-services/bio-report" element={<UsaServicePage />} />
+
+          {/* Banking dedicated pages */}
+          <Route path="/banks-payment-solutions/:slug" element={<BankingProviderPage />} />
+
+          {/* Dynamic service sub-pages (fallback) */}
           <Route path="/uk-services/:slug" element={<DynamicServicePage />} />
           <Route path="/usa-services/:slug" element={<DynamicServicePage />} />
-          <Route path="/banks-payment-solutions/:slug" element={<DynamicServicePage />} />
 
           {/* Core pages */}
           <Route path="/web-development" element={<WebDevelopment />} />
