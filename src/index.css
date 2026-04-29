@@ -91,7 +91,7 @@ body p, body span, body li, body label, body small, body div {
 .bg-gradient-brand *,
 .bg-primary *,
 .bg-accent * { color: hsl(var(--primary-foreground)) !important; }
-.logo-card span { color: #1a1d22 !important; }
+.logo-card span { color: #ffffff !important; }
 
 @layer utilities {
   .text-gradient {
@@ -189,7 +189,7 @@ body p, body span, body li, body label, body small, body div {
     position: relative;
     z-index: 1;
     text-align: center;
-    color: #1a1d22 !important;
+    color: #ffffff !important;
     letter-spacing: 0.02em;
   }
 }
