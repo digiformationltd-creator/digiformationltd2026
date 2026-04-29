@@ -95,7 +95,7 @@ const DigiFooter = () => {
             Founded by Muhammad Haroon — UK & US company formation, banking & compliance.
           </p>
           <div className="text-[10px] uppercase tracking-[0.18em] font-semibold mb-3 opacity-90">Connect With Us</div>
-          <div className="grid grid-cols-5 gap-2 w-full max-w-[240px] sm:max-w-none">
+          <div className="grid grid-cols-4 gap-2 w-full max-w-[200px] sm:max-w-none">
             {socials.map((s) => {
               const IconComp = s.icon;
               return (
