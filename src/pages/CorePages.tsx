@@ -120,9 +120,12 @@ export const Contact = () => {
       `Country: ${encodeURIComponent(form.country)}%0A` +
       `Service: ${encodeURIComponent(form.service)}%0A%0A` +
       `${encodeURIComponent(form.message)}`;
-    window.open(`https://wa.me/923164467464?text=${text}`, "_blank", "noopener,noreferrer");
-    toast.success("Opening WhatsApp — we'll reply within one business day.");
-    setSubmitting(false);
+    setSubmitted(true);
+    toast.success("Message received — opening WhatsApp…");
+    setTimeout(() => {
+      window.open(`https://wa.me/923164467464?text=${text}`, "_blank", "noopener,noreferrer");
+      setSubmitting(false);
+    }, 2200);
   };
 
   return (
