@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      contact_submissions: {
+        Row: {
+          country: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          message: string
+          page_path: string | null
+          referrer: string | null
+          service: string
+          user_agent: string | null
+          whatsapp: string
+        }
+        Insert: {
+          country: string
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          message: string
+          page_path?: string | null
+          referrer?: string | null
+          service: string
+          user_agent?: string | null
+          whatsapp: string
+        }
+        Update: {
+          country?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          message?: string
+          page_path?: string | null
+          referrer?: string | null
+          service?: string
+          user_agent?: string | null
+          whatsapp?: string
+        }
+        Relationships: []
+      }
       newsletter_subscribers: {
         Row: {
           created_at: string
