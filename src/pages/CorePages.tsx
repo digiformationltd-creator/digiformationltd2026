@@ -179,23 +179,6 @@ export const Contact = () => {
               </div>
             </div>
 
-            <div className="glass rounded-2xl p-7">
-              <div className="text-[10px] uppercase tracking-[0.18em] mb-3 opacity-80">Why Digiformation?</div>
-              <ul className="space-y-2 text-sm">
-                {[
-                  "Fast UK & USA company registration",
-                  "Transparent pricing — no hidden fees",
-                  "Dedicated customer support",
-                  "Complete compliance & documentation",
-                  "Trusted by 300+ international clients",
-                ].map((t) => (
-                  <li key={t} className="flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span>{t}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
           </aside>
 
           {/* Form */}

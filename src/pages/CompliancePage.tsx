@@ -109,21 +109,8 @@ const CompliancePage = () => {
             </div>
 
             <div className="glass rounded-2xl p-10">
-              <div className="text-[10px] uppercase tracking-[0.2em] mb-3 opacity-80">Why Digiformation</div>
-              <ul className="space-y-5 mt-6">
-                {trust.map(({ icon: Icon, label }) => (
-                  <li key={label} className="flex gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-5 h-5 text-primary" />
-                    </div>
-                    <span className="pt-2 opacity-90">{label}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-10 pt-8 border-t border-border/40">
-                <div className="text-[10px] uppercase tracking-[0.18em] opacity-70 mb-2">Service Charge</div>
-                <div className="text-5xl font-bold text-gradient">{page.price}</div>
-              </div>
+              <div className="text-[10px] uppercase tracking-[0.18em] opacity-70 mb-2">Service Charge</div>
+              <div className="text-5xl font-bold text-gradient">{page.price}</div>
             </div>
           </div>
         </div>
