@@ -189,6 +189,65 @@ export const Contact = () => {
               </div>
             </div>
 
+            <a
+              href="https://www.google.com/maps/place/31%C2%B028'58.9%22N+74%C2%B025'22.1%22E/@31.4830225,74.4202212,17z"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="glass rounded-2xl p-7 flex gap-4 hover:-translate-y-1 transition-transform"
+            >
+              <MapPin className="w-6 h-6 text-primary mt-1" />
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.18em] mb-1 opacity-80">UK Registered Office</div>
+                <div className="font-display text-base font-semibold leading-relaxed">
+                  Office 1006, 85 Dunstall Hill,<br />
+                  Wolverhampton, WV6 0SR,<br />
+                  United Kingdom
+                </div>
+                <div className="mt-2 text-[11px] uppercase tracking-widest text-primary">📍 Open live meetup pin →</div>
+              </div>
+            </a>
+
+            <a
+              href="https://find-and-update.company-information.service.gov.uk/company/16994903"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="glass rounded-2xl p-7 flex gap-4 hover:-translate-y-1 transition-transform"
+            >
+              <Building2 className="w-6 h-6 text-primary mt-1" />
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.18em] mb-1 opacity-80">Companies House</div>
+                <div className="font-display text-base font-semibold">Digiformation Ltd</div>
+                <div className="text-xs opacity-80 mt-0.5">Company No. 16994903 · Verify on GOV.UK →</div>
+              </div>
+            </a>
+
+            <div className="glass rounded-2xl p-7">
+              <div className="text-[10px] uppercase tracking-[0.18em] mb-3 opacity-80">Follow Us</div>
+              <div className="grid grid-cols-4 gap-2">
+                {[
+                  { name: "Facebook", href: "https://www.facebook.com/share/1D676UBQw5/", Icon: Facebook },
+                  { name: "Instagram", href: "https://www.instagram.com/digiformationltd?igsh=ejBoMmFsOXFpMmdw", Icon: Instagram },
+                  { name: "YouTube", href: "https://www.youtube.com/@digiformationltd", Icon: Youtube },
+                  { name: "LinkedIn", href: "https://www.linkedin.com/in/muhammad-haroon-9a9945366", Icon: Linkedin },
+                ].map(({ name, href, Icon }) => (
+                  <a
+                    key={name}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={name}
+                    title={name}
+                    className="w-10 h-10 rounded-lg bg-background/30 grid place-items-center hover:bg-primary/20 hover:-translate-y-0.5 transition-all"
+                  >
+                    <Icon className="w-4 h-4" />
+                  </a>
+                ))}
+              </div>
+              <p className="text-xs opacity-70 mt-3 leading-relaxed">
+                Connect with us on social media for updates, tips and client success stories.
+              </p>
+            </div>
+
           </aside>
 
           {/* Form */}
