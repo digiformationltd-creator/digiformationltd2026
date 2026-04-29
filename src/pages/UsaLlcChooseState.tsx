@@ -60,7 +60,7 @@ const formatUSD = (n: number) =>
 const UsaLlcChooseState = () => {
   const [states, setStates] = useState<StatePricing[]>([]);
   const [loading, setLoading] = useState(true);
-  const [query, setQuery] = useState("");
+  
   const [selectedCode, setSelectedCode] = useState<string | null>(null);
 
   useEffect(() => {
