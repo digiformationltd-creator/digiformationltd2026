@@ -290,6 +290,9 @@ export const Contact = () => {
                 <div className="text-xs opacity-80 mt-1">Reach us via WhatsApp or email — same team, same fast support.</div>
               </div>
             </div>
+
+            <a
+              href="https://find-and-update.company-information.service.gov.uk/company/16994903"
               target="_blank"
               rel="noopener noreferrer"
               className="glass rounded-2xl p-7 flex gap-4 hover:-translate-y-1 transition-transform"
