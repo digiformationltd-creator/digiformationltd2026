@@ -15,7 +15,7 @@ import DigiFooter from "@/components/DigiFooter";
 const Index = () => {
   useEffect(() => {
     document.title =
-      "Digiformation Ltd | UK & US Company Formation & Banking Solutions";
+      "Digiformation Ltd | UK LTD & US LLC Formation • PayPal, Stripe, Payoneer, Wise, WorldFirst, Tide";
 
     const setMeta = (name: string, content: string, attr: "name" | "property" = "name") => {
       let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
@@ -28,10 +28,13 @@ const Index = () => {
     };
 
     const description =
-      "Digiformation Ltd provides fast, transparent and fully compliant UK & US company formation, banking solutions, payment gateways and web development for entrepreneurs worldwide.";
+      "Digiformation Ltd — fast UK LTD & US LLC company formation with business banking and payment gateways: PayPal, Stripe, Payoneer, Wise, WorldFirst, Tide, Airwallex, PingPong, Mollie, Wallester. Trusted by 300+ entrepreneurs worldwide.";
 
     setMeta("description", description);
-    setMeta("keywords", "UK LTD formation, US LLC formation, business banking solutions, payment gateway setup, web development for entrepreneurs");
+    setMeta(
+      "keywords",
+      "Digiformation, Digiformation Ltd, Digiformation UK, UK LTD formation, US LLC formation, register UK company, register US LLC, Companies House registration, Delaware LLC, Wyoming LLC, EIN number, ITIN number, BOI report, UK UTR, VAT registration, PayPal account, Payoneer account, Stripe account, Wise business account, WorldFirst account, Tide business banking, Airwallex, PingPong, Mollie, Wallester Visa card, Sunrate, ZionPe, payment gateway setup UK, payment gateway setup Pakistan, Amazon seller LLC, eBay seller LTD, Shopify Stripe setup"
+    );
     setMeta("og:title", "Digiformation Ltd | UK & US Company Formation & Banking Solutions", "property");
     setMeta("og:description", description, "property");
     setMeta("og:type", "website", "property");
