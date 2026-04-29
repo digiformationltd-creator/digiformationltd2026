@@ -31,9 +31,9 @@ const DigiHero = () => {
         </div>
 
         <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-bold leading-[1.05] mb-8 min-h-[1.2em] animate-fade-up" style={{ animationDelay: "0.1s" }}>
-          <span key={i} className="block animate-headline-slide">
+          <span key={i} className="block animate-headline-slide will-change-transform">
             {headlines[i].pre && <>{headlines[i].pre} </>}
-            <span className="text-gradient">{headlines[i].accent}</span>
+            <span className="headline-accent-shimmer">{headlines[i].accent}</span>
             {headlines[i].post && <> {headlines[i].post}</>}
           </span>
         </h1>
