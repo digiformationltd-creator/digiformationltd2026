@@ -13,7 +13,7 @@ const DigiHero = () => {
   const [i, setI] = useState(0);
 
   useEffect(() => {
-    const id = setInterval(() => setI((v) => (v + 1) % headlines.length), 5000);
+    const id = setInterval(() => setI((v) => (v + 1) % headlines.length), 7000);
     return () => clearInterval(id);
   }, []);
 
