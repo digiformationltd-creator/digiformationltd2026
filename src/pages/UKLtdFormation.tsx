@@ -224,7 +224,7 @@ const UKLtdFormation = () => {
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <Button asChild variant="hero" size="lg" className="rounded-full">
-                <Link to="/contact">Get Started <ArrowRight className="w-4 h-4" /></Link>
+                <Link to="/uk-services/uk-ltd-formation/choose-jurisdiction">Get Started <ArrowRight className="w-4 h-4" /></Link>
               </Button>
               <Button asChild variant="ghostGlow" size="lg" className="rounded-full">
                 <a href="#packages">View Packages</a>
@@ -323,7 +323,7 @@ const UKLtdFormation = () => {
                   ))}
                 </ul>
                 <Button asChild variant={p.badge ? "hero" : "ghostGlow"} className="rounded-full mt-7 w-full">
-                  <Link to="/contact">{p.cta} <ArrowRight className="w-4 h-4" /></Link>
+                  <Link to={`/uk-services/uk-ltd-formation/checkout?jurisdiction=EW&package=${p.name}`}>{p.cta} <ArrowRight className="w-4 h-4" /></Link>
                 </Button>
               </div>
             ))}
