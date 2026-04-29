@@ -12,6 +12,8 @@ import UKLtdFormation from "./pages/UKLtdFormation";
 import LtdIdVerification from "./pages/LtdIdVerification";
 import RegisteredOfficeAddress from "./pages/RegisteredOfficeAddress";
 import UtrCodes from "./pages/UtrCodes";
+import CompliancePage from "./pages/CompliancePage";
+import UKChangeServices from "./pages/UKChangeServices";
 
 const queryClient = new QueryClient();
 
@@ -43,9 +45,16 @@ const App = () => (
           <Route path="/ltd-formation-services/registered-office-address" element={<RegisteredOfficeAddress />} />
           <Route path="/ltd-formation-services/utr-codes" element={<UtrCodes />} />
 
+          {/* UK Company Services - expanded change services */}
+          <Route path="/uk-company-services/change-services" element={<UKChangeServices />} />
+          <Route path="/uk-company-services/registered-office-address" element={<RegisteredOfficeAddress />} />
+          <Route path="/uk-company-services/director-service-address" element={<RegisteredOfficeAddress />} />
+
+          {/* UK Compliance dedicated data-driven pages */}
+          <Route path="/uk-compliance/:slug" element={<CompliancePage />} />
+
           {/* Dynamic service sub-pages */}
           <Route path="/uk-services/:slug" element={<DynamicServicePage />} />
-          <Route path="/uk-compliance/:slug" element={<DynamicServicePage />} />
           <Route path="/usa-services/:slug" element={<DynamicServicePage />} />
           <Route path="/banks-payment-solutions/:slug" element={<DynamicServicePage />} />
 
