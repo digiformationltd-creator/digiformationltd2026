@@ -488,7 +488,7 @@ const usaExtraPackages: DetailPkg[] = [
   },
   {
     name: "Annual Tax Filing",
-    price: "$299",
+    price: "$99",
     tone: "from-amber-400/25 to-amber-400/5",
     ring: "ring-amber-400/50",
     features: [
