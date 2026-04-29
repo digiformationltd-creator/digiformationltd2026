@@ -99,6 +99,28 @@ const DigiFooter = () => {
         {/* Brand */}
         <div className="flex flex-col items-center text-center sm:items-start sm:text-left sm:-mt-4 sm:col-span-2 lg:col-span-1">
           <img src={logo} alt="Digiformation Ltd" className="h-24 sm:h-32 w-auto max-w-full object-contain mb-4 sm:-ml-2" />
+          <p className="text-xs opacity-75 mb-4 leading-relaxed">
+            Founded by Muhammad Haroon — UK & US company formation, banking & compliance.
+          </p>
+          <div className="text-[10px] uppercase tracking-[0.18em] font-semibold mb-3 opacity-90">Connect With Us</div>
+          <div className="grid grid-cols-5 gap-2 w-full max-w-[240px] sm:max-w-none">
+            {socials.map((s) => {
+              const IconComp = s.icon;
+              return (
+                <a
+                  key={s.name}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={s.name}
+                  title={s.name}
+                  className="w-9 h-9 rounded-lg glass grid place-items-center hover:bg-primary/20 hover:-translate-y-0.5 transition-all"
+                >
+                  <IconComp className="w-4 h-4" />
+                </a>
+              );
+            })}
+          </div>
         </div>
 
         {/* Services */}
