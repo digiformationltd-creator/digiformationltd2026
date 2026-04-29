@@ -179,11 +179,22 @@ const DigiFooter = () => {
             </li>
             <li className="flex items-start gap-3">
               <MapPin className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-              <span>
-                Office 1006, 85 Dunstall Hill,<br />
-                Wolverhampton, WV6 0SR,<br />
-                United Kingdom
-              </span>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Office+1006%2C+85+Dunstall+Hill%2C+Wolverhampton%2C+WV6+0SR%2C+United+Kingdom"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-primary transition-colors group"
+                aria-label="Open Digiformation Ltd UK office location in Google Maps (live meetup pin)"
+              >
+                <span>
+                  Office 1006, 85 Dunstall Hill,<br />
+                  Wolverhampton, WV6 0SR,<br />
+                  United Kingdom
+                </span>
+                <span className="block mt-1.5 text-[11px] uppercase tracking-widest text-primary opacity-90 group-hover:opacity-100">
+                  📍 Open live location for meetup →
+                </span>
+              </a>
             </li>
           </ul>
         </div>
