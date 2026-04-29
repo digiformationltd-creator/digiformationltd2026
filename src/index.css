@@ -211,14 +211,9 @@ body p, body span, body li, body label, body small, body div {
   100% { transform: translateX(-50%); }
 }
 @keyframes headline-slide {
-  0% { clip-path: inset(0 100% 0 0); transform: translateX(20px); opacity: 0; }
-  18% { clip-path: inset(0 0 0 0); transform: translateX(0); opacity: 1; }
-  22% { clip-path: inset(40% 0 40% 0); transform: translateX(-6px); }
-  26% { clip-path: inset(0 0 0 0); transform: translateX(0); }
-  30% { clip-path: inset(20% 0 60% 0); transform: translateX(4px); }
-  34%, 82% { clip-path: inset(0 0 0 0); transform: translateX(0); opacity: 1; }
-  92% { clip-path: inset(0 0 0 100%); transform: translateX(-20px); opacity: 0; }
-  100% { opacity: 0; }
+  0% { filter: blur(20px); letter-spacing: 0.4em; opacity: 0; }
+  20%, 80% { filter: blur(0); letter-spacing: normal; opacity: 1; }
+  100% { filter: blur(20px); letter-spacing: -0.05em; opacity: 0; }
 }
 
 .animate-float { animation: float 6s ease-in-out infinite; }
