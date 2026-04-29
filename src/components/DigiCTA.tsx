@@ -1,11 +1,18 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ctaBg from "@/assets/premium-cta-bg.jpg";
 
 const DigiCTA = () => (
   <section id="contact" className="py-20">
     <div className="container mx-auto px-4">
       <div className="relative overflow-hidden rounded-3xl glass p-12 md:p-20 text-center">
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-cover bg-center opacity-40 pointer-events-none"
+          style={{ backgroundImage: `url(${ctaBg})` }}
+        />
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/55 to-background/80 pointer-events-none" />
         <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-gradient-accent opacity-20 blur-3xl pointer-events-none" />
         <div className="relative">
           <h2 className="text-4xl md:text-6xl font-bold mb-6 max-w-3xl mx-auto leading-tight">
