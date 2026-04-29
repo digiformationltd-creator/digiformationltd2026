@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import premiumFintech from "@/assets/premium-fintech.jpg";
 
 const stats = [
   { value: 300, suffix: "+", label: "Companies Registered (UK & US)" },
