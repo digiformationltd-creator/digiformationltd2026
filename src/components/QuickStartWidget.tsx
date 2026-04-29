@@ -54,7 +54,7 @@ const QuickStartWidget = () => {
 
   const handleStart = () => {
     if (tab === "usa" && usState) {
-      navigate(`/usa-services/us-llc-formation/checkout?state=${usState}&package=Starter`);
+      navigate(`/usa-services/us-llc-formation/choose-state?state=${usState}#packages`);
     } else if (tab === "uk" && ukJur) {
       navigate(`/uk-services/uk-ltd-formation?jurisdiction=${ukJur}#packages`);
     }
@@ -164,7 +164,7 @@ const QuickStartWidget = () => {
               onClick={handleStart}
               disabled={!canStart}
             >
-              {tab === "usa" ? "Continue to Checkout" : "View UK Ltd Packages"}{" "}
+              {tab === "usa" ? "View Packages for this State" : "View UK Ltd Packages"}{" "}
               <ArrowRight className="w-4 h-4" />
             </Button>
 

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { ArrowRight, MapPin, CheckCircle2, Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -60,7 +60,7 @@ const formatUSD = (n: number) =>
 const UsaLlcChooseState = () => {
   const [states, setStates] = useState<StatePricing[]>([]);
   const [loading, setLoading] = useState(true);
-  
+  const [searchParams] = useSearchParams();
   const [selectedCode, setSelectedCode] = useState<string | null>(null);
 
   useEffect(() => {
@@ -84,6 +84,15 @@ const UsaLlcChooseState = () => {
       setLoading(false);
     })();
   }, []);
+
+  // Pre-select state from ?state= query param (from homepage Quick Start widget)
+  useEffect(() => {
+    const code = searchParams.get("state");
+    if (code && states.some((s) => s.state_code === code)) {
+      setSelectedCode(code);
+      setTimeout(() => document.getElementById("packages")?.scrollIntoView({ behavior: "smooth", block: "start" }), 200);
+    }
+  }, [searchParams, states]);
 
   const popular = useMemo(() => states.filter((s) => s.is_popular), [states]);
   const sortedStates = useMemo(
