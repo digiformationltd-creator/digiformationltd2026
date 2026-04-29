@@ -1,60 +1,68 @@
 import { Link } from "react-router-dom";
-import { Building2, Flag, Landmark, CreditCard, Code2, Package } from "lucide-react";
-import bgCompaniesHouse from "@/assets/card-bg-companies-house.jpg";
-import bgUsLlc from "@/assets/card-bg-us-llc.jpg";
-import bgBanking from "@/assets/card-bg-banking.jpg";
-import bgPayments from "@/assets/card-bg-payments.jpg";
-import bgWeb from "@/assets/card-bg-web.jpg";
-import bgPackages from "@/assets/card-bg-packages.jpg";
+import heroUkLtd from "@/assets/card-hero-uk-ltd.jpg";
+import heroUsLlc from "@/assets/card-hero-us-llc.jpg";
+import heroBanking from "@/assets/card-hero-banking.jpg";
+import heroPayments from "@/assets/card-hero-payments.jpg";
+import heroWeb from "@/assets/card-hero-web.jpg";
+import heroTax from "@/assets/card-hero-tax.jpg";
+import heroPackages from "@/assets/card-hero-packages.jpg";
 
 const items = [
   {
-    icon: Building2,
+    tag: "UK · 01",
     title: "UK LTD Formation",
     desc: "Establish your UK Limited Company with Companies House, including UTR, Registered Office, and full compliance support.",
-    cta: "Learn More",
+    cta: "Learn more",
     href: "/uk-services/uk-ltd-formation",
-    bg: bgCompaniesHouse,
+    image: heroUkLtd,
   },
   {
-    icon: Flag,
+    tag: "USA · 02",
     title: "US LLC Formation",
-    desc: "Start a compliant US LLC in any state, complete with EIN, ITIN (if applicable), registered agent, and BIO report.",
-    cta: "Learn More",
+    desc: "Start a compliant US LLC in any state, complete with EIN, ITIN (if applicable), registered agent, and BOI report.",
+    cta: "Learn more",
     href: "/usa-services/us-llc-formation",
-    bg: bgUsLlc,
+    image: heroUsLlc,
   },
   {
-    icon: Landmark,
-    title: "Business Banking Solutions",
+    tag: "TAX · 03",
+    title: "Tax & Compliance",
+    desc: "UTR, EIN, ITIN, VAT registration, BOI reports and annual filings — all handled by our specialists.",
+    cta: "Learn more",
+    href: "/uk-services/utr-codes",
+    image: heroTax,
+  },
+  {
+    tag: "BANK · 04",
+    title: "Business Banking",
     desc: "Activate multi-currency business accounts with Tide, Sunrate, WorldFirst, Wise, and more — fast and fully verified.",
-    cta: "Learn More",
+    cta: "Learn more",
     href: "/banks-payment-solutions/tide",
-    bg: bgBanking,
+    image: heroBanking,
   },
   {
-    icon: CreditCard,
+    tag: "PAY · 05",
     title: "Payment Gateway Setup",
     desc: "Start accepting payments worldwide using Stripe, PayPal, and Mollie. Verified merchant accounts ready for your business.",
-    cta: "Get Started",
+    cta: "Learn more",
     href: "/banks-payment-solutions/stripe",
-    bg: bgPayments,
+    image: heroPayments,
   },
   {
-    icon: Code2,
-    title: "Web Development Services",
+    tag: "WEB · 06",
+    title: "Web Development",
     desc: "Establish your online presence with custom websites and landing pages, fully SEO-ready and business-ready.",
-    cta: "Learn More",
+    cta: "Learn more",
     href: "/web-development",
-    bg: bgWeb,
+    image: heroWeb,
   },
   {
-    icon: Package,
+    tag: "PACK · 07",
     title: "Packages & Pricing",
     desc: "Explore our all-in-one bundles — formation, banking, compliance and web combined at transparent, value-driven prices.",
-    cta: "View Packages",
+    cta: "View packages",
     href: "/pricing",
-    bg: bgPackages,
+    image: heroPackages,
   },
 ];
 
@@ -80,26 +88,32 @@ const DigiServices = () => (
         {items.map((it) => (
           <article
             key={it.title}
-            className="relative overflow-hidden glass rounded-2xl p-7 hover:-translate-y-1 hover:shadow-elegant transition-all duration-300 flex flex-col group"
+            className="group relative overflow-hidden rounded-2xl glass hover:-translate-y-1 hover:shadow-elegant transition-all duration-300 flex flex-col"
           >
-            {/* Premium themed graphic — clearly visible */}
-            <div
-              aria-hidden
-              className="absolute inset-0 bg-cover bg-center opacity-50 group-hover:opacity-70 transition-opacity duration-500 pointer-events-none"
-              style={{ backgroundImage: `url(${it.bg})` }}
-            />
-            {/* Bottom-weighted overlay so text stays readable but graphic shows through */}
-            <div
-              aria-hidden
-              className="absolute inset-0 bg-gradient-to-t from-background via-background/85 to-background/20 pointer-events-none"
-            />
-
-            <div className="relative z-10 flex flex-col h-full">
-              <div className="w-12 h-12 rounded-xl bg-gradient-brand grid place-items-center mb-5 shadow-card">
-                <it.icon className="w-5 h-5" />
+            {/* Top hero image */}
+            <div className="relative aspect-[4/3] overflow-hidden">
+              <img
+                src={it.image}
+                alt={it.title}
+                loading="lazy"
+                width={1024}
+                height={768}
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              {/* Tag chip */}
+              <div className="absolute top-4 left-4 z-10">
+                <span className="inline-flex items-center px-3 py-1 rounded-full bg-background/70 backdrop-blur-md border border-border/50 text-[10px] font-semibold tracking-[0.14em] uppercase">
+                  {it.tag}
+                </span>
               </div>
+              {/* Subtle bottom fade for blend */}
+              <div aria-hidden className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background to-transparent pointer-events-none" />
+            </div>
+
+            {/* Bottom content */}
+            <div className="p-6 flex flex-col flex-1">
               <h3 className="font-display text-xl font-semibold mb-2">{it.title}</h3>
-              <p className="text-sm leading-relaxed opacity-90 flex-1">{it.desc}</p>
+              <p className="text-sm leading-relaxed opacity-80 flex-1">{it.desc}</p>
               <Link
                 to={it.href}
                 className="inline-flex items-center gap-2 mt-5 text-xs font-semibold uppercase tracking-[0.12em] hover:gap-3 transition-all"
