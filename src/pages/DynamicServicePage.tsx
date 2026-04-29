@@ -32,6 +32,7 @@ export const DynamicServicePage = () => {
     <ServicePage
       eyebrow={match.group}
       title={match.name}
+      contactService={match.name}
       description={`Professional ${match.name.toLowerCase()} delivered with speed, transparency and full compliance. Trusted by 300+ entrepreneurs across the UK, USA and beyond.`}
     />
   );
