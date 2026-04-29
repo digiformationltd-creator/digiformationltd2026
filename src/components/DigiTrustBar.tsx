@@ -31,7 +31,7 @@ const partners: Partner[] = [
   { name: "eBay", logo: ebay },
   { name: "Shopify", logo: shopify },
   { name: "Airwallex", logo: airwallex },
-  { name: "ZionPe", logo: zionpe },
+  
   { name: "Wallester", logo: wallester },
 ];
 
