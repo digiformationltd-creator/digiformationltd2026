@@ -16,6 +16,43 @@ export type BlogPost = {
 // entrepreneurs, e-commerce sellers (Amazon, eBay, Shopify), and freelancers.
 export const blogPosts: BlogPost[] = [
   {
+    slug: "muhammad-haroon-founder-story-digiformation",
+    title: "Meet Muhammad Haroon: The Founder Behind Digiformation Ltd & 71+ UK Companies",
+    excerpt: "From a young entrepreneur in Pakistan to the director of 71+ active UK companies — the story of Muhammad Haroon and how Digiformation Ltd became a trusted name in global business setup.",
+    category: "Founder Story",
+    readTime: "7 min",
+    date: "2026-04-01",
+    metaTitle: "Muhammad Haroon — Founder of Digiformation Ltd | Director of 71+ UK Companies",
+    metaDescription: "Meet Muhammad Haroon, founder of Digiformation Ltd and director of 71+ active UK companies registered at Companies House. His journey, mission and vision.",
+    keywords: "Muhammad Haroon, Digiformation founder, Digiformation Ltd owner, UK company formation expert, Companies House director, 71 UK companies",
+    content: [
+      {
+        h: "From Pakistan to Companies House: A Founder's Journey",
+        body: "<p>Muhammad Haroon didn't start with capital, connections, or a famous surname. He started with a simple observation: thousands of talented entrepreneurs across Pakistan, India and the Middle East were being locked out of global commerce — not because of their skills, but because of paperwork.</p><p>Opening a UK LTD, getting a US LLC, accessing Stripe or PayPal — these were treated like privileges reserved for people in the West. Muhammad believed that was wrong. And he set out to fix it, one company at a time.</p>",
+      },
+      {
+        h: "Building Digiformation Ltd",
+        body: "<p>Digiformation Ltd was founded with one core promise: <strong>transparent, fast, and genuinely accessible global business setup</strong>. No hidden fees. No vague timelines. No outsourcing your dream to an unknown call centre.</p><p>Today, Digiformation handles end-to-end company formation across the UK and US, plus banking, payment gateways (PayPal, Stripe, Payoneer, Wise, WorldFirst, Tide, Airwallex, PingPong, Mollie, Wallester), compliance filings and ongoing director-level support.</p>",
+      },
+      {
+        h: "71+ Active UK Companies — Verified by Companies House",
+        body: "<p>Muhammad currently serves as a registered director on <strong>71+ active UK companies</strong> — every appointment is publicly verifiable on the official UK government Companies House register. This isn't a marketing claim; it's a public record.</p><p>You can verify his appointments live at: <a href=\"https://find-and-update.company-information.service.gov.uk/officers/iIzC9R8zKXH6lyWTWCDaT3_gK4E/appointments\" target=\"_blank\" rel=\"noopener noreferrer\">Companies House officer profile →</a></p><p>This level of public accountability is rare in the formation industry. It's what allows clients across 20+ countries to trust Digiformation with their most important paperwork.</p>",
+      },
+      {
+        h: "The Philosophy: Hands-On, Personal, Honest",
+        body: "<p>Muhammad personally reviews complex formations and banking applications. Every client gets direct WhatsApp access — not a ticket number. Every package is priced on the public website — no surprise invoices.</p><p><em>\"If I wouldn't form this company for myself this way, I won't form it for a client.\"</em> — that's the standard.</p>",
+      },
+      {
+        h: "What's Next",
+        body: "<p>Digiformation is expanding into new markets, more banking partners, and a free educational blog (the one you're reading now) to help Pakistani and global entrepreneurs make informed decisions about UK and US business setup.</p><p>Whether you're a first-time founder or scaling your 5th brand, Muhammad and the Digiformation team are here to help you launch — properly.</p>",
+      },
+      {
+        h: "Get in Touch",
+        body: "<p>Want to speak with Muhammad's team about your UK LTD or US LLC formation? Book a free consultation on WhatsApp or fill out our contact form. Most clients hear back within an hour during UK business hours.</p>",
+      },
+    ],
+  },
+  {
     slug: "how-to-register-uk-ltd-from-pakistan-2026",
     title: "How to Register a UK LTD Company from Pakistan in 2026 (Step-by-Step Guide)",
     excerpt: "Complete walkthrough for Pakistani entrepreneurs to register a UK Limited Company remotely — UTR, ID verification, registered office and banking included.",
