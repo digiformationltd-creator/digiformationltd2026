@@ -219,5 +219,5 @@ body p, body span, body li, body label, body small, body div {
 .animate-float { animation: float 6s ease-in-out infinite; }
 .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
 .animate-fade-up { animation: fade-up 0.8s var(--transition-smooth) both; }
-.animate-partner-slide { animation: partner-slide 18s linear infinite; }
+.animate-partner-slide { animation: partner-slide 24s linear infinite; }
 .animate-headline-slide { animation: headline-slide 4s cubic-bezier(0.76, 0, 0.24, 1) both; }
