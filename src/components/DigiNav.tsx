@@ -41,6 +41,7 @@ const DigiNav = () => {
           {/* Desktop links */}
           <div className="hidden xl:flex items-center gap-6">
             <NavLink to="/" className="text-sm hover:opacity-80 transition">Home</NavLink>
+            <NavLink to="/pricing" className="text-sm hover:opacity-80 transition">Packages</NavLink>
             {navGroups.map((g) => (
               <div key={g.label} className="relative group">
                 <button className="flex items-center gap-1 text-sm hover:opacity-80 transition">
@@ -64,7 +65,6 @@ const DigiNav = () => {
               </div>
             ))}
             <NavLink to="/web-development" className="text-sm hover:opacity-80 transition">Web Dev</NavLink>
-            <NavLink to="/pricing" className="text-sm hover:opacity-80 transition">Pricing</NavLink>
 
             {/* More dropdown for the rest */}
             <div className="relative group">
