@@ -124,7 +124,7 @@ const UtrCodes = () => {
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
-        <div className="container mx-auto px-4 py-24 md:py-28 relative">
+        <div className="container mx-auto px-4 py-12 md:py-14 relative">
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-3 mb-6">
               <span className="h-px w-7 bg-primary" />
@@ -142,7 +142,7 @@ const UtrCodes = () => {
       </section>
 
       {/* Cards */}
-      <section className="py-20 border-t border-border/60">
+      <section className="py-10 border-t border-border/60">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-3 gap-6">
             {cards.map((c) => {
@@ -211,7 +211,7 @@ const UtrCodes = () => {
       </section>
 
       {/* What we do */}
-      <section className="py-20 bg-muted/20 border-t border-border/60">
+      <section className="py-10 bg-muted/20 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="inline-flex items-center gap-3 mb-5">
             <span className="h-px w-7 bg-primary" />

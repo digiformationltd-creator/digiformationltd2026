@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import ctaBg from "@/assets/premium-cta-bg.jpg";
 
 const DigiCTA = () => (
-  <section id="contact" className="py-20">
+  <section id="contact" className="py-10">
     <div className="container mx-auto px-4">
       <div className="relative overflow-hidden rounded-3xl glass p-12 md:p-20 text-center">
         <div

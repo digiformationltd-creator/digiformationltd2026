@@ -11,7 +11,7 @@ const reasons = [
 ];
 
 const DigiWhyChoose = () => (
-  <section className="py-14 md:py-20 relative overflow-hidden">
+  <section className="py-14 md:py-10 relative overflow-hidden">
     <div
       aria-hidden
       className="absolute inset-0 bg-cover bg-center opacity-25 pointer-events-none"

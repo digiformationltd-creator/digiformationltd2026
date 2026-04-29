@@ -133,7 +133,7 @@ export const Contact = () => {
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
-        <div className="container mx-auto px-4 py-24 md:py-28 relative">
+        <div className="container mx-auto px-4 py-12 md:py-14 relative">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-3 mb-6">
               <span className="h-px w-7 bg-primary" />
@@ -150,7 +150,7 @@ export const Contact = () => {
         </div>
       </section>
 
-      <section className="py-20">
+      <section className="py-10">
         <div className="container mx-auto px-4 max-w-6xl grid lg:grid-cols-5 gap-10">
           {/* Quick info */}
           <aside className="lg:col-span-2 space-y-5">
@@ -742,7 +742,7 @@ export const Pricing = () => {
         .map((s, gi) => (
           <section
             key={s.title}
-            className={`py-20 ${gi % 2 === 1 ? "bg-muted/20" : ""} border-t border-border/60`}
+            className={`py-10 ${gi % 2 === 1 ? "bg-muted/20" : ""} border-t border-border/60`}
           >
             <div className="container mx-auto px-4 max-w-7xl">
               <div className="flex items-center gap-3 mb-3">
@@ -763,7 +763,7 @@ export const Pricing = () => {
           </section>
         ))}
 
-      <section className="py-20 border-t border-border/60">
+      <section className="py-10 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-3xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Need help choosing?</h2>
           <p className="opacity-80 mb-8">
@@ -855,7 +855,7 @@ export const FAQ = () => {
     <Layout>
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
-        <div className="container mx-auto px-4 py-24 md:py-28 relative">
+        <div className="container mx-auto px-4 py-12 md:py-14 relative">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-3 mb-6">
               <span className="h-px w-7 bg-primary" />
@@ -871,7 +871,7 @@ export const FAQ = () => {
         </div>
       </section>
 
-      <section className="py-20">
+      <section className="py-10">
         <div className="container mx-auto px-4 max-w-3xl space-y-3">
           {faqList.map((f, i) => {
             const isOpen = open === i;
@@ -1011,7 +1011,7 @@ export const Blog = () => {
     <Layout>
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
-        <div className="container mx-auto px-4 py-24 md:py-28 relative">
+        <div className="container mx-auto px-4 py-12 md:py-14 relative">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-3 mb-6">
               <span className="h-px w-7 bg-primary" />
@@ -1152,7 +1152,7 @@ export const WebDevelopment = () => {
       </section>
 
       {/* Services */}
-      <section className="py-20 border-t border-border/60">
+      <section className="py-10 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="mb-12 max-w-2xl">
             <span className="text-[10px] uppercase tracking-[0.22em] opacity-70 font-mono">Services</span>
@@ -1171,7 +1171,7 @@ export const WebDevelopment = () => {
       </section>
 
       {/* Process */}
-      <section className="py-20 bg-muted/20 border-t border-border/60">
+      <section className="py-10 bg-muted/20 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="mb-12 max-w-2xl">
             <span className="text-[10px] uppercase tracking-[0.22em] opacity-70 font-mono">Process</span>
@@ -1189,7 +1189,7 @@ export const WebDevelopment = () => {
       </section>
 
       {/* Portfolio placeholder */}
-      <section className="py-20 border-t border-border/60">
+      <section className="py-10 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="mb-12 max-w-2xl">
             <span className="text-[10px] uppercase tracking-[0.22em] opacity-70 font-mono">Portfolio</span>
@@ -1213,7 +1213,7 @@ export const WebDevelopment = () => {
       </section>
 
       {/* Tech stack */}
-      <section className="py-20 bg-muted/20 border-t border-border/60">
+      <section className="py-10 bg-muted/20 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="mb-10 max-w-2xl">
             <span className="text-[10px] uppercase tracking-[0.22em] opacity-70 font-mono">Tech Stack</span>
@@ -1228,7 +1228,7 @@ export const WebDevelopment = () => {
       </section>
 
       {/* FAQ */}
-      <section className="py-20 border-t border-border/60">
+      <section className="py-10 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="mb-10">
             <span className="text-[10px] uppercase tracking-[0.22em] opacity-70 font-mono">FAQ</span>
@@ -1300,7 +1300,7 @@ export const Privacy = () => {
     <Layout>
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
-        <div className="container mx-auto px-4 py-20 md:py-24 relative">
+        <div className="container mx-auto px-4 py-10 md:py-12 relative">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-3 mb-5">
               <Shield className="w-4 h-4 text-primary" />

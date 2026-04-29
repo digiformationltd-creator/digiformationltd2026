@@ -11,7 +11,7 @@ const stats = [
 ];
 
 const DigiAbout = () => (
-  <section className="py-14 md:py-20 relative overflow-hidden">
+  <section className="py-14 md:py-10 relative overflow-hidden">
     <div
       aria-hidden
       className="absolute right-0 top-0 w-1/2 h-full bg-cover bg-center opacity-20 pointer-events-none"
