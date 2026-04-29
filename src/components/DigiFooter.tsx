@@ -79,10 +79,6 @@ const DigiFooter = () => {
         {/* Brand */}
         <div className="flex flex-col items-center text-center sm:items-start sm:text-left sm:-mt-4 sm:col-span-2 lg:col-span-1">
           <img src={logo} alt="Digiformation Ltd" className="h-24 sm:h-32 w-auto max-w-full object-contain mb-4 sm:-ml-2" />
-          <p className="text-sm text-white/80 leading-relaxed max-w-md">
-            Digiformation Ltd helps you start, manage and grow your business in the UK and USA —
-            company formation, address services, compliance and more.
-          </p>
         </div>
 
         {/* Services */}
