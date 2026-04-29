@@ -21,12 +21,12 @@ const cases = [
     ],
   },
   {
-    tag: "UK Shelf Company",
-    title: "Immediate ownership transfer",
+    tag: "UK Compliance",
+    title: "Annual filing handled end-to-end",
     points: [
-      "Pre-registered UK company acquired",
-      "Director & shareholder change filed same-day",
-      "Banking history retained for instant credibility",
+      "Confirmation statement filed on time",
+      "Annual accounts prepared and submitted",
+      "Director and PSC records kept fully compliant",
     ],
   },
 ];

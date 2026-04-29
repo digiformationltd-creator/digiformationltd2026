@@ -37,13 +37,6 @@ const items = [
     cta: "Learn More",
     href: "/web-development",
   },
-  {
-    icon: Package,
-    title: "UK Shelf Companies",
-    desc: "Acquire ready-made UK shelf companies for instant ownership transfer, banking history, and faster market entry.",
-    cta: "Learn More",
-    href: "/uk-services",
-  },
 ];
 
 const DigiServices = () => (

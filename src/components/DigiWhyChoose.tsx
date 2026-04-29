@@ -1,7 +1,7 @@
 import { Zap, Eye, ShieldCheck, Globe2, Headphones, Award } from "lucide-react";
 
 const reasons = [
-  { icon: Zap, title: "Speed & Efficiency", desc: "Quick UK & US company formation and shelf company acquisition — most setups completed within days." },
+  { icon: Zap, title: "Speed & Efficiency", desc: "Quick UK & US company formation and compliance — most setups completed within days." },
   { icon: Eye, title: "Transparency", desc: "Clear, upfront pricing with no hidden fees. You know exactly what you're paying for, every step of the way." },
   { icon: ShieldCheck, title: "Full Compliance", desc: "UTR, EIN/ITIN, ID verification, annual filings and tax compliance — all handled by certified specialists." },
   { icon: Globe2, title: "Global Expertise", desc: "Supporting entrepreneurs across multiple jurisdictions with deep local regulatory knowledge." },
