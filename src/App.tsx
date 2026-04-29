@@ -9,6 +9,9 @@ import { DynamicServicePage } from "./pages/DynamicServicePage";
 import { UKServicesHub, UKComplianceHub, USAServicesHub, BankingHub } from "./pages/SectionHubs";
 import { About, Contact, Pricing, FAQ, Blog, ClientArea, WebDevelopment, Privacy, Terms } from "./pages/CorePages";
 import UKLtdFormation from "./pages/UKLtdFormation";
+import LtdIdVerification from "./pages/LtdIdVerification";
+import RegisteredOfficeAddress from "./pages/RegisteredOfficeAddress";
+import UtrCodes from "./pages/UtrCodes";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +32,16 @@ const App = () => (
 
           {/* Dedicated service pages (must come before dynamic route) */}
           <Route path="/uk-services/uk-ltd-formation" element={<UKLtdFormation />} />
+          <Route path="/uk-services/ltd-id-verification" element={<LtdIdVerification />} />
+          <Route path="/uk-services/registered-office-address" element={<RegisteredOfficeAddress />} />
+          <Route path="/uk-services/utr-codes" element={<UtrCodes />} />
+          {/* Aliases under /ltd-formation-services */}
+          <Route path="/ltd-formation-services" element={<UKLtdFormation />} />
+          <Route path="/ltd-formation-services/uk-ltd-formation" element={<UKLtdFormation />} />
+          <Route path="/ltd-formation-services/ltd-id-verification" element={<LtdIdVerification />} />
+          <Route path="/ltd-formation/ltd-id-verification" element={<LtdIdVerification />} />
+          <Route path="/ltd-formation-services/registered-office-address" element={<RegisteredOfficeAddress />} />
+          <Route path="/ltd-formation-services/utr-codes" element={<UtrCodes />} />
 
           {/* Dynamic service sub-pages */}
           <Route path="/uk-services/:slug" element={<DynamicServicePage />} />
