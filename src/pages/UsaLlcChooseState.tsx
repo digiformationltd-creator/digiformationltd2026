@@ -112,7 +112,7 @@ const UsaLlcChooseState = () => {
               <em className="not-italic text-gradient">Choose your state</em> to register your LLC
             </h1>
             <p className="mt-6 text-lg md:text-xl leading-relaxed max-w-2xl opacity-90">
-              ہر state کی اپنی filing fees اور rates ہیں۔ پہلے اپنی state منتخب کریں — package pricing اسی state کے مطابق automatically calculate ہو جائے گی۔
+              Each U.S. state has its own filing fees and rates. Select your state first — your package pricing will be calculated automatically based on it.
             </p>
           </div>
         </div>
