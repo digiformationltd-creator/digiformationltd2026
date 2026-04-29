@@ -14,7 +14,7 @@ import DigiFooter from "@/components/DigiFooter";
 const Index = () => {
   useEffect(() => {
     document.title =
-      "Digiformation Ltd | UK & US Company Formation, Shelf Companies & Banking Solutions";
+      "Digiformation Ltd | UK & US Company Formation & Banking Solutions";
 
     const setMeta = (name: string, content: string, attr: "name" | "property" = "name") => {
       let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
@@ -27,14 +27,14 @@ const Index = () => {
     };
 
     const description =
-      "Digiformation Ltd provides fast, transparent and fully compliant UK & US company formation, ready-made UK shelf companies, banking solutions, payment gateways and web development for entrepreneurs worldwide.";
+      "Digiformation Ltd provides fast, transparent and fully compliant UK & US company formation, banking solutions, payment gateways and web development for entrepreneurs worldwide.";
 
     setMeta("description", description);
-    setMeta("keywords", "UK LTD formation, US LLC formation, UK shelf companies for sale, business banking solutions, payment gateway setup, web development for entrepreneurs");
-    setMeta("og:title", "Digiformation Ltd | UK & US Company Formation, Shelf Companies & Banking Solutions", "property");
+    setMeta("keywords", "UK LTD formation, US LLC formation, business banking solutions, payment gateway setup, web development for entrepreneurs");
+    setMeta("og:title", "Digiformation Ltd | UK & US Company Formation & Banking Solutions", "property");
     setMeta("og:description", description, "property");
     setMeta("og:type", "website", "property");
-    setMeta("twitter:title", "Digiformation Ltd | UK & US Company Formation, Shelf Companies & Banking Solutions");
+    setMeta("twitter:title", "Digiformation Ltd | UK & US Company Formation & Banking Solutions");
     setMeta("twitter:description", description);
 
     // Canonical
@@ -99,7 +99,7 @@ const Index = () => {
       <DigiNav />
       <main>
         <h1 className="sr-only">
-          Digiformation Ltd — UK &amp; US Company Formation, Shelf Companies &amp; Banking Solutions
+          Digiformation Ltd — UK &amp; US Company Formation &amp; Banking Solutions
         </h1>
         <DigiHero />
         <DigiTrustBar />
