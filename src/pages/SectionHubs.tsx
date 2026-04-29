@@ -28,9 +28,8 @@ const SectionHub = ({ title, eyebrow, description, items }: { title: string; eye
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {items.map((item, i) => (
+            {items.map((item) => (
               <Link key={item.path} to={item.path} className="glass rounded-2xl p-7 hover:-translate-y-1 hover:shadow-elegant transition-all duration-300 group block">
-                <div className="font-display text-4xl font-bold text-primary/15 mb-2">{String(i + 1).padStart(2, "0")}</div>
                 <h3 className="font-display text-2xl font-semibold mb-3 group-hover:text-gradient transition">{item.name}</h3>
                 <p className="text-sm opacity-90">Professional {item.name.toLowerCase()} — fully managed.</p>
                 <div className="mt-5 text-[11px] uppercase tracking-[0.14em]">Explore →</div>
