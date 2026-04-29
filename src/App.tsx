@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound.tsx";
 import { DynamicServicePage } from "./pages/DynamicServicePage";
 import { UKServicesHub, UKComplianceHub, USAServicesHub, BankingHub } from "./pages/SectionHubs";
 import { About, Contact, Pricing, FAQ, Blog, ClientArea, WebDevelopment, Privacy, Terms } from "./pages/CorePages";
+import UKLtdFormation from "./pages/UKLtdFormation";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,9 @@ const App = () => (
           <Route path="/uk-compliance" element={<UKComplianceHub />} />
           <Route path="/usa-services" element={<USAServicesHub />} />
           <Route path="/banks-payment-solutions" element={<BankingHub />} />
+
+          {/* Dedicated service pages (must come before dynamic route) */}
+          <Route path="/uk-services/uk-ltd-formation" element={<UKLtdFormation />} />
 
           {/* Dynamic service sub-pages */}
           <Route path="/uk-services/:slug" element={<DynamicServicePage />} />
