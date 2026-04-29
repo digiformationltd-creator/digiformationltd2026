@@ -160,7 +160,7 @@ export const Contact = () => {
               <MessageCircle className="w-6 h-6 text-primary mt-1" />
               <div>
                 <div className="text-[10px] uppercase tracking-[0.18em] mb-1 opacity-80">WhatsApp (Fast Support)</div>
-                <div className="font-display text-xl font-semibold">+92 164 467 464</div>
+                <div className="font-display text-xl font-semibold">+92 316 446 7464</div>
               </div>
             </a>
             <div className="glass rounded-2xl p-7 flex gap-4">
@@ -964,7 +964,7 @@ export const Privacy = () => {
 
           <LegalSection num="8" title="Contact for Privacy">
             <p>📧 Email: <a className="text-primary hover:underline" href="mailto:info@digiformation.uk">info@digiformation.uk</a></p>
-            <p>📲 WhatsApp: +92 164 467 464</p>
+            <p>📲 WhatsApp: +92 316 446 7464</p>
           </LegalSection>
         </div>
       </section>
