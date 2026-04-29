@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Building2, Flag, Landmark, CreditCard, Code2 } from "lucide-react";
+import { Building2, Flag, Landmark, CreditCard, Code2, Package } from "lucide-react";
 
 const items = [
   {
@@ -36,6 +36,13 @@ const items = [
     desc: "Establish your online presence with custom websites and landing pages, fully SEO-ready and business-ready.",
     cta: "Learn More",
     href: "/web-development",
+  },
+  {
+    icon: Package,
+    title: "Packages & Pricing",
+    desc: "Explore our all-in-one bundles — formation, banking, compliance and web combined at transparent, value-driven prices.",
+    cta: "View Packages",
+    href: "/pricing",
   },
 ];
 
