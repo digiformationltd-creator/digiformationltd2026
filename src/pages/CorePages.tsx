@@ -253,64 +253,382 @@ export const Contact = () => {
   );
 };
 
-/* ---------- Pricing (kept) ---------- */
-type PriceItem = { name: string; price: string; note?: string; link: string };
-type PriceGroup = { title: string; tag: string; intro: string; items: PriceItem[] };
+/* ---------- Pricing (full detailed) ---------- */
+type DetailPkg = {
+  name: string;
+  price: string;
+  badge?: string;
+  note?: string;
+  tone: string;
+  ring: string;
+  features: string[];
+  link?: string;
+};
 
-const priceGroups: PriceGroup[] = [
+type PricingSection = {
+  title: string;
+  tag: string;
+  intro: string;
+  packages: DetailPkg[];
+  cols?: 2 | 3 | 4;
+};
+
+// UK LTD Formation
+const ukLtdPackages: DetailPkg[] = [
+  {
+    name: "Starter",
+    price: "£140",
+    note: "3–5 Business Days",
+    tone: "from-emerald-500/20 to-emerald-500/5",
+    ring: "ring-emerald-500/40",
+    features: [
+      "UK LTD (Company) Registration",
+      "Companies House Incorporation Fee Included",
+      "Digital Certificate of Incorporation",
+      "Digital Memorandum & Articles of Association",
+      "Digital Copy of All Documents (PDF)",
+      "Digital Shares Certificate",
+      "ID Verification Included",
+      "12/6 Phone & WhatsApp Support",
+    ],
+  },
+  {
+    name: "Silver",
+    price: "£170",
+    badge: "Most Popular",
+    tone: "from-sky-500/25 to-sky-500/5",
+    ring: "ring-sky-400/60",
+    features: [
+      "UK LTD (Company) Registration",
+      "Companies House Incorporation Fee Included",
+      "Digital + Printed Certificate of Incorporation",
+      "Digital Memorandum & Articles of Association",
+      "Registered Office Address",
+      "Company Authentication Code",
+      "UTR Number",
+      "Digital Shares Certificate",
+      "ID Verification Included",
+    ],
+  },
+  {
+    name: "Gold",
+    price: "£180",
+    tone: "from-amber-400/25 to-amber-400/5",
+    ring: "ring-amber-400/50",
+    features: [
+      "UK LTD (Company) Registration",
+      "Companies House Incorporation Fee Included",
+      "Digital Certificate of Incorporation",
+      "Digital Memorandum & Articles of Association",
+      "Registered Office Address",
+      "Company Authentication Code",
+      "UTR Number",
+      "Digital Shares Certificate",
+      "ID Verification Included",
+      "Director Service Address",
+    ],
+  },
+  {
+    name: "Platinum",
+    price: "£200",
+    tone: "from-rose-500/25 to-rose-500/5",
+    ring: "ring-rose-400/50",
+    features: [
+      "UK LTD (Company) Registration",
+      "Companies House Incorporation Fee Included",
+      "Digital Certificate of Incorporation",
+      "Digital Memorandum & Articles of Association",
+      "London Registered Office Address",
+      "Company Authentication Code",
+      "UTR Number",
+      "Digital Shares Certificate",
+      "ID Verification Included",
+      "Director Service Address",
+    ],
+  },
+];
+
+// USA LLC Formation
+const usaLlcPackages: DetailPkg[] = [
+  {
+    name: "Starter",
+    price: "£150",
+    note: "Base price — state surcharge may apply",
+    tone: "from-emerald-500/20 to-emerald-500/5",
+    ring: "ring-emerald-500/40",
+    features: [
+      "U.S. LLC Registration",
+      "Shared Business Address (no portal, no mail support)",
+      "Articles of Organization",
+      "Employer Identification Number (EIN)",
+      "Digital Company Documents (PDF)",
+      "Certificate of Formation (Digital)",
+      "24/7 Support",
+    ],
+  },
+  {
+    name: "Silver",
+    price: "£200",
+    badge: "Most Popular",
+    tone: "from-sky-500/25 to-sky-500/5",
+    ring: "ring-sky-400/60",
+    features: [
+      "U.S. LLC Registration",
+      "Unique Business Address (with portal access & mail support)",
+      "Articles of Organization",
+      "Employer Identification Number (EIN)",
+      "Digital Company Documents (PDF)",
+      "Certificate of Formation (Digital)",
+      "24/7 Support",
+    ],
+  },
+  {
+    name: "Gold",
+    price: "£400",
+    tone: "from-amber-400/25 to-amber-400/5",
+    ring: "ring-amber-400/50",
+    features: [
+      "U.S. LLC Registration",
+      "Unique Business Address (with portal access & mail support)",
+      "Articles of Organization",
+      "Employer Identification Number (EIN)",
+      "Individual Taxpayer Identification Number (ITIN) included",
+      "Digital Company Documents (PDF)",
+      "Certificate of Formation (Digital)",
+      "24/7 Support",
+    ],
+  },
+];
+
+// UK Address Packages
+const addressPackages: DetailPkg[] = [
+  {
+    name: "Registered Office Address",
+    price: "£40",
+    note: "1 Year Contract",
+    tone: "from-emerald-500/20 to-emerald-500/5",
+    ring: "ring-emerald-500/40",
+    features: [
+      "Unique Office Number with Address",
+      "Use address for registration of 1 Company/Business",
+      "Receive all mail from UK government bodies",
+      "Receive Post (up to 10 items/month)",
+      "Notify via email when mail received",
+      "Proof of Address provided",
+      "Scan & Email Your Mail",
+      "Forward Your Mail (Paid)",
+    ],
+  },
+  {
+    name: "Business Service Address",
+    price: "£60",
+    badge: "Most Popular",
+    note: "1 Year Contract",
+    tone: "from-sky-500/25 to-sky-500/5",
+    ring: "ring-sky-400/60",
+    features: [
+      "Unique Office Number with Address",
+      "Use for registration of 1 Company/Business",
+      "Use address for marketing & advertising",
+      "Receive Post (up to 10 items/month)",
+      "Notify via email when mail received",
+      "Proof of Address provided",
+      "Scan & Email Your Mail",
+      "Forward Your Mail (Paid)",
+    ],
+  },
+  {
+    name: "Director Service Address",
+    price: "£20",
+    note: "1 Year Contract",
+    tone: "from-amber-400/25 to-amber-400/5",
+    ring: "ring-amber-400/50",
+    features: [
+      "Unique Office Number with Address",
+      "Use address for 1 Director",
+      "Receive all mail from UK government bodies",
+      "Receive Post (up to 10 items/month)",
+      "Notify via email when mail received",
+      "Scan & Email Your Mail",
+      "Forward Your Mail (Paid)",
+    ],
+  },
+];
+
+// USA Add-on services
+const usaAddOnPackages: DetailPkg[] = usaServicePagesPlaceholder();
+function usaServicePagesPlaceholder(): DetailPkg[] {
+  return [];
+}
+
+const usaExtraPackages: DetailPkg[] = [
+  {
+    name: "EIN Number Service",
+    price: "$149",
+    tone: "from-emerald-500/20 to-emerald-500/5",
+    ring: "ring-emerald-500/40",
+    features: [
+      "EIN Registration with IRS",
+      "Digital Certificate Delivery (PDF)",
+      "Fast Processing",
+      "Compliant & Secure",
+      "Support included",
+    ],
+    link: "/usa-services/ein-number",
+  },
+  {
+    name: "ITIN Number Service",
+    price: "$199",
+    tone: "from-sky-500/25 to-sky-500/5",
+    ring: "ring-sky-400/60",
+    features: [
+      "ITIN Application Assistance",
+      "IRS-Compliant Submission",
+      "Digital ITIN Certificate",
+      "Fast & Secure Process",
+      "Support Included",
+    ],
+    link: "/usa-services/itin-number",
+  },
+  {
+    name: "Annual Tax Filing",
+    price: "$299",
+    tone: "from-amber-400/25 to-amber-400/5",
+    ring: "ring-amber-400/50",
+    features: [
+      "Federal & State Tax Submission",
+      "IRS & State Compliant",
+      "Portal Access for Filings",
+      "Support & Guidance",
+      "Ongoing Tax Assistance",
+    ],
+    link: "/usa-services/annual-tax-filing",
+  },
+  {
+    name: "BOI Report Service",
+    price: "$99",
+    tone: "from-rose-500/25 to-rose-500/5",
+    ring: "ring-rose-400/50",
+    features: [
+      "Digital BOI Report Submission",
+      "U.S. Government Compliant",
+      "Fast Processing",
+      "Secure Document Delivery (PDF)",
+      "Support Included",
+    ],
+    link: "/usa-services/bio-report",
+  },
+];
+
+// Tone rotation for compliance & banking
+const toneCycle = [
+  { tone: "from-emerald-500/20 to-emerald-500/5", ring: "ring-emerald-500/40" },
+  { tone: "from-sky-500/25 to-sky-500/5", ring: "ring-sky-400/60" },
+  { tone: "from-amber-400/25 to-amber-400/5", ring: "ring-amber-400/50" },
+  { tone: "from-rose-500/25 to-rose-500/5", ring: "ring-rose-400/50" },
+  { tone: "from-violet-500/25 to-violet-500/5", ring: "ring-violet-400/50" },
+  { tone: "from-cyan-500/25 to-cyan-500/5", ring: "ring-cyan-400/50" },
+];
+
+const compliancePackages: DetailPkg[] = compliancePages.map((p, i) => ({
+  name: p.title.replace(" Service", ""),
+  price: p.price,
+  tone: toneCycle[i % toneCycle.length].tone,
+  ring: toneCycle[i % toneCycle.length].ring,
+  features: p.overview,
+  link: `/uk-compliance/${p.slug}`,
+}));
+
+const bankingPackages: DetailPkg[] = bankingProviders.map((b, i) => ({
+  name: b.name,
+  price: b.setupPrice,
+  note: b.tagline,
+  tone: toneCycle[i % toneCycle.length].tone,
+  ring: toneCycle[i % toneCycle.length].ring,
+  features: b.features,
+  link: `/banks-payment-solutions/${b.slug}`,
+}));
+
+const pricingSections: PricingSection[] = [
   {
     title: "UK Company Formation",
     tag: "UK Formation",
     intro: "All-inclusive UK LTD incorporation packages with Companies House registration.",
-    items: [
-      { name: "Starter Package", price: "£140", note: "3–5 business days", link: "/uk-services/uk-ltd-formation#packages" },
-      { name: "Silver Package", price: "£170", note: "Most Popular", link: "/uk-services/uk-ltd-formation#packages" },
-      { name: "Gold Package", price: "£180", link: "/uk-services/uk-ltd-formation#packages" },
-      { name: "Platinum Package", price: "£200", link: "/uk-services/uk-ltd-formation#packages" },
-    ],
+    packages: ukLtdPackages,
+    cols: 4,
+  },
+  {
+    title: "UK Address Services",
+    tag: "UK Address",
+    intro: "Three address solutions to keep your UK company professionally registered and compliant.",
+    packages: addressPackages,
+    cols: 3,
+  },
+  {
+    title: "USA LLC Formation",
+    tag: "USA Formation",
+    intro: "Form your U.S. LLC with EIN, business address, and full digital documentation.",
+    packages: usaLlcPackages,
+    cols: 3,
+  },
+  {
+    title: "USA Add-on Services",
+    tag: "USA Services",
+    intro: "Standalone U.S. tax & compliance services for existing or new LLCs.",
+    packages: usaExtraPackages,
+    cols: 4,
   },
   {
     title: "UK Compliance Services",
     tag: "UK Compliance",
-    intro: "Keep your UK company fully compliant — Companies House and HMRC filings.",
-    items: compliancePages.map((p) => ({
-      name: p.title.replace(" Service", ""),
-      price: p.price,
-      link: `/uk-compliance/${p.slug}`,
-    })),
+    intro: "Stay fully compliant with Companies House and HMRC — every filing handled for you.",
+    packages: compliancePackages,
+    cols: 3,
   },
   {
-    title: "USA Company Formation",
-    tag: "USA Services",
-    intro: "Form your US LLC or C-Corp with EIN, registered agent, and full compliance.",
-    items: [
-      { name: "USA LLC Formation", price: "From $299", note: "EIN + Registered Agent included", link: "/usa-services/us-llc-formation#packages" },
-      { name: "USA C-Corp Formation", price: "From $399", link: "/usa-services" },
-      { name: "EIN Application Only", price: "$149", link: "/usa-services" },
-      { name: "ITIN Application", price: "$199", link: "/usa-services" },
-    ],
-  },
-  {
-    title: "Banking & Payment Gateways",
+    title: "Banking & Payment Solutions",
     tag: "Banking & Payments",
-    intro: "Account creation & setup service charges for leading payment gateways and business banks.",
-    items: [
-      { name: "PayPal Account Creation", price: "£20", link: "/banks-payment-solutions/paypal" },
-      { name: "Payoneer Account Creation", price: "£20", link: "/banks-payment-solutions/payoneer" },
-      { name: "WorldFirst Account Creation", price: "£20", link: "/banks-payment-solutions/worldfirst" },
-      { name: "Stripe Account Creation", price: "£20", link: "/banks-payment-solutions/stripe" },
-      { name: "Tide Account Creation", price: "£50", link: "/banks-payment-solutions/tide" },
-      { name: "Sumup Account Creation", price: "£50", link: "/banks-payment-solutions/sumup" },
-      { name: "Wise Account Creation", price: "£70", link: "/banks-payment-solutions/wise" },
-      { name: "Zyla Account Creation", price: "£30", link: "/banks-payment-solutions/zyla" },
-      { name: "Airwallex Account Creation", price: "£50", link: "/banks-payment-solutions/airwallex" },
-      { name: "Mollie Account Creation", price: "£30", link: "/banks-payment-solutions/mollie" },
-      { name: "Zionpe Account Creation", price: "£50", link: "/banks-payment-solutions/zionpe" },
-      { name: "Wallester Account Creation", price: "£50", link: "/banks-payment-solutions/wallester" },
-      { name: "Pingpong Account Creation", price: "£50", link: "/banks-payment-solutions/pingpong" },
-    ],
+    intro: "Account creation & setup for leading payment gateways and business banks.",
+    packages: bankingPackages,
+    cols: 3,
   },
 ];
+
+const colsClass = (n: 2 | 3 | 4 = 3) =>
+  n === 4
+    ? "grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
+    : n === 3
+    ? "grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
+    : "grid sm:grid-cols-2 gap-6";
+
+const PackageCard = ({ p }: { p: DetailPkg }) => (
+  <div
+    className={`relative glass rounded-3xl p-7 ring-1 ${p.ring} bg-gradient-to-b ${p.tone} flex flex-col`}
+  >
+    {p.badge && (
+      <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-brand text-[10px] font-bold uppercase tracking-widest whitespace-nowrap">
+        {p.badge}
+      </div>
+    )}
+    <h3 className="text-xl font-bold mb-2 leading-snug">{p.name}</h3>
+    <div className="mb-1 text-[10px] opacity-70 uppercase tracking-widest">Starting from</div>
+    <div className="text-4xl font-bold text-gradient mb-1">{p.price}</div>
+    {p.note && <div className="text-xs opacity-70 mb-4">{p.note}</div>}
+    <ul className="space-y-2.5 mb-6 mt-3 flex-1">
+      {p.features.map((f) => (
+        <li key={f} className="flex gap-2.5 text-sm">
+          <CheckCircle2 className="w-4 h-4 mt-0.5 text-primary flex-shrink-0" />
+          <span className="opacity-90 leading-snug">{f}</span>
+        </li>
+      ))}
+    </ul>
+    <Button asChild variant="hero" className="rounded-full w-full mt-auto">
+      <Link to={p.link ?? "/contact"}>
+        Get Started <ArrowRight className="w-4 h-4" />
+      </Link>
+    </Button>
+  </div>
+);
 
 export const Pricing = () => {
   useEffect(() => {
@@ -335,51 +653,48 @@ export const Pricing = () => {
               Transparent pricing, <em className="not-italic text-gradient">no surprises</em>
             </h1>
             <p className="mt-8 text-lg md:text-xl leading-relaxed opacity-90">
-              Every service we offer — UK formation, compliance, USA company setup and banking — with fixed fees and zero hidden add-ons.
+              Every package — UK formation, address, compliance, USA LLC and banking — laid out in full with all features included. Fixed fees, no hidden add-ons.
             </p>
           </div>
         </div>
       </section>
 
-      {priceGroups.map((g, gi) => (
-        <section key={g.title} className={`py-20 ${gi % 2 === 1 ? "bg-muted/20" : ""} border-t border-border/60`}>
-          <div className="container mx-auto px-4 max-w-6xl">
-            <div className="flex items-center gap-3 mb-3">
-              <span className="text-[10px] uppercase tracking-[0.22em] opacity-70 font-mono">{g.tag}</span>
+      {pricingSections
+        .filter((s) => s.packages.length > 0)
+        .map((s, gi) => (
+          <section
+            key={s.title}
+            className={`py-20 ${gi % 2 === 1 ? "bg-muted/20" : ""} border-t border-border/60`}
+          >
+            <div className="container mx-auto px-4 max-w-7xl">
+              <div className="flex items-center gap-3 mb-3">
+                <span className="text-[10px] uppercase tracking-[0.22em] opacity-70 font-mono">
+                  {s.tag}
+                </span>
+              </div>
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tight">{s.title}</h2>
+                <p className="opacity-80 max-w-md md:text-right">{s.intro}</p>
+              </div>
+              <div className={colsClass(s.cols)}>
+                {s.packages.map((p) => (
+                  <PackageCard key={p.name + p.price} p={p} />
+                ))}
+              </div>
             </div>
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tight">{g.title}</h2>
-              <p className="opacity-80 max-w-md md:text-right">{g.intro}</p>
-            </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {g.items.map((it) => (
-                <Link
-                  key={it.name + it.price}
-                  to={it.link}
-                  className="glass rounded-2xl p-6 hover:-translate-y-1 hover:shadow-elegant transition-all group flex flex-col"
-                >
-                  <div className="flex items-start justify-between gap-3 mb-4">
-                    <h3 className="text-lg font-semibold leading-snug group-hover:text-gradient">{it.name}</h3>
-                    <CheckCircle2 className="w-4 h-4 text-primary mt-1 flex-shrink-0 opacity-70" />
-                  </div>
-                  <div className="text-3xl font-bold text-gradient mb-2">{it.price}</div>
-                  {it.note && <div className="text-xs opacity-70 mb-4">{it.note}</div>}
-                  <div className="mt-auto pt-4 text-[11px] uppercase tracking-[0.16em] opacity-80 group-hover:opacity-100">
-                    View details →
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      ))}
+          </section>
+        ))}
 
       <section className="py-20 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-3xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Need help choosing?</h2>
-          <p className="opacity-80 mb-8">Book a free 30-minute consultation and we'll recommend the right package for you.</p>
+          <p className="opacity-80 mb-8">
+            Book a free 30-minute consultation and we'll recommend the right package for you.
+          </p>
           <Button asChild variant="hero" size="lg" className="rounded-full">
-            <Link to="/contact">Talk to a Specialist <ArrowRight className="w-4 h-4" /></Link>
+            <Link to="/contact">
+              Talk to a Specialist <ArrowRight className="w-4 h-4" />
+            </Link>
           </Button>
         </div>
       </section>
