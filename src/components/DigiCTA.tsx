@@ -9,16 +9,16 @@ const DigiCTA = () => (
       <div className="relative overflow-hidden rounded-3xl glass p-12 md:p-20 text-center">
         <div
           aria-hidden
-          className="absolute inset-0 bg-cover bg-center opacity-90 pointer-events-none"
+          className="absolute inset-0 bg-cover bg-center opacity-40 pointer-events-none"
           style={{ backgroundImage: `url(${ctaBg})` }}
         />
-        <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-background/10 pointer-events-none" />
-        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-gradient-accent opacity-20 blur-3xl pointer-events-none" />
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-background via-background/70 to-background/85 pointer-events-none" />
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-gradient-accent opacity-15 blur-3xl pointer-events-none" />
         <div className="relative">
-          <h2 className="text-4xl md:text-6xl font-bold mb-6 max-w-3xl mx-auto leading-tight">
+          <h2 className="text-4xl md:text-6xl font-bold mb-6 max-w-3xl mx-auto leading-tight text-foreground drop-shadow-lg">
             Ready to <em className="not-italic text-gradient">launch your business?</em>
           </h2>
-          <p className="text-lg max-w-xl mx-auto mb-10 opacity-90">
+          <p className="text-lg max-w-xl mx-auto mb-10 text-foreground/90">
             Book a 30-minute strategy call. We'll map the highest-leverage moves for your roadmap.
           </p>
           <Button asChild variant="hero" size="lg" className="rounded-full">
