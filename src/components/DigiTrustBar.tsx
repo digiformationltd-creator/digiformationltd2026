@@ -1,17 +1,16 @@
-import AdaptiveLogo from "@/components/AdaptiveLogo";
-import stripe from "@/assets/partners/stripe.png";
-import paypal from "@/assets/partners/paypal.png";
-import wise from "@/assets/partners/wise.png";
-import payoneer from "@/assets/partners/payoneer.png";
-import shopify from "@/assets/partners/shopify.png";
+import stripe from "@/assets/partners/stripe.svg";
+import paypal from "@/assets/partners/paypal.svg";
+import wise from "@/assets/partners/wise.svg";
+import payoneer from "@/assets/partners/payoneer.svg";
+import shopify from "@/assets/partners/shopify.svg";
 import ebay from "@/assets/partners/ebay.svg";
 import wallester from "@/assets/partners/wallester.png";
 import zionpe from "@/assets/partners/zionpe.svg";
-import companiesHouse from "@/assets/partners/companies-house.png";
-import airwallex from "@/assets/partners/airwallex.png";
-import tide from "@/assets/partners/tide.png";
-import hmrc from "@/assets/partners/hmrc.png";
-import sunrate from "@/assets/partners/sunrate.png";
+import companiesHouse from "@/assets/partners/companies-house-raw.jpeg";
+import airwallex from "@/assets/partners/airwallex-raw.jpeg";
+import tide from "@/assets/partners/tide-raw.png";
+import hmrc from "@/assets/partners/hmrc-raw.jpeg";
+import sunrate from "@/assets/partners/sunrate-raw.png";
 import irs from "@/assets/partners/irs.png";
 import worldfirst from "@/assets/partners/worldfirst.png";
 
@@ -31,8 +30,8 @@ const partners: Partner[] = [
   { name: "eBay", logo: ebay },
   { name: "Shopify", logo: shopify },
   { name: "Airwallex", logo: airwallex },
-  
-  
+  { name: "Wallester", logo: wallester },
+  { name: "ZionPe", logo: zionpe },
 ];
 
 const DigiTrustBar = () => {
@@ -49,10 +48,12 @@ const DigiTrustBar = () => {
           {loop.map((p, i) => (
             <div key={i} className="logo-card" title={p.name}>
               {p.logo ? (
-                <AdaptiveLogo
+                <img
                   src={p.logo}
                   alt={`${p.name} logo`}
-                  cardBg="#1c1f25"
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority={i < partners.length ? "high" : "low"}
                   className={`object-contain ${p.name === "WorldFirst" ? "h-24 w-[200px]" : "h-16 w-[150px]"}`}
                 />
               ) : (
