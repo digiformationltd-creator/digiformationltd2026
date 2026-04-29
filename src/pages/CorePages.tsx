@@ -19,6 +19,12 @@ import {
   TestTube,
   Wrench,
   ChevronDown,
+  MapPin,
+  Building2,
+  Facebook,
+  Instagram,
+  Youtube,
+  Linkedin,
 } from "lucide-react";
 import SimplePage from "@/components/SimplePage";
 import Layout from "@/components/layout/Layout";
