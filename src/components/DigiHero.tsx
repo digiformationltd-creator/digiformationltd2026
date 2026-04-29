@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 const headlines = [
   { pre: "Establish Your", accent: "UK or US", post: "Business in Days" },
-  { pre: "", accent: "500+", post: "Companies Successfully Registered" },
+  { pre: "", accent: "300+", post: "Companies Successfully Registered" },
   { pre: "Banking, Payments &", accent: "Compliance", post: "— All In One Place" },
 ];
 

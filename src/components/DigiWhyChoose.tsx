@@ -6,7 +6,7 @@ const reasons = [
   { icon: ShieldCheck, title: "Full Compliance", desc: "UTR, EIN/ITIN, ID verification, annual filings and tax compliance — all handled by certified specialists." },
   { icon: Globe2, title: "Global Expertise", desc: "Supporting entrepreneurs across multiple jurisdictions with deep local regulatory knowledge." },
   { icon: Headphones, title: "Dedicated Support", desc: "Personalized account managers for every client — real humans, fast responses, no ticket queues." },
-  { icon: Award, title: "Proven Success", desc: "Over 500 companies registered globally with a 98% client retention rate." },
+  { icon: Award, title: "Proven Success", desc: "Over 300 companies registered globally with a 98% client retention rate." },
 ];
 
 const DigiWhyChoose = () => (

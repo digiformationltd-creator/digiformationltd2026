@@ -12,7 +12,7 @@ const rotatingHeadlines = [
 
 const trustSignals = [
   { icon: Building2, label: "Registered with Companies House" },
-  { icon: Users, label: "500+ UK Companies Formed" },
+  { icon: Users, label: "300+ UK Companies Formed" },
   { icon: Star, label: "98% Success Rate" },
   { icon: Lock, label: "Secure Document Handling" },
   { icon: ShieldCheck, label: "Dedicated Support Team" },
