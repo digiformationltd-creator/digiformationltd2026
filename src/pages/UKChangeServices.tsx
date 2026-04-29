@@ -22,7 +22,7 @@ const cards: Card[] = [
     title: "Company Name Change",
     price: "£30",
     description: "Update your company name officially at Companies House with certificate and resolution document included.",
-    requirements: ["Current Company Name", "New Company Name", "CRN (Company Registration Number)", "Auth Code"],
+    requirements: ["Company Number (CRN)", "Company Authentication Code", "New Company Name"],
   },
   {
     id: "director-change",
@@ -30,7 +30,7 @@ const cards: Card[] = [
     title: "Director Change Only",
     price: "£10",
     description: "Change a director for your UK company. Simple, fast, Companies House updated.",
-    requirements: ["Director Name (Old & New)", "Company Name & CRN", "Auth Code"],
+    requirements: ["Company Number (CRN)", "Company Authentication Code", "Director's Personal Code"],
   },
   {
     id: "director-id",
@@ -39,9 +39,9 @@ const cards: Card[] = [
     price: "£30",
     description: "Director change along with full ID verification including live selfie, passport/ID, and proof of address.",
     requirements: [
-      "Director Name (Old & New)",
-      "Company Name & CRN",
-      "Auth Code",
+      "Company Number (CRN)",
+      "Company Authentication Code",
+      "Director's Personal Code",
       "Live Selfie",
       "Passport / ID Picture (can be combined)",
       "Residential Bank Statement (address proof)",
@@ -55,7 +55,7 @@ const cards: Card[] = [
     title: "Company Address Change",
     price: "£10",
     description: "Update your registered UK company address, valid for 1 year, includes email notifications and mail scanning if needed.",
-    requirements: ["Director Name", "Company Name & CRN", "Auth Code", "New Address Details"],
+    requirements: ["Company Number (CRN)", "Company Authentication Code", "New Address"],
   },
   {
     id: "residence-change",
@@ -63,7 +63,7 @@ const cards: Card[] = [
     title: "UK Country Residence Change",
     price: "£10",
     description: "Update your registered country of residence with full Companies House and HMRC compliance.",
-    requirements: ["Director Name", "Company Name & CRN", "Auth Code", "New Country of Residence"],
+    requirements: ["Company Number (CRN)", "Company Authentication Code", "New Country of Residence"],
   },
   {
     id: "sic-change",
@@ -71,7 +71,7 @@ const cards: Card[] = [
     title: "SIC Code Change",
     price: "£10",
     description: "Change your company's Standard Industrial Classification (SIC) code at Companies House.",
-    requirements: ["Company Name & CRN", "Auth Code", "Current SIC Code", "New SIC Code"],
+    requirements: ["Company Number (CRN)", "Company Authentication Code", "New SIC Code"],
   },
   {
     id: "shareholder-change",
@@ -79,7 +79,7 @@ const cards: Card[] = [
     title: "Shareholder Change",
     price: "£10",
     description: "Add or remove shareholders and update your UK company's ownership structure.",
-    requirements: ["Company Name & CRN", "Auth Code", "Existing Shareholder Details", "New Shareholder Details"],
+    requirements: ["Company Number (CRN)", "Company Authentication Code", "Shareholder's Personal Code"],
   },
   {
     id: "psc-secretary",
@@ -87,7 +87,7 @@ const cards: Card[] = [
     title: "PSC / Secretary Change",
     price: "£10",
     description: "Appoint or remove Persons of Significant Control or Company Secretaries with full compliance.",
-    requirements: ["Company Name & CRN", "Auth Code", "PSC / Secretary Details"],
+    requirements: ["Company Number (CRN)", "Company Authentication Code", "PSC / Secretary Personal Code"],
   },
 ];
 
