@@ -1,16 +1,16 @@
 import stripe from "@/assets/partners/stripe.png";
 import paypal from "@/assets/partners/paypal.png";
-import wise from "@/assets/partners/wise.png";
-import payoneer from "@/assets/partners/payoneer.png";
+import wise from "@/assets/partners/wise-white.png";
+import payoneer from "@/assets/partners/payoneer-white.png";
 import shopify from "@/assets/partners/shopify.png";
 import ebay from "@/assets/partners/ebay.svg";
 import wallester from "@/assets/partners/wallester.png";
 import zionpe from "@/assets/partners/zionpe.svg";
 import companiesHouse from "@/assets/partners/companies-house.png";
-import airwallex from "@/assets/partners/airwallex.png";
+import airwallex from "@/assets/partners/airwallex-white.png";
 import tide from "@/assets/partners/tide.png";
 import hmrc from "@/assets/partners/hmrc.png";
-import sunrate from "@/assets/partners/sunrate.png";
+import sunrate from "@/assets/partners/sunrate-white.png";
 import irs from "@/assets/partners/irs.png";
 import worldfirst from "@/assets/partners/worldfirst.png";
 
@@ -22,14 +22,14 @@ const partners: Partner[] = [
   { name: "IRS", logo: irs },
   { name: "Stripe", logo: stripe },
   { name: "PayPal", logo: paypal },
-  { name: "Wise", logo: wise, lightBg: true },
-  { name: "Payoneer", logo: payoneer, lightBg: true },
+  { name: "Wise", logo: wise },
+  { name: "Payoneer", logo: payoneer },
   { name: "Tide", logo: tide },
-  { name: "Sunrate", logo: sunrate, lightBg: true },
+  { name: "Sunrate", logo: sunrate },
   { name: "WorldFirst", logo: worldfirst },
   { name: "eBay", logo: ebay },
   { name: "Shopify", logo: shopify },
-  { name: "Airwallex", logo: airwallex, lightBg: true },
+  { name: "Airwallex", logo: airwallex },
 ];
 
 const DigiTrustBar = () => {
@@ -46,15 +46,13 @@ const DigiTrustBar = () => {
           {loop.map((p, i) => (
             <div key={i} className="logo-card" title={p.name}>
               {p.logo ? (
-                <div className={p.lightBg ? "bg-white rounded-md px-3 py-2 flex items-center justify-center" : "flex items-center justify-center"}>
-                  <img
-                    src={p.logo}
-                    alt={`${p.name} logo`}
-                    loading="lazy"
-                    className={`object-contain ${p.name === "WorldFirst" ? "h-24 w-[200px]" : "h-16 w-[150px]"}`}
-                    style={p.whiten ? { filter: "brightness(0) invert(1)" } : undefined}
-                  />
-                </div>
+                <img
+                  src={p.logo}
+                  alt={`${p.name} logo`}
+                  loading="lazy"
+                  className={`object-contain ${p.name === "WorldFirst" ? "h-24 w-[200px]" : "h-16 w-[150px]"}`}
+                  style={p.whiten ? { filter: "brightness(0) invert(1)" } : undefined}
+                />
               ) : (
                 <span>{p.name}</span>
               )}
