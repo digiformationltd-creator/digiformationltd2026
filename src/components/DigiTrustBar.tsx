@@ -22,14 +22,14 @@ const partners: Partner[] = [
   { name: "IRS", logo: irs },
   { name: "Stripe", logo: stripe },
   { name: "PayPal", logo: paypal },
-  { name: "Wise", logo: wise, whiten: true },
-  { name: "Payoneer", logo: payoneer, whiten: true },
+  { name: "Wise", logo: wise, lightBg: true },
+  { name: "Payoneer", logo: payoneer, lightBg: true },
   { name: "Tide", logo: tide },
-  { name: "Sunrate", logo: sunrate, whiten: true },
+  { name: "Sunrate", logo: sunrate, lightBg: true },
   { name: "WorldFirst", logo: worldfirst },
   { name: "eBay", logo: ebay },
   { name: "Shopify", logo: shopify },
-  { name: "Airwallex", logo: airwallex, whiten: true },
+  { name: "Airwallex", logo: airwallex, lightBg: true },
 ];
 
 const DigiTrustBar = () => {
