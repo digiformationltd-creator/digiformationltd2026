@@ -126,6 +126,15 @@ const UKLtdFormation = () => {
   }, []);
 
   useEffect(() => {
+    if (window.location.hash) {
+      const id = window.location.hash.slice(1);
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 200);
+    }
+  }, []);
+
+  useEffect(() => {
     document.title = "UK LTD Formation Services | Register Your Company with Companies House";
 
     const setMeta = (name: string, content: string, attr: "name" | "property" = "name") => {
