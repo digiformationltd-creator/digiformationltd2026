@@ -54,7 +54,7 @@ const QuickStartWidget = () => {
 
   const handleStart = () => {
     if (tab === "usa" && usState) {
-      navigate(`/usa-services/us-llc-formation/checkout?state=${usState}&package=Starter`);
+      navigate(`/usa-services/us-llc-formation/choose-state?state=${usState}#packages`);
     } else if (tab === "uk" && ukJur) {
       navigate(`/uk-services/uk-ltd-formation?jurisdiction=${ukJur}#packages`);
     }
