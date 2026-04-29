@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
-import { Award, Building2, ShieldCheck, ArrowRight } from "lucide-react";
+import { Award, Building2, ShieldCheck, ArrowRight, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import founderImg from "@/assets/founder-haroon.jpg";
 import aboutAccent from "@/assets/premium-about-accent.jpg";
+
+const COMPANIES_HOUSE_URL =
+  "https://find-and-update.company-information.service.gov.uk/officers/iIzC9R8zKXH6lyWTWCDaT3_gK4E/appointments";
 
 const stats = [
   { icon: Building2, value: "71+", label: "UK Companies Registered Under His Name" },
@@ -36,16 +39,24 @@ const DigiAbout = () => (
             <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent pointer-events-none" />
             <div className="absolute -inset-px rounded-3xl border border-primary/20 pointer-events-none" />
           </div>
-          {/* Floating credential chip */}
-          <div className="absolute -bottom-4 -right-4 glass rounded-2xl px-4 py-3 shadow-elegant">
+          {/* Floating credential chip — links to Companies House officer profile */}
+          <a
+            href={COMPANIES_HOUSE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute -bottom-4 -right-4 glass rounded-2xl px-4 py-3 shadow-elegant hover:scale-105 transition-transform group/badge"
+            aria-label="View 71 UK company appointments on Companies House (opens in new tab)"
+          >
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-primary" />
               <div>
-                <div className="text-[10px] uppercase tracking-widest opacity-70">Verified</div>
-                <div className="text-xs font-semibold">Companies House</div>
+                <div className="text-[10px] uppercase tracking-widest opacity-70 flex items-center gap-1">
+                  Verified <ExternalLink className="w-2.5 h-2.5" />
+                </div>
+                <div className="text-xs font-semibold">Companies House · 71</div>
               </div>
             </div>
-          </div>
+          </a>
         </div>
 
         {/* Content */}
@@ -68,12 +79,26 @@ const DigiAbout = () => (
             across the world.
           </p>
 
-          <p className="text-base leading-relaxed opacity-80 mb-8">
+          <p className="text-base leading-relaxed opacity-80 mb-6">
             With over <strong>71 active UK companies</strong> registered directly under his name with
             Companies House, and hundreds of international clients successfully launched in the UK and USA,
             Muhammad combines hands-on industry expertise with a personal commitment to every case
             Digiformation handles — from formation and banking to long-term compliance.
           </p>
+
+          {/* Public verification link */}
+          <a
+            href={COMPANIES_HOUSE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 mb-8 px-4 py-2.5 rounded-full glass border border-primary/30 hover:border-primary/60 hover:bg-primary/10 transition-all text-sm group/verify"
+          >
+            <ShieldCheck className="w-4 h-4 text-primary" />
+            <span className="opacity-90">
+              Verify <strong>71 UK appointments</strong> on Companies House
+            </span>
+            <ExternalLink className="w-3.5 h-3.5 opacity-60 group-hover/verify:opacity-100 transition-opacity" />
+          </a>
 
           {/* Mini stats */}
           <div className="grid sm:grid-cols-3 gap-4 mb-8">
