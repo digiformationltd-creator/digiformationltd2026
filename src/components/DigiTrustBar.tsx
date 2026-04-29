@@ -53,7 +53,7 @@ const DigiTrustBar = () => {
                   src={p.logo}
                   alt={`${p.name} logo`}
                   cardBg="#1c1f25"
-                  className="h-16 w-[150px] object-contain"
+                  className={`object-contain ${p.name === "WorldFirst" ? "h-24 w-[200px]" : "h-16 w-[150px]"}`}
                 />
               ) : (
                 <span>{p.name}</span>
