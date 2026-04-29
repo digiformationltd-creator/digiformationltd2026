@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Building2, Flag, Landmark, CreditCard, Code2, Package } from "lucide-react";
+import { Building2, Flag, Landmark, CreditCard, Code2 } from "lucide-react";
 
 const items = [
   {
