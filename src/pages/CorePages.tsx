@@ -548,7 +548,27 @@ const bankingPackages: DetailPkg[] = bankingProviders.map((b, i) => ({
 // Web Development Packages
 const webDevPackages: DetailPkg[] = [
   {
-    name: "Basic",
+    name: "Shopify Store",
+    price: "£50",
+    badge: "Best Value",
+    note: "E-commerce Setup",
+    tone: "from-rose-500/25 to-rose-500/5",
+    ring: "ring-rose-400/60",
+    features: [
+      "Free domain included",
+      "Shopify trial arranged from our end",
+      "Full website setup & configuration",
+      "Theme installation & customization",
+      "Product upload (up to 20 products)",
+      "Payment gateway integration",
+      "Shipping & tax configuration",
+      "Mobile-responsive storefront",
+      "Basic SEO setup",
+      "Launch support & training",
+    ],
+  },
+  {
+    name: "React Basic",
     price: "£60",
     note: "Website Package",
     tone: "from-emerald-500/20 to-emerald-500/5",
@@ -564,7 +584,7 @@ const webDevPackages: DetailPkg[] = [
     ],
   },
   {
-    name: "Standard",
+    name: "React Standard",
     price: "£120",
     badge: "Most Popular",
     note: "Website Package",
@@ -585,7 +605,7 @@ const webDevPackages: DetailPkg[] = [
     ],
   },
   {
-    name: "Premium",
+    name: "React Premium",
     price: "£300",
     note: "Website Package",
     tone: "from-amber-400/25 to-amber-400/5",
@@ -603,23 +623,6 @@ const webDevPackages: DetailPkg[] = [
       "Third-party integrations (Mailchimp, Google Maps, social feeds)",
       "Advanced SEO, schema markup and sitemap + Contact form with file upload",
       "Performance optimization + 60 days post-launch support",
-    ],
-  },
-  {
-    name: "Shopify Store",
-    price: "£30",
-    note: "E-commerce Setup",
-    tone: "from-rose-500/25 to-rose-500/5",
-    ring: "ring-rose-400/60",
-    features: [
-      "Shopify store setup & configuration",
-      "Theme installation & customization",
-      "Product upload (up to 20 products)",
-      "Payment gateway integration",
-      "Shipping & tax configuration",
-      "Mobile-responsive storefront",
-      "Basic SEO setup",
-      "Launch support & training",
     ],
   },
 ];
