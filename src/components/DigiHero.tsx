@@ -30,8 +30,8 @@ const DigiHero = () => {
           <span className="text-[11px] uppercase tracking-widest">UK & US Company Formation • Banking • Compliance</span>
         </div>
 
-        <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-bold leading-[1.05] mb-8 min-h-[1.1em] animate-fade-up" style={{ animationDelay: "0.1s" }}>
-          <span key={i} className="block animate-fade-up">
+        <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-bold leading-[1.05] mb-8 min-h-[1.2em] animate-fade-up" style={{ animationDelay: "0.1s" }}>
+          <span key={i} className="block animate-headline-slide">
             {headlines[i].pre && <>{headlines[i].pre} </>}
             <span className="text-gradient">{headlines[i].accent}</span>
             {headlines[i].post && <> {headlines[i].post}</>}
