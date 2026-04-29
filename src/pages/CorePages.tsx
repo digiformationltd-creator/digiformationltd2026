@@ -669,7 +669,7 @@ export const ClientArea = () => (
 const webServices = [
   { icon: Code2, title: "Custom Website Design & Development", desc: "Bespoke, conversion-focused websites built to reflect your brand and drive measurable results." },
   { icon: ShoppingBag, title: "E-commerce (Shopify)", desc: "Beautiful, high-performance Shopify stores with conversion-optimised product pages and checkout." },
-  { icon: LayoutIcon, title: "Landing Page Design & Development", desc: "Standalone landing pages engineered for ad campaigns and product launches." },
+  { icon: LayoutIcon, title: "Landing Page Design & Development", desc: "Standalone landing pages for product launches, lead capture and service-specific offers." },
   { icon: RefreshCw, title: "Website Redesign & Migration", desc: "Modernise an outdated site or migrate to a faster, safer stack with zero SEO loss." },
   { icon: LifeBuoy, title: "Ongoing Maintenance & Support", desc: "Updates, security patches, performance tuning and content edits — all handled for you." },
 ];
@@ -687,7 +687,7 @@ const webProcess = [
 const techStack = ["WordPress", "Shopify", "React", "Next.js", "Figma", "Tailwind CSS", "Vite", "TypeScript"];
 
 const webFaqs = [
-  { q: "How long does a website take?", a: "A standard marketing site takes 4–6 weeks. E-commerce or custom builds typically take 8–12 weeks depending on scope." },
+  { q: "How long does a website take?", a: "A standard business website takes 4–6 weeks. E-commerce or custom builds typically take 8–12 weeks depending on scope." },
   { q: "What CMS should I use?", a: "We recommend WordPress for content-heavy sites, Shopify for e-commerce, and headless React/Next.js when you need maximum performance and flexibility." },
   { q: "What about hosting?", a: "We can host on Vercel, Netlify, or your preferred provider. We handle SSL, CDN configuration, and ongoing performance monitoring." },
   { q: "Will my site be SEO-ready?", a: "Yes. Every site we build ships with semantic HTML, schema markup, optimised meta tags, sitemap.xml and Core Web Vitals tuning." },
@@ -728,7 +728,7 @@ export const WebDevelopment = () => {
               Websites designed to <em className="not-italic text-gradient">convert</em>
             </h1>
             <p className="mt-8 text-lg md:text-xl leading-relaxed opacity-90">
-              Conversion-focused websites that complement your digital marketing — built on modern stacks, optimised for SEO and engineered for speed.
+              Professional websites for your newly-formed UK or US company — built on modern stacks, optimised for SEO and engineered for speed.
             </p>
             <Button asChild variant="hero" size="lg" className="rounded-full mt-10">
               <Link to="/contact">Request a Free Quote <ArrowRight className="w-4 h-4" /></Link>
