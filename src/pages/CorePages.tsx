@@ -1,7 +1,7 @@
 import SimplePage from "@/components/SimplePage";
 
 export const About = () => (
-  <SimplePage eyebrow="About Us" title="Building global businesses, one formation at a time" description="Digiformation Ltd is the trusted one-stop platform for UK & US company formation, banking, payment gateways, compliance and web development. We've helped 500+ entrepreneurs in 60+ countries launch and scale." />
+  <SimplePage eyebrow="About Us" title="Building global businesses, one formation at a time" description="Digiformation Ltd is the trusted one-stop platform for UK & US company formation, banking, payment gateways, compliance and web development. We've helped 300+ entrepreneurs in 60+ countries launch and scale." />
 );
 
 export const Contact = () => (

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 const stats = [
-  { value: 500, suffix: "+", label: "Companies Registered (UK & US)" },
+  { value: 300, suffix: "+", label: "Companies Registered (UK & US)" },
   { value: 24, suffix: "/7", label: "Global Support for Entrepreneurs" },
   { value: 14, suffix: "+", label: "Banking & Payment Partners" },
   { value: 98, suffix: "%", label: "Client Retention Rate" },
