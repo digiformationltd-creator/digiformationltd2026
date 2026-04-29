@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import {
   ArrowRight,
   CheckCircle2,
@@ -101,6 +102,7 @@ export const Contact = () => {
     service: "",
     message: "",
   });
+  const [website, setWebsite] = useState(""); // honeypot
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -109,10 +111,37 @@ export const Contact = () => {
       "Contact Digiformation Ltd – UK Company Formation & Business Services",
       "Contact Digiformation Ltd for UK LTD & LLC formation, address services, ID verification and annual compliance. Reach us via email, WhatsApp or our inquiry form."
     );
-    // Pre-fill service from query string e.g. /contact?service=PayPal
+    const cleanup = injectJsonLd("contact-page-schema", {
+      "@context": "https://schema.org",
+      "@type": "ContactPage",
+      name: "Contact Digiformation Ltd",
+      url: "https://digiformation.uk/contact",
+      mainEntity: {
+        "@type": "Organization",
+        name: "Digiformation Ltd",
+        email: "Info@digiformation.uk",
+        telephone: "+92-316-446-7464",
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "Office 1006, 85 Dunstall Hill",
+          addressLocality: "Wolverhampton",
+          postalCode: "WV6 0SR",
+          addressCountry: "GB",
+        },
+        contactPoint: [{
+          "@type": "ContactPoint",
+          contactType: "customer support",
+          email: "Info@digiformation.uk",
+          telephone: "+92-316-446-7464",
+          availableLanguage: ["English", "Urdu"],
+          areaServed: ["GB", "US", "PK", "Worldwide"],
+        }],
+      },
+    });
     const params = new URLSearchParams(window.location.search);
     const svc = params.get("service");
     if (svc) setForm((f) => ({ ...f, service: svc }));
+    return cleanup;
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
