@@ -18,17 +18,17 @@ type Partner = { name: string; logo?: string; whiten?: boolean };
 
 const partners: Partner[] = [
   { name: "Companies House", logo: companiesHouse, whiten: true },
-  { name: "HMRC", logo: hmrc, whiten: true },
-  { name: "IRS", logo: irs, whiten: true },
+  { name: "HMRC", logo: hmrc },
+  { name: "IRS", logo: irs },
   { name: "Stripe", logo: stripe },
   { name: "PayPal", logo: paypal },
   { name: "Wise", logo: wise, whiten: true },
   { name: "Payoneer", logo: payoneer, whiten: true },
-  { name: "Tide", logo: tide, whiten: true },
+  { name: "Tide", logo: tide },
   { name: "Sunrate", logo: sunrate, whiten: true },
-  { name: "WorldFirst", logo: worldfirst, whiten: true },
+  { name: "WorldFirst", logo: worldfirst },
   { name: "eBay", logo: ebay },
-  { name: "Shopify", logo: shopify, whiten: true },
+  { name: "Shopify", logo: shopify },
   { name: "Airwallex", logo: airwallex, whiten: true },
 ];
 
