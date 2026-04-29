@@ -14,24 +14,22 @@ import sunrate from "@/assets/partners/sunrate.png";
 import irs from "@/assets/partners/irs.png";
 import worldfirst from "@/assets/partners/worldfirst.png";
 
-type Partner = { name: string; logo?: string };
+type Partner = { name: string; logo?: string; whiten?: boolean };
 
 const partners: Partner[] = [
-  { name: "Companies House", logo: companiesHouse },
-  { name: "HMRC", logo: hmrc },
-  { name: "IRS", logo: irs },
+  { name: "Companies House", logo: companiesHouse, whiten: true },
+  { name: "HMRC", logo: hmrc, whiten: true },
+  { name: "IRS", logo: irs, whiten: true },
   { name: "Stripe", logo: stripe },
   { name: "PayPal", logo: paypal },
-  { name: "Wise", logo: wise },
-  { name: "Payoneer", logo: payoneer },
-  { name: "Tide", logo: tide },
-  { name: "Sunrate", logo: sunrate },
-  { name: "WorldFirst", logo: worldfirst },
+  { name: "Wise", logo: wise, whiten: true },
+  { name: "Payoneer", logo: payoneer, whiten: true },
+  { name: "Tide", logo: tide, whiten: true },
+  { name: "Sunrate", logo: sunrate, whiten: true },
+  { name: "WorldFirst", logo: worldfirst, whiten: true },
   { name: "eBay", logo: ebay },
-  { name: "Shopify", logo: shopify },
-  { name: "Airwallex", logo: airwallex },
-  
-  
+  { name: "Shopify", logo: shopify, whiten: true },
+  { name: "Airwallex", logo: airwallex, whiten: true },
 ];
 
 const DigiTrustBar = () => {
@@ -53,6 +51,7 @@ const DigiTrustBar = () => {
                   alt={`${p.name} logo`}
                   loading="lazy"
                   className={`object-contain ${p.name === "WorldFirst" ? "h-24 w-[200px]" : "h-16 w-[150px]"}`}
+                  style={p.whiten ? { filter: "brightness(0) invert(1)" } : undefined}
                 />
               ) : (
                 <span>{p.name}</span>
