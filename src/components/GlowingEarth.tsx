@@ -9,7 +9,7 @@ const GlowingEarth = () => {
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-0 flex items-start sm:items-center justify-center overflow-hidden pt-60 sm:pt-0"
+      className="pointer-events-none absolute inset-0 flex items-start sm:items-center justify-center overflow-hidden pt-56 sm:pt-0"
     >
       <div className="earth-wrap">
         {/* Outer atmospheric glow */}
