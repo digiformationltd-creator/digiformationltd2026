@@ -18,10 +18,10 @@ const DigiWhyChoose = () => (
     {/* Premium background — golden network */}
     <div
       aria-hidden
-      className="absolute inset-0 bg-cover bg-center opacity-[0.10] pointer-events-none mix-blend-screen"
+      className="absolute inset-0 bg-cover bg-center opacity-30 pointer-events-none"
       style={{ backgroundImage: `url(${premiumNetwork})` }}
     />
-    <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background/40 pointer-events-none" />
+    <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background/70 pointer-events-none" />
 
     <div className="container mx-auto px-4 relative z-10">
       <div className="text-center max-w-3xl mx-auto mb-16">

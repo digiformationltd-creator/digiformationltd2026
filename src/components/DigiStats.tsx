@@ -53,10 +53,10 @@ const DigiStats = () => (
     {/* Premium background imagery */}
     <div
       aria-hidden
-      className="absolute inset-0 bg-cover bg-center opacity-[0.18] pointer-events-none"
+      className="absolute inset-0 bg-cover bg-center opacity-40 pointer-events-none"
       style={{ backgroundImage: `url(${premiumFintech})` }}
     />
-    <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/40 to-background/70 pointer-events-none" />
+    <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background/80 pointer-events-none" />
 
     <div className="container mx-auto px-4 relative z-10">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
