@@ -5,7 +5,7 @@ import heroBanking from "@/assets/card-hero-banking.jpg";
 import heroPayments from "@/assets/card-hero-payments.jpg";
 import heroWeb from "@/assets/card-hero-web.jpg";
 import heroTax from "@/assets/card-hero-tax.jpg";
-import heroPackages from "@/assets/card-hero-packages.jpg";
+
 
 const items = [
   {
@@ -55,14 +55,6 @@ const items = [
     cta: "Learn more",
     href: "/web-development",
     image: heroWeb,
-  },
-  {
-    tag: "PACK",
-    title: "Packages",
-    desc: "Explore our all-in-one bundles — formation, banking, compliance and web combined at transparent, value-driven prices.",
-    cta: "View packages",
-    href: "/pricing",
-    image: heroPackages,
   },
 ];
 
