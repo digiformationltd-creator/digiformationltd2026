@@ -58,7 +58,7 @@ const items = [
   },
   {
     tag: "PACK · 07",
-    title: "Packages & Pricing",
+    title: "Packages",
     desc: "Explore our all-in-one bundles — formation, banking, compliance and web combined at transparent, value-driven prices.",
     cta: "View packages",
     href: "/pricing",
