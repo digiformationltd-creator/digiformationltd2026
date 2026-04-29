@@ -111,6 +111,8 @@ const related = [
 const UKChangeServices = () => {
   const { toast } = useToast();
   const [selected, setSelected] = useState<string>("name-change");
+  const [submitted, setSubmitted] = useState(false);
+  const [submittedName, setSubmittedName] = useState("");
 
   useEffect(() => {
     document.title = "UK Company Services – Director, Name & Address Change | DiGiFormation LTD";
