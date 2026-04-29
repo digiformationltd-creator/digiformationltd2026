@@ -118,7 +118,7 @@ export const Contact = () => {
       `Country: ${encodeURIComponent(form.country)}%0A` +
       `Service: ${encodeURIComponent(form.service)}%0A%0A` +
       `${encodeURIComponent(form.message)}`;
-    window.open(`https://wa.me/921644674644?text=${text}`, "_blank", "noopener,noreferrer");
+    window.open(`https://wa.me/923164467464?text=${text}`, "_blank", "noopener,noreferrer");
     toast.success("Opening WhatsApp — we'll reply within one business day.");
     setSubmitting(false);
   };
@@ -156,7 +156,7 @@ export const Contact = () => {
                 <div className="font-display text-xl font-semibold">Info@digiformation.uk</div>
               </div>
             </a>
-            <a href="https://wa.me/921644674644" target="_blank" rel="noopener noreferrer" className="glass rounded-2xl p-7 flex gap-4 hover:-translate-y-1 transition-transform">
+            <a href="https://wa.me/923164467464" target="_blank" rel="noopener noreferrer" className="glass rounded-2xl p-7 flex gap-4 hover:-translate-y-1 transition-transform">
               <MessageCircle className="w-6 h-6 text-primary mt-1" />
               <div>
                 <div className="text-[10px] uppercase tracking-[0.18em] mb-1 opacity-80">WhatsApp (Fast Support)</div>
