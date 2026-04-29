@@ -25,6 +25,14 @@ const risks = [
   "Your company may face compliance issues",
 ];
 
+const verificationRequirements = [
+  "ID Card / Passport Picture",
+  "Live Selfie",
+  "Home Address",
+  "Residential Bank Statement",
+  "Email Address",
+];
+
 const LtdIdVerification = () => {
   useEffect(() => {
     document.title = "UK LTD ID Verification | Companies House Identity Check";
@@ -130,6 +138,28 @@ const LtdIdVerification = () => {
                 ))}
               </ul>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Requirements */}
+      <section className="py-20 border-t border-border/60">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="inline-flex items-center gap-3 mb-5">
+            <span className="h-px w-7 bg-primary" />
+            <span className="text-xs uppercase tracking-[0.18em] font-semibold">Requirements</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-4">
+            ID Verification <em className="not-italic text-gradient">Requirements</em>
+          </h2>
+          <p className="opacity-80 mb-10 max-w-2xl">Please prepare the following documents before starting your verification. This ensures fast, smooth processing with Companies House.</p>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {verificationRequirements.map((r, i) => (
+              <div key={r} className="glass rounded-xl p-5 flex gap-4 items-start">
+                <div className="w-7 h-7 rounded-full bg-gradient-brand grid place-items-center text-xs font-bold flex-shrink-0">{i + 1}</div>
+                <span className="font-medium">{r}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
