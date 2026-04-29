@@ -92,12 +92,6 @@ const DigiServices = () => (
                 height={768}
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              {/* Tag chip */}
-              <div className="absolute top-4 left-4 z-10">
-                <span className="inline-flex items-center px-3 py-1 rounded-full bg-background/70 backdrop-blur-md border border-border/50 text-[10px] font-semibold tracking-[0.14em] uppercase">
-                  {it.tag}
-                </span>
-              </div>
               {/* Subtle bottom fade for blend */}
               <div aria-hidden className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background to-transparent pointer-events-none" />
             </div>
