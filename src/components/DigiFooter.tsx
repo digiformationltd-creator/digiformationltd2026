@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Mail, MessageCircle, Clock, MapPin, ArrowRight } from "lucide-react";
 import logo from "@/assets/digiformation-logo.png";
+import NewsletterForm from "./NewsletterForm";
 
 const DigiFooter = () => {
   const year = new Date().getFullYear();
@@ -75,7 +76,7 @@ const DigiFooter = () => {
       </div>
 
       {/* Main grid */}
-      <div className="container mx-auto px-4 py-10 sm:py-14 grid gap-8 sm:gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="container mx-auto px-4 py-10 sm:py-14 grid gap-8 sm:gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
         {/* Brand */}
         <div className="flex flex-col items-center text-center sm:items-start sm:text-left sm:-mt-4 sm:col-span-2 lg:col-span-1">
           <img src={logo} alt="Digiformation Ltd" className="h-24 sm:h-32 w-auto max-w-full object-contain mb-4 sm:-ml-2" />
@@ -146,6 +147,11 @@ const DigiFooter = () => {
               <span>United Kingdom</span>
             </li>
           </ul>
+        </div>
+
+        {/* Newsletter */}
+        <div className="sm:col-span-2 lg:col-span-1">
+          <NewsletterForm />
         </div>
       </div>
 
