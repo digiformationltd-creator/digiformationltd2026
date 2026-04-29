@@ -38,7 +38,7 @@ const partners: Partner[] = [
 const DigiTrustBar = () => {
   const loop = [...partners, ...partners];
   return (
-    <section className="py-20 border-y border-border/60 bg-secondary/20 overflow-hidden relative">
+    <section className="py-12 border-y border-border/60 bg-secondary/20 overflow-hidden relative">
       <div className="container mx-auto px-4 mb-10 text-center">
         <p className="text-xs uppercase tracking-[0.18em] text-white">Trusted Partners & Official Integrations</p>
       </div>

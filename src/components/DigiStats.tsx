@@ -49,7 +49,7 @@ const StatItem = ({ value, suffix, label, isFirst }: { value: number; suffix: st
 };
 
 const DigiStats = () => (
-  <section className="relative py-24 border-y border-border bg-secondary/30 overflow-hidden">
+  <section className="relative py-14 border-y border-border bg-secondary/30 overflow-hidden">
     {/* Premium background imagery */}
     <div
       aria-hidden
