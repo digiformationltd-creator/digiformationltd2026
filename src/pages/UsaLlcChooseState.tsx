@@ -85,22 +85,23 @@ const UsaLlcChooseState = () => {
     })();
   }, []);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return states;
-    return states.filter(
-      (s) => s.state_name.toLowerCase().includes(q) || s.state_code.toLowerCase().includes(q),
-    );
-  }, [states, query]);
-
   const popular = useMemo(() => states.filter((s) => s.is_popular), [states]);
+  const sortedStates = useMemo(
+    () => [...states].sort((a, b) => a.state_name.localeCompare(b.state_name)),
+    [states],
+  );
   const selected = useMemo(
     () => states.find((s) => s.state_code === selectedCode) ?? null,
     [states, selectedCode],
   );
 
   const scrollToPackages = () => {
-    setTimeout(() => document.getElementById("packages")?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+    setTimeout(() => document.getElementById("packages")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+  };
+
+  const handleSelect = (code: string) => {
+    setSelectedCode(code);
+    scrollToPackages();
   };
 
   return (
@@ -127,66 +128,54 @@ const UsaLlcChooseState = () => {
 
       {/* State picker */}
       <section className="py-10 md:py-14 border-t border-border/60">
-        <div className="container mx-auto px-4 max-w-6xl">
-          {/* Search */}
-          <div className="glass rounded-2xl p-4 md:p-5 mb-8 flex items-center gap-3">
-            <Search className="w-5 h-5 opacity-70" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search state by name or code (e.g. Texas, TX)"
-              className="flex-1 bg-transparent outline-none text-base placeholder:opacity-60"
-            />
-          </div>
-
+        <div className="container mx-auto px-4 max-w-3xl">
           {loading ? (
             <div className="py-20 grid place-items-center opacity-70">
               <Loader2 className="w-6 h-6 animate-spin" />
             </div>
           ) : (
-            <>
-              {/* Popular */}
-              {!query && popular.length > 0 && (
-                <div className="mb-10">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Star className="w-4 h-4 text-primary" />
-                    <h3 className="text-sm font-semibold uppercase tracking-[0.14em]">Popular Choices</h3>
-                  </div>
-                  <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="glass rounded-3xl p-6 md:p-8 border border-border/50 shadow-elegant">
+              <label className="block text-xs uppercase tracking-[0.18em] font-semibold opacity-80 mb-3">
+                Select your state
+              </label>
+              <Select value={selectedCode ?? undefined} onValueChange={handleSelect}>
+                <SelectTrigger className="h-14 text-base rounded-xl bg-background/60 border-border/60">
+                  <SelectValue placeholder="— Choose a U.S. state —" />
+                </SelectTrigger>
+                <SelectContent className="max-h-80">
+                  {sortedStates.map((s) => (
+                    <SelectItem key={s.state_code} value={s.state_code}>
+                      {s.state_name} ({s.state_code}) — from {formatUSD(Number(s.starter_price_usd))}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {popular.length > 0 && (
+                <div className="mt-6">
+                  <div className="text-[11px] uppercase tracking-[0.16em] opacity-70 mb-3">Popular choices</div>
+                  <div className="flex flex-wrap gap-2">
                     {popular.map((s) => (
-                      <StateCard
-                        key={s.id}
-                        state={s}
-                        active={selectedCode === s.state_code}
-                        onSelect={() => { setSelectedCode(s.state_code); scrollToPackages(); }}
-                      />
+                      <button
+                        key={s.state_code}
+                        onClick={() => handleSelect(s.state_code)}
+                        className={`px-3 py-1.5 rounded-full text-sm border transition ${
+                          selectedCode === s.state_code
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "border-border/60 hover:border-primary/60 hover:bg-primary/5"
+                        }`}
+                      >
+                        {s.state_name}
+                      </button>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* All */}
-              <div>
-                <h3 className="text-sm font-semibold uppercase tracking-[0.14em] mb-4 opacity-80">
-                  {query ? `Results (${filtered.length})` : "All States"}
-                </h3>
-                {filtered.length === 0 ? (
-                  <div className="opacity-70 text-center py-10">No states matched your search.</div>
-                ) : (
-                  <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                    {filtered.map((s) => (
-                      <StateCard
-                        key={s.id}
-                        state={s}
-                        compact
-                        active={selectedCode === s.state_code}
-                        onSelect={() => { setSelectedCode(s.state_code); scrollToPackages(); }}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            </>
+              <p className="mt-5 text-xs opacity-70">
+                Pricing for Starter, Silver, and Gold updates automatically based on your selected state's filing fees.
+              </p>
+            </div>
           )}
         </div>
       </section>
