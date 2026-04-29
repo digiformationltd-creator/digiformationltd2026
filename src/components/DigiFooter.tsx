@@ -180,11 +180,11 @@ const DigiFooter = () => {
             <li className="flex items-start gap-3">
               <MapPin className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
               <a
-                href="https://www.google.com/maps/search/?api=1&query=Office+1006%2C+85+Dunstall+Hill%2C+Wolverhampton%2C+WV6+0SR%2C+United+Kingdom"
+                href="https://www.google.com/maps/place/31%C2%B028'58.9%22N+74%C2%B025'22.1%22E/@31.4830225,74.4202212,17z/data=!3m1!4b1!4m4!3m3!8m2!3d31.4830225!4d74.4227961"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-primary transition-colors group"
-                aria-label="Open Digiformation Ltd UK office location in Google Maps (live meetup pin)"
+                aria-label="Open live meetup location pin in Google Maps"
               >
                 <span>
                   Office 1006, 85 Dunstall Hill,<br />
