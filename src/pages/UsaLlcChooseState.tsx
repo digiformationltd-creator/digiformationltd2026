@@ -1,8 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, MapPin, Search, Star, CheckCircle2, Loader2 } from "lucide-react";
+import { ArrowRight, MapPin, CheckCircle2, Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 
 type StatePricing = {
