@@ -1,7 +1,4 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import GlowingEarth from "@/components/GlowingEarth";
 
 const headlines = [
@@ -46,29 +43,6 @@ const DigiHero = () => {
           Fast, transparent and fully supported company formation, banking, payments, compliance and web services for entrepreneurs worldwide.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-up" style={{ animationDelay: "0.3s" }}>
-          <Button asChild variant="hero" size="lg" className="rounded-full">
-            <Link to="/uk-services/uk-ltd-formation/choose-jurisdiction">
-              Register Your UK Company <ArrowRight className="w-4 h-4" />
-            </Link>
-          </Button>
-          <Button asChild variant="hero" size="lg" className="rounded-full">
-            <Link to="/usa-services/us-llc-formation/choose-state">
-              Register Your USA Company <ArrowRight className="w-4 h-4" />
-            </Link>
-          </Button>
-          <Button asChild variant="ghostGlow" size="lg" className="rounded-full">
-            <a href="#services">Explore All Services</a>
-          </Button>
-        </div>
-
-        <div className="mt-16 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs uppercase tracking-widest opacity-70 animate-fade-up" style={{ animationDelay: "0.4s" }}>
-          <span>Companies House Authorised</span>
-          <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
-          <span>IRS Acceptance Agent Network</span>
-          <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
-          <span>Global Delivery</span>
-        </div>
       </div>
     </section>
   );
