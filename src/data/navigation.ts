@@ -43,8 +43,9 @@ export const banking: NavItem[] = [
   { name: "Zyla", path: "/banks-payment-solutions/zyla" },
   { name: "Airwallex", path: "/banks-payment-solutions/airwallex" },
   { name: "Mollie", path: "/banks-payment-solutions/mollie" },
+  { name: "ZionPe", path: "/banks-payment-solutions/zionpe" },
   { name: "Wallester", path: "/banks-payment-solutions/wallester" },
-  { name: "Zionpe", path: "/banks-payment-solutions/zionpe" },
+  { name: "PingPong", path: "/banks-payment-solutions/pingpong" },
 ];
 
 export const navGroups: NavGroup[] = [
