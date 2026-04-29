@@ -88,9 +88,20 @@ const UsaLlcChooseState = () => {
   // Pre-select state from ?state= query param (from homepage Quick Start widget)
   useEffect(() => {
     const code = searchParams.get("state");
-    if (code && states.some((s) => s.state_code === code)) {
-      setSelectedCode(code);
-      setTimeout(() => document.getElementById("packages")?.scrollIntoView({ behavior: "smooth", block: "start" }), 200);
+    if (!code || states.length === 0) return;
+    const match = states.find((s) => s.state_code.toUpperCase() === code.toUpperCase());
+    if (match) {
+      setSelectedCode(match.state_code);
+      // Wait for the packages section to mount, then scroll
+      const tryScroll = (attempt = 0) => {
+        const el = document.getElementById("packages");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        } else if (attempt < 10) {
+          setTimeout(() => tryScroll(attempt + 1), 100);
+        }
+      };
+      setTimeout(() => tryScroll(), 150);
     }
   }, [searchParams, states]);
 
