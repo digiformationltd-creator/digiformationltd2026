@@ -84,15 +84,14 @@ const DigiFooter = () => {
         {/* Services */}
         <div>
           <div className="text-xs uppercase tracking-[0.18em] font-semibold mb-4 opacity-90">
-            Services
+            Quick Links
           </div>
           <ul className="space-y-2 text-sm">
-            <li><Link to="/uk-ltd-formation" className="hover:text-primary transition">UK LTD Formation</Link></li>
-            <li><Link to="/llc-formation-services/usa-llc-formation" className="hover:text-primary transition">USA LLC Formation</Link></li>
-            <li><Link to="/registered-office-address" className="hover:text-primary transition">Address Services</Link></li>
-            <li><Link to="/ltd-id-verification" className="hover:text-primary transition">ID Verification</Link></li>
-            <li><Link to="/compliance" className="hover:text-primary transition">Annual Filing</Link></li>
-            <li><Link to="/services/web-design" className="hover:text-primary transition">Web Development</Link></li>
+            <li><Link to="/uk-services" className="hover:text-primary transition">UK Services</Link></li>
+            <li><Link to="/usa-services" className="hover:text-primary transition">USA Services</Link></li>
+            <li><Link to="/banking" className="hover:text-primary transition">Banks & Payment Solutions</Link></li>
+            <li><Link to="/pricing" className="hover:text-primary transition">Pricing</Link></li>
+            <li><Link to="/contact" className="hover:text-primary transition">Contact</Link></li>
           </ul>
         </div>
 
