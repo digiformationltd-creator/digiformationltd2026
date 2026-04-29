@@ -79,9 +79,9 @@ const ServicePage = ({ eyebrow, title, description, highlights, children }: Serv
               <div className="text-[10px] uppercase tracking-[0.2em] mb-3 opacity-80">How it works</div>
               <ol className="space-y-6 mt-6">
                 {["Book a free consultation", "We collect your details securely", "Our team handles every step", "You receive your documents"].map((step, i) => (
-                  <li key={i} className="flex gap-5">
-                    <div className="font-display text-3xl font-bold text-gradient w-10 flex-shrink-0">0{i + 1}</div>
-                    <div className="pt-2 opacity-90">{step}</div>
+                  <li key={i} className="flex gap-5 items-start">
+                    <CheckCircle2 className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+                    <div className="opacity-90">{step}</div>
                   </li>
                 ))}
               </ol>
