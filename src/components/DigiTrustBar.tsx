@@ -52,7 +52,7 @@ const DigiTrustBar = () => {
                 <AdaptiveLogo
                   src={p.logo}
                   alt={`${p.name} logo`}
-                  cardBg="#9aa0a8"
+                  cardBg="#1c1f25"
                   className="max-h-12 max-w-[130px] w-auto h-auto object-contain"
                 />
               ) : (
