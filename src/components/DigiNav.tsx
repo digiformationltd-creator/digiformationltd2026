@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Menu, X, ChevronDown, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { navGroups } from "@/data/navigation";
+import logo from "@/assets/digiformation-logo.png";
 
 const topLinks = [
   { name: "Home", path: "/" },
@@ -33,13 +34,8 @@ const DigiNav = () => {
       <div className="container mx-auto mt-4 px-4">
         <nav className="glass rounded-full flex items-center justify-between pl-6 pr-3 py-2.5">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-gradient-brand grid place-items-center shadow-glow">
-              <span className="font-display font-bold text-base">D</span>
-            </div>
-            <span className="font-display font-semibold text-lg">
-              Digi<span className="text-gradient">formation</span>
-            </span>
+          <Link to="/" className="flex items-center" aria-label="Digiformation home">
+            <img src={logo} alt="Digiformation" className="h-10 md:h-11 w-auto object-contain" />
           </Link>
 
           {/* Desktop links */}
