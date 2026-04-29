@@ -84,12 +84,6 @@ const DigiFooter = () => {
             >
               <MessageCircle className="w-4 h-4" /> WhatsApp Us
             </a>
-            <Link
-              to="/contact"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-full border border-border font-semibold hover:bg-secondary/40 transition"
-            >
-              Get Free Consultation <ArrowRight className="w-4 h-4" />
-            </Link>
           </div>
         </div>
       </div>

@@ -7,18 +7,16 @@ import { toast } from "sonner";
 const schema = z.object({
   name: z.string().trim().min(1, "Name is required").max(100, "Name too long"),
   email: z.string().trim().email("Invalid email").max(255, "Email too long"),
-  message: z.string().trim().max(2000, "Message too long").optional(),
 });
 
 const NewsletterForm = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const parsed = schema.safeParse({ name, email, message: message || undefined });
+    const parsed = schema.safeParse({ name, email });
     if (!parsed.success) {
       toast.error(parsed.error.issues[0].message);
       return;
@@ -29,7 +27,6 @@ const NewsletterForm = () => {
       .insert({
         name: parsed.data.name,
         email: parsed.data.email,
-        message: parsed.data.message ?? null,
       });
     setLoading(false);
     if (error) {
@@ -43,7 +40,6 @@ const NewsletterForm = () => {
     toast.success("Subscribed! Thanks for joining our newsletter.");
     setName("");
     setEmail("");
-    setMessage("");
   };
 
   return (
@@ -71,14 +67,6 @@ const NewsletterForm = () => {
         maxLength={255}
         required
         className="w-full px-4 py-2.5 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-primary text-sm"
-      />
-      <textarea
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Your query or message (optional)"
-        maxLength={2000}
-        rows={3}
-        className="w-full px-4 py-2.5 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-primary text-sm resize-none"
       />
       <button
         type="submit"
