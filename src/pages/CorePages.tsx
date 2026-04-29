@@ -626,13 +626,6 @@ const webDevPackages: DetailPkg[] = [
 
 const pricingSections: PricingSection[] = [
   {
-    title: "Web Development",
-    tag: "Web & E-commerce",
-    intro: "Custom React websites and Shopify stores — from simple landing pages to full-featured platforms.",
-    packages: webDevPackages,
-    cols: 4,
-  },
-  {
     title: "UK Company Formation",
     tag: "UK Formation",
     intro: "All-inclusive UK LTD incorporation packages with Companies House registration.",
