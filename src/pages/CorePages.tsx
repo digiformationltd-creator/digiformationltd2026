@@ -144,14 +144,36 @@ export const Contact = () => {
     return cleanup;
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (website) {
+      // Honeypot triggered — silently succeed
+      setSubmitted(true);
+      return;
+    }
     const result = contactSchema.safeParse(form);
     if (!result.success) {
       toast.error(result.error.issues[0]?.message ?? "Please check the form.");
       return;
     }
     setSubmitting(true);
+
+    // Save to database (non-blocking for UX — log error but still proceed)
+    const { error: dbError } = await supabase.from("contact_submissions").insert({
+      full_name: form.fullName,
+      email: form.email,
+      whatsapp: form.whatsapp,
+      country: form.country,
+      service: form.service,
+      message: form.message,
+      page_path: window.location.pathname,
+      referrer: document.referrer || null,
+      user_agent: navigator.userAgent.slice(0, 500),
+    });
+    if (dbError) {
+      console.error("Failed to save submission:", dbError);
+    }
+
     const text =
       `Hello Digiformation,%0A%0A` +
       `Name: ${encodeURIComponent(form.fullName)}%0A` +
