@@ -113,7 +113,7 @@ const DigiAbout = () => (
 
           <div className="flex flex-wrap gap-3">
             <Button asChild variant="hero" size="lg" className="rounded-full">
-              <Link to="/about">
+              <Link to="/blog/muhammad-haroon-founder-story-digiformation">
                 Read Full Story <ArrowRight className="w-4 h-4" />
               </Link>
             </Button>
