@@ -91,7 +91,7 @@ body p, body span, body li, body label, body small, body div {
 .bg-gradient-brand *,
 .bg-primary *,
 .bg-accent * { color: hsl(var(--primary-foreground)) !important; }
-.logo-card span { color: #1a1d22 !important; }
+.logo-card span { color: #ffffff !important; }
 
 @layer utilities {
   .text-gradient {
@@ -124,7 +124,7 @@ body p, body span, body li, body label, body small, body div {
     background-size: 48px 48px;
   }
 
-  /* Clean white logo card (Trust bar) — lets colorful brand logos pop */
+  /* Jet black logo card (Trust bar) */
   .logo-card {
     width: 170px;
     height: 84px;
@@ -133,18 +133,18 @@ body p, body span, body li, body label, body small, body div {
     position: relative;
     cursor: pointer;
     transition: transform .22s ease, box-shadow .22s ease;
-    background: #ffffff;
+    background: #000000;
     box-shadow:
-      0 4px 14px rgba(0,0,0,0.35),
-      0 12px 32px rgba(0,0,0,0.25);
-    border: 1px solid rgba(255,255,255,0.10);
+      0 4px 14px rgba(0,0,0,0.55),
+      0 12px 32px rgba(0,0,0,0.45);
+    border: 1px solid rgba(255,255,255,0.08);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 14px 20px;
   }
   .logo-card--dark {
-    background: #0f1216;
+    background: #000000;
     border: 1px solid rgba(255,255,255,0.08);
   }
   .logo-card:hover { transform: translateY(-5px) scale(1.04); }
