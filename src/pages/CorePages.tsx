@@ -96,6 +96,7 @@ export const Contact = () => {
     message: "",
   });
   const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     setMeta(
@@ -119,9 +120,12 @@ export const Contact = () => {
       `Country: ${encodeURIComponent(form.country)}%0A` +
       `Service: ${encodeURIComponent(form.service)}%0A%0A` +
       `${encodeURIComponent(form.message)}`;
-    window.open(`https://wa.me/923164467464?text=${text}`, "_blank", "noopener,noreferrer");
-    toast.success("Opening WhatsApp — we'll reply within one business day.");
-    setSubmitting(false);
+    setSubmitted(true);
+    toast.success("Message received — opening WhatsApp…");
+    setTimeout(() => {
+      window.open(`https://wa.me/923164467464?text=${text}`, "_blank", "noopener,noreferrer");
+      setSubmitting(false);
+    }, 2200);
   };
 
   return (
@@ -195,6 +199,18 @@ export const Contact = () => {
           </aside>
 
           {/* Form */}
+          {submitted ? (
+            <div className="lg:col-span-3 glass rounded-2xl p-10 flex flex-col items-center justify-center text-center space-y-4 min-h-[420px]">
+              <div className="w-16 h-16 rounded-full bg-primary/15 flex items-center justify-center">
+                <CheckCircle2 className="w-9 h-9 text-primary" />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold">Thank you, {form.fullName.split(" ")[0] || "there"}!</h2>
+              <p className="opacity-80 max-w-md">
+                Your message has been received. We're opening WhatsApp now so we can confirm your details and reply within one business day.
+              </p>
+              <p className="text-xs opacity-60">Redirecting to WhatsApp…</p>
+            </div>
+          ) : (
           <form onSubmit={handleSubmit} className="lg:col-span-3 glass rounded-2xl p-8 space-y-5">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">Send us a message</h2>
@@ -247,6 +263,7 @@ export const Contact = () => {
               Get Free Consultation <ArrowRight className="w-4 h-4" />
             </Button>
           </form>
+          )}
         </div>
       </section>
     </Layout>
