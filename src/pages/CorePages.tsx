@@ -1112,21 +1112,41 @@ export const WebDevelopment = () => {
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
-        <div className="container mx-auto px-4 py-24 md:py-28 relative">
+        <div className="container mx-auto px-4 py-12 md:py-16 relative">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-3 mb-6">
+            <div className="inline-flex items-center gap-3 mb-4">
               <span className="h-px w-7 bg-primary" />
               <span className="text-xs uppercase tracking-[0.18em] font-semibold">Web Design & Development</span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold leading-[1.02] tracking-tight">
-              Websites designed to <em className="not-italic text-gradient">convert</em>
+            <h1 className="text-4xl md:text-5xl font-bold leading-[1.05] tracking-tight">
+              Websites that <em className="not-italic text-gradient">convert</em>
             </h1>
-            <p className="mt-8 text-lg md:text-xl leading-relaxed opacity-90">
-              Professional websites for your newly-formed UK or US company — built on modern stacks, optimised for SEO and engineered for speed.
+            <p className="mt-4 text-base md:text-lg opacity-90">
+              Fast, modern websites & Shopify stores. Fixed prices, no hidden fees.
             </p>
-            <Button asChild variant="hero" size="lg" className="rounded-full mt-10">
+            <Button asChild variant="hero" size="lg" className="rounded-full mt-6">
               <Link to="/contact">Request a Free Quote <ArrowRight className="w-4 h-4" /></Link>
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Packages */}
+      <section className="py-12 md:py-16 border-t border-border/60">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-[10px] uppercase tracking-[0.22em] opacity-70 font-mono">Packages</span>
+          </div>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Web Development Packages</h2>
+            <p className="opacity-80 max-w-md md:text-right">
+              Pick the package that fits — Shopify stores or custom React websites. Fixed prices, no hidden fees.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {webDevPackages.map((p) => (
+              <PackageCard key={p.name + p.price} p={p} />
+            ))}
           </div>
         </div>
       </section>
@@ -1158,9 +1178,8 @@ export const WebDevelopment = () => {
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight mt-3">Our design process</h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-            {webProcess.map(({ icon: Icon, label }, i) => (
+            {webProcess.map(({ icon: Icon, label }) => (
               <div key={label} className="glass rounded-2xl p-5 text-center">
-                
                 <Icon className="w-6 h-6 text-primary mx-auto mb-2" />
                 <div className="text-sm font-semibold">{label}</div>
               </div>
@@ -1203,26 +1222,6 @@ export const WebDevelopment = () => {
           <div className="flex flex-wrap gap-3">
             {techStack.map((t) => (
               <span key={t} className="glass rounded-full px-5 py-2 text-sm font-semibold">{t}</span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Packages */}
-      <section className="py-20 border-t border-border/60">
-        <div className="container mx-auto px-4 max-w-7xl">
-          <div className="flex items-center gap-3 mb-3">
-            <span className="text-[10px] uppercase tracking-[0.22em] opacity-70 font-mono">Pricing</span>
-          </div>
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Web Development Packages</h2>
-            <p className="opacity-80 max-w-md md:text-right">
-              Choose the package that fits your business — from simple websites to full-featured Shopify stores. All prices fixed, no hidden fees.
-            </p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {webDevPackages.map((p) => (
-              <PackageCard key={p.name + p.price} p={p} />
             ))}
           </div>
         </div>
