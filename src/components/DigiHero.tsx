@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import GlowingEarth from "@/components/GlowingEarth";
 
 const headlines = [
   { pre: "Establish Your", accent: "UK or US", post: "Business in Days" },
@@ -24,6 +25,9 @@ const DigiHero = () => {
       {/* floating orbs — source spec */}
       <div className="absolute -top-32 -left-32 w-[480px] h-[480px] rounded-full bg-primary/20 blur-3xl animate-float" aria-hidden />
       <div className="absolute -bottom-40 -right-20 w-[520px] h-[520px] rounded-full bg-accent/20 blur-3xl animate-float" aria-hidden style={{ animationDelay: "2s" }} />
+
+      {/* Rotating glowing earth — sits behind headline */}
+      <GlowingEarth />
 
       <div className="container mx-auto px-4 py-20 relative z-10 text-center">
         <div className="inline-flex glass rounded-full px-5 py-2 mt-16 md:mt-20 mb-10 animate-fade-up">
