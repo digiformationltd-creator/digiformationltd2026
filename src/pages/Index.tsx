@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import DigiNav from "@/components/DigiNav";
 import DigiHero from "@/components/DigiHero";
+import QuickStartWidget from "@/components/QuickStartWidget";
 import DigiTrustBar from "@/components/DigiTrustBar";
 import DigiServicesSlider from "@/components/DigiServicesSlider";
 import DigiStats from "@/components/DigiStats";
@@ -106,6 +107,7 @@ const Index = () => {
           Digiformation Ltd — UK &amp; US Company Formation &amp; Banking Solutions
         </h1>
         <DigiHero />
+        <QuickStartWidget />
         <DigiTrustBar />
         <DigiStats />
         <DigiServicesSlider />
