@@ -247,6 +247,20 @@ const UKChangeServices = () => {
             <h2 className="text-4xl md:text-5xl font-bold mb-3">Place Your Order</h2>
             <p className="opacity-90">Selected: <span className="font-semibold">{selectedCard.title}</span> — <span className="text-gradient font-bold">{selectedCard.price}</span></p>
           </div>
+          {submitted ? (
+            <div className="glass rounded-3xl p-10 md:p-12 text-center space-y-5">
+              <div className="w-16 h-16 rounded-full bg-primary/15 flex items-center justify-center mx-auto">
+                <CheckCircle2 className="w-9 h-9 text-primary" />
+              </div>
+              <h3 className="text-2xl md:text-3xl font-bold">Thank you{submittedName ? `, ${submittedName}` : ""}!</h3>
+              <p className="opacity-85 max-w-lg mx-auto">
+                Your order for <span className="font-semibold">{selectedCard.title}</span> has been received. Our team will reach out shortly to confirm details and next steps.
+              </p>
+              <Button variant="ghostGlow" className="rounded-full" onClick={() => setSubmitted(false)}>
+                Place another order
+              </Button>
+            </div>
+          ) : (
           <form onSubmit={handleSubmit} className="glass rounded-3xl p-8 md:p-10 space-y-5">
             <div className="grid sm:grid-cols-2 gap-5">
               <input name="firstName" placeholder="First Name" className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none" maxLength={60} required />
@@ -266,6 +280,7 @@ const UKChangeServices = () => {
               Submit Order <ArrowRight className="w-4 h-4" />
             </Button>
           </form>
+          )}
         </div>
       </section>
 
