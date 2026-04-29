@@ -48,7 +48,7 @@ const DigiHero = () => {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-up" style={{ animationDelay: "0.3s" }}>
           <Button asChild variant="hero" size="lg" className="rounded-full">
-            <Link to="/uk-services/uk-ltd-formation#packages">
+            <Link to="/uk-services/uk-ltd-formation/choose-jurisdiction">
               Register Your UK Company <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>

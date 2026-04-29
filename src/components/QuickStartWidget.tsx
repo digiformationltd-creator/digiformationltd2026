@@ -56,7 +56,7 @@ const QuickStartWidget = () => {
     if (tab === "usa" && usState) {
       navigate(`/usa-services/us-llc-formation/choose-state?state=${usState}#packages`);
     } else if (tab === "uk" && ukJur) {
-      navigate(`/uk-services/uk-ltd-formation?jurisdiction=${ukJur}#packages`);
+      navigate(`/uk-services/uk-ltd-formation/choose-jurisdiction?jurisdiction=${ukJur}`);
     }
   };
 

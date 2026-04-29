@@ -11,6 +11,8 @@ import { About, Contact, Pricing, FAQ, ClientArea, WebDevelopment, Privacy, Term
 import BlogIndex from "./pages/BlogIndex";
 import BlogPost from "./pages/BlogPost";
 import UKLtdFormation from "./pages/UKLtdFormation";
+import UkLtdChooseJurisdiction from "./pages/UkLtdChooseJurisdiction";
+import UkLtdCheckout from "./pages/UkLtdCheckout";
 import LtdIdVerification from "./pages/LtdIdVerification";
 import RegisteredOfficeAddress from "./pages/RegisteredOfficeAddress";
 import UtrCodes from "./pages/UtrCodes";
@@ -41,6 +43,8 @@ const App = () => (
           <Route path="/banks-payment-solutions" element={<BankingHub />} />
 
           {/* Dedicated service pages (must come before dynamic route) */}
+          <Route path="/uk-services/uk-ltd-formation/choose-jurisdiction" element={<UkLtdChooseJurisdiction />} />
+          <Route path="/uk-services/uk-ltd-formation/checkout" element={<UkLtdCheckout />} />
           <Route path="/uk-services/uk-ltd-formation" element={<UKLtdFormation />} />
           <Route path="/uk-services/ltd-id-verification" element={<LtdIdVerification />} />
           <Route path="/uk-services/registered-office-address" element={<RegisteredOfficeAddress />} />
