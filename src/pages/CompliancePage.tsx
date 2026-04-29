@@ -145,7 +145,7 @@ const CompliancePage = () => {
             </h3>
             <p className="mt-4 opacity-90">Speak with our specialists today — fast, compliant, and Companies House approved.</p>
             <Button asChild variant="hero" size="lg" className="rounded-full mt-8">
-              <Link to="/contact">Start Your Filing <ArrowRight className="w-4 h-4" /></Link>
+              <Link to={`/contact?service=${encodeURIComponent(page.title)}`}>Start Your Filing <ArrowRight className="w-4 h-4" /></Link>
             </Button>
           </div>
         </div>
