@@ -626,13 +626,6 @@ const webDevPackages: DetailPkg[] = [
 
 const pricingSections: PricingSection[] = [
   {
-    title: "Web Development",
-    tag: "Web & E-commerce",
-    intro: "Custom React websites and Shopify stores — from simple landing pages to full-featured platforms.",
-    packages: webDevPackages,
-    cols: 4,
-  },
-  {
     title: "UK Company Formation",
     tag: "UK Formation",
     intro: "All-inclusive UK LTD incorporation packages with Companies House registration.",
@@ -1207,6 +1200,26 @@ export const WebDevelopment = () => {
           <div className="flex flex-wrap gap-3">
             {techStack.map((t) => (
               <span key={t} className="glass rounded-full px-5 py-2 text-sm font-semibold">{t}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Packages */}
+      <section className="py-20 border-t border-border/60">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-[10px] uppercase tracking-[0.22em] opacity-70 font-mono">Pricing</span>
+          </div>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Web Development Packages</h2>
+            <p className="opacity-80 max-w-md md:text-right">
+              Choose the package that fits your business — from simple websites to full-featured Shopify stores. All prices fixed, no hidden fees.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {webDevPackages.map((p) => (
+              <PackageCard key={p.name + p.price} p={p} />
             ))}
           </div>
         </div>
