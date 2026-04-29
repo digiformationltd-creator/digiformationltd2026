@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { Award, Building2, ShieldCheck, ArrowRight, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import founderImg from "@/assets/founder-haroon.jpg";
-import aboutAccent from "@/assets/premium-about-accent.jpg";
 
 const COMPANIES_HOUSE_URL =
   "https://find-and-update.company-information.service.gov.uk/officers/iIzC9R8zKXH6lyWTWCDaT3_gK4E/appointments";
@@ -15,11 +14,6 @@ const stats = [
 
 const DigiAbout = () => (
   <section className="py-14 md:py-10 relative overflow-hidden">
-    <div
-      aria-hidden
-      className="absolute right-0 top-0 w-1/2 h-full bg-cover bg-center opacity-20 pointer-events-none"
-      style={{ backgroundImage: `url(${aboutAccent})`, maskImage: "linear-gradient(to left, black, transparent)", WebkitMaskImage: "linear-gradient(to left, black, transparent)" }}
-    />
     <div className="absolute inset-0 grid-pattern opacity-20 pointer-events-none" />
     <div className="absolute top-1/3 -left-32 w-[420px] h-[420px] rounded-full bg-primary/10 blur-3xl pointer-events-none" />
 
