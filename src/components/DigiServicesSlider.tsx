@@ -1,18 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronLeft, ChevronRight, Hand } from "lucide-react";
-import iconUkFormation from "@/assets/slider-icon-uk-formation.png";
-import iconIdVerification from "@/assets/slider-icon-id-verification.png";
-import iconCompliance from "@/assets/slider-icon-compliance.png";
-import iconUsLlc from "@/assets/slider-icon-us-llc.png";
-import iconBanking from "@/assets/slider-icon-banking.png";
-import iconAnnualFiling from "@/assets/slider-icon-annual-filing.png";
-import iconWebDev from "@/assets/slider-icon-web-dev.png";
-import iconEin from "@/assets/slider-icon-ein.png";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Hand,
+  Building2,
+  BadgeCheck,
+  ShieldCheck,
+  Landmark,
+  Wallet,
+  FileText,
+  Globe,
+  Hash,
+  type LucideIcon,
+} from "lucide-react";
 
 type Service = {
   num: string;
-  icon: string;
+  icon: LucideIcon;
   category: string;
   title: string;
   desc: string;
@@ -20,14 +25,14 @@ type Service = {
 };
 
 const services: Service[] = [
-  { num: "01", icon: iconUkFormation, category: "UK Formation", title: "UK LTD Company Formation", desc: "Register a UK Limited Company with Companies House. Fast, compliant, managed from anywhere in the world.", href: "/uk-services/uk-ltd-formation" },
-  { num: "02", icon: iconIdVerification, category: "UK Compliance", title: "LTD ID Verification", desc: "Companies House identity verification for directors & PSCs. Secure, fast, and fully DIATF compliant.", href: "/uk-services/ltd-id-verification" },
-  { num: "03", icon: iconCompliance, category: "UK Compliance", title: "Company Compliance Services", desc: "Name change, director updates, address change, SIC code, PSC, shareholders, confirmation statements & more.", href: "/uk-compliance/confirmation-statement" },
-  { num: "04", icon: iconUsLlc, category: "USA Formation", title: "US LLC Formation", desc: "Register a US LLC remotely. Access PayPal, Stripe, Amazon, and the US market without being physically present.", href: "/usa-services/us-llc-formation" },
-  { num: "05", icon: iconBanking, category: "Banking", title: "Banks & Payment Solutions", desc: "Tide, Airwallex, Wise, Payoneer, Stripe, PayPal, WorldFirst, Sunrate, Zyla, Mollie, Wallester & more.", href: "/banks-payment-solutions/stripe" },
-  { num: "06", icon: iconAnnualFiling, category: "UK Compliance", title: "Company Annual Filing", desc: "Confirmation statements, annual accounts filing and all statutory returns submitted to Companies House on time.", href: "/uk-services/company-annual-filing" },
-  { num: "07", icon: iconWebDev, category: "Technology", title: "Web Development", desc: "Professional websites, landing pages, and e-commerce solutions for your UK or US business — concept to launch.", href: "/web-development" },
-  { num: "08", icon: iconEin, category: "USA Services", title: "EIN Number Registration", desc: "Get your US Employer Identification Number (EIN) from the IRS. Required for US business banking and tax compliance.", href: "/usa-services/ein-number" },
+  { num: "01", icon: Building2, category: "UK Formation", title: "UK LTD Company Formation", desc: "Register a UK Limited Company with Companies House. Fast, compliant, managed from anywhere in the world.", href: "/uk-services/uk-ltd-formation" },
+  { num: "02", icon: BadgeCheck, category: "UK Compliance", title: "LTD ID Verification", desc: "Companies House identity verification for directors & PSCs. Secure, fast, and fully DIATF compliant.", href: "/uk-services/ltd-id-verification" },
+  { num: "03", icon: ShieldCheck, category: "UK Compliance", title: "Company Compliance Services", desc: "Name change, director updates, address change, SIC code, PSC, shareholders, confirmation statements & more.", href: "/uk-compliance/confirmation-statement" },
+  { num: "04", icon: Landmark, category: "USA Formation", title: "US LLC Formation", desc: "Register a US LLC remotely. Access PayPal, Stripe, Amazon, and the US market without being physically present.", href: "/usa-services/us-llc-formation" },
+  { num: "05", icon: Wallet, category: "Banking", title: "Banks & Payment Solutions", desc: "Tide, Airwallex, Wise, Payoneer, Stripe, PayPal, WorldFirst, Sunrate, Zyla, Mollie, Wallester & more.", href: "/banks-payment-solutions/stripe" },
+  { num: "06", icon: FileText, category: "UK Compliance", title: "Company Annual Filing", desc: "Confirmation statements, annual accounts filing and all statutory returns submitted to Companies House on time.", href: "/uk-services/company-annual-filing" },
+  { num: "07", icon: Globe, category: "Technology", title: "Web Development", desc: "Professional websites, landing pages, and e-commerce solutions for your UK or US business — concept to launch.", href: "/web-development" },
+  { num: "08", icon: Hash, category: "USA Services", title: "EIN Number Registration", desc: "Get your US Employer Identification Number (EIN) from the IRS. Required for US business banking and tax compliance.", href: "/usa-services/ein-number" },
 ];
 
 const total = services.length;
@@ -162,15 +167,9 @@ const DigiServicesSlider = () => {
                     <span className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent rounded-t-2xl" />
                   )}
 
-                  <img
-                    src={s.icon}
-                    alt=""
-                    aria-hidden="true"
-                    loading="lazy"
-                    width={1024}
-                    height={1024}
-                    className="mb-3 h-16 w-16 md:h-20 md:w-20 object-contain drop-shadow-[0_14px_24px_hsl(var(--primary)/0.18)]"
-                  />
+                  <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-brand grid place-items-center mb-4 shadow-card">
+                    <s.icon className="w-6 h-6 md:w-7 md:h-7" aria-hidden="true" />
+                  </div>
                   <div className="text-[10px] font-semibold uppercase tracking-[0.14em] mb-2 opacity-80">
                     {s.category}
                   </div>
