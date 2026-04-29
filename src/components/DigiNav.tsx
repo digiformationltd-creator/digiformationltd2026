@@ -33,13 +33,13 @@ const DigiNav = () => {
       <div className="container mx-auto mt-4 px-4">
         <nav className="glass rounded-full flex items-center justify-between pl-6 pr-3 py-2.5">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-gradient-brand grid place-items-center shadow-glow">
-              <span className="font-display font-bold text-base">D</span>
-            </div>
-            <span className="font-display font-semibold text-lg">
-              Digi<span className="text-gradient">formation</span>
-            </span>
+          <Link to="/" className="flex items-center gap-2">
+            <img
+              src={new URL("@/assets/digiformation-logo.png", import.meta.url).href}
+              alt="Digiformation"
+              className="h-9 w-auto object-contain"
+            />
+            <span className="font-display font-semibold text-lg sr-only">Digiformation</span>
           </Link>
 
           {/* Desktop links */}
