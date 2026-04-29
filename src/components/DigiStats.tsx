@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import statsBg from "@/assets/stats-bg-companies.jpg";
 
 const stats = [
   { value: 300, suffix: "+", label: "Companies Registered (UK & US)" },
@@ -50,13 +49,8 @@ const StatItem = ({ value, suffix, label, isFirst }: { value: number; suffix: st
 
 const DigiStats = () => (
   <section className="relative py-14 border-y border-border bg-secondary/30 overflow-hidden">
-    {/* Premium background imagery */}
-    <div
-      aria-hidden
-      className="absolute inset-0 bg-cover bg-center opacity-80 pointer-events-none"
-      style={{ backgroundImage: `url(${statsBg})` }}
-    />
-    <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/35 to-background/70 pointer-events-none" />
+    <div className="absolute inset-0 grid-pattern opacity-30 pointer-events-none" />
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-primary/10 blur-3xl pointer-events-none" />
 
     <div className="container mx-auto px-4 relative z-10">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
