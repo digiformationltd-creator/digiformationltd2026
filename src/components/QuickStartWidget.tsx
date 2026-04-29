@@ -164,7 +164,7 @@ const QuickStartWidget = () => {
               onClick={handleStart}
               disabled={!canStart}
             >
-              {tab === "usa" ? "Continue to Checkout" : "View UK Ltd Packages"}{" "}
+              {tab === "usa" ? "View Packages for this State" : "View UK Ltd Packages"}{" "}
               <ArrowRight className="w-4 h-4" />
             </Button>
 
