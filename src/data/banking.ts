@@ -4,11 +4,38 @@ export type BankingProvider = {
   tagline: string;
   description: string;
   features: string[];
+  requirements: string[];
   setupPrice: string;
   metaTitle: string;
   metaDescription: string;
   keywords: string;
 };
+
+// Region helper for requirements
+type Region = "uk" | "usa" | "both";
+
+const buildRequirements = (region: Region): string[] => {
+  const numberLine =
+    region === "uk"
+      ? "UK Number"
+      : region === "usa"
+      ? "USA Number"
+      : "UK / USA Number";
+  return [
+    "Company Name",
+    numberLine,
+    "Email Address",
+    "Residential Home Address",
+    "Residential Bank Statement",
+    "Passport Pictures (holding selfie + picture + live selfie)",
+    "Website",
+    "Business Category",
+  ];
+};
+
+const REQ_UK = buildRequirements("uk");
+const REQ_USA = buildRequirements("usa");
+const REQ_BOTH = buildRequirements("both");
 
 export const bankingProviders: BankingProvider[] = [
   {
@@ -22,6 +49,7 @@ export const bankingProviders: BankingProvider[] = [
       "Buyer & seller protection",
       "Easy integration with e-commerce platforms",
     ],
+    requirements: REQ_UK,
     setupPrice: "£20",
     metaTitle: "PayPal Payment Services | Digiformation Ltd",
     metaDescription: "Accept and send payments worldwide with PayPal. Secure, fast, and reliable online payment solutions for businesses.",
@@ -38,6 +66,7 @@ export const bankingProviders: BankingProvider[] = [
       "Prepaid MasterCard for withdrawals",
       "E-commerce marketplace support",
     ],
+    requirements: REQ_UK,
     setupPrice: "£20",
     metaTitle: "Payoneer Payment Services | Digiformation Ltd",
     metaDescription: "Receive international payments easily with Payoneer. Multi-currency accounts and prepaid cards for global business.",
@@ -54,6 +83,7 @@ export const bankingProviders: BankingProvider[] = [
       "Easy integration with global marketplaces",
       "Safe and reliable transfers",
     ],
+    requirements: REQ_UK,
     setupPrice: "£20",
     metaTitle: "WorldFirst International Transfers | Digiformation Ltd",
     metaDescription: "Send and receive money globally with WorldFirst. Low-cost international transfers for businesses and freelancers.",
@@ -70,6 +100,7 @@ export const bankingProviders: BankingProvider[] = [
       "Fraud protection",
       "API integration for websites",
     ],
+    requirements: REQ_UK,
     setupPrice: "£20",
     metaTitle: "Stripe Payment Gateway | Digiformation Ltd",
     metaDescription: "Accept global payments online with Stripe. Payment gateway for businesses with fraud protection and easy integration.",
@@ -86,6 +117,7 @@ export const bankingProviders: BankingProvider[] = [
       "Expense management",
       "Integrated invoicing",
     ],
+    requirements: REQ_UK,
     setupPrice: "£50",
     metaTitle: "Tide Business Account UK | Digiformation Ltd",
     metaDescription: "Open a Tide business account in the UK. Manage payments, invoices, and expenses with ease.",
@@ -102,6 +134,7 @@ export const bankingProviders: BankingProvider[] = [
       "Competitive exchange rates",
       "API for automation",
     ],
+    requirements: REQ_BOTH,
     setupPrice: "£50",
     metaTitle: "Sunrate Cross-Border Payments | Digiformation Ltd",
     metaDescription: "Fast, secure, and low-cost international payments for businesses with Sunrate. Multi-currency and API support.",
@@ -118,6 +151,7 @@ export const bankingProviders: BankingProvider[] = [
       "International invoicing",
       "Borderless account for global payments",
     ],
+    requirements: REQ_BOTH,
     setupPrice: "£70",
     metaTitle: "Wise (TransferWise) International Payments | Digiformation Ltd",
     metaDescription: "Send and receive money globally with Wise. Transparent, fast, and low-cost international payments for businesses.",
@@ -134,6 +168,7 @@ export const bankingProviders: BankingProvider[] = [
       "Online payment processing",
       "Simple integration",
     ],
+    requirements: REQ_UK,
     setupPrice: "£50",
     metaTitle: "Zyla Payment Solutions | Digiformation Ltd",
     metaDescription: "Fast and secure online payments for SMEs with Zyla. Multi-currency and merchant account support.",
@@ -150,6 +185,7 @@ export const bankingProviders: BankingProvider[] = [
       "Competitive FX rates",
       "Virtual cards for team expenses",
     ],
+    requirements: REQ_USA,
     setupPrice: "£50",
     metaTitle: "Airwallex Global Payments | Digiformation Ltd",
     metaDescription: "Manage international payments and FX with Airwallex. Multi-currency accounts and virtual cards for businesses.",
@@ -166,6 +202,7 @@ export const bankingProviders: BankingProvider[] = [
       "Subscription and recurring payments",
       "Real-time reporting",
     ],
+    requirements: REQ_UK,
     setupPrice: "£50",
     metaTitle: "Mollie Payment Gateway Europe | Digiformation Ltd",
     metaDescription: "Accept online payments in Europe with Mollie. Credit cards, e-wallets, subscriptions, and real-time reporting.",
@@ -183,6 +220,7 @@ export const bankingProviders: BankingProvider[] = [
       "Multi-currency: GBP, USD, EUR",
       "Instant payouts in 195+ countries",
     ],
+    requirements: REQ_UK,
     setupPrice: "£50",
     metaTitle: "ZionPe Payment Platform | Digiformation Ltd",
     metaDescription: "Accept payments, send invoices, and automate subscriptions with ZionPe. Modern payment OS for digital businesses worldwide.",
@@ -200,6 +238,7 @@ export const bankingProviders: BankingProvider[] = [
       "Multi-currency settlement",
       "Operates in 35+ countries",
     ],
+    requirements: REQ_UK,
     setupPrice: "£50",
     metaTitle: "Wallester Visa Card Issuing | Digiformation Ltd",
     metaDescription: "Issue virtual and physical Visa cards instantly with Wallester. API-driven card issuing and payment solutions for businesses.",
@@ -217,9 +256,61 @@ export const bankingProviders: BankingProvider[] = [
       "Card issuing for global spend",
       "Marketplace & e-commerce integrations",
     ],
+    requirements: REQ_USA,
     setupPrice: "£50",
     metaTitle: "PingPong Cross-Border Payments | Digiformation Ltd",
     metaDescription: "Accept and send cross-border payments with PingPong. Multi-currency accounts, FX, and payouts for global businesses and marketplaces.",
     keywords: "PingPong, cross-border payments, multi-currency accounts, marketplace payouts",
+  },
+  {
+    slug: "grey",
+    name: "Grey",
+    tagline: "Borderless banking for freelancers, remote workers, and global businesses.",
+    description: "Receive international payments in USD, GBP, and EUR with foreign accounts, convert to local currency at great rates, and spend globally with virtual cards.",
+    features: [
+      "Foreign currency accounts (USD, GBP, EUR)",
+      "Competitive currency conversion",
+      "Virtual USD cards for global spending",
+      "Fast international transfers",
+    ],
+    requirements: REQ_UK,
+    setupPrice: "£50",
+    metaTitle: "Grey Borderless Banking | Digiformation Ltd",
+    metaDescription: "Open foreign currency accounts with Grey. Receive USD, GBP, EUR payments and spend globally with virtual cards.",
+    keywords: "Grey banking, borderless accounts, freelancer banking, virtual USD card",
+  },
+  {
+    slug: "taptap",
+    name: "TapTap Send",
+    tagline: "Fast, low-cost international money transfers to emerging markets.",
+    description: "Send money internationally with low fees and competitive exchange rates. Trusted by millions for cross-border remittances and business payouts.",
+    features: [
+      "Low-cost international transfers",
+      "Competitive FX rates",
+      "Fast delivery to bank accounts & mobile wallets",
+      "Wide global coverage",
+    ],
+    requirements: REQ_UK,
+    setupPrice: "£50",
+    metaTitle: "TapTap Send International Transfers | Digiformation Ltd",
+    metaDescription: "Send money internationally with TapTap Send. Low fees, competitive FX, and fast delivery for businesses and individuals.",
+    keywords: "TapTap Send, international transfers, remittance, low cost FX",
+  },
+  {
+    slug: "nsave-business",
+    name: "Nsave Business",
+    tagline: "Secure offshore business banking with multi-currency accounts.",
+    description: "Protect and grow your business funds with Nsave Business. Multi-currency accounts in stable jurisdictions, international payments, and dedicated business support.",
+    features: [
+      "Multi-currency business accounts",
+      "Offshore account protection",
+      "International SWIFT payments",
+      "Dedicated business support",
+    ],
+    requirements: REQ_UK,
+    setupPrice: "£50",
+    metaTitle: "Nsave Business Banking | Digiformation Ltd",
+    metaDescription: "Open a Nsave Business account for secure offshore banking. Multi-currency accounts and international payments for global businesses.",
+    keywords: "Nsave Business, offshore business banking, multi-currency account",
   },
 ];

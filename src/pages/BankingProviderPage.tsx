@@ -78,6 +78,22 @@ const BankingProviderPage = () => {
         </div>
       </section>
 
+      <section className="py-20 border-t border-border/60 bg-muted/10">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="text-xs uppercase tracking-[0.18em] opacity-70 mb-3">Application Requirements</div>
+          <h2 className="text-4xl font-bold mb-4">What you'll need to apply</h2>
+          <p className="opacity-80 mb-10 max-w-2xl">Please prepare the following documents and details before starting your {provider.name} application. This helps us complete your setup quickly and without delays.</p>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {provider.requirements.map((r, i) => (
+              <div key={r} className="glass rounded-xl p-5 flex gap-4 items-start">
+                <div className="w-7 h-7 rounded-full bg-gradient-brand grid place-items-center text-xs font-bold flex-shrink-0">{i + 1}</div>
+                <span className="font-medium text-sm leading-relaxed">{r}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section id="apply" className="py-20 bg-muted/20 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-3xl text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">Apply for {provider.name}</h2>
