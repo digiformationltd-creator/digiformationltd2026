@@ -17,6 +17,7 @@ import UKChangeServices from "./pages/UKChangeServices";
 import UsaLlcFormation from "./pages/UsaLlcFormation";
 import UsaServicePage from "./pages/UsaServicePage";
 import BankingProviderPage from "./pages/BankingProviderPage";
+import WhatsAppFloat from "./components/WhatsAppFloat";
 
 const queryClient = new QueryClient();
 
@@ -90,6 +91,7 @@ const App = () => (
 
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <WhatsAppFloat />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
