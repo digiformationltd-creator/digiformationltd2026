@@ -46,13 +46,15 @@ const DigiTrustBar = () => {
           {loop.map((p, i) => (
             <div key={i} className="logo-card" title={p.name}>
               {p.logo ? (
-                <img
-                  src={p.logo}
-                  alt={`${p.name} logo`}
-                  loading="lazy"
-                  className={`object-contain ${p.name === "WorldFirst" ? "h-24 w-[200px]" : "h-16 w-[150px]"}`}
-                  style={p.whiten ? { filter: "brightness(0) invert(1)" } : undefined}
-                />
+                <div className={p.lightBg ? "bg-white rounded-md px-3 py-2 flex items-center justify-center" : "flex items-center justify-center"}>
+                  <img
+                    src={p.logo}
+                    alt={`${p.name} logo`}
+                    loading="lazy"
+                    className={`object-contain ${p.name === "WorldFirst" ? "h-24 w-[200px]" : "h-16 w-[150px]"}`}
+                    style={p.whiten ? { filter: "brightness(0) invert(1)" } : undefined}
+                  />
+                </div>
               ) : (
                 <span>{p.name}</span>
               )}
