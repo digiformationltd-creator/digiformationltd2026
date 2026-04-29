@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Award, Building2, ShieldCheck, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import founderImg from "@/assets/founder-haroon.png";
+import founderImg from "@/assets/founder-haroon.jpg";
 
 const stats = [
   { icon: Building2, value: "71+", label: "UK Companies Registered Under His Name" },
