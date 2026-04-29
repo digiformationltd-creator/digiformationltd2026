@@ -1,5 +1,6 @@
 import { Zap, Eye, ShieldCheck, Globe2, Headphones, Award } from "lucide-react";
 import whyBg from "@/assets/premium-why-choose-bg.jpg";
+import GlowingEarth from "@/components/GlowingEarth";
 
 const reasons = [
   { icon: Zap, title: "Speed & Efficiency", desc: "Quick UK & US company formation and compliance — most setups completed within days." },
@@ -20,6 +21,9 @@ const DigiWhyChoose = () => (
     <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-background/85 via-background/70 to-background/90 pointer-events-none" />
     <div className="absolute inset-0 grid-pattern opacity-20 pointer-events-none" />
     <div className="absolute -left-40 top-1/3 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl" />
+
+    {/* Glowing rotating earth behind the content */}
+    <GlowingEarth />
 
     <div className="container mx-auto px-4 relative z-10">
       <div className="text-center max-w-3xl mx-auto mb-16">
