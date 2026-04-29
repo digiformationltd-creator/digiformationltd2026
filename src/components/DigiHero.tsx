@@ -53,7 +53,7 @@ const DigiHero = () => {
             </Link>
           </Button>
           <Button asChild variant="hero" size="lg" className="rounded-full">
-            <Link to="/usa-services/us-llc-formation#packages">
+            <Link to="/usa-services/us-llc-formation/choose-state">
               Register Your USA Company <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
