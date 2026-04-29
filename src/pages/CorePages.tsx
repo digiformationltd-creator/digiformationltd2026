@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import {
   ArrowRight,
   CheckCircle2,
@@ -101,6 +102,7 @@ export const Contact = () => {
     service: "",
     message: "",
   });
+  const [website, setWebsite] = useState(""); // honeypot
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -109,20 +111,69 @@ export const Contact = () => {
       "Contact Digiformation Ltd – UK Company Formation & Business Services",
       "Contact Digiformation Ltd for UK LTD & LLC formation, address services, ID verification and annual compliance. Reach us via email, WhatsApp or our inquiry form."
     );
-    // Pre-fill service from query string e.g. /contact?service=PayPal
+    const cleanup = injectJsonLd("contact-page-schema", {
+      "@context": "https://schema.org",
+      "@type": "ContactPage",
+      name: "Contact Digiformation Ltd",
+      url: "https://digiformation.uk/contact",
+      mainEntity: {
+        "@type": "Organization",
+        name: "Digiformation Ltd",
+        email: "Info@digiformation.uk",
+        telephone: "+92-316-446-7464",
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "Office 1006, 85 Dunstall Hill",
+          addressLocality: "Wolverhampton",
+          postalCode: "WV6 0SR",
+          addressCountry: "GB",
+        },
+        contactPoint: [{
+          "@type": "ContactPoint",
+          contactType: "customer support",
+          email: "Info@digiformation.uk",
+          telephone: "+92-316-446-7464",
+          availableLanguage: ["English", "Urdu"],
+          areaServed: ["GB", "US", "PK", "Worldwide"],
+        }],
+      },
+    });
     const params = new URLSearchParams(window.location.search);
     const svc = params.get("service");
     if (svc) setForm((f) => ({ ...f, service: svc }));
+    return cleanup;
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (website) {
+      // Honeypot triggered — silently succeed
+      setSubmitted(true);
+      return;
+    }
     const result = contactSchema.safeParse(form);
     if (!result.success) {
       toast.error(result.error.issues[0]?.message ?? "Please check the form.");
       return;
     }
     setSubmitting(true);
+
+    // Save to database (non-blocking for UX — log error but still proceed)
+    const { error: dbError } = await supabase.from("contact_submissions").insert({
+      full_name: form.fullName,
+      email: form.email,
+      whatsapp: form.whatsapp,
+      country: form.country,
+      service: form.service,
+      message: form.message,
+      page_path: window.location.pathname,
+      referrer: document.referrer || null,
+      user_agent: navigator.userAgent.slice(0, 500),
+    });
+    if (dbError) {
+      console.error("Failed to save submission:", dbError);
+    }
+
     const text =
       `Hello Digiformation,%0A%0A` +
       `Name: ${encodeURIComponent(form.fullName)}%0A` +
@@ -168,16 +219,33 @@ export const Contact = () => {
               <Mail className="w-6 h-6 text-primary mt-1" />
               <div>
                 <div className="text-[10px] uppercase tracking-[0.18em] mb-1 opacity-80">Business Email</div>
-                <div className="font-display text-xl font-semibold">Info@digiformation.uk</div>
+                <div className="font-display text-xl font-semibold break-all">Info@digiformation.uk</div>
+                <div className="mt-1.5 text-[11px] opacity-70">Replies within 1 business day · We speak English & Urdu</div>
               </div>
             </a>
-            <a href="https://wa.me/923164467464" target="_blank" rel="noopener noreferrer" className="glass rounded-2xl p-7 flex gap-4 hover:-translate-y-1 transition-transform">
+            <div className="glass rounded-2xl p-7 flex gap-4">
               <MessageCircle className="w-6 h-6 text-primary mt-1" />
-              <div>
-                <div className="text-[10px] uppercase tracking-[0.18em] mb-1 opacity-80">WhatsApp (Fast Support)</div>
+              <div className="flex-1">
+                <div className="text-[10px] uppercase tracking-[0.18em] mb-1 opacity-80">WhatsApp / Phone (Fast Support)</div>
                 <div className="font-display text-xl font-semibold">+92 316 446 7464</div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <a
+                    href="https://wa.me/923164467464"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] uppercase tracking-widest px-3 py-1.5 rounded-full bg-primary/15 text-primary hover:bg-primary/25 transition"
+                  >
+                    💬 WhatsApp
+                  </a>
+                  <a
+                    href="tel:+923164467464"
+                    className="text-[11px] uppercase tracking-widest px-3 py-1.5 rounded-full bg-primary/15 text-primary hover:bg-primary/25 transition"
+                  >
+                    📞 Call
+                  </a>
+                </div>
               </div>
-            </a>
+            </div>
             <div className="glass rounded-2xl p-7 flex gap-4">
               <Clock className="w-6 h-6 text-primary mt-1" />
               <div>
@@ -333,11 +401,55 @@ export const Contact = () => {
               <Textarea id="message" rows={5} maxLength={1500} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} required />
             </div>
 
+            {/* Honeypot — hidden from real users, bots fill it */}
+            <div aria-hidden="true" className="absolute left-[-9999px] w-px h-px overflow-hidden">
+              <Label htmlFor="website">Website</Label>
+              <Input
+                id="website"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+              />
+            </div>
+
             <Button type="submit" variant="hero" size="lg" className="rounded-full w-full sm:w-auto" disabled={submitting}>
-              Get Free Consultation <ArrowRight className="w-4 h-4" />
+              {submitting ? "Sending…" : "Get Free Consultation"} <ArrowRight className="w-4 h-4" />
             </Button>
+
+            <p className="text-[11px] opacity-70 leading-relaxed pt-1">
+              By submitting this form, you agree to our{" "}
+              <Link to="/privacy-policy" className="text-primary hover:underline">Privacy Policy</Link>.
+              Your details are stored securely and never shared with third parties.
+            </p>
           </form>
           )}
+        </div>
+      </section>
+
+      {/* Embedded UK Office Map */}
+      <section className="py-12 bg-secondary/10">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="text-center mb-6">
+            <div className="text-[10px] uppercase tracking-[0.18em] mb-2 opacity-80">Visit Us</div>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Our UK Registered Office</h2>
+            <p className="opacity-80 mt-2 text-sm md:text-base">
+              Office 1006, 85 Dunstall Hill, Wolverhampton, WV6 0SR, United Kingdom
+            </p>
+          </div>
+          <div className="rounded-2xl overflow-hidden border border-border shadow-lg">
+            <iframe
+              title="Digiformation Ltd — UK Office, Wolverhampton"
+              src="https://www.google.com/maps?q=85+Dunstall+Hill,+Wolverhampton,+WV6+0SR,+United+Kingdom&output=embed"
+              width="100%"
+              height="380"
+              style={{ border: 0 }}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+            />
+          </div>
         </div>
       </section>
     </Layout>
