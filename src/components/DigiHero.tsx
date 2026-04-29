@@ -26,7 +26,7 @@ const DigiHero = () => {
       <div className="absolute -bottom-40 -right-20 w-[520px] h-[520px] rounded-full bg-accent/20 blur-3xl animate-float" aria-hidden style={{ animationDelay: "2s" }} />
 
       <div className="container mx-auto px-4 py-20 relative z-10 text-center">
-        <div className="inline-flex glass rounded-full px-5 py-2 mb-10 animate-fade-up">
+        <div className="inline-flex glass rounded-full px-5 py-2 mt-16 md:mt-20 mb-10 animate-fade-up">
           <span className="text-[11px] uppercase tracking-widest">UK & US Company Formation • Banking • Compliance</span>
         </div>
 
