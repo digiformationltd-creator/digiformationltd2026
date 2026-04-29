@@ -545,7 +545,93 @@ const bankingPackages: DetailPkg[] = bankingProviders.map((b, i) => ({
   link: `/banks-payment-solutions/${b.slug}`,
 }));
 
+// Web Development Packages
+const webDevPackages: DetailPkg[] = [
+  {
+    name: "Basic",
+    price: "£60",
+    note: "Website Package",
+    tone: "from-emerald-500/20 to-emerald-500/5",
+    ring: "ring-emerald-500/40",
+    features: [
+      "4-page React website (Home, About, Services, Contact)",
+      "Basic logo design with 1 revision",
+      "Mobile-responsive design",
+      "Basic contact form",
+      "Social media links integration",
+      "Free hosting setup (Netlify/Vercel)",
+      "14 days post-launch support",
+    ],
+  },
+  {
+    name: "Standard",
+    price: "£120",
+    badge: "Most Popular",
+    note: "Website Package",
+    tone: "from-sky-500/25 to-sky-500/5",
+    ring: "ring-sky-400/60",
+    features: [
+      "6-page React website",
+      "Enhanced logo design (2 concepts, 3 revisions)",
+      "Professional color scheme and typography",
+      "Smooth animations and transitions",
+      "Newsletter signup form",
+      "Image gallery or portfolio section",
+      "Google Analytics integration",
+      "Basic SEO optimization with meta tags",
+      "Advanced contact form with validation",
+      "SSL certificate setup + Premium hosting setup",
+      "30 days post-launch support, minor updates",
+    ],
+  },
+  {
+    name: "Premium",
+    price: "£300",
+    note: "Website Package",
+    tone: "from-amber-400/25 to-amber-400/5",
+    ring: "ring-amber-400/60",
+    features: [
+      "10-page React website",
+      "Comprehensive logo package (3 concepts, unlimited revisions)",
+      "Complete brand style guide",
+      "Advanced animations and interactive elements",
+      "CMS integration for easy content updates",
+      "Full blog functionality with categories and tags",
+      "Booking/appointment system integration",
+      "Customer testimonials section with carousel",
+      "FAQ section with accordion + Social media integration",
+      "Third-party integrations (Mailchimp, Google Maps, social feeds)",
+      "Advanced SEO, schema markup and sitemap + Contact form with file upload",
+      "Performance optimization + 60 days post-launch support",
+    ],
+  },
+  {
+    name: "Shopify Store",
+    price: "£30",
+    note: "E-commerce Setup",
+    tone: "from-rose-500/25 to-rose-500/5",
+    ring: "ring-rose-400/60",
+    features: [
+      "Shopify store setup & configuration",
+      "Theme installation & customization",
+      "Product upload (up to 20 products)",
+      "Payment gateway integration",
+      "Shipping & tax configuration",
+      "Mobile-responsive storefront",
+      "Basic SEO setup",
+      "Launch support & training",
+    ],
+  },
+];
+
 const pricingSections: PricingSection[] = [
+  {
+    title: "Web Development",
+    tag: "Web & E-commerce",
+    intro: "Custom React websites and Shopify stores — from simple landing pages to full-featured platforms.",
+    packages: webDevPackages,
+    cols: 4,
+  },
   {
     title: "UK Company Formation",
     tag: "UK Formation",
