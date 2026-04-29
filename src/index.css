@@ -124,10 +124,10 @@ body p, body span, body li, body label, body small, body div {
     background-size: 48px 48px;
   }
 
-  /* Polished silver logo card (Trust bar) */
+  /* Polished dark logo card (Trust bar) */
   .logo-card {
-    width: 140px;
-    height: 78px;
+    width: 180px;
+    height: 96px;
     flex-shrink: 0;
     border-radius: 20px;
     position: relative;
