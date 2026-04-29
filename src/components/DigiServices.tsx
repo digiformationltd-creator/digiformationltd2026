@@ -1,13 +1,49 @@
 import { Link } from "react-router-dom";
-import { Building2, ShieldCheck, Landmark, Code2, FileCheck, Globe2 } from "lucide-react";
+import { Building2, Flag, Landmark, CreditCard, Code2, Package } from "lucide-react";
 
 const items = [
-  { icon: Building2, title: "Company Formation", desc: "UK Ltd & US LLC formation handled end-to-end with full compliance.", href: "/uk-services/uk-ltd-formation" },
-  { icon: ShieldCheck, title: "Identity & Verification", desc: "DIATF-compliant ID verification for directors, PSCs and shareholders.", href: "/uk-services/ltd-id-verification" },
-  { icon: Landmark, title: "Banking & Payments", desc: "Stripe, PayPal, Wise, Tide, Airwallex and 9 more global gateways.", href: "/banks-payment-solutions/stripe" },
-  { icon: FileCheck, title: "Annual Compliance", desc: "Annual accounts, confirmation statements and statutory filings.", href: "/uk-compliance/annual-accounts-filing" },
-  { icon: Globe2, title: "USA Tax Services", desc: "EIN, ITIN, BIO reports and annual tax filing for non-US founders.", href: "/usa-services/ein-number" },
-  { icon: Code2, title: "Web Development", desc: "Conversion-focused websites and e-commerce builds for your brand.", href: "/web-development" },
+  {
+    icon: Building2,
+    title: "UK LTD Formation",
+    desc: "Establish your UK Limited Company with Companies House, including UTR, Registered Office, and full compliance support.",
+    cta: "Learn More",
+    href: "/uk-services/uk-ltd-formation",
+  },
+  {
+    icon: Flag,
+    title: "US LLC Formation",
+    desc: "Start a compliant US LLC in any state, complete with EIN, ITIN (if applicable), registered agent, and BIO report.",
+    cta: "Learn More",
+    href: "/usa-services/us-llc-formation",
+  },
+  {
+    icon: Landmark,
+    title: "Business Banking Solutions",
+    desc: "Activate multi-currency business accounts with Tide, Sunrate, WorldFirst, Wise, and more — fast and fully verified.",
+    cta: "Learn More",
+    href: "/banks-payment-solutions/tide",
+  },
+  {
+    icon: CreditCard,
+    title: "Payment Gateway Setup",
+    desc: "Start accepting payments worldwide using Stripe, PayPal, and Mollie. Verified merchant accounts ready for your business.",
+    cta: "Get Started",
+    href: "/banks-payment-solutions/stripe",
+  },
+  {
+    icon: Code2,
+    title: "Web Development Services",
+    desc: "Establish your online presence with custom websites and landing pages, fully SEO-ready and business-ready.",
+    cta: "Learn More",
+    href: "/web-development",
+  },
+  {
+    icon: Package,
+    title: "UK Shelf Companies",
+    desc: "Acquire ready-made UK shelf companies for instant ownership transfer, banking history, and faster market entry.",
+    cta: "Learn More",
+    href: "/uk-services",
+  },
 ];
 
 const DigiServices = () => (
@@ -17,24 +53,32 @@ const DigiServices = () => (
       <div className="text-center max-w-3xl mx-auto mb-16">
         <div className="inline-flex items-center gap-3 mb-5">
           <span className="h-px w-7 bg-primary" />
-          <span className="text-xs uppercase tracking-[0.18em] font-semibold">Our Services</span>
+          <span className="text-xs uppercase tracking-[0.18em] font-semibold">Services Overview</span>
           <span className="h-px w-7 bg-primary" />
         </div>
         <h2 className="text-4xl md:text-5xl font-bold leading-tight">
-          Built for founders who <em className="not-italic text-gradient">move fast</em>
+          Everything to launch &amp; run your <em className="not-italic text-gradient">global business</em>
         </h2>
-        <p className="text-lg mt-5 opacity-90">From day-one formation to year-round compliance — every service you need to operate globally, in one trusted place.</p>
+        <p className="text-lg mt-5 opacity-90">
+          From day-one formation to year-round compliance — every service you need to operate globally, in one trusted place.
+        </p>
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {items.map((it) => (
-          <Link key={it.title} to={it.href} className="glass rounded-2xl p-7 hover:-translate-y-1 hover:shadow-elegant transition-all duration-300 block group">
+          <article key={it.title} className="glass rounded-2xl p-7 hover:-translate-y-1 hover:shadow-elegant transition-all duration-300 flex flex-col">
             <div className="w-12 h-12 rounded-xl bg-gradient-brand grid place-items-center mb-5 shadow-card">
               <it.icon className="w-5 h-5" />
             </div>
-            <h3 className="font-display text-xl font-semibold mb-2 group-hover:text-gradient transition">{it.title}</h3>
-            <p className="text-sm leading-relaxed opacity-90">{it.desc}</p>
-          </Link>
+            <h3 className="font-display text-xl font-semibold mb-2">{it.title}</h3>
+            <p className="text-sm leading-relaxed opacity-90 flex-1">{it.desc}</p>
+            <Link
+              to={it.href}
+              className="inline-flex items-center gap-2 mt-5 text-xs font-semibold uppercase tracking-[0.12em] hover:gap-3 transition-all"
+            >
+              {it.cta} →
+            </Link>
+          </article>
         ))}
       </div>
     </div>
