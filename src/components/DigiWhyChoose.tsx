@@ -1,4 +1,5 @@
 import { Zap, Eye, ShieldCheck, Globe2, Headphones, Award } from "lucide-react";
+import whyBg from "@/assets/premium-why-choose-bg.jpg";
 
 const reasons = [
   { icon: Zap, title: "Speed & Efficiency", desc: "Quick UK & US company formation and compliance — most setups completed within days." },
@@ -11,6 +12,12 @@ const reasons = [
 
 const DigiWhyChoose = () => (
   <section className="py-14 md:py-20 relative overflow-hidden">
+    <div
+      aria-hidden
+      className="absolute inset-0 bg-cover bg-center opacity-25 pointer-events-none"
+      style={{ backgroundImage: `url(${whyBg})` }}
+    />
+    <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-background/85 via-background/70 to-background/90 pointer-events-none" />
     <div className="absolute inset-0 grid-pattern opacity-20 pointer-events-none" />
     <div className="absolute -left-40 top-1/3 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl" />
 
