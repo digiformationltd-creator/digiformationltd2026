@@ -57,7 +57,7 @@ const DigiFooter = () => {
           </div>
           <div className="flex flex-wrap gap-3">
             <a
-              href="https://wa.me/921644674644"
+              href="https://wa.me/923164467464"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90 transition"
@@ -127,7 +127,7 @@ const DigiFooter = () => {
             <li className="flex items-start gap-3">
               <MessageCircle className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
               <a
-                href="https://wa.me/921644674644"
+                href="https://wa.me/923164467464"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-primary transition"
