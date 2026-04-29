@@ -36,6 +36,7 @@ import {
 import { toast } from "sonner";
 import { z } from "zod";
 import { compliancePages } from "@/data/compliance";
+import { bankingProviders } from "@/data/banking";
 
 /* ---------- helpers ---------- */
 const setMeta = (title: string, description: string) => {
