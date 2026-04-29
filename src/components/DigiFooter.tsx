@@ -38,7 +38,7 @@ const DigiFooter = () => {
   };
 
   return (
-    <footer className="border-t border-border bg-secondary/20">
+    <footer className="border-t border-border bg-secondary/20 text-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
@@ -77,9 +77,9 @@ const DigiFooter = () => {
       {/* Main grid */}
       <div className="container mx-auto px-4 py-14 grid gap-10 md:grid-cols-2 lg:grid-cols-4">
         {/* Brand */}
-        <div>
-          <img src={logo} alt="Digiformation Ltd" className="h-28 w-auto object-contain mb-4" />
-          <p className="text-sm opacity-80 leading-relaxed">
+        <div className="flex flex-col -mt-4">
+          <img src={logo} alt="Digiformation Ltd" className="h-32 w-auto object-contain mb-4 -ml-2" />
+          <p className="text-sm text-white/80 leading-relaxed">
             Digiformation Ltd helps you start, manage and grow your business in the UK and USA —
             company formation, address services, compliance and more.
           </p>
