@@ -142,8 +142,13 @@ const UKChangeServices = () => {
       toast({ title: "Please check your details", description: result.error.errors[0]?.message, variant: "destructive" });
       return;
     }
+    setSubmittedName(String(data.firstName || ""));
+    setSubmitted(true);
     toast({ title: "Order received", description: `We'll be in touch about your "${selectedCard.title}" request.` });
     (e.target as HTMLFormElement).reset();
+    setTimeout(() => {
+      document.getElementById("order-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
   };
 
   return (
