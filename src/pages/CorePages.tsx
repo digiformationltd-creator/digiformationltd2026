@@ -26,6 +26,11 @@ import {
   Instagram,
   Youtube,
   Linkedin,
+  ShieldCheck,
+  Globe,
+  Quote,
+  Star,
+  Lock,
 } from "lucide-react";
 import SimplePage from "@/components/SimplePage";
 import Layout from "@/components/layout/Layout";
@@ -275,8 +280,16 @@ export const Contact = () => {
               </div>
             </a>
 
-            <a
-              href="https://find-and-update.company-information.service.gov.uk/company/16994903"
+            <div className="glass rounded-2xl p-7 flex gap-4">
+              <Globe className="w-6 h-6 text-primary mt-1" />
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.18em] mb-1 opacity-80">Pakistan Operations Office</div>
+                <div className="font-display text-base font-semibold leading-relaxed">
+                  Lahore, Punjab,<br />Pakistan
+                </div>
+                <div className="text-xs opacity-80 mt-1">Reach us via WhatsApp or email — same team, same fast support.</div>
+              </div>
+            </div>
               target="_blank"
               rel="noopener noreferrer"
               className="glass rounded-2xl p-7 flex gap-4 hover:-translate-y-1 transition-transform"
