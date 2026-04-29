@@ -77,7 +77,7 @@ const CompliancePage = () => {
             <p className="mt-8 text-lg md:text-xl leading-relaxed max-w-2xl opacity-90">{page.description}</p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 items-start sm:items-center">
               <Button asChild variant="hero" size="lg" className="rounded-full">
-                <Link to="/contact">Get Started — {page.price} <ArrowRight className="w-4 h-4" /></Link>
+                <Link to={`/contact?service=${encodeURIComponent(page.title)}`}>Get Started — {page.price} <ArrowRight className="w-4 h-4" /></Link>
               </Button>
               <Button asChild variant="ghostGlow" size="lg" className="rounded-full">
                 <Link to="/uk-compliance">All Compliance Services</Link>
@@ -145,7 +145,7 @@ const CompliancePage = () => {
             </h3>
             <p className="mt-4 opacity-90">Speak with our specialists today — fast, compliant, and Companies House approved.</p>
             <Button asChild variant="hero" size="lg" className="rounded-full mt-8">
-              <Link to="/contact">Start Your Filing <ArrowRight className="w-4 h-4" /></Link>
+              <Link to={`/contact?service=${encodeURIComponent(page.title)}`}>Start Your Filing <ArrowRight className="w-4 h-4" /></Link>
             </Button>
           </div>
         </div>

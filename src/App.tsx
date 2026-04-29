@@ -7,7 +7,9 @@ import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import { DynamicServicePage } from "./pages/DynamicServicePage";
 import { UKServicesHub, UKComplianceHub, USAServicesHub, BankingHub } from "./pages/SectionHubs";
-import { About, Contact, Pricing, FAQ, Blog, ClientArea, WebDevelopment, Privacy, Terms } from "./pages/CorePages";
+import { About, Contact, Pricing, FAQ, ClientArea, WebDevelopment, Privacy, Terms } from "./pages/CorePages";
+import BlogIndex from "./pages/BlogIndex";
+import BlogPost from "./pages/BlogPost";
 import UKLtdFormation from "./pages/UKLtdFormation";
 import LtdIdVerification from "./pages/LtdIdVerification";
 import RegisteredOfficeAddress from "./pages/RegisteredOfficeAddress";
@@ -85,7 +87,8 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/faq" element={<FAQ />} />
-          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog" element={<BlogIndex />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/privacy-policy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
 

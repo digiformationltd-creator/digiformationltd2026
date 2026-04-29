@@ -8,6 +8,7 @@ type ServicePageProps = {
   title: string;
   description: string;
   highlights?: string[];
+  contactService?: string;
   children?: React.ReactNode;
 };
 
@@ -17,7 +18,8 @@ const splitTitle = (t: string) => {
   return { lead: parts.slice(0, -2).join(" "), accent: parts.slice(-2).join(" ") };
 };
 
-const ServicePage = ({ eyebrow, title, description, highlights, children }: ServicePageProps) => {
+const ServicePage = ({ eyebrow, title, description, highlights, contactService, children }: ServicePageProps) => {
+  const contactHref = contactService ? `/contact?service=${encodeURIComponent(contactService)}` : "/contact";
   const { lead, accent } = splitTitle(title);
   const items = highlights ?? [
     "Fully managed end-to-end process",
@@ -44,7 +46,7 @@ const ServicePage = ({ eyebrow, title, description, highlights, children }: Serv
             <p className="mt-8 text-lg md:text-xl leading-relaxed max-w-2xl opacity-90">{description}</p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <Button asChild variant="hero" size="lg" className="rounded-full">
-                <Link to="/contact">Get Started <ArrowRight className="w-4 h-4" /></Link>
+                <Link to={contactHref}>Get Started <ArrowRight className="w-4 h-4" /></Link>
               </Button>
               <Button asChild variant="ghostGlow" size="lg" className="rounded-full">
                 <Link to="/pricing">View Pricing</Link>
@@ -100,7 +102,7 @@ const ServicePage = ({ eyebrow, title, description, highlights, children }: Serv
             </h3>
             <p className="mt-4 opacity-90">Speak with our specialists today — it's free and there's no obligation.</p>
             <Button asChild variant="hero" size="lg" className="rounded-full mt-8">
-              <Link to="/contact">Book Free Consultation <ArrowRight className="w-4 h-4" /></Link>
+              <Link to={contactHref}>Book Free Consultation <ArrowRight className="w-4 h-4" /></Link>
             </Button>
           </div>
         </div>

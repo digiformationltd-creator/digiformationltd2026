@@ -103,6 +103,10 @@ export const Contact = () => {
       "Contact Digiformation Ltd – UK Company Formation & Business Services",
       "Contact Digiformation Ltd for UK LTD & LLC formation, address services, ID verification and annual compliance. Reach us via email, WhatsApp or our inquiry form."
     );
+    // Pre-fill service from query string e.g. /contact?service=PayPal
+    const params = new URLSearchParams(window.location.search);
+    const svc = params.get("service");
+    if (svc) setForm((f) => ({ ...f, service: svc }));
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -225,14 +229,36 @@ export const Contact = () => {
                 <SelectTrigger id="service"><SelectValue placeholder="Choose a service" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="UK LTD Formation">UK LTD Formation</SelectItem>
-                  <SelectItem value="LLC Formation">USA LLC Formation</SelectItem>
+                  <SelectItem value="USA LLC Formation">USA LLC Formation</SelectItem>
                   <SelectItem value="Address Services">Address Services</SelectItem>
                   <SelectItem value="ID Verification">ID Verification</SelectItem>
                   <SelectItem value="Annual Filing">Annual Filing</SelectItem>
                   <SelectItem value="Company Changes">Company Changes</SelectItem>
-                  <SelectItem value="Banking & Payments">Banking & Payments</SelectItem>
+                  <SelectItem value="UTR / EIN / ITIN">UTR / EIN / ITIN</SelectItem>
+                  <SelectItem value="PayPal">PayPal Account</SelectItem>
+                  <SelectItem value="Payoneer">Payoneer Account</SelectItem>
+                  <SelectItem value="Stripe">Stripe Account</SelectItem>
+                  <SelectItem value="Wise">Wise Account</SelectItem>
+                  <SelectItem value="WorldFirst">WorldFirst Account</SelectItem>
+                  <SelectItem value="Tide">Tide Business Account</SelectItem>
+                  <SelectItem value="Airwallex">Airwallex Account</SelectItem>
+                  <SelectItem value="PingPong">PingPong Account</SelectItem>
+                  <SelectItem value="Mollie">Mollie Account</SelectItem>
+                  <SelectItem value="Wallester">Wallester Cards</SelectItem>
+                  <SelectItem value="Sunrate">Sunrate Account</SelectItem>
+                  <SelectItem value="ZionPe">ZionPe Account</SelectItem>
+                  <SelectItem value="Banking & Payments">Other Banking & Payments</SelectItem>
                   <SelectItem value="Web Development">Web Development</SelectItem>
                   <SelectItem value="Other">Other</SelectItem>
+                  {form.service &&
+                    ![
+                      "UK LTD Formation","USA LLC Formation","Address Services","ID Verification","Annual Filing",
+                      "Company Changes","UTR / EIN / ITIN","PayPal","Payoneer","Stripe","Wise","WorldFirst","Tide",
+                      "Airwallex","PingPong","Mollie","Wallester","Sunrate","ZionPe","Banking & Payments",
+                      "Web Development","Other",
+                    ].includes(form.service) && (
+                      <SelectItem value={form.service}>{form.service}</SelectItem>
+                    )}
                 </SelectContent>
               </Select>
             </div>
