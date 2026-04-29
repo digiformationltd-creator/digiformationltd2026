@@ -30,7 +30,7 @@ const DigiHero = () => {
       <GlowingEarth />
 
       <div className="container mx-auto px-4 py-20 relative z-10 text-center">
-        <div className="inline-flex glass rounded-full px-5 py-2 mt-16 md:mt-20 mb-10 animate-fade-up">
+        <div className="inline-flex glass rounded-full px-5 py-2 mt-10 md:mt-20 mb-10 animate-fade-up">
           <span className="text-[11px] uppercase tracking-widest">UK & US Company Formation • Banking • Compliance</span>
         </div>
 
