@@ -401,11 +401,55 @@ export const Contact = () => {
               <Textarea id="message" rows={5} maxLength={1500} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} required />
             </div>
 
+            {/* Honeypot — hidden from real users, bots fill it */}
+            <div aria-hidden="true" className="absolute left-[-9999px] w-px h-px overflow-hidden">
+              <Label htmlFor="website">Website</Label>
+              <Input
+                id="website"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+              />
+            </div>
+
             <Button type="submit" variant="hero" size="lg" className="rounded-full w-full sm:w-auto" disabled={submitting}>
-              Get Free Consultation <ArrowRight className="w-4 h-4" />
+              {submitting ? "Sending…" : "Get Free Consultation"} <ArrowRight className="w-4 h-4" />
             </Button>
+
+            <p className="text-[11px] opacity-70 leading-relaxed pt-1">
+              By submitting this form, you agree to our{" "}
+              <Link to="/privacy-policy" className="text-primary hover:underline">Privacy Policy</Link>.
+              Your details are stored securely and never shared with third parties.
+            </p>
           </form>
           )}
+        </div>
+      </section>
+
+      {/* Embedded UK Office Map */}
+      <section className="py-12 bg-secondary/10">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="text-center mb-6">
+            <div className="text-[10px] uppercase tracking-[0.18em] mb-2 opacity-80">Visit Us</div>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Our UK Registered Office</h2>
+            <p className="opacity-80 mt-2 text-sm md:text-base">
+              Office 1006, 85 Dunstall Hill, Wolverhampton, WV6 0SR, United Kingdom
+            </p>
+          </div>
+          <div className="rounded-2xl overflow-hidden border border-border shadow-lg">
+            <iframe
+              title="Digiformation Ltd — UK Office, Wolverhampton"
+              src="https://www.google.com/maps?q=85+Dunstall+Hill,+Wolverhampton,+WV6+0SR,+United+Kingdom&output=embed"
+              width="100%"
+              height="380"
+              style={{ border: 0 }}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+            />
+          </div>
         </div>
       </section>
     </Layout>
