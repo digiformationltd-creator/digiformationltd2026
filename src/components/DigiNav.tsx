@@ -114,6 +114,9 @@ const DigiNav = () => {
             <Link to="/" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm rounded-lg hover:bg-primary/10">
               Home
             </Link>
+            <Link to="/pricing" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm rounded-lg hover:bg-primary/10">
+              Packages
+            </Link>
             {navGroups.map((g) => (
               <div key={g.label} className="border-t border-border/40 mt-1 pt-1">
                 <button
