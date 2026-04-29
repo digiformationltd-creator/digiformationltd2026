@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import premiumFintech from "@/assets/premium-fintech.jpg";
 
 const stats = [
   { value: 300, suffix: "+", label: "Companies Registered (UK & US)" },
@@ -48,8 +49,16 @@ const StatItem = ({ value, suffix, label, isFirst }: { value: number; suffix: st
 };
 
 const DigiStats = () => (
-  <section className="py-24 border-y border-border bg-secondary/30">
-    <div className="container mx-auto px-4">
+  <section className="relative py-24 border-y border-border bg-secondary/30 overflow-hidden">
+    {/* Premium background imagery */}
+    <div
+      aria-hidden
+      className="absolute inset-0 bg-cover bg-center opacity-[0.18] pointer-events-none"
+      style={{ backgroundImage: `url(${premiumFintech})` }}
+    />
+    <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/40 to-background/70 pointer-events-none" />
+
+    <div className="container mx-auto px-4 relative z-10">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
         {stats.map((s, i) => (
           <StatItem key={s.label} {...s} isFirst={i === 0} />
