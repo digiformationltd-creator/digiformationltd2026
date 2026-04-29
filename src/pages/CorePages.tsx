@@ -96,6 +96,7 @@ export const Contact = () => {
     message: "",
   });
   const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     setMeta(
