@@ -455,11 +455,7 @@ const addressPackages: DetailPkg[] = [
   },
 ];
 
-// USA Add-on services
-const usaAddOnPackages: DetailPkg[] = usaServicePagesPlaceholder();
-function usaServicePagesPlaceholder(): DetailPkg[] {
-  return [];
-}
+// USA Add-on Services
 
 const usaExtraPackages: DetailPkg[] = [
   {
