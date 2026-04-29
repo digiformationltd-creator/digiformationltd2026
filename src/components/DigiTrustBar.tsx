@@ -17,23 +17,7 @@ import worldfirst from "@/assets/partners/worldfirst.png";
 
 type Partner = { name: string; logo?: string };
 
-const partners: Partner[] = [
-  { name: "Companies House", logo: companiesHouse },
-  { name: "HMRC", logo: hmrc },
-  { name: "IRS", logo: irs },
-  { name: "Stripe", logo: stripe },
-  { name: "PayPal", logo: paypal },
-  { name: "Wise", logo: wise },
-  { name: "Payoneer", logo: payoneer },
-  { name: "Tide", logo: tide },
-  { name: "Sunrate", logo: sunrate },
-  { name: "WorldFirst", logo: worldfirst },
-  { name: "eBay", logo: ebay },
-  { name: "Shopify", logo: shopify },
-  { name: "Airwallex", logo: airwallex },
-  { name: "ZionPe", logo: zionpe },
-  { name: "Wallester", logo: wallester },
-];
+const partners: Partner[] = [];
 
 const DigiTrustBar = () => {
   const loop = [...partners, ...partners];
