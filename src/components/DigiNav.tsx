@@ -11,7 +11,6 @@ const topLinks = [
 
 const moreLinks = [
   { name: "Web Dev", path: "/web-development" },
-  { name: "Pricing", path: "/pricing" },
   { name: "About", path: "/about" },
   { name: "Blog", path: "/blog" },
   { name: "FAQ", path: "/faq" },
@@ -41,6 +40,7 @@ const DigiNav = () => {
           {/* Desktop links */}
           <div className="hidden xl:flex items-center gap-6">
             <NavLink to="/" className="text-sm hover:opacity-80 transition">Home</NavLink>
+            <NavLink to="/pricing" className="text-sm hover:opacity-80 transition">Packages</NavLink>
             {navGroups.map((g) => (
               <div key={g.label} className="relative group">
                 <button className="flex items-center gap-1 text-sm hover:opacity-80 transition">
@@ -64,7 +64,6 @@ const DigiNav = () => {
               </div>
             ))}
             <NavLink to="/web-development" className="text-sm hover:opacity-80 transition">Web Dev</NavLink>
-            <NavLink to="/pricing" className="text-sm hover:opacity-80 transition">Pricing</NavLink>
 
             {/* More dropdown for the rest */}
             <div className="relative group">
@@ -114,6 +113,9 @@ const DigiNav = () => {
           <div className="glass rounded-2xl p-4 max-h-[calc(100vh-8rem)] overflow-y-auto">
             <Link to="/" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm rounded-lg hover:bg-primary/10">
               Home
+            </Link>
+            <Link to="/pricing" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm rounded-lg hover:bg-primary/10">
+              Packages
             </Link>
             {navGroups.map((g) => (
               <div key={g.label} className="border-t border-border/40 mt-1 pt-1">

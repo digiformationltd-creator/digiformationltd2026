@@ -57,8 +57,8 @@ export const navGroups: NavGroup[] = [
 
 export const simpleLinks: NavItem[] = [
   { name: "Home", path: "/" },
+  { name: "Packages", path: "/pricing" },
   { name: "Web Development", path: "/web-development" },
-  { name: "Pricing", path: "/pricing" },
   { name: "Blog", path: "/blog" },
   { name: "FAQ", path: "/faq" },
   { name: "About", path: "/about" },
