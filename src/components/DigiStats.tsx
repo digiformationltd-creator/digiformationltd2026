@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import premiumFintech from "@/assets/premium-fintech.jpg";
+import statsBg from "@/assets/stats-bg-companies.jpg";
 
 const stats = [
   { value: 300, suffix: "+", label: "Companies Registered (UK & US)" },
@@ -53,10 +53,10 @@ const DigiStats = () => (
     {/* Premium background imagery */}
     <div
       aria-hidden
-      className="absolute inset-0 bg-cover bg-center opacity-40 pointer-events-none"
-      style={{ backgroundImage: `url(${premiumFintech})` }}
+      className="absolute inset-0 bg-cover bg-center opacity-50 pointer-events-none"
+      style={{ backgroundImage: `url(${statsBg})` }}
     />
-    <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background/80 pointer-events-none" />
+    <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/55 to-background/85 pointer-events-none" />
 
     <div className="container mx-auto px-4 relative z-10">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
