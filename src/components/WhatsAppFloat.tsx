@@ -1,4 +1,5 @@
 import { MessageCircle } from "lucide-react";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 const WhatsAppFloat = () => {
   return (
@@ -6,6 +7,7 @@ const WhatsAppFloat = () => {
       href="https://wa.me/923164467464"
       target="_blank"
       rel="noopener noreferrer"
+      onClick={() => trackWhatsAppClick("floating_button")}
       aria-label="Chat with us on WhatsApp"
       className="fixed bottom-5 right-5 z-50 group flex items-center gap-2 bg-[#25D366] text-white rounded-full shadow-2xl hover:scale-105 transition-transform p-4 sm:p-4"
     >
