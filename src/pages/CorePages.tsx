@@ -219,16 +219,33 @@ export const Contact = () => {
               <Mail className="w-6 h-6 text-primary mt-1" />
               <div>
                 <div className="text-[10px] uppercase tracking-[0.18em] mb-1 opacity-80">Business Email</div>
-                <div className="font-display text-xl font-semibold">Info@digiformation.uk</div>
+                <div className="font-display text-xl font-semibold break-all">Info@digiformation.uk</div>
+                <div className="mt-1.5 text-[11px] opacity-70">Replies within 1 business day · We speak English & Urdu</div>
               </div>
             </a>
-            <a href="https://wa.me/923164467464" target="_blank" rel="noopener noreferrer" className="glass rounded-2xl p-7 flex gap-4 hover:-translate-y-1 transition-transform">
+            <div className="glass rounded-2xl p-7 flex gap-4">
               <MessageCircle className="w-6 h-6 text-primary mt-1" />
-              <div>
-                <div className="text-[10px] uppercase tracking-[0.18em] mb-1 opacity-80">WhatsApp (Fast Support)</div>
+              <div className="flex-1">
+                <div className="text-[10px] uppercase tracking-[0.18em] mb-1 opacity-80">WhatsApp / Phone (Fast Support)</div>
                 <div className="font-display text-xl font-semibold">+92 316 446 7464</div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <a
+                    href="https://wa.me/923164467464"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] uppercase tracking-widest px-3 py-1.5 rounded-full bg-primary/15 text-primary hover:bg-primary/25 transition"
+                  >
+                    💬 WhatsApp
+                  </a>
+                  <a
+                    href="tel:+923164467464"
+                    className="text-[11px] uppercase tracking-widest px-3 py-1.5 rounded-full bg-primary/15 text-primary hover:bg-primary/25 transition"
+                  >
+                    📞 Call
+                  </a>
+                </div>
               </div>
-            </a>
+            </div>
             <div className="glass rounded-2xl p-7 flex gap-4">
               <Clock className="w-6 h-6 text-primary mt-1" />
               <div>
