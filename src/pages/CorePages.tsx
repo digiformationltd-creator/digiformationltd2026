@@ -468,6 +468,84 @@ export const Contact = () => {
           </div>
         </div>
       </section>
+
+      {/* Trust badges */}
+      <section className="py-10 border-y border-border/40">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="text-center mb-6">
+            <div className="text-[10px] uppercase tracking-[0.18em] mb-2 opacity-80">Why Trust Digiformation</div>
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+              Verified, secure, compliant — every step of the way
+            </h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { Icon: ShieldCheck, label: "Companies House", note: "Verified · Co. No. 16994903" },
+              { Icon: Lock, label: "SSL Encrypted", note: "256-bit secure forms" },
+              { Icon: Building2, label: "UK Registered Ltd", note: "Wolverhampton, UK" },
+              { Icon: Globe, label: "GDPR Compliant", note: "EU & UK data protection" },
+            ].map(({ Icon, label, note }) => (
+              <div key={label} className="glass rounded-xl p-5 text-center">
+                <Icon className="w-6 h-6 text-primary mx-auto mb-2" />
+                <div className="font-semibold text-sm">{label}</div>
+                <div className="text-[11px] opacity-70 mt-1">{note}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Social proof / testimonials on Contact */}
+      <section className="py-12">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="grid md:grid-cols-3 gap-5">
+            <div className="glass rounded-2xl p-7 text-center">
+              <div className="text-4xl md:text-5xl font-bold text-gradient">300+</div>
+              <div className="text-sm font-semibold mt-1">Clients Served</div>
+              <div className="text-[11px] opacity-70 mt-1">Across 60+ countries worldwide</div>
+            </div>
+            <div className="glass rounded-2xl p-7 text-center">
+              <div className="text-4xl md:text-5xl font-bold text-gradient">71+</div>
+              <div className="text-sm font-semibold mt-1">UK Companies Formed</div>
+              <div className="text-[11px] opacity-70 mt-1">Verified on Companies House</div>
+            </div>
+            <div className="glass rounded-2xl p-7 text-center">
+              <div className="text-4xl md:text-5xl font-bold text-gradient">8+</div>
+              <div className="text-sm font-semibold mt-1">Years of Expertise</div>
+              <div className="text-[11px] opacity-70 mt-1">UK & US formations · banking</div>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-5 mt-6">
+            {[
+              {
+                quote:
+                  "Muhammad and the Digiformation team made my UK Ltd registration effortless — from incorporation to opening a Tide account, every step was handled professionally.",
+                name: "Ali R.",
+                role: "Amazon FBA Seller, Pakistan",
+              },
+              {
+                quote:
+                  "I needed a US LLC plus EIN urgently for Stripe. Digiformation delivered both inside two weeks with full compliance support. Highly recommended.",
+                name: "Sarah K.",
+                role: "E-commerce Founder, UAE",
+              },
+            ].map((t) => (
+              <div key={t.name} className="glass rounded-2xl p-7">
+                <Quote className="w-7 h-7 text-primary opacity-60 mb-3" />
+                <p className="text-sm md:text-base leading-relaxed opacity-90">"{t.quote}"</p>
+                <div className="flex items-center gap-1 mt-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-3.5 h-3.5 fill-primary text-primary" />
+                  ))}
+                </div>
+                <div className="mt-2 text-sm font-semibold">{t.name}</div>
+                <div className="text-[11px] opacity-70">{t.role}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </Layout>
   );
 };
