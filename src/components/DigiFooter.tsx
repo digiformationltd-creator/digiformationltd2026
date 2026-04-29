@@ -91,7 +91,7 @@ const DigiFooter = () => {
             <li><Link to="/uk-services" className="hover:text-primary transition">UK Services</Link></li>
             <li><Link to="/usa-services" className="hover:text-primary transition">USA Services</Link></li>
             <li><Link to="/banking" className="hover:text-primary transition">Banks & Payment Solutions</Link></li>
-            <li><Link to="/pricing" className="hover:text-primary transition">Pricing</Link></li>
+            <li><Link to="/pricing" className="hover:text-primary transition">Packages</Link></li>
             <li><Link to="/contact" className="hover:text-primary transition">Contact</Link></li>
           </ul>
         </div>
@@ -103,7 +103,7 @@ const DigiFooter = () => {
           </div>
           <ul className="space-y-2 text-sm">
             <li><Link to="/about" className="hover:text-primary transition">About Us</Link></li>
-            <li><Link to="/pricing" className="hover:text-primary transition">Pricing</Link></li>
+            <li><Link to="/pricing" className="hover:text-primary transition">Packages</Link></li>
             <li><Link to="/blog" className="hover:text-primary transition">Blog</Link></li>
             <li><Link to="/faq" className="hover:text-primary transition">FAQ</Link></li>
             <li><Link to="/contact" className="hover:text-primary transition">Contact</Link></li>

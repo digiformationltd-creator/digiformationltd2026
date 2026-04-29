@@ -718,17 +718,17 @@ export const Pricing = () => {
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
-        <div className="container mx-auto px-4 py-24 md:py-28 relative">
+        <div className="container mx-auto px-4 py-12 md:py-16 relative">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-3 mb-6">
+            <div className="inline-flex items-center gap-3 mb-4">
               <span className="h-px w-7 bg-primary" />
-              <span className="text-xs uppercase tracking-[0.18em] font-semibold">Pricing</span>
+              <span className="text-xs uppercase tracking-[0.18em] font-semibold">Packages</span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold leading-[1.02] tracking-tight">
-              Transparent pricing, <em className="not-italic text-gradient">no surprises</em>
+            <h1 className="text-4xl md:text-6xl font-bold leading-[1.05] tracking-tight">
+              Our <em className="not-italic text-gradient">Packages</em>
             </h1>
-            <p className="mt-8 text-lg md:text-xl leading-relaxed opacity-90">
-              Every package — UK formation, address, compliance, USA LLC and banking — laid out in full with all features included. Fixed fees, no hidden add-ons.
+            <p className="mt-4 text-base md:text-lg opacity-85">
+              Fixed fees, no hidden add-ons.
             </p>
           </div>
         </div>
