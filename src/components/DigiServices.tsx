@@ -5,7 +5,7 @@ import heroBanking from "@/assets/card-hero-banking.jpg";
 import heroPayments from "@/assets/card-hero-payments.jpg";
 import heroWeb from "@/assets/card-hero-web.jpg";
 import heroTax from "@/assets/card-hero-tax.jpg";
-import heroPackages from "@/assets/card-hero-packages.jpg";
+
 
 const items = [
   {
@@ -56,14 +56,6 @@ const items = [
     href: "/web-development",
     image: heroWeb,
   },
-  {
-    tag: "PACK",
-    title: "Packages",
-    desc: "Explore our all-in-one bundles — formation, banking, compliance and web combined at transparent, value-driven prices.",
-    cta: "View packages",
-    href: "/pricing",
-    image: heroPackages,
-  },
 ];
 
 const DigiServices = () => (
@@ -100,12 +92,6 @@ const DigiServices = () => (
                 height={768}
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              {/* Tag chip */}
-              <div className="absolute top-4 left-4 z-10">
-                <span className="inline-flex items-center px-3 py-1 rounded-full bg-background/70 backdrop-blur-md border border-border/50 text-[10px] font-semibold tracking-[0.14em] uppercase">
-                  {it.tag}
-                </span>
-              </div>
               {/* Subtle bottom fade for blend */}
               <div aria-hidden className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background to-transparent pointer-events-none" />
             </div>
