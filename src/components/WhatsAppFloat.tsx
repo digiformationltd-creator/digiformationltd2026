@@ -1,10 +1,29 @@
 import { MessageCircle } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import { trackWhatsAppClick } from "@/lib/analytics";
 
+// Map URL path patterns → friendly pre-filled WhatsApp message.
+const buildMessage = (pathname: string): string => {
+  const p = pathname.toLowerCase();
+  let topic = "your services";
+  if (p.includes("uk-ltd") || p.includes("uk-services")) topic = "UK LTD company formation";
+  else if (p.includes("us-llc") || p.includes("usa-services")) topic = "US LLC company formation";
+  else if (p.includes("banks") || p.includes("payment")) topic = "banking & payment account setup";
+  else if (p.includes("compliance") || p.includes("annual")) topic = "UK compliance & annual filing";
+  else if (p.includes("web-development")) topic = "web development services";
+  else if (p.includes("pricing")) topic = "your pricing & packages";
+  else if (p.includes("blog/")) topic = "the article I'm reading on your blog";
+
+  return `Hello Digiformation, I'd like to know more about ${topic}. (sent from ${pathname})`;
+};
+
 const WhatsAppFloat = () => {
+  const { pathname } = useLocation();
+  const text = encodeURIComponent(buildMessage(pathname));
+
   return (
     <a
-      href="https://wa.me/923164467464"
+      href={`https://wa.me/923164467464?text=${text}`}
       target="_blank"
       rel="noopener noreferrer"
       onClick={() => trackWhatsAppClick("floating_button")}
