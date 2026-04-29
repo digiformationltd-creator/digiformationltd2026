@@ -1,5 +1,5 @@
 import { Zap, Eye, ShieldCheck, Globe2, Headphones, Award } from "lucide-react";
-import premiumNetwork from "@/assets/premium-network.jpg";
+import whyChooseBg from "@/assets/whychoose-bg-support.jpg";
 
 const reasons = [
   { icon: Zap, title: "Speed & Efficiency", desc: "Quick UK & US company formation and compliance — most setups completed within days." },
@@ -15,13 +15,13 @@ const DigiWhyChoose = () => (
     <div className="absolute inset-0 grid-pattern opacity-20 pointer-events-none" />
     <div className="absolute -left-40 top-1/3 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl" />
 
-    {/* Premium background — golden network */}
+    {/* Premium themed graphic — global support */}
     <div
       aria-hidden
-      className="absolute inset-0 bg-cover bg-center opacity-30 pointer-events-none"
-      style={{ backgroundImage: `url(${premiumNetwork})` }}
+      className="absolute inset-0 bg-cover bg-center opacity-40 pointer-events-none"
+      style={{ backgroundImage: `url(${whyChooseBg})` }}
     />
-    <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background/70 pointer-events-none" />
+    <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background/80 pointer-events-none" />
 
     <div className="container mx-auto px-4 relative z-10">
       <div className="text-center max-w-3xl mx-auto mb-16">
