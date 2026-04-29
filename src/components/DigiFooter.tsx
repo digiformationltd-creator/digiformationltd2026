@@ -179,7 +179,11 @@ const DigiFooter = () => {
             </li>
             <li className="flex items-start gap-3">
               <MapPin className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-              <span>United Kingdom</span>
+              <span>
+                Office 1006, 85 Dunstall Hill,<br />
+                Wolverhampton, WV6 0SR,<br />
+                United Kingdom
+              </span>
             </li>
           </ul>
         </div>
