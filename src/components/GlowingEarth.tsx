@@ -39,7 +39,7 @@ const GlowingEarth = () => {
           position: relative;
           width: clamp(300px, 58vw, 680px);
           aspect-ratio: 1 / 1;
-          opacity: 0.75;
+          opacity: 0.35;
         }
         .earth-halo {
           position: absolute;
@@ -47,11 +47,10 @@ const GlowingEarth = () => {
           border-radius: 50%;
           background:
             radial-gradient(circle at 50% 50%,
-              hsl(210 60% 75% / 0.28) 0%,
-              hsl(210 50% 55% / 0.16) 28%,
-              hsl(220 40% 35% / 0.08) 50%,
+              hsl(210 40% 60% / 0.14) 0%,
+              hsl(210 30% 40% / 0.08) 35%,
               transparent 70%);
-          filter: blur(40px);
+          filter: blur(50px);
           animation: earth-pulse 7s ease-in-out infinite;
         }
         .earth-sphere {
@@ -119,15 +118,7 @@ const GlowingEarth = () => {
           pointer-events: none;
         }
         .earth-atmosphere {
-          position: absolute;
-          inset: -2%;
-          border-radius: 50%;
-          background: radial-gradient(circle,
-            transparent 60%,
-            hsl(210 70% 70% / 0.22) 68%,
-            hsl(210 60% 60% / 0.1) 78%,
-            transparent 92%);
-          pointer-events: none;
+          display: none;
         }
         @keyframes earth-spin {
           from { background-position: 0 center; }
