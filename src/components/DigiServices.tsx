@@ -82,15 +82,16 @@ const DigiServices = () => (
             key={it.title}
             className="relative overflow-hidden glass rounded-2xl p-7 hover:-translate-y-1 hover:shadow-elegant transition-all duration-300 flex flex-col group"
           >
-            {/* Premium themed watermark */}
+            {/* Premium themed graphic — clearly visible */}
             <div
               aria-hidden
-              className="absolute inset-0 bg-cover bg-center opacity-[0.10] group-hover:opacity-[0.18] transition-opacity duration-500 pointer-events-none"
+              className="absolute inset-0 bg-cover bg-center opacity-50 group-hover:opacity-70 transition-opacity duration-500 pointer-events-none"
               style={{ backgroundImage: `url(${it.bg})` }}
             />
+            {/* Bottom-weighted overlay so text stays readable but graphic shows through */}
             <div
               aria-hidden
-              className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/20 to-background/70 pointer-events-none"
+              className="absolute inset-0 bg-gradient-to-t from-background via-background/85 to-background/20 pointer-events-none"
             />
 
             <div className="relative z-10 flex flex-col h-full">
