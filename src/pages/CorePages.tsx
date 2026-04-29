@@ -460,7 +460,7 @@ const addressPackages: DetailPkg[] = [
 const usaExtraPackages: DetailPkg[] = [
   {
     name: "EIN Number Service",
-    price: "$149",
+    price: "$30",
     tone: "from-emerald-500/20 to-emerald-500/5",
     ring: "ring-emerald-500/40",
     features: [
