@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import heroImg from "@/assets/card-hero-us-llc.jpg";
 import { supabase } from "@/integrations/supabase/client";
 
 type StatePricing = {
