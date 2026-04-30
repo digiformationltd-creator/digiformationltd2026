@@ -52,7 +52,6 @@ const DigiTrustBar = () => {
                   alt={`${p.name} logo`}
                   loading="lazy"
                   decoding="async"
-                  className="w-full h-full object-contain"
                 />
               </div>
             ))}
