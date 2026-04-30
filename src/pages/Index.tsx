@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import DigiNav from "@/components/DigiNav";
 import DigiHero from "@/components/DigiHero";
 import QuickStartWidget from "@/components/QuickStartWidget";
-import DigiTrustBar from "@/components/DigiTrustBar";
+
 import DigiServicesSlider from "@/components/DigiServicesSlider";
 import DigiStats from "@/components/DigiStats";
 import DigiServices from "@/components/DigiServices";
@@ -108,7 +108,6 @@ const Index = () => {
         </h1>
         <DigiHero />
         <QuickStartWidget />
-        <DigiTrustBar />
         <DigiStats />
         <DigiServicesSlider />
         <DigiServices />
