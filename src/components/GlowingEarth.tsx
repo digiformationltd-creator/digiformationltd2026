@@ -105,10 +105,15 @@ const GlowingEarth = () => {
           inset: 0;
           background-repeat: no-repeat;
           background-size: 200% 100%;
-          background-position: 25% center;
+          background-position: 0% center;
           opacity: 0.92;
           mix-blend-mode: screen;
           filter: brightness(0.9) contrast(1.1) hue-rotate(-8deg);
+          animation: earth-spin 60s linear infinite;
+        }
+        @keyframes earth-spin {
+          from { background-position: 0% center; }
+          to   { background-position: -200% center; }
         }
         .earth-lights {
           position: absolute;
