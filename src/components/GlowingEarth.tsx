@@ -7,7 +7,7 @@ const GlowingEarth = () => {
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-0 flex items-start sm:items-center justify-center overflow-hidden pt-64 sm:pt-0 sm:translate-y-28 lg:translate-y-36"
+      className="pointer-events-none absolute inset-0 flex items-start sm:items-center justify-center overflow-hidden pt-64 sm:pt-0 sm:translate-y-12 lg:translate-y-16"
     >
       <div className="earth-wrap">
         {/* Emanating light rays */}
