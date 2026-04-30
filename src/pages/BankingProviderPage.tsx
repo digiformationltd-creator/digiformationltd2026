@@ -4,6 +4,10 @@ import { ArrowRight, CheckCircle2, Wallet } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { bankingProviders } from "@/data/banking";
+import heroBanking from "@/assets/card-hero-banking.jpg";
+import heroPayments from "@/assets/card-hero-payments.jpg";
+
+const PAYMENT_SLUGS = new Set(["stripe", "paypal", "mollie", "wise", "payoneer", "worldfirst", "airwallex", "pingpong", "wallester", "zionpe", "zyla", "sunrate"]);
 
 const BankingProviderPage = () => {
   const { slug } = useParams();
