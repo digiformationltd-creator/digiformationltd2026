@@ -36,7 +36,7 @@ const GlowingEarth = () => {
         }
         @media (min-width: 640px) {
           .earth-wrap {
-            width: clamp(300px, 58vw, 680px);
+            width: clamp(260px, 46vw, 540px);
             opacity: 0.55;
           }
         }
