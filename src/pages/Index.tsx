@@ -108,15 +108,15 @@ const Index = () => {
           Digiformation Ltd — UK &amp; US Company Formation &amp; Banking Solutions
         </h1>
         <DigiHero />
-        <QuickStartWidget />
-        <DigiStats />
-        <DigiServicesSlider />
-        <DigiServices />
-        <DigiWhyChoose />
-        <DigiTrustBar />
-        <DigiAbout />
-        <DigiCaseStudies />
-        <DigiTestimonials />
+        <div id="quick-start"><QuickStartWidget /></div>
+        <div id="stats"><DigiStats /></div>
+        <div id="services-overview"><DigiServicesSlider /></div>
+        <div id="services"><DigiServices /></div>
+        <div id="why-choose"><DigiWhyChoose /></div>
+        <div id="trust"><DigiTrustBar /></div>
+        <div id="about"><DigiAbout /></div>
+        <div id="case-studies"><DigiCaseStudies /></div>
+        <div id="testimonials"><DigiTestimonials /></div>
         <DigiCTA />
       </main>
       <DigiFooter />
