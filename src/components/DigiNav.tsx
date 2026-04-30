@@ -40,7 +40,7 @@ const DigiNav = () => {
           {/* Desktop links */}
           <div className="hidden xl:flex items-center gap-6">
             <NavLink to="/" className="text-sm hover:opacity-80 transition">Home</NavLink>
-            <NavLink to="/pricing" className="text-sm hover:opacity-80 transition">Packages</NavLink>
+            <NavLink to="/#services" className="text-sm hover:opacity-80 transition">Packages</NavLink>
             {navGroups.map((g) => (
               <div key={g.label} className="relative group">
                 <button className="flex items-center gap-1 text-sm hover:opacity-80 transition">
@@ -74,11 +74,11 @@ const DigiNav = () => {
               <div className="absolute top-full right-0 pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                 <div className="min-w-[200px] glass rounded-xl p-2">
                   {[
-                    { name: "About", path: "/about" },
+                    { name: "About", path: "/#about" },
                     { name: "Blog", path: "/blog" },
                     { name: "FAQ", path: "/faq" },
                     { name: "Client Area", path: "/client-area" },
-                    { name: "Contact", path: "/contact" },
+                    { name: "Contact", path: "/#contact" },
                   ].map((l) => (
                     <Link key={l.path} to={l.path} className="block px-4 py-2 text-sm rounded-md hover:bg-primary/10 transition">
                       {l.name}
@@ -92,7 +92,7 @@ const DigiNav = () => {
           {/* CTA */}
           <div className="flex items-center gap-2">
             <Button asChild variant="hero" size="sm" className="rounded-full hidden sm:inline-flex">
-              <Link to="/contact">
+              <Link to="/#contact">
                 Free Consultation <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </Button>
@@ -114,7 +114,7 @@ const DigiNav = () => {
             <Link to="/" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm rounded-lg hover:bg-primary/10">
               Home
             </Link>
-            <Link to="/pricing" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm rounded-lg hover:bg-primary/10">
+            <Link to="/#services" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm rounded-lg hover:bg-primary/10">
               Packages
             </Link>
             {navGroups.map((g) => (
@@ -150,7 +150,7 @@ const DigiNav = () => {
               ))}
             </div>
             <Button asChild variant="hero" className="w-full mt-3 rounded-full">
-              <Link to="/contact" onClick={() => setOpen(false)}>Free Consultation</Link>
+              <Link to="/#contact" onClick={() => setOpen(false)}>Free Consultation</Link>
             </Button>
           </div>
         </div>
