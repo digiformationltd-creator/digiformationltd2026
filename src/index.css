@@ -287,35 +287,27 @@ body p, body span, body li, body label, body small, body div {
 .trust-marquee:hover .trust-track { animation-play-state: paused; }
 .trust-card {
   flex: 0 0 auto;
-  width: 200px;
-  height: 110px;
-  border-radius: 18px;
+  width: 180px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0 1rem;
-  background:
-    radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.10) 0%, transparent 55%),
-    linear-gradient(155deg, #1a1a1a 0%, #0a0a0a 55%, #050505 100%);
-  border: 1px solid rgba(255,255,255,0.06);
-  box-shadow:
-    0 10px 24px rgba(0,0,0,0.55),
-    inset 0 1px 0 rgba(255,255,255,0.08),
-    inset 0 -8px 14px rgba(0,0,0,0.5);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  opacity: 0.85;
 }
 .trust-card:hover {
-  transform: translateY(-3px) scale(1.03);
-  box-shadow:
-    0 16px 32px rgba(0,0,0,0.7),
-    inset 0 1px 0 rgba(255,255,255,0.12),
-    inset 0 -8px 14px rgba(0,0,0,0.5);
+  transform: translateY(-2px) scale(1.05);
+  opacity: 1;
 }
 .trust-mark { display: inline-flex; align-items: center; }
+.trust-mark svg { width: 28px; height: 28px; }
 .trust-name {
   font-family: 'Inter', system-ui, sans-serif;
-  font-size: 1.15rem;
+  font-size: 1.4rem;
   line-height: 1;
   white-space: nowrap;
 }
