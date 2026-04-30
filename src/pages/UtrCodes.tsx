@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2, FileText, KeyRound, Power, AlertCircle } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
+import heroImg from "@/assets/card-hero-tax.jpg";
 
 const rotatingCtas = [
   "Get Your UTR Today",
