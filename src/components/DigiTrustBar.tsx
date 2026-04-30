@@ -6,26 +6,24 @@ import airwallex from "@/assets/partners/airwallex.png";
 import stripe from "@/assets/partners/stripe.png";
 import ebay from "@/assets/partners/ebay.png";
 import wise from "@/assets/partners/wise.png";
-import payoneer from "@/assets/partners/payoneer.png";
 import worldfirst from "@/assets/partners/worldfirst.png";
 import tide from "@/assets/partners/tide.png";
 import sunrate from "@/assets/partners/sunrate.png";
 import irs from "@/assets/partners/irs.png";
 
 const logos = [
-  { src: companiesHouse, alt: "Companies House" },
-  { src: hmrc, alt: "HM Revenue & Customs" },
-  { src: irs, alt: "IRS" },
-  { src: paypal, alt: "PayPal" },
-  { src: stripe, alt: "Stripe" },
-  { src: payoneer, alt: "Payoneer" },
-  { src: wise, alt: "Wise" },
-  { src: worldfirst, alt: "WorldFirst" },
-  { src: airwallex, alt: "Airwallex" },
-  { src: tide, alt: "Tide" },
-  { src: sunrate, alt: "Sunrate" },
-  { src: shopify, alt: "Shopify" },
-  { src: ebay, alt: "eBay" },
+  { src: companiesHouse, alt: "Companies House", size: "lg" },
+  { src: hmrc, alt: "HM Revenue & Customs", size: "lg" },
+  { src: irs, alt: "IRS", size: "md" },
+  { src: paypal, alt: "PayPal", size: "lg" },
+  { src: stripe, alt: "Stripe", size: "md" },
+  { src: wise, alt: "Wise", size: "lg" },
+  { src: worldfirst, alt: "WorldFirst", size: "xl" },
+  { src: airwallex, alt: "Airwallex", size: "lg" },
+  { src: tide, alt: "Tide", size: "md" },
+  { src: sunrate, alt: "Sunrate", size: "lg" },
+  { src: shopify, alt: "Shopify", size: "md" },
+  { src: ebay, alt: "eBay", size: "md" },
 ];
 
 const DigiTrustBar = () => {
@@ -46,7 +44,7 @@ const DigiTrustBar = () => {
       <div className="trust-strip">
         <div className="trust-track">
           {loop.map((l, i) => (
-            <div className="trust-slot" key={i}>
+            <div className={`trust-slot trust-slot-${l.size}`} key={i}>
               <img src={l.src} alt={l.alt} loading="lazy" />
             </div>
           ))}
