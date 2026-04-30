@@ -130,7 +130,7 @@ const AIAssistant = () => {
 
       {/* Chat window */}
       {open && (
-        <div className="fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-5 z-[60] sm:w-[400px] sm:h-[600px] bg-background sm:rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
+        <div className="fixed inset-0 sm:inset-auto sm:bottom-24 sm:left-5 z-[60] sm:w-[400px] sm:h-[600px] bg-background sm:rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
           {/* Header */}
           <div className="bg-gradient-brand text-primary-foreground p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
