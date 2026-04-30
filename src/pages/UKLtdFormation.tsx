@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2, ShieldCheck, Building2, FileCheck, Lock, Users, Star } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
+import heroImg from "@/assets/card-hero-uk-ltd.jpg";
 
 const rotatingHeadlines = [
   { lead: "Register Your UK Limited Company in", accent: "Days" },
