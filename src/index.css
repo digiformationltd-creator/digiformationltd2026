@@ -285,50 +285,13 @@ body p, body span, body li, body label, body small, body div {
   will-change: transform;
 }
 .trust-marquee:hover .trust-track { animation-play-state: paused; }
-.trust-card {
-  flex: 0 0 auto;
-  width: 220px;
-  height: 130px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 22px;
-  position: relative;
-  overflow: hidden;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,255,255,0.10) 0%, transparent 60%),
-    linear-gradient(160deg, #1a1a1a 0%, #0a0a0a 55%, #050505 100%);
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.10),
-    0 10px 24px rgba(0,0,0,0.55),
-    0 2px 4px rgba(0,0,0,0.4);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.trust-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 22px;
-  background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.35) 100%);
-  pointer-events: none;
-}
-.trust-card:hover {
-  transform: translateY(-4px) scale(1.03);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.14),
-    0 16px 32px rgba(0,0,0,0.65),
-    0 4px 8px rgba(0,0,0,0.5);
-}
-.trust-logo {
-  position: relative;
-  z-index: 2;
-  max-width: 75%;
-  max-height: 60%;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+/* Lightweight empty strip — placeholder for logos */
+.trust-strip {
+  width: 100%;
+  height: 90px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 @keyframes trust-scroll {
   from { transform: translateX(0); }
