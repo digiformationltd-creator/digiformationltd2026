@@ -74,9 +74,11 @@ const DigiServices = () => (
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {items.map((it) => (
-          <article
+          <Link
             key={it.title}
-            className="group relative overflow-hidden rounded-2xl glass hover:-translate-y-1 hover:shadow-elegant transition-all duration-300 flex flex-col"
+            to={it.href}
+            aria-label={`${it.title} — ${it.cta}`}
+            className="group relative overflow-hidden rounded-2xl glass hover:-translate-y-1.5 hover:shadow-elegant hover:border-primary/40 transition-all duration-300 flex flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             {/* Top hero image */}
             <div className="relative aspect-[4/3] overflow-hidden">
@@ -90,22 +92,18 @@ const DigiServices = () => (
                 sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 360px"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              {/* Subtle bottom fade for blend */}
               <div aria-hidden className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background to-transparent pointer-events-none" />
             </div>
 
             {/* Bottom content */}
             <div className="p-6 flex flex-col flex-1">
-              <h3 className="font-display text-xl font-semibold mb-2">{it.title}</h3>
+              <h3 className="font-display text-xl font-semibold mb-2 group-hover:text-gradient transition-colors">{it.title}</h3>
               <p className="text-sm leading-relaxed opacity-80 flex-1">{it.desc}</p>
-              <Link
-                to={it.href}
-                className="inline-flex items-center gap-2 mt-5 text-xs font-semibold uppercase tracking-[0.12em] hover:gap-3 transition-all"
-              >
+              <span className="inline-flex items-center gap-2 mt-5 text-xs font-semibold uppercase tracking-[0.12em] text-primary group-hover:gap-3 transition-all">
                 {it.cta} →
-              </Link>
+              </span>
             </div>
-          </article>
+          </Link>
         ))}
       </div>
     </div>

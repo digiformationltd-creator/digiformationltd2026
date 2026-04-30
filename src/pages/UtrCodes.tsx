@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2, FileText, KeyRound, Power, AlertCircle } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
+import heroImg from "@/assets/card-hero-tax.jpg";
 
 const rotatingCtas = [
   "Get Your UTR Today",
@@ -125,18 +126,26 @@ const UtrCodes = () => {
         <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
         <div className="container mx-auto px-4 py-12 md:py-14 relative">
-          <div className="max-w-4xl">
-            <div className="inline-flex items-center gap-3 mb-6">
-              <span className="h-px w-7 bg-primary" />
-              <span className="text-xs uppercase tracking-[0.18em] font-semibold">HMRC · UK Tax Compliance</span>
+          <div className="grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-14 items-center">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-3 mb-6">
+                <span className="h-px w-7 bg-primary" />
+                <span className="text-xs uppercase tracking-[0.18em] font-semibold">HMRC · UK Tax Compliance</span>
+              </div>
+              <h1 className="text-5xl md:text-7xl font-bold leading-[1.02] tracking-tight">
+                UTR, Auth Code & <em className="not-italic text-gradient">Activation Code</em>
+              </h1>
+              <p className="mt-8 text-lg md:text-xl leading-relaxed max-w-2xl opacity-90">
+                Get or recover the three essential codes every UK Limited Company needs to file taxes, access HMRC, and stay compliant.
+              </p>
+              <div className="mt-10"><RotatingCta /></div>
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold leading-[1.02] tracking-tight">
-              UTR, Auth Code & <em className="not-italic text-gradient">Activation Code</em>
-            </h1>
-            <p className="mt-8 text-lg md:text-xl leading-relaxed max-w-2xl opacity-90">
-              Get or recover the three essential codes every UK Limited Company needs to file taxes, access HMRC, and stay compliant.
-            </p>
-            <div className="mt-10"><RotatingCta /></div>
+            <div className="relative hidden lg:block">
+              <div className="relative rounded-2xl overflow-hidden glass shadow-elegant aspect-[4/3]">
+                <img src={heroImg} alt="Tax & Compliance" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-background/40 via-transparent to-transparent" />
+              </div>
+            </div>
           </div>
         </div>
       </section>

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2, ShieldCheck, Building2, FileCheck, Lock, Users, Star } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
+import heroImg from "@/assets/card-hero-uk-ltd.jpg";
 
 const rotatingHeadlines = [
   { lead: "Register Your UK Limited Company in", accent: "Days" },
@@ -208,27 +209,35 @@ const UKLtdFormation = () => {
         <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
         <div className="container mx-auto px-4 py-12 md:py-16 relative">
-          <div className="max-w-4xl">
-            <div className="inline-flex items-center gap-3 mb-6">
-              <span className="h-px w-7 bg-primary" />
-              <span className="text-xs uppercase tracking-[0.18em] font-semibold">UK Services</span>
+          <div className="grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-14 items-center">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-3 mb-6">
+                <span className="h-px w-7 bg-primary" />
+                <span className="text-xs uppercase tracking-[0.18em] font-semibold">UK Services</span>
+              </div>
+              <h1
+                key={headlineIdx}
+                className="text-5xl md:text-7xl font-bold leading-[1.02] tracking-tight animate-fade-in"
+              >
+                {current.lead} <em className="not-italic text-gradient">{current.accent}</em>
+              </h1>
+              <p className="mt-8 text-lg md:text-xl leading-relaxed max-w-2xl opacity-90">
+                Fast, compliant, and fully supported UK LTD registration with UTR, ID verification, and registered office services.
+              </p>
+              <div className="mt-10 flex flex-col sm:flex-row gap-4">
+                <Button asChild variant="hero" size="lg" className="rounded-full">
+                  <Link to="/uk-services/uk-ltd-formation/choose-jurisdiction">Get Started <ArrowRight className="w-4 h-4" /></Link>
+                </Button>
+                <Button asChild variant="ghostGlow" size="lg" className="rounded-full">
+                  <a href="#packages">View Packages</a>
+                </Button>
+              </div>
             </div>
-            <h1
-              key={headlineIdx}
-              className="text-5xl md:text-7xl font-bold leading-[1.02] tracking-tight animate-fade-in"
-            >
-              {current.lead} <em className="not-italic text-gradient">{current.accent}</em>
-            </h1>
-            <p className="mt-8 text-lg md:text-xl leading-relaxed max-w-2xl opacity-90">
-              Fast, compliant, and fully supported UK LTD registration with UTR, ID verification, and registered office services.
-            </p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4">
-              <Button asChild variant="hero" size="lg" className="rounded-full">
-                <Link to="/uk-services/uk-ltd-formation/choose-jurisdiction">Get Started <ArrowRight className="w-4 h-4" /></Link>
-              </Button>
-              <Button asChild variant="ghostGlow" size="lg" className="rounded-full">
-                <a href="#packages">View Packages</a>
-              </Button>
+            <div className="relative hidden lg:block">
+              <div className="relative rounded-2xl overflow-hidden glass shadow-elegant aspect-[4/3]">
+                <img src={heroImg} alt="UK LTD Formation" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-background/40 via-transparent to-transparent" />
+              </div>
             </div>
           </div>
         </div>

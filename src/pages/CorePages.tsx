@@ -49,6 +49,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { compliancePages } from "@/data/compliance";
 import { bankingProviders } from "@/data/banking";
+import heroWeb from "@/assets/card-hero-web.jpg";
 
 /* ---------- helpers ---------- */
 const setMeta = (title: string, description: string) => {
@@ -1417,20 +1418,28 @@ export const WebDevelopment = () => {
         <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
         <div className="container mx-auto px-4 py-12 md:py-16 relative">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-3 mb-4">
-              <span className="h-px w-7 bg-primary" />
-              <span className="text-xs uppercase tracking-[0.18em] font-semibold">Web Design & Development</span>
+          <div className="grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-14 items-center">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-3 mb-4">
+                <span className="h-px w-7 bg-primary" />
+                <span className="text-xs uppercase tracking-[0.18em] font-semibold">Web Design & Development</span>
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold leading-[1.05] tracking-tight">
+                Websites that <em className="not-italic text-gradient">convert</em>
+              </h1>
+              <p className="mt-4 text-base md:text-lg opacity-90">
+                Fast, modern websites & Shopify stores. Fixed prices, no hidden fees.
+              </p>
+              <Button asChild variant="hero" size="lg" className="rounded-full mt-6">
+                <Link to="/contact">Request a Free Quote <ArrowRight className="w-4 h-4" /></Link>
+              </Button>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold leading-[1.05] tracking-tight">
-              Websites that <em className="not-italic text-gradient">convert</em>
-            </h1>
-            <p className="mt-4 text-base md:text-lg opacity-90">
-              Fast, modern websites & Shopify stores. Fixed prices, no hidden fees.
-            </p>
-            <Button asChild variant="hero" size="lg" className="rounded-full mt-6">
-              <Link to="/contact">Request a Free Quote <ArrowRight className="w-4 h-4" /></Link>
-            </Button>
+            <div className="relative hidden lg:block">
+              <div className="relative rounded-2xl overflow-hidden glass shadow-elegant aspect-[4/3]">
+                <img src={heroWeb} alt="Web Development" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-background/40 via-transparent to-transparent" />
+              </div>
+            </div>
           </div>
         </div>
       </section>
