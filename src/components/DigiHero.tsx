@@ -34,13 +34,34 @@ const DigiHero = () => {
           <span className="text-[11px] uppercase tracking-widest">UK & US Company Formation • Banking • Compliance</span>
         </div>
 
-        <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-bold leading-[1.05] mb-8 min-h-[1.2em] animate-fade-up" style={{ animationDelay: "0.1s" }}>
-          <span key={i} className="block animate-headline-slide will-change-transform">
-            {headlines[i].pre && <>{headlines[i].pre} </>}
-            <span className="headline-accent-shimmer">{headlines[i].accent}</span>
-            {headlines[i].post && <> {headlines[i].post}</>}
-          </span>
-        </h1>
+        <div className="relative">
+          {/* Massive glow emanating from behind the headline */}
+          <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[260%] rounded-[50%] bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.55)_0%,hsl(var(--accent)/0.30)_28%,hsl(var(--primary)/0.12)_55%,transparent_75%)] blur-3xl animate-hero-glow" />
+          <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[160%] rounded-full bg-[radial-gradient(circle,hsl(var(--accent)/0.45),transparent_70%)] blur-2xl animate-hero-glow-slow" />
+
+          <h1 className="relative text-5xl md:text-7xl lg:text-[5.5rem] font-bold leading-[1.05] mb-8 min-h-[1.2em] animate-fade-up" style={{ animationDelay: "0.1s" }}>
+            <span key={i} className="block animate-headline-slide will-change-transform">
+              {headlines[i].pre && <>{headlines[i].pre} </>}
+              <span className="headline-accent-shimmer">{headlines[i].accent}</span>
+              {headlines[i].post && <> {headlines[i].post}</>}
+            </span>
+          </h1>
+        </div>
+        <style>{`
+          @keyframes hero-glow {
+            0%, 100% { opacity: 0.85; transform: translate(-50%, -50%) scale(1); }
+            50%      { opacity: 1;    transform: translate(-50%, -50%) scale(1.08); }
+          }
+          @keyframes hero-glow-slow {
+            0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.05); }
+            50%      { opacity: 1;   transform: translate(-50%, -50%) scale(0.95); }
+          }
+          .animate-hero-glow      { animation: hero-glow 5s ease-in-out infinite; }
+          .animate-hero-glow-slow { animation: hero-glow-slow 8s ease-in-out infinite; }
+          @media (prefers-reduced-motion: reduce) {
+            .animate-hero-glow, .animate-hero-glow-slow { animation: none; }
+          }
+        `}</style>
 
         <p className="text-lg md:text-xl max-w-3xl mx-auto mb-10 leading-relaxed animate-fade-up" style={{ animationDelay: "0.2s" }}>
           Fast, transparent and fully supported company formation, banking, payments, compliance and web services for entrepreneurs worldwide.
