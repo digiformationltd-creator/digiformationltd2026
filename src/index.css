@@ -270,11 +270,58 @@ body p, body span, body li, body label, body small, body div {
 .animate-partner-slide { animation: partner-slide 24s linear infinite; }
 .animate-headline-slide { animation: headline-slide 4s cubic-bezier(0.22, 1, 0.36, 1) both; }
 
-/* Lightweight empty strip — placeholder for logos */
+/* Lightweight logo strip */
 .trust-strip {
   width: 100%;
-  height: 90px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  height: 110px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.05), rgba(255,255,255,0.02));
   border-top: 1px solid rgba(255,255,255,0.06);
   border-bottom: 1px solid rgba(255,255,255,0.06);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.trust-strip::before,
+.trust-strip::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 120px;
+  z-index: 2;
+  pointer-events: none;
+}
+.trust-strip::before {
+  left: 0;
+  background: linear-gradient(90deg, hsl(var(--background)) 0%, transparent 100%);
+}
+.trust-strip::after {
+  right: 0;
+  background: linear-gradient(270deg, hsl(var(--background)) 0%, transparent 100%);
+}
+.trust-track {
+  display: flex;
+  align-items: center;
+  gap: 64px;
+  width: max-content;
+  animation: partner-slide 38s linear infinite;
+}
+.trust-slot {
+  flex-shrink: 0;
+  width: 150px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.trust-slot img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  opacity: 0.92;
+  transition: opacity .25s ease, transform .25s ease;
+}
+.trust-slot img:hover {
+  opacity: 1;
+  transform: scale(1.06);
 }
