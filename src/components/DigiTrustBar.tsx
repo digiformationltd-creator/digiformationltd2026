@@ -1,4 +1,27 @@
+import shopify from "@/assets/partners/shopify.png";
+import companiesHouse from "@/assets/partners/companies-house.png";
+import hmrc from "@/assets/partners/hmrc.png";
+import paypal from "@/assets/partners/paypal.png";
+import airwallex from "@/assets/partners/airwallex.png";
+import stripe from "@/assets/partners/stripe.png";
+import ebay from "@/assets/partners/ebay.png";
+import wise from "@/assets/partners/wise.png";
+import payoneer from "@/assets/partners/payoneer.png";
+
+const logos = [
+  { src: companiesHouse, alt: "Companies House" },
+  { src: hmrc, alt: "HM Revenue & Customs" },
+  { src: paypal, alt: "PayPal" },
+  { src: stripe, alt: "Stripe" },
+  { src: payoneer, alt: "Payoneer" },
+  { src: wise, alt: "Wise" },
+  { src: airwallex, alt: "Airwallex" },
+  { src: shopify, alt: "Shopify" },
+  { src: ebay, alt: "eBay" },
+];
+
 const DigiTrustBar = () => {
+  const loop = [...logos, ...logos];
   return (
     <section className="relative py-12 md:py-16 overflow-hidden border-y border-border/30">
       <div className="container mx-auto px-4 mb-8 text-center">
@@ -12,8 +35,15 @@ const DigiTrustBar = () => {
         </h2>
       </div>
 
-      {/* Lightweight empty strip — logos will be added here */}
-      <div className="trust-strip" aria-hidden="true" />
+      <div className="trust-strip">
+        <div className="trust-track">
+          {loop.map((l, i) => (
+            <div className="trust-slot" key={i}>
+              <img src={l.src} alt={l.alt} loading="lazy" />
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
   );
 };
