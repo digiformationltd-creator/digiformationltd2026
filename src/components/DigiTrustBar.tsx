@@ -1,28 +1,189 @@
-import airwallex from "@/assets/partners/airwallex.png";
-import ebay from "@/assets/partners/ebay.png";
-import wise from "@/assets/partners/wise.png";
-import payoneer from "@/assets/partners/payoneer.png";
-import tide from "@/assets/partners/tide.png";
-import worldfirst from "@/assets/partners/worldfirst.png";
-import sunrate from "@/assets/partners/sunrate.png";
-import zyla from "@/assets/partners/zyla.png";
-import irs from "@/assets/partners/irs.png";
-
-type Partner = { name: string; src: string };
+type Partner = {
+  name: string;
+  // Brand color for the logo text/mark
+  color: string;
+  // Optional: small mark/icon SVG path data (rendered before name)
+  mark?: React.ReactNode;
+  // Font style for the wordmark
+  fontFamily?: string;
+  fontWeight?: number;
+  italic?: boolean;
+  uppercase?: boolean;
+  tracking?: string;
+};
 
 const partners: Partner[] = [
-  { name: "Airwallex", src: airwallex },
-  { name: "Wise", src: wise },
-  { name: "Payoneer", src: payoneer },
-  { name: "Tide", src: tide },
-  { name: "WorldFirst", src: worldfirst },
-  { name: "Sunrate", src: sunrate },
-  { name: "Zyla", src: zyla },
-  { name: "eBay", src: ebay },
-  { name: "IRS", src: irs },
+  {
+    name: "Airwallex",
+    color: "#FF5E3A",
+    fontWeight: 700,
+    mark: (
+      <svg viewBox="0 0 24 24" className="w-5 h-5" aria-hidden="true">
+        <path
+          d="M4 20 L12 4 L20 20 M7 14 L17 14"
+          stroke="url(#aw)"
+          strokeWidth="2.5"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <defs>
+          <linearGradient id="aw" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#FF8A5C" />
+            <stop offset="1" stopColor="#FF3D1F" />
+          </linearGradient>
+        </defs>
+      </svg>
+    ),
+  },
+  {
+    name: "wise",
+    color: "#9FE870",
+    fontWeight: 800,
+    italic: true,
+    mark: (
+      <svg viewBox="0 0 24 24" className="w-5 h-5" aria-hidden="true">
+        <path d="M3 5 L14 5 L8 13 L18 13 L4 19 Z" fill="#9FE870" />
+      </svg>
+    ),
+  },
+  {
+    name: "Payoneer",
+    color: "#FFFFFF",
+    fontWeight: 600,
+    mark: (
+      <svg viewBox="0 0 24 24" className="w-5 h-5" aria-hidden="true">
+        <defs>
+          <linearGradient id="po" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#FF7A00" />
+            <stop offset="0.5" stopColor="#E91E63" />
+            <stop offset="1" stopColor="#3F51B5" />
+          </linearGradient>
+        </defs>
+        <circle cx="12" cy="12" r="9" stroke="url(#po)" strokeWidth="3" fill="none" />
+      </svg>
+    ),
+  },
+  {
+    name: "tide",
+    color: "#3F2DEB",
+    fontWeight: 700,
+    mark: (
+      <svg viewBox="0 0 24 24" className="w-5 h-5" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" stroke="#3F2DEB" strokeWidth="2.5" fill="none" />
+        <path d="M7 13 Q10 16 13 13 T19 13" stroke="#3F2DEB" strokeWidth="2" fill="none" />
+      </svg>
+    ),
+  },
+  {
+    name: "WorldFirst",
+    color: "#FF1F5A",
+    fontWeight: 800,
+  },
+  {
+    name: "SUNRATE",
+    color: "#FFFFFF",
+    fontWeight: 800,
+    italic: true,
+    uppercase: true,
+    tracking: "0.04em",
+    mark: (
+      <svg viewBox="0 0 24 24" className="w-4 h-4" aria-hidden="true">
+        <path d="M4 12 L10 7 L10 17 Z M12 12 L18 7 L18 17 Z" fill="#FFFFFF" />
+      </svg>
+    ),
+  },
+  {
+    name: "zyla",
+    color: "#FFFFFF",
+    fontWeight: 700,
+    mark: (
+      <svg viewBox="0 0 24 24" className="w-5 h-5" aria-hidden="true">
+        <defs>
+          <linearGradient id="zy" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#5B8DEF" />
+            <stop offset="1" stopColor="#A24BFF" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M5 8 Q5 5 8 5 Q11 5 11 8 L11 16 Q11 19 14 19 Q17 19 17 16 Q17 13 14 13 L10 13"
+          stroke="url(#zy)"
+          strokeWidth="2.5"
+          fill="none"
+          strokeLinecap="round"
+        />
+      </svg>
+    ),
+  },
+  {
+    name: "ebay",
+    color: "#E53238",
+    fontWeight: 800,
+    italic: true,
+    // ebay multi-color is rendered with per-letter spans below
+  },
+  {
+    name: "IRS",
+    color: "#FFFFFF",
+    fontWeight: 800,
+    tracking: "0.05em",
+  },
+  {
+    name: "Stripe",
+    color: "#635BFF",
+    fontWeight: 800,
+    italic: true,
+  },
+  {
+    name: "PayPal",
+    color: "#FFFFFF",
+    fontWeight: 800,
+    italic: true,
+  },
 ];
 
-// Duplicate for seamless marquee loop
+// eBay needs multi-color letters
+const renderName = (p: Partner) => {
+  if (p.name === "ebay") {
+    const letters = [
+      { c: "e", color: "#E53238" },
+      { c: "b", color: "#0064D2" },
+      { c: "a", color: "#F5AF02" },
+      { c: "y", color: "#86B817" },
+    ];
+    return (
+      <span className="italic font-extrabold">
+        {letters.map((l, i) => (
+          <span key={i} style={{ color: l.color }}>
+            {l.c}
+          </span>
+        ))}
+      </span>
+    );
+  }
+  if (p.name === "PayPal") {
+    return (
+      <span className="italic font-extrabold">
+        <span style={{ color: "#003087" }}>Pay</span>
+        <span style={{ color: "#009CDE" }}>Pal</span>
+      </span>
+    );
+  }
+  return (
+    <span
+      style={{
+        color: p.color,
+        fontWeight: p.fontWeight ?? 700,
+        fontStyle: p.italic ? "italic" : "normal",
+        textTransform: p.uppercase ? "uppercase" : "none",
+        letterSpacing: p.tracking ?? "normal",
+      }}
+    >
+      {p.name}
+    </span>
+  );
+};
+
 const loop = [...partners, ...partners];
 
 const DigiTrustBar = () => {
@@ -47,12 +208,8 @@ const DigiTrustBar = () => {
           <div className="trust-track">
             {loop.map((p, i) => (
               <div key={`${p.name}-${i}`} className="trust-card">
-                <img
-                  src={p.src}
-                  alt={`${p.name} logo`}
-                  loading="lazy"
-                  decoding="async"
-                />
+                {p.mark && <span className="trust-mark">{p.mark}</span>}
+                <span className="trust-name">{renderName(p)}</span>
               </div>
             ))}
           </div>
