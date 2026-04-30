@@ -8,6 +8,7 @@ import { toast } from "@/hooks/use-toast";
 
 const JURISDICTIONS: Record<string, string> = {
   EW: "England & Wales",
+  WA: "Wales",
   SC: "Scotland",
   NI: "Northern Ireland",
 };
