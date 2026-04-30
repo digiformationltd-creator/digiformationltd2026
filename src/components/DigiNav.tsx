@@ -11,11 +11,11 @@ const topLinks = [
 
 const moreLinks = [
   { name: "Web Dev", path: "/web-development" },
-  { name: "About", path: "/about" },
+  { name: "About", path: "/#about" },
   { name: "Blog", path: "/blog" },
   { name: "FAQ", path: "/faq" },
   { name: "Client Area", path: "/client-area" },
-  { name: "Contact", path: "/contact" },
+  { name: "Contact", path: "/#contact" },
 ];
 
 const DigiNav = () => {
