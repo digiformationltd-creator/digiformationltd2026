@@ -65,6 +65,8 @@
 @layer base {
   * { @apply border-border; }
   html { scroll-behavior: smooth; }
+  /* Offset for sticky nav when jumping to a section via #hash */
+  section[id], div[id] { scroll-margin-top: 88px; }
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', system-ui, sans-serif;
