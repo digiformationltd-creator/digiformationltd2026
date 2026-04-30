@@ -84,8 +84,10 @@ const DigiServices = () => (
                 src={it.image}
                 alt={it.title}
                 loading="lazy"
+                decoding="async"
                 width={1024}
                 height={768}
+                sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 360px"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               {/* Subtle bottom fade for blend */}
