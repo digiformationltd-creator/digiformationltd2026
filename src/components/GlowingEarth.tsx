@@ -162,7 +162,7 @@ const GlowingEarth = () => {
           50%      { opacity: 1; transform: scale(1.06); }
         }
         @media (prefers-reduced-motion: reduce) {
-          .earth-halo, .earth-lights, .earth-rays { animation: none; }
+          .earth-halo, .earth-lights, .earth-rays, .earth-texture { animation: none; }
         }
       `}</style>
     </div>
