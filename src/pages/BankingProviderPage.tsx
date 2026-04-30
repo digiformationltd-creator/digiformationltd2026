@@ -45,23 +45,35 @@ const BankingProviderPage = () => {
         <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
         <div className="container mx-auto px-4 py-12 md:py-14 relative">
-          <div className="max-w-4xl">
-            <div className="inline-flex items-center gap-3 mb-6">
-              <span className="h-px w-7 bg-primary" />
-              <span className="text-xs uppercase tracking-[0.18em] font-semibold">Banks & Payment Solutions</span>
+          <div className="grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-14 items-center">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-3 mb-6">
+                <span className="h-px w-7 bg-primary" />
+                <span className="text-xs uppercase tracking-[0.18em] font-semibold">Banks & Payment Solutions</span>
+              </div>
+              <h1 className="text-5xl md:text-7xl font-bold leading-[1.02] tracking-tight">
+                {provider.name} <em className="not-italic text-gradient">Account Setup</em>
+              </h1>
+              <p className="mt-6 text-lg md:text-xl leading-relaxed max-w-2xl opacity-90">{provider.tagline}</p>
+              <p className="mt-4 text-base leading-relaxed max-w-2xl opacity-80">{provider.description}</p>
+              <div className="mt-10 flex flex-wrap gap-4 items-center">
+                <Button variant="hero" size="lg" className="rounded-full" onClick={() => scrollTo("apply")}>
+                  Apply Now <ArrowRight className="w-4 h-4" />
+                </Button>
+                <div className="glass rounded-full px-5 py-2 text-sm flex items-center gap-2">
+                  <Wallet className="w-4 h-4" />
+                  Setup fee: <span className="font-bold text-gradient">{provider.setupPrice}</span>
+                </div>
+              </div>
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold leading-[1.02] tracking-tight">
-              {provider.name} <em className="not-italic text-gradient">Account Setup</em>
-            </h1>
-            <p className="mt-6 text-lg md:text-xl leading-relaxed max-w-2xl opacity-90">{provider.tagline}</p>
-            <p className="mt-4 text-base leading-relaxed max-w-2xl opacity-80">{provider.description}</p>
-            <div className="mt-10 flex flex-wrap gap-4 items-center">
-              <Button variant="hero" size="lg" className="rounded-full" onClick={() => scrollTo("apply")}>
-                Apply Now <ArrowRight className="w-4 h-4" />
-              </Button>
-              <div className="glass rounded-full px-5 py-2 text-sm flex items-center gap-2">
-                <Wallet className="w-4 h-4" />
-                Setup fee: <span className="font-bold text-gradient">{provider.setupPrice}</span>
+            <div className="relative hidden lg:block">
+              <div className="relative rounded-2xl overflow-hidden glass shadow-elegant aspect-[4/3]">
+                <img
+                  src={BANKING_SLUGS.has(provider.slug) ? heroBanking : heroPayments}
+                  alt={`${provider.name} ${BANKING_SLUGS.has(provider.slug) ? "Business Banking" : "Payment Gateway"}`}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-tr from-background/40 via-transparent to-transparent" />
               </div>
             </div>
           </div>
