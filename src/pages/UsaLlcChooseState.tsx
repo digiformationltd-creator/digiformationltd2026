@@ -132,17 +132,25 @@ const UsaLlcChooseState = () => {
         <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
         <div className="container mx-auto px-4 py-12 md:py-16 relative">
-          <div className="max-w-4xl">
-            <div className="inline-flex items-center gap-3 mb-6">
-              <span className="h-px w-7 bg-primary" />
-              <span className="text-xs uppercase tracking-[0.18em] font-semibold">Step 1 of 3 — Choose State</span>
+          <div className="grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-14 items-center">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-3 mb-6">
+                <span className="h-px w-7 bg-primary" />
+                <span className="text-xs uppercase tracking-[0.18em] font-semibold">Step 1 of 3 — Choose State</span>
+              </div>
+              <h1 className="text-5xl md:text-7xl font-bold leading-[1.02] tracking-tight">
+                <em className="not-italic text-gradient">Choose your state</em> to register your LLC
+              </h1>
+              <p className="mt-6 text-lg md:text-xl leading-relaxed max-w-2xl opacity-90">
+                Each U.S. state has its own filing fees and rates. Select your state first — your package pricing will be calculated automatically based on it.
+              </p>
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold leading-[1.02] tracking-tight">
-              <em className="not-italic text-gradient">Choose your state</em> to register your LLC
-            </h1>
-            <p className="mt-6 text-lg md:text-xl leading-relaxed max-w-2xl opacity-90">
-              Each U.S. state has its own filing fees and rates. Select your state first — your package pricing will be calculated automatically based on it.
-            </p>
+            <div className="relative hidden lg:block">
+              <div className="relative rounded-2xl overflow-hidden glass shadow-elegant aspect-[4/3]">
+                <img src={heroImg} alt="US LLC Formation" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-background/40 via-transparent to-transparent" />
+              </div>
+            </div>
           </div>
         </div>
       </section>
