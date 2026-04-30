@@ -329,18 +329,26 @@ body p, body span, body li, body label, body small, body div {
 }
 /* Logos with extra whitespace — scale up so visual size matches others */
 .trust-slot[data-logo="paypal"] img,
-.trust-slot[data-logo="worldfirst"] img,
 .trust-slot[data-logo="airwallex"] img {
   transform: scale(1.45);
+}
+.trust-slot[data-logo="worldfirst"] img,
+.trust-slot[data-logo="sunrate"] img,
+.trust-slot[data-logo="companies-house"] img {
+  transform: scale(1.6);
 }
 .trust-slot img:hover {
   opacity: 1;
   transform: scale(1.06);
 }
 .trust-slot[data-logo="paypal"] img:hover,
-.trust-slot[data-logo="worldfirst"] img:hover,
 .trust-slot[data-logo="airwallex"] img:hover {
   transform: scale(1.52);
+}
+.trust-slot[data-logo="worldfirst"] img:hover,
+.trust-slot[data-logo="sunrate"] img:hover,
+.trust-slot[data-logo="companies-house"] img:hover {
+  transform: scale(1.68);
 }
 
 @media (max-width: 768px) {

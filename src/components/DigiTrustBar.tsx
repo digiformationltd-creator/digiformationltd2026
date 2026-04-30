@@ -12,7 +12,7 @@ import sunrate from "@/assets/partners/sunrate.png";
 import irs from "@/assets/partners/irs.png";
 
 const logos = [
-  { src: companiesHouse, alt: "Companies House", size: "lg", id: "companies-house" },
+  { src: companiesHouse, alt: "Companies House", size: "xl", id: "companies-house" },
   { src: hmrc, alt: "HM Revenue & Customs", size: "lg", id: "hmrc" },
   { src: irs, alt: "IRS", size: "md", id: "irs" },
   { src: paypal, alt: "PayPal", size: "xl", id: "paypal" },
@@ -21,7 +21,7 @@ const logos = [
   { src: worldfirst, alt: "WorldFirst", size: "xl", id: "worldfirst" },
   { src: airwallex, alt: "Airwallex", size: "xl", id: "airwallex" },
   { src: tide, alt: "Tide", size: "md", id: "tide" },
-  { src: sunrate, alt: "Sunrate", size: "lg", id: "sunrate" },
+  { src: sunrate, alt: "Sunrate", size: "xl", id: "sunrate" },
   { src: shopify, alt: "Shopify", size: "md", id: "shopify" },
   { src: ebay, alt: "eBay", size: "md", id: "ebay" },
 ];
