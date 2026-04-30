@@ -30,6 +30,7 @@ type StateRow = {
 
 const UK_JURISDICTIONS = [
   { code: "EW", name: "England & Wales" },
+  { code: "WA", name: "Wales" },
   { code: "SC", name: "Scotland" },
   { code: "NI", name: "Northern Ireland" },
 ];
