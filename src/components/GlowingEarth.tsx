@@ -30,7 +30,7 @@ const GlowingEarth = () => {
       <style>{`
         .earth-wrap {
           position: relative;
-          width: clamp(280px, 78vw, 360px);
+          width: clamp(320px, 90vw, 420px);
           aspect-ratio: 1 / 1;
           opacity: 0.28;
         }
