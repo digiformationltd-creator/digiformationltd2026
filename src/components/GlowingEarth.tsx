@@ -32,12 +32,12 @@ const GlowingEarth = () => {
           position: relative;
           width: clamp(220px, 60vw, 280px);
           aspect-ratio: 1 / 1;
-          opacity: 0.55;
+          opacity: 0.28;
         }
         @media (min-width: 640px) {
           .earth-wrap {
             width: clamp(300px, 58vw, 680px);
-            opacity: 0.85;
+            opacity: 0.55;
           }
         }
         .earth-rays {

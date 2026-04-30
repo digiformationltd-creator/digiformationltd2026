@@ -35,9 +35,9 @@ const DigiHero = () => {
         </div>
 
         <div className="relative">
-          {/* Subtle glow behind the headline (kept soft so the Earth stays visible) */}
-          <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[200%] rounded-[50%] bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.22)_0%,hsl(var(--accent)/0.12)_30%,transparent_70%)] blur-3xl animate-hero-glow" />
-          <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[130%] rounded-full bg-[radial-gradient(circle,hsl(var(--accent)/0.18),transparent_70%)] blur-2xl animate-hero-glow-slow" />
+          {/* Subtle glow behind the headline */}
+          <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[200%] rounded-[50%] bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.55)_0%,hsl(var(--accent)/0.25)_30%,transparent_70%)] blur-3xl animate-hero-glow" />
+          <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[130%] rounded-full bg-[radial-gradient(circle,hsl(var(--accent)/0.45),transparent_70%)] blur-2xl animate-hero-glow-slow" />
 
           <h1 className="relative text-5xl md:text-7xl lg:text-[5.5rem] font-bold leading-[1.05] mb-8 min-h-[1.2em] animate-fade-up" style={{ animationDelay: "0.1s" }}>
             <span key={i} className="block animate-headline-slide will-change-transform">
