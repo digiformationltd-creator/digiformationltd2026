@@ -32,7 +32,7 @@ const DigiTrustBar = () => {
     <section className="relative py-12 md:py-16 overflow-hidden border-y border-border/30">
       <div className="container mx-auto px-4 mb-8 text-center">
         <div className="mb-4 text-sm md:text-base uppercase tracking-[0.18em] font-semibold text-primary">Trusted Network</div>
-        <h2 className="text-4xl md:text-5xl font-bold leading-tight">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
           Trusted Partners &amp; <em className="not-italic text-gradient">Official Integrations</em>
         </h2>
       </div>
