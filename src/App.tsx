@@ -24,6 +24,7 @@ import UsaLlcCheckout from "./pages/UsaLlcCheckout";
 import UsaServicePage from "./pages/UsaServicePage";
 import BankingProviderPage from "./pages/BankingProviderPage";
 import WhatsAppFloat from "./components/WhatsAppFloat";
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
