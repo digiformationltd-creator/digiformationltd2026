@@ -114,17 +114,20 @@ const AIAssistant = () => {
 
   return (
     <>
-      {/* Floating button — bottom-LEFT, opposite the WhatsApp button */}
+      {/* Floating button — bottom-right, stacked above WhatsApp */}
       <button
         onClick={() => setOpen(true)}
         aria-label="Open Digi AI Assistant"
-        className="fixed bottom-5 left-5 z-50 group flex items-center gap-2 bg-gradient-brand text-primary-foreground rounded-full shadow-glow hover:shadow-elegant hover:scale-105 transition-all p-4"
+        className="fixed bottom-24 right-5 z-50 group flex items-center justify-center bg-gradient-brand text-primary-foreground rounded-full shadow-glow hover:shadow-elegant hover:scale-110 transition-all w-14 h-14 sm:w-16 sm:h-16"
       >
-        <Bot className="w-6 h-6 sm:w-7 sm:h-7" />
-        <span className="hidden sm:inline font-semibold pr-1">Ask AI</span>
+        <Bot className="w-7 h-7 sm:w-8 sm:h-8" />
         <span className="absolute -top-1 -right-1 flex h-3 w-3">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
           <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+        </span>
+        {/* Tooltip on hover (desktop) */}
+        <span className="hidden sm:block absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-foreground text-background text-xs font-semibold px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+          Ask AI Assistant
         </span>
       </button>
 
