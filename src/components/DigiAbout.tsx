@@ -104,17 +104,6 @@ const DigiAbout = () => (
             <ExternalLink className="w-3.5 h-3.5 opacity-60 group-hover/verify:opacity-100 transition-opacity" />
           </a>
 
-          {/* Stats below the description */}
-          <div className="grid sm:grid-cols-3 gap-4 mb-8">
-            {stats.map((s) => (
-              <div key={s.label} className="glass rounded-xl p-4">
-                <s.icon className="w-5 h-5 mb-2 opacity-80" />
-                <div className="text-2xl font-bold text-gradient">{s.value}</div>
-                <div className="text-[11px] uppercase tracking-wider opacity-70 mt-1 leading-snug">{s.label}</div>
-              </div>
-            ))}
-          </div>
-
           <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
             <Button asChild variant="hero" size="lg" className="rounded-full">
               <Link to="/blog/muhammad-haroon-founder-story-digiformation">
@@ -122,7 +111,13 @@ const DigiAbout = () => (
               </Link>
             </Button>
             <Button asChild variant="ghostGlow" size="lg" className="rounded-full">
-              <Link to="/contact">Get in Touch</Link>
+              <a
+                href="https://wa.me/923164467464?text=Hi%20Digiformation%2C%20I%20want%20to%20get%20in%20touch%20about%20your%20services."
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Get in Touch
+              </a>
             </Button>
           </div>
         </div>
