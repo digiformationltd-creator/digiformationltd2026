@@ -273,7 +273,7 @@ body p, body span, body li, body label, body small, body div {
 /* Lightweight logo strip */
 .trust-strip {
   width: 100%;
-  height: 110px;
+  height: 120px;
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.05), rgba(255,255,255,0.02));
   border-top: 1px solid rgba(255,255,255,0.06);
   border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -309,22 +309,20 @@ body p, body span, body li, body label, body small, body div {
 }
 .trust-slot {
   flex-shrink: 0;
-  height: 70px;
+  height: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.trust-slot-md { width: 130px; }
-.trust-slot-lg { width: 160px; }
-.trust-slot-xl { width: 180px; }
-
-.trust-slot-md img { max-height: 56px; }
-.trust-slot-lg img { max-height: 72px; }
-.trust-slot-xl img { max-height: 80px; }
+/* All logos zoom to fill the strip uniformly */
+.trust-slot-md { width: 150px; }
+.trust-slot-lg { width: 170px; }
+.trust-slot-xl { width: 190px; }
 
 .trust-slot img {
-  max-width: 100%;
+  height: 90px;
   width: auto;
+  max-width: 100%;
   object-fit: contain;
   opacity: 0.95;
   transition: opacity .25s ease, transform .25s ease;
@@ -340,12 +338,10 @@ body p, body span, body li, body label, body small, body div {
     gap: 36px;
     animation-duration: 32s;
   }
-  .trust-slot { height: 56px; }
-  .trust-slot-md { width: 96px; }
-  .trust-slot-lg { width: 116px; }
-  .trust-slot-xl { width: 132px; }
-  .trust-slot-md img { max-height: 44px; }
-  .trust-slot-lg img { max-height: 56px; }
-  .trust-slot-xl img { max-height: 62px; }
+  .trust-slot { height: 70px; }
+  .trust-slot-md { width: 110px; }
+  .trust-slot-lg { width: 125px; }
+  .trust-slot-xl { width: 140px; }
+  .trust-slot img { height: 70px; }
   .trust-strip::before, .trust-strip::after { width: 50px; }
 }
