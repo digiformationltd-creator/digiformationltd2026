@@ -54,7 +54,7 @@ const DigiAbout = () => (
         </div>
 
         {/* Content */}
-        <div>
+        <div className="text-center lg:text-left">
           <div className="inline-flex items-center gap-3 mb-5">
             <span className="h-px w-7 bg-primary" />
             <span className="text-xs uppercase tracking-[0.18em] font-semibold">About Digiformation Owner</span>
@@ -105,7 +105,7 @@ const DigiAbout = () => (
             ))}
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
             <Button asChild variant="hero" size="lg" className="rounded-full">
               <Link to="/blog/muhammad-haroon-founder-story-digiformation">
                 Read Full Story <ArrowRight className="w-4 h-4" />
