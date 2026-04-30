@@ -18,6 +18,11 @@ const JURISDICTIONS = [
     blurb: "Most common — registered with Companies House in Cardiff. Suits the vast majority of UK businesses.",
   },
   {
+    code: "WA",
+    name: "Wales",
+    blurb: "Wales-only jurisdiction — registered with Companies House in Cardiff. For businesses with a registered office in Wales that prefer a Welsh designation.",
+  },
+  {
     code: "SC",
     name: "Scotland",
     blurb: "Registered with Companies House in Edinburgh. Required for businesses with a Scottish registered office.",
