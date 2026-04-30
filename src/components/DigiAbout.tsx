@@ -18,48 +18,58 @@ const DigiAbout = () => (
     <div className="absolute top-1/3 -left-32 w-[420px] h-[420px] rounded-full bg-primary/10 blur-3xl pointer-events-none" />
 
     <div className="container mx-auto px-4 relative z-10">
-      <div className="grid lg:grid-cols-[auto,1fr] gap-12 lg:gap-16 items-center max-w-6xl mx-auto">
-        {/* Founder portrait */}
-        <div className="relative mx-auto lg:mx-0">
-          <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-3xl glass overflow-hidden group">
-            <img
-              src={founderImg}
-              alt="Muhammad Haroon — Founder of Digiformation Ltd"
-              className="w-full h-full object-cover object-top"
-              loading="lazy"
-              width={320}
-              height={320}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent pointer-events-none" />
-            <div className="absolute -inset-px rounded-3xl border border-primary/20 pointer-events-none" />
-          </div>
-          {/* Floating credential chip — links to Companies House officer profile */}
-          <a
-            href={COMPANIES_HOUSE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="absolute -bottom-4 -right-4 glass rounded-2xl px-4 py-3 shadow-elegant hover:scale-105 transition-transform group/badge"
-            aria-label="View 71 UK company appointments on Companies House (opens in new tab)"
-          >
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-primary" />
-              <div>
-                <div className="text-[10px] uppercase tracking-widest opacity-70 flex items-center gap-1">
-                  Verified <ExternalLink className="w-2.5 h-2.5" />
-                </div>
-                <div className="text-xs font-semibold">Companies House · 71</div>
-              </div>
+      <div className="grid lg:grid-cols-[auto,1fr] gap-12 lg:gap-16 lg:items-start max-w-6xl mx-auto">
+        {/* Founder portrait + stats below */}
+        <div className="flex flex-col items-center lg:items-start lg:pt-2">
+          <div className="relative mx-auto lg:mx-0">
+            <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-3xl glass overflow-hidden group">
+              <img
+                src={founderImg}
+                alt="Muhammad Haroon — Founder of Digiformation Ltd"
+                className="w-full h-full object-cover object-top"
+                loading="lazy"
+                width={320}
+                height={320}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute -inset-px rounded-3xl border border-primary/20 pointer-events-none" />
             </div>
-          </a>
+            {/* Floating credential chip — links to Companies House officer profile */}
+            <a
+              href={COMPANIES_HOUSE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute -bottom-4 -right-4 glass rounded-2xl px-4 py-3 shadow-elegant hover:scale-105 transition-transform group/badge"
+              aria-label="View 71 UK company appointments on Companies House (opens in new tab)"
+            >
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-primary" />
+                <div>
+                  <div className="text-[10px] uppercase tracking-widest opacity-70 flex items-center gap-1">
+                    Verified <ExternalLink className="w-2.5 h-2.5" />
+                  </div>
+                  <div className="text-xs font-semibold">Companies House · 71</div>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          {/* Stats below the picture — desktop view */}
+          <div className="hidden lg:grid grid-cols-1 gap-3 w-full mt-10">
+            {stats.map((s) => (
+              <div key={s.label} className="glass rounded-xl p-4 flex items-center gap-3">
+                <s.icon className="w-5 h-5 opacity-80 flex-shrink-0" />
+                <div>
+                  <div className="text-xl font-bold text-gradient leading-none">{s.value}</div>
+                  <div className="text-[11px] uppercase tracking-wider opacity-70 mt-1 leading-snug">{s.label}</div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Content */}
         <div className="text-center lg:text-left">
-          <div className="inline-flex items-center gap-3 mb-5">
-            <span className="h-px w-7 bg-primary" />
-            <span className="text-xs uppercase tracking-[0.18em] font-semibold">About Digiformation Owner</span>
-          </div>
-
           <h2 className="text-4xl md:text-5xl font-bold leading-[1.08] mb-3">
             Meet <em className="not-italic text-gradient">Muhammad Haroon</em>
           </h2>
@@ -94,7 +104,7 @@ const DigiAbout = () => (
             <ExternalLink className="w-3.5 h-3.5 opacity-60 group-hover/verify:opacity-100 transition-opacity" />
           </a>
 
-          {/* Mini stats */}
+          {/* Stats below the description */}
           <div className="grid sm:grid-cols-3 gap-4 mb-8">
             {stats.map((s) => (
               <div key={s.label} className="glass rounded-xl p-4">
