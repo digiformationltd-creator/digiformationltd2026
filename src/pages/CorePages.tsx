@@ -49,6 +49,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { compliancePages } from "@/data/compliance";
 import { bankingProviders } from "@/data/banking";
+import heroWeb from "@/assets/card-hero-web.jpg";
 
 /* ---------- helpers ---------- */
 const setMeta = (title: string, description: string) => {
