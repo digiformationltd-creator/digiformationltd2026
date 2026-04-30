@@ -337,6 +337,10 @@ body p, body span, body li, body label, body small, body div {
 .trust-slot[data-logo="companies-house"] img {
   transform: scale(1.6);
 }
+.trust-slot[data-logo="irs"] img,
+.trust-slot[data-logo="stripe"] img {
+  transform: scale(0.78);
+}
 .trust-slot img:hover {
   opacity: 1;
   transform: scale(1.06);
