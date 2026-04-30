@@ -304,7 +304,7 @@ body p, body span, body li, body label, body small, body div {
   align-items: center;
   gap: 56px;
   width: max-content;
-  animation: partner-slide 45s linear infinite;
+  animation: partner-slide 28s linear infinite;
   will-change: transform;
 }
 .trust-slot {
@@ -317,7 +317,7 @@ body p, body span, body li, body label, body small, body div {
 /* All logos zoom to fill the strip uniformly */
 .trust-slot-md { width: 150px; }
 .trust-slot-lg { width: 170px; }
-.trust-slot-xl { width: 190px; }
+.trust-slot-xl { width: 200px; }
 
 .trust-slot img {
   height: 90px;
@@ -327,21 +327,32 @@ body p, body span, body li, body label, body small, body div {
   opacity: 0.95;
   transition: opacity .25s ease, transform .25s ease;
 }
+/* Logos with extra whitespace — scale up so visual size matches others */
+.trust-slot[data-logo="paypal"] img,
+.trust-slot[data-logo="worldfirst"] img,
+.trust-slot[data-logo="airwallex"] img {
+  transform: scale(1.45);
+}
 .trust-slot img:hover {
   opacity: 1;
   transform: scale(1.06);
+}
+.trust-slot[data-logo="paypal"] img:hover,
+.trust-slot[data-logo="worldfirst"] img:hover,
+.trust-slot[data-logo="airwallex"] img:hover {
+  transform: scale(1.52);
 }
 
 @media (max-width: 768px) {
   .trust-strip { height: 90px; }
   .trust-track {
     gap: 36px;
-    animation-duration: 32s;
+    animation-duration: 20s;
   }
   .trust-slot { height: 70px; }
   .trust-slot-md { width: 110px; }
   .trust-slot-lg { width: 125px; }
-  .trust-slot-xl { width: 140px; }
+  .trust-slot-xl { width: 145px; }
   .trust-slot img { height: 70px; }
   .trust-strip::before, .trust-strip::after { width: 50px; }
 }
