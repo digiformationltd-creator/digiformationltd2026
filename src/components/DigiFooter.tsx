@@ -129,8 +129,8 @@ const DigiFooter = () => {
             <li><Link to="/banks-payment-solutions" className="hover:text-primary transition">Banks & Payment Solutions</Link></li>
             <li><Link to="/uk-compliance" className="hover:text-primary transition">UK Compliance</Link></li>
             <li><Link to="/web-development" className="hover:text-primary transition">Web Development</Link></li>
-            <li><Link to="/pricing" className="hover:text-primary transition">Packages</Link></li>
-            <li><Link to="/contact" className="hover:text-primary transition">Contact</Link></li>
+            <li><Link to="/#services" className="hover:text-primary transition">Packages</Link></li>
+            <li><Link to="/#contact" className="hover:text-primary transition">Contact</Link></li>
           </ul>
         </div>
 
@@ -140,11 +140,11 @@ const DigiFooter = () => {
             Company
           </div>
           <ul className="space-y-2 text-sm">
-            <li><Link to="/about" className="hover:text-primary transition">About Us</Link></li>
-            <li><Link to="/pricing" className="hover:text-primary transition">Packages</Link></li>
+            <li><Link to="/#about" className="hover:text-primary transition">About Us</Link></li>
+            <li><Link to="/#services" className="hover:text-primary transition">Packages</Link></li>
             <li><Link to="/blog" className="hover:text-primary transition">Blog</Link></li>
             <li><Link to="/faq" className="hover:text-primary transition">FAQ</Link></li>
-            <li><Link to="/contact" className="hover:text-primary transition">Contact</Link></li>
+            <li><Link to="/#contact" className="hover:text-primary transition">Contact</Link></li>
             <li><Link to="/privacy-policy" className="hover:text-primary transition">Privacy Policy</Link></li>
             <li><Link to="/terms" className="hover:text-primary transition">Terms & Conditions</Link></li>
           </ul>
