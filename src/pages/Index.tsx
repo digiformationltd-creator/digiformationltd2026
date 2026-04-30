@@ -8,6 +8,7 @@ import DigiStats from "@/components/DigiStats";
 import DigiServices from "@/components/DigiServices";
 import DigiWhyChoose from "@/components/DigiWhyChoose";
 import DigiAbout from "@/components/DigiAbout";
+import DigiTrustBar from "@/components/DigiTrustBar";
 import DigiCaseStudies from "@/components/DigiCaseStudies";
 import DigiTestimonials from "@/components/DigiTestimonials";
 import DigiCTA from "@/components/DigiCTA";
@@ -112,6 +113,7 @@ const Index = () => {
         <DigiServicesSlider />
         <DigiServices />
         <DigiWhyChoose />
+        <DigiTrustBar />
         <DigiAbout />
         <DigiCaseStudies />
         <DigiTestimonials />
