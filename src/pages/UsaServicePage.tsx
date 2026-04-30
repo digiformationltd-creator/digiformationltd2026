@@ -71,15 +71,6 @@ const UsaServicePage = () => {
         </div>
       </section>
 
-      <section id="requirements" className="py-10 bg-muted/20 border-t border-border/60">
-        <div className="container mx-auto px-4 max-w-3xl text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">Ready to get started?</h2>
-          <p className="opacity-80 mb-8">Submit your details and our team will be in touch within one business day.</p>
-          <Button asChild variant="hero" size="lg" className="rounded-full">
-            <Link to={`/contact?service=${encodeURIComponent(page.title.replace(" Service", ""))}`}>Get {page.title.replace(" Service", "")} <ArrowRight className="w-4 h-4" /></Link>
-          </Button>
-        </div>
-      </section>
 
       <section className="py-10 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-6xl">

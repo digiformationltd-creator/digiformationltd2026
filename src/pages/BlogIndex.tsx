@@ -94,19 +94,6 @@ const BlogIndex = () => {
         </div>
       </section>
 
-      <section className="py-12">
-        <div className="container mx-auto px-4">
-          <div className="glass rounded-3xl p-12 text-center max-w-3xl mx-auto">
-            <h3 className="text-3xl md:text-4xl font-bold">
-              Ready to <em className="not-italic text-gradient">launch your business?</em>
-            </h3>
-            <p className="mt-4 opacity-90">Talk to our specialists on WhatsApp — fast, free and no obligation.</p>
-            <Button asChild variant="hero" size="lg" className="rounded-full mt-8">
-              <Link to="/contact">Book Free Consultation <ArrowRight className="w-4 h-4" /></Link>
-            </Button>
-          </div>
-        </div>
-      </section>
     </Layout>
   );
 };
