@@ -184,8 +184,8 @@ const DigiServicesSlider = () => {
             {services.map((s, idx) => {
               const isActive = idx === active;
               const rel = Math.abs(relIndex(idx));
-              const opacity = isActive ? 1 : rel === 1 ? 0.55 : rel === 2 ? 0.28 : 0.12;
-              const scale = isActive ? 1 : 0.92;
+              const opacity = isActive ? 1 : rel === 1 ? 0.7 : rel === 2 ? 0.35 : 0.1;
+              const scale = isActive ? 1 : 0.9;
               return (
                 <article
                   key={s.num}
