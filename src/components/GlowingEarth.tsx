@@ -1,9 +1,7 @@
 import earthMap from "@/assets/earth-map.jpg";
 
 /**
- * GlowingEarth — realistic spinning earth using a world-map texture
- * masked into a sphere, with atmospheric glow + city-light glints.
- * Pure CSS animation, fully responsive.
+ * GlowingEarth — single still earth with soft glow and emanating light rays.
  */
 const GlowingEarth = () => {
   return (
@@ -12,26 +10,21 @@ const GlowingEarth = () => {
       className="pointer-events-none absolute inset-0 flex items-start sm:items-center justify-center overflow-hidden pt-52 sm:pt-0"
     >
       <div className="earth-wrap">
+        {/* Emanating light rays */}
+        <div className="earth-rays" />
         {/* Outer atmospheric glow */}
         <div className="earth-halo" />
 
-        {/* The sphere */}
+        {/* The sphere (still) */}
         <div className="earth-sphere">
-          {/* Rotating texture */}
           <div
             className="earth-texture"
             style={{ backgroundImage: `url(${earthMap})` }}
           />
-          {/* City-light glints */}
           <div className="earth-lights" />
-          {/* Spherical shading (lit side / dark side) */}
           <div className="earth-shade" />
-          {/* Inner rim highlight */}
           <div className="earth-rim" />
         </div>
-
-        {/* Soft outer atmosphere ring */}
-        <div className="earth-atmosphere" />
       </div>
 
       <style>{`
@@ -39,12 +32,46 @@ const GlowingEarth = () => {
           position: relative;
           width: clamp(250px, 72vw, 300px);
           aspect-ratio: 1 / 1;
-          opacity: 0.35;
+          opacity: 0.55;
         }
         @media (min-width: 640px) {
           .earth-wrap {
             width: clamp(300px, 58vw, 680px);
           }
+        }
+        .earth-rays {
+          position: absolute;
+          inset: -60%;
+          border-radius: 50%;
+          background:
+            conic-gradient(
+              from 0deg,
+              transparent 0deg,
+              hsl(200 90% 70% / 0.10) 8deg,
+              transparent 16deg,
+              transparent 40deg,
+              hsl(210 90% 75% / 0.08) 50deg,
+              transparent 60deg,
+              transparent 95deg,
+              hsl(195 90% 70% / 0.10) 105deg,
+              transparent 115deg,
+              transparent 150deg,
+              hsl(205 90% 75% / 0.08) 160deg,
+              transparent 170deg,
+              transparent 210deg,
+              hsl(200 90% 70% / 0.10) 220deg,
+              transparent 230deg,
+              transparent 270deg,
+              hsl(210 90% 75% / 0.09) 280deg,
+              transparent 290deg,
+              transparent 320deg,
+              hsl(195 90% 70% / 0.10) 330deg,
+              transparent 340deg
+            );
+          filter: blur(2px);
+          mask-image: radial-gradient(circle, transparent 28%, black 36%, black 70%, transparent 92%);
+          -webkit-mask-image: radial-gradient(circle, transparent 28%, black 36%, black 70%, transparent 92%);
+          animation: earth-rays-pulse 6s ease-in-out infinite;
         }
         .earth-halo {
           position: absolute;
@@ -52,10 +79,10 @@ const GlowingEarth = () => {
           border-radius: 50%;
           background:
             radial-gradient(circle at 50% 50%,
-              hsl(210 40% 60% / 0.14) 0%,
-              hsl(210 30% 40% / 0.08) 35%,
+              hsl(210 70% 65% / 0.22) 0%,
+              hsl(210 50% 50% / 0.12) 35%,
               transparent 70%);
-          filter: blur(50px);
+          filter: blur(40px);
           animation: earth-pulse 7s ease-in-out infinite;
         }
         .earth-sphere {
@@ -70,18 +97,15 @@ const GlowingEarth = () => {
           box-shadow:
             inset 0 0 80px hsl(220 50% 4% / 0.6),
             inset -30px -40px 100px hsl(220 60% 3% / 0.85),
-            0 0 60px hsl(210 50% 60% / 0.15);
+            0 0 80px hsl(210 70% 65% / 0.30),
+            0 0 160px hsl(210 70% 60% / 0.15);
         }
         .earth-texture {
           position: absolute;
-          top: 0;
-          left: 0;
-          width: 200%;
-          height: 100%;
-          background-repeat: repeat-x;
-          background-size: 50% 100%;
-          background-position: 0 center;
-          animation: earth-spin 60s linear infinite;
+          inset: 0;
+          background-repeat: no-repeat;
+          background-size: 200% 100%;
+          background-position: 25% center;
           opacity: 0.92;
           mix-blend-mode: screen;
           filter: brightness(0.9) contrast(1.1) hue-rotate(-8deg);
@@ -111,7 +135,6 @@ const GlowingEarth = () => {
             radial-gradient(circle at 75% 80%,
               hsl(220 70% 3% / 0.7) 0%,
               transparent 55%);
-          pointer-events: none;
         }
         .earth-rim {
           position: absolute;
@@ -120,25 +143,21 @@ const GlowingEarth = () => {
           box-shadow:
             inset 0 0 2px hsl(210 80% 90% / 0.4),
             inset 4px 6px 30px hsl(210 70% 70% / 0.12);
-          pointer-events: none;
-        }
-        .earth-atmosphere {
-          display: none;
-        }
-        @keyframes earth-spin {
-          from { background-position: 0 center; }
-          to   { background-position: -100% center; }
         }
         @keyframes earth-pulse {
           0%, 100% { opacity: 0.9; transform: scale(1); }
-          50%      { opacity: 1; transform: scale(1.05); }
+          50%      { opacity: 1; transform: scale(1.04); }
         }
         @keyframes earth-lights-pulse {
           0%, 100% { opacity: 0.6; }
           50%      { opacity: 1; }
         }
+        @keyframes earth-rays-pulse {
+          0%, 100% { opacity: 0.7; transform: scale(1); }
+          50%      { opacity: 1; transform: scale(1.06); }
+        }
         @media (prefers-reduced-motion: reduce) {
-          .earth-texture, .earth-halo, .earth-lights { animation: none; }
+          .earth-halo, .earth-lights, .earth-rays { animation: none; }
         }
       `}</style>
     </div>
