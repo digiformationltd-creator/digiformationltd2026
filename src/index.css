@@ -269,3 +269,42 @@ body p, body span, body li, body label, body small, body div {
 .animate-fade-up { animation: fade-up 0.8s var(--transition-smooth) both; }
 .animate-partner-slide { animation: partner-slide 24s linear infinite; }
 .animate-headline-slide { animation: headline-slide 4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Trust marquee — lightweight, uniform cards */
+.trust-marquee {
+  overflow: hidden;
+  width: 100%;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.trust-track {
+  display: flex;
+  gap: 1rem;
+  width: max-content;
+  animation: trust-scroll 40s linear infinite;
+  will-change: transform;
+}
+.trust-marquee:hover .trust-track { animation-play-state: paused; }
+.trust-card {
+  flex: 0 0 auto;
+  width: 220px;
+  height: 80px;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0 1.25rem;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+.trust-card:hover {
+  transform: translateY(-2px);
+  border-color: hsl(var(--primary) / 0.5);
+}
+@keyframes trust-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .trust-track { animation: none; }
+}
