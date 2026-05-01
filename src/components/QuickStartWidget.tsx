@@ -46,7 +46,7 @@ const formatUSD = (n: number) =>
 
 const QuickStartWidget = () => {
   const navigate = useNavigate();
-  const [tab, setTab] = useState<"usa" | "uk">("usa");
+  const [tab, setTab] = useState<"usa" | "uk">("uk");
   const [states, setStates] = useState<StateRow[]>([]);
   const [usState, setUsState] = useState<string | undefined>(undefined);
   const [ukJur, setUkJur] = useState<string | undefined>(undefined);
@@ -139,16 +139,6 @@ const QuickStartWidget = () => {
             {/* Tabs */}
             <div className="grid grid-cols-2 gap-2 p-1 bg-muted/40 rounded-full mb-6">
               <button
-                onClick={() => setTab("usa")}
-                className={`flex items-center justify-center gap-2 py-2.5 rounded-full text-sm font-semibold transition-all ${
-                  tab === "usa"
-                    ? "bg-gradient-brand text-primary-foreground shadow-md"
-                    : "opacity-70 hover:opacity-100"
-                }`}
-              >
-                <Flag className="w-4 h-4" /> USA LLC
-              </button>
-              <button
                 onClick={() => setTab("uk")}
                 className={`flex items-center justify-center gap-2 py-2.5 rounded-full text-sm font-semibold transition-all ${
                   tab === "uk"
@@ -157,6 +147,16 @@ const QuickStartWidget = () => {
                 }`}
               >
                 <Building2 className="w-4 h-4" /> UK Ltd
+              </button>
+              <button
+                onClick={() => setTab("usa")}
+                className={`flex items-center justify-center gap-2 py-2.5 rounded-full text-sm font-semibold transition-all ${
+                  tab === "usa"
+                    ? "bg-gradient-brand text-primary-foreground shadow-md"
+                    : "opacity-70 hover:opacity-100"
+                }`}
+              >
+                <Flag className="w-4 h-4" /> USA LLC
               </button>
             </div>
 

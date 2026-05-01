@@ -3,21 +3,21 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 
 const cases = [
   {
-    tag: "UK Startup",
-    title: "Full LTD setup in under 48 hours",
+    tag: "LTD Formation",
+    title: "Full LTD setup in 3 to 5 days",
     points: [
-      "UK Limited Company registered with Companies House",
-      "Business banking activated and verified",
-      "Full compliance & ID verification completed",
+      "ID Verification",
+      "Company Formation",
+      "Banks",
     ],
   },
   {
-    tag: "US LLC",
-    title: "Merchant-ready in 3 days",
+    tag: "We launch your US business end-to-end",
+    title: "LLC Formation",
     points: [
-      "US LLC formation with registered agent",
-      "EIN, ITIN, and BIO report processed",
-      "Stripe & PayPal merchant accounts approved",
+      "File your LLC in 10 days",
+      "EIN with Bank",
+      "Approved Bank in 10 days",
     ],
   },
   {
