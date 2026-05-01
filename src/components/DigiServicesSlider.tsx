@@ -45,8 +45,8 @@ const useDims = (): Dim => {
   useEffect(() => {
     const calc = () => {
       const w = window.innerWidth;
-      if (w < 480)        setD({ radius: 320, cardW: 150, cardH: 230, stageH: 340 });
-      else if (w < 640)   setD({ radius: 340, cardW: 170, cardH: 250, stageH: 360 });
+      if (w < 480)        setD({ radius: 260, cardW: 160, cardH: 240, stageH: 320 });
+      else if (w < 640)   setD({ radius: 280, cardW: 180, cardH: 260, stageH: 340 });
       else if (w < 1024)  setD({ radius: 310, cardW: 250, cardH: 330, stageH: 410 });
       else                setD({ radius: 380, cardW: 270, cardH: 350, stageH: 430 });
     };
