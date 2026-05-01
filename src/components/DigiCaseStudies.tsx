@@ -10,6 +10,7 @@ const cases = [
       "Company Formation",
       "Banks",
     ],
+    href: "/pricing",
   },
   {
     tag: "We launch your US business end-to-end",
@@ -19,6 +20,7 @@ const cases = [
       "EIN with Bank",
       "Approved Bank in 10 days",
     ],
+    href: "/pricing",
   },
   {
     tag: "UK Compliance",
@@ -28,6 +30,7 @@ const cases = [
       "Annual accounts prepared and submitted",
       "Director and PSC records kept fully compliant",
     ],
+    href: "/contact",
   },
 ];
 
