@@ -89,7 +89,7 @@ const DigiFooter = () => {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90 transition"
             >
-              <MessageCircle className="w-4 h-4" /> WhatsApp Us
+              <WhatsAppIcon className="w-4 h-4" /> WhatsApp Us
             </a>
           </div>
         </div>
@@ -169,7 +169,7 @@ const DigiFooter = () => {
               </a>
             </li>
             <li className="flex items-start gap-3">
-              <MessageCircle className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+              <WhatsAppIcon className="w-4 h-4 mt-0.5 flex-shrink-0" />
               <a
                 href="https://wa.me/923164467464"
                 target="_blank"
@@ -196,9 +196,8 @@ const DigiFooter = () => {
                 aria-label="Open live meetup location pin in Google Maps"
               >
                 <span>
-                  Office 1006, 85 Dunstall Hill,<br />
-                  Wolverhampton, WV6 0SR,<br />
-                  United Kingdom
+                  Lahore,<br />
+                  Punjab, Pakistan
                 </span>
                 <span className="block mt-1.5 text-[11px] uppercase tracking-widest text-primary opacity-90 group-hover:opacity-100">
                   📍 Open live location for meetup →
