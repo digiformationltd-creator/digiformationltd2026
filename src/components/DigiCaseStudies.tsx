@@ -61,10 +61,10 @@ const DigiCaseStudies = () => (
               ))}
             </ul>
             <Link
-              to="/contact"
+              to={c.href}
               className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] hover:gap-3 transition-all"
             >
-              Read Full Case Study <ArrowRight className="w-3.5 h-3.5" />
+              {c.href === "/pricing" ? "View Packages" : "Learn More"} <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </article>
         ))}
