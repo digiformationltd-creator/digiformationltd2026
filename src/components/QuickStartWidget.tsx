@@ -46,7 +46,7 @@ const formatUSD = (n: number) =>
 
 const QuickStartWidget = () => {
   const navigate = useNavigate();
-  const [tab, setTab] = useState<"usa" | "uk">("usa");
+  const [tab, setTab] = useState<"usa" | "uk">("uk");
   const [states, setStates] = useState<StateRow[]>([]);
   const [usState, setUsState] = useState<string | undefined>(undefined);
   const [ukJur, setUkJur] = useState<string | undefined>(undefined);
