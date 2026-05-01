@@ -1031,13 +1031,6 @@ export const Pricing = () => {
             <p className="mt-4 text-base md:text-lg opacity-85">
               Fixed fees, no hidden add-ons.
             </p>
-            <div className="mt-5 inline-flex items-center gap-2 glass rounded-full px-4 py-2 text-xs">
-              <Globe className="w-3.5 h-3.5 text-primary" />
-              <span>
-                Prices in <strong>£ GBP</strong>. Pay in <strong>USD ($)</strong> or
-                <strong> PKR (₨)</strong> via Wise / bank transfer at live exchange rate.
-              </span>
-            </div>
           </div>
         </div>
       </section>
