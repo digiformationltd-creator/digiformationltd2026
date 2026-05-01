@@ -10,6 +10,7 @@ const cases = [
       "Company Formation",
       "Banks",
     ],
+    href: "/pricing",
   },
   {
     tag: "We launch your US business end-to-end",
@@ -19,6 +20,7 @@ const cases = [
       "EIN with Bank",
       "Approved Bank in 10 days",
     ],
+    href: "/pricing",
   },
   {
     tag: "UK Compliance",
@@ -28,6 +30,7 @@ const cases = [
       "Annual accounts prepared and submitted",
       "Director and PSC records kept fully compliant",
     ],
+    href: "/contact",
   },
 ];
 
@@ -58,10 +61,10 @@ const DigiCaseStudies = () => (
               ))}
             </ul>
             <Link
-              to="/contact"
+              to={c.href}
               className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] hover:gap-3 transition-all"
             >
-              Read Full Case Study <ArrowRight className="w-3.5 h-3.5" />
+              {c.href === "/pricing" ? "View Packages" : "Learn More"} <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </article>
         ))}
