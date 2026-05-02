@@ -17,6 +17,12 @@ import {
   UserCircle2,
   Send,
   Loader2,
+  GraduationCap,
+  Megaphone,
+  Target,
+  LineChart,
+  Rocket,
+  Users,
 } from "lucide-react";
 import { z } from "zod";
 
