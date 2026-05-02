@@ -52,9 +52,9 @@ import { bankingProviders } from "@/data/banking";
 import heroWeb from "@/assets/card-hero-web.jpg";
 
 /* ---------- helpers ---------- */
-const setMeta = (title: string, description: string) => {
+const setMeta = (title: string, description: string, keywords?: string) => {
   document.title = title;
-  const set = (n: string, c: string) => {
+  const setName = (n: string, c: string) => {
     let el = document.querySelector(`meta[name="${n}"]`) as HTMLMetaElement | null;
     if (!el) {
       el = document.createElement("meta");
@@ -63,7 +63,33 @@ const setMeta = (title: string, description: string) => {
     }
     el.setAttribute("content", c);
   };
-  set("description", description);
+  const setProp = (p: string, c: string) => {
+    let el = document.querySelector(`meta[property="${p}"]`) as HTMLMetaElement | null;
+    if (!el) {
+      el = document.createElement("meta");
+      el.setAttribute("property", p);
+      document.head.appendChild(el);
+    }
+    el.setAttribute("content", c);
+  };
+  setName("description", description);
+  if (keywords) setName("keywords", keywords);
+  setName("robots", "index, follow, max-snippet:-1, max-image-preview:large");
+  setProp("og:title", title);
+  setProp("og:description", description);
+  setProp("og:type", "website");
+  setProp("og:url", window.location.href);
+  setName("twitter:card", "summary_large_image");
+  setName("twitter:title", title);
+  setName("twitter:description", description);
+  // canonical
+  let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+  if (!canonical) {
+    canonical = document.createElement("link");
+    canonical.rel = "canonical";
+    document.head.appendChild(canonical);
+  }
+  canonical.href = window.location.origin + window.location.pathname;
 };
 
 const injectJsonLd = (id: string, data: object) => {
