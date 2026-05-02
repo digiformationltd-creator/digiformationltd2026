@@ -12,16 +12,17 @@ import {
   CalendarDays, ShoppingBag, Wallet, Building2, FileText, UserCog,
   MapPin, ShoppingCart, Ticket, LifeBuoy, LogOut, UserCircle2,
   ChevronRight, Loader2, Inbox, Plus, Download, ArrowUpRight,
-  Handshake, Link2, TrendingUp, Copy, Megaphone, GraduationCap,
+  Handshake, Link2, TrendingUp, Copy, Megaphone, GraduationCap, LayoutDashboard,
 } from "lucide-react";
 import logo from "@/assets/digiformation-logo.png";
 
 type SectionId =
-  | "subscriptions" | "orders" | "wallet" | "company" | "documents"
+  | "overview" | "subscriptions" | "orders" | "wallet" | "company" | "documents"
   | "editAccount" | "editAddress" | "newServices" | "tickets" | "openTicket"
   | "affiliate";
 
 const menu: { id: SectionId; label: string; icon: any }[] = [
+  { id: "overview", label: "Dashboard", icon: LayoutDashboard },
   { id: "subscriptions", label: "Subscriptions", icon: CalendarDays },
   { id: "orders", label: "My Orders", icon: ShoppingBag },
   { id: "wallet", label: "My Wallet", icon: Wallet },
