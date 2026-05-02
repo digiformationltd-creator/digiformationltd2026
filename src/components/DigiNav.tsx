@@ -30,10 +30,10 @@ const DigiNav = () => {
   return (
     <header className="fixed top-0 inset-x-0 z-50">
       <div className="container mx-auto mt-1 sm:mt-2 xl:mt-4 px-3 sm:px-4">
-        <nav className="flex items-center justify-between pl-1 sm:pl-2 pr-2 sm:pr-3 py-1.5 sm:py-2 xl:py-2.5">
+        <nav className="flex items-center justify-between gap-2 pl-1 sm:pl-2 pr-2 sm:pr-3 py-1.5 sm:py-2 xl:py-2.5">
           {/* Logo */}
-          <Link to="/" className="flex items-center" aria-label="Digiformation home">
-            <img src={logo} alt="Digiformation" className="h-16 sm:h-24 md:h-28 xl:h-32 w-auto object-contain" />
+          <Link to="/" className="flex items-center shrink-0" aria-label="Digiformation home">
+            <img src={logo} alt="Digiformation" className="h-10 sm:h-24 md:h-28 xl:h-32 w-auto object-contain" />
           </Link>
 
           {/* Desktop links */}
