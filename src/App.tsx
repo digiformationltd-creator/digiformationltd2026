@@ -26,6 +26,8 @@ import BankingProviderPage from "./pages/BankingProviderPage";
 import WhatsAppFloat from "./components/WhatsAppFloat";
 import AIAssistant from "./components/AIAssistant";
 import ScrollToTop from "./components/ScrollToTop";
+import Auth from "./pages/Auth";
+import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -102,6 +104,10 @@ const App = () => (
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/privacy-policy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
+
+          {/* Client auth + dashboard */}
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/dashboard" element={<Dashboard />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
