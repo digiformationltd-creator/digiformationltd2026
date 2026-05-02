@@ -87,25 +87,25 @@ const DigiNav = () => {
 
           {/* CTA */}
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <Button asChild variant="outline" size="sm" className="rounded-full hidden sm:inline-flex">
+            <Button asChild variant="outline" className="rounded-full hidden sm:inline-flex h-12 sm:h-14 px-4">
               <Link to="/affiliate" aria-label="Join the affiliate program">
-                <Handshake className="w-4 h-4" />
+                <Handshake className="w-5 h-5" />
                 <span>Join Us</span>
               </Link>
             </Button>
-            <Button asChild variant="hero" size="sm" className="rounded-full">
+            <Button asChild variant="hero" className="rounded-full h-12 sm:h-14 px-4">
               <Link to="/auth" aria-label="Sign in to client dashboard">
-                <UserCircle2 className="w-4 h-4" />
+                <UserCircle2 className="w-5 h-5" />
                 <span className="hidden sm:inline">Client Dashboard</span>
-                <span className="sm:hidden text-xs">Login</span>
+                <span className="sm:hidden text-sm">Login</span>
               </Link>
             </Button>
             <button
               aria-label="Toggle menu"
               onClick={() => setOpen(!open)}
-              className="xl:hidden w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full grid place-items-center hover:bg-primary/10 transition"
+              className="xl:hidden w-12 h-12 sm:w-14 sm:h-14 rounded-full grid place-items-center hover:bg-primary/10 transition"
             >
-              {open ? <X className="w-9 h-9 sm:w-10 sm:h-10" /> : <Menu className="w-9 h-9 sm:w-10 sm:h-10" />}
+              {open ? <X className="w-7 h-7 sm:w-8 sm:h-8" /> : <Menu className="w-7 h-7 sm:w-8 sm:h-8" />}
             </button>
           </div>
         </nav>
