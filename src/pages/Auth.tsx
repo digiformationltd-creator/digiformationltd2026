@@ -125,7 +125,7 @@ const Auth = () => {
                     <Label htmlFor="si-email">Email</Label>
                     <div className="relative mt-1.5">
                       <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 opacity-60" />
-                      <Input id="si-email" name="email" type="email" required placeholder="you@company.com" className="pl-9" autoComplete="email" />
+                      <Input id="si-email" name="email" type="email" required placeholder="Enter your email" className="pl-9" autoComplete="email" />
                     </div>
                   </div>
                   <div>
@@ -146,11 +146,11 @@ const Auth = () => {
                 <form onSubmit={handleSignUp} className="space-y-4">
                   <div>
                     <Label htmlFor="su-name">Full Name</Label>
-                    <Input id="su-name" name="fullName" required placeholder="Muhammad Khurram Ali" className="mt-1.5" autoComplete="name" />
+                    <Input id="su-name" name="fullName" required placeholder="Enter your full name" className="mt-1.5" autoComplete="name" />
                   </div>
                   <div>
                     <Label htmlFor="su-email">Email</Label>
-                    <Input id="su-email" name="email" type="email" required placeholder="you@company.com" className="mt-1.5" autoComplete="email" />
+                    <Input id="su-email" name="email" type="email" required placeholder="Enter your email" className="mt-1.5" autoComplete="email" />
                   </div>
                   <div>
                     <Label htmlFor="su-password">Password</Label>
