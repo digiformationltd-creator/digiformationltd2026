@@ -1035,8 +1035,9 @@ const PackageCard = ({ p }: { p: DetailPkg }) => (
 export const Pricing = () => {
   useEffect(() => {
     setMeta(
-      "Transparent Pricing — UK & US Formation, Compliance & Banking | Digiformation",
-      "All Digiformation pricing in one place — UK formation, compliance, USA company services and banking. Fixed fees, no hidden costs."
+      "Pricing & Packages 2026 — UK LTD, US LLC, Banking & Compliance | Digiformation",
+      "Transparent 2026 pricing for UK Limited Company formation, US LLC formation, business banking (Tide, Wise, Mercury, Airwallex) and annual compliance. Fixed fees, no hidden costs — for non-residents in Pakistan, India, UAE, Bangladesh, Morocco & worldwide.",
+      "UK LTD pricing 2026, US LLC formation cost, business banking packages, Companies House fees, Digiformation pricing, non resident formation cost worldwide"
     );
   }, []);
 
