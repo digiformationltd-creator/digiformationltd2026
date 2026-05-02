@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      client_addresses: {
+        Row: {
+          address_line1: string | null
+          address_line2: string | null
+          city: string | null
+          country: string | null
+          county: string | null
+          created_at: string
+          expire_date: string | null
+          id: string
+          label: string
+          notes: string | null
+          postcode: string | null
+          service_type: string
+          start_date: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address_line1?: string | null
+          address_line2?: string | null
+          city?: string | null
+          country?: string | null
+          county?: string | null
+          created_at?: string
+          expire_date?: string | null
+          id?: string
+          label: string
+          notes?: string | null
+          postcode?: string | null
+          service_type?: string
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address_line1?: string | null
+          address_line2?: string | null
+          city?: string | null
+          country?: string | null
+          county?: string | null
+          created_at?: string
+          expire_date?: string | null
+          id?: string
+          label?: string
+          notes?: string | null
+          postcode?: string | null
+          service_type?: string
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       client_company_details: {
         Row: {
           accounts_filing_due: string | null

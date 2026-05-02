@@ -23,10 +23,10 @@ const menu: { id: SectionId; label: string; icon: any }[] = [
   { id: "subscriptions", label: "Subscriptions", icon: CalendarDays },
   { id: "orders", label: "My Orders", icon: ShoppingBag },
   { id: "wallet", label: "My Wallet", icon: Wallet },
-  { id: "company", label: "Company Details", icon: Building2 },
+  { id: "company", label: "My Companies", icon: Building2 },
+  { id: "editAddress", label: "My Addresses", icon: MapPin },
   { id: "documents", label: "Documents", icon: FileText },
   { id: "editAccount", label: "Edit Account", icon: UserCog },
-  { id: "editAddress", label: "Edit Address", icon: MapPin },
   { id: "newServices", label: "Order New Services", icon: ShoppingCart },
   { id: "tickets", label: "My Tickets", icon: Ticket },
   { id: "openTicket", label: "Open a Ticket", icon: LifeBuoy },
@@ -94,7 +94,7 @@ const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    document.title = "Client Dashboard | Digiformation";
+    document.title = "Client Dashboard | DigiFormation Ltd";
 
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       setUser(session?.user ?? null);
@@ -148,8 +148,12 @@ const Dashboard = () => {
       {/* Sidebar */}
       <aside className={`${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 fixed lg:sticky top-0 left-0 z-40 h-screen w-72 glass border-r border-border/40 flex flex-col transition-transform`}>
         <div className="p-5 border-b border-border/40">
-          <Link to="/" className="flex items-center gap-2">
-            <img src={logo} alt="Digiformation" className="h-12 w-auto object-contain" />
+          <Link to="/" className="flex items-center gap-3">
+            <img src={logo} alt="DigiFormation Ltd" className="h-10 w-auto object-contain" />
+            <div className="leading-tight">
+              <div className="text-sm font-semibold">DigiFormation Ltd</div>
+              <div className="text-[10px] opacity-60">Client Portal</div>
+            </div>
           </Link>
         </div>
 
@@ -300,7 +304,7 @@ const Dashboard = () => {
             <EditAccountForm profile={profile} email={user.email || ""} onSaved={(p) => setProfile(p)} />
           )}
 
-          {active === "editAddress" && <EditAddressForm />}
+          {active === "editAddress" && <MyAddressesSection userId={user.id} />}
 
           {active === "newServices" && (
             <div>
@@ -395,20 +399,75 @@ const EditAccountForm = ({ profile, email, onSaved }: { profile: Profile | null;
   );
 };
 
-const EditAddressForm = () => {
-  const fields = ["Address Line 1", "Address Line 2", "City", "County", "Postcode", "Country"];
+interface AddressRow {
+  id: string;
+  label: string;
+  service_type: string;
+  address_line1: string | null;
+  address_line2: string | null;
+  city: string | null;
+  county: string | null;
+  postcode: string | null;
+  country: string | null;
+  start_date: string | null;
+  expire_date: string | null;
+  status: string;
+}
+
+const MyAddressesSection = ({ userId }: { userId: string }) => {
+  const [rows, setRows] = useState<AddressRow[] | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("client_addresses")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
+      setRows((data as AddressRow[]) || []);
+    })();
+  }, [userId]);
+
+  if (rows === null) {
+    return <div className="glass rounded-2xl p-10 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto opacity-60" /></div>;
+  }
+
+  if (rows.length === 0) {
+    return (
+      <EmptyState
+        icon={MapPin}
+        title="No addresses on file"
+        description="If you've purchased a standalone Registered Office Address or Director Service Address (without a company), it will appear here. Need one? Order below."
+        action={<Button asChild variant="hero" className="rounded-full"><Link to="/uk-services/registered-office-address">Order Registered Address</Link></Button>}
+      />
+    );
+  }
+
+  const formatAddr = (a: AddressRow) =>
+    [a.address_line1, a.address_line2, a.city, a.county, a.postcode, a.country].filter(Boolean).join(", ");
+
   return (
-    <form onSubmit={(e) => { e.preventDefault(); toast.success("Address updated"); }} className="glass rounded-2xl p-6 sm:p-8 space-y-5 max-w-2xl">
-      <div className="grid sm:grid-cols-2 gap-4">
-        {fields.map((f) => (
-          <div key={f}>
-            <Label>{f}</Label>
-            <Input placeholder={f} className="mt-1.5" />
+    <div className="space-y-4">
+      <p className="text-sm opacity-70">Standalone address services you have purchased from DigiFormation Ltd.</p>
+      {rows.map((a) => (
+        <div key={a.id} className="glass rounded-2xl p-6">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <MapPin className="w-4 h-4 opacity-70" />
+                <h3 className="font-semibold">{a.label}</h3>
+                <StatusBadge status={a.status === "active" ? "Active" : "Expired"} />
+              </div>
+              <p className="text-sm opacity-80">{formatAddr(a) || "—"}</p>
+            </div>
+            <div className="text-xs opacity-70 text-right">
+              {a.start_date && <div>Start: {a.start_date}</div>}
+              {a.expire_date && <div>Expires: {a.expire_date}</div>}
+            </div>
           </div>
-        ))}
-      </div>
-      <Button type="submit" variant="hero" className="rounded-full">Update Address</Button>
-    </form>
+        </div>
+      ))}
+    </div>
   );
 };
 
