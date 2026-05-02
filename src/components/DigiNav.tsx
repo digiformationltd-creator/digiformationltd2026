@@ -33,7 +33,7 @@ const DigiNav = () => {
         <nav className="flex items-center justify-between gap-2 pl-1 sm:pl-2 pr-2 sm:pr-3 py-1.5 sm:py-2 xl:py-2.5">
           {/* Logo */}
           <Link to="/" className="flex items-center shrink-0" aria-label="Digiformation home">
-            <img src={logo} alt="Digiformation" className="h-10 sm:h-24 md:h-28 xl:h-32 w-auto object-contain" />
+            <img src={logo} alt="Digiformation" className="h-16 sm:h-24 md:h-28 xl:h-32 w-auto object-contain" />
           </Link>
 
           {/* Desktop links */}
