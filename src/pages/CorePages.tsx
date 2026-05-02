@@ -1417,8 +1417,9 @@ export const WebDevelopment = () => {
 
   useEffect(() => {
     setMeta(
-      "Web Design & Development Services UK | Digiformation Ltd",
-      "Get a conversion-focused website from Digiformation Ltd. Custom design, WordPress, Shopify, landing pages & ongoing support. Request a free quote."
+      "Business Website Development 2026 — Shopify, WordPress & Custom Web Design (Worldwide)",
+      "Conversion-focused business website development in 2026 — Shopify, WooCommerce, WordPress, custom React builds, landing pages and ongoing support. SEO-ready websites for founders in UK, USA, Pakistan, India, UAE & worldwide.",
+      "business website development 2026, Shopify development, WordPress design, custom web development, ecommerce website worldwide, conversion landing pages"
     );
     return injectJsonLd("web-faq-jsonld", {
       "@context": "https://schema.org",
