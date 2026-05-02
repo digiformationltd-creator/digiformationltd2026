@@ -152,12 +152,6 @@ const DigiNav = () => {
                 </Link>
               ))}
             </div>
-            <Button asChild variant="hero" className="w-full mt-3 rounded-full">
-              <Link to="/auth" onClick={() => setOpen(false)}>
-                <UserCircle2 className="w-4 h-4" />
-                Client Dashboard
-              </Link>
-            </Button>
           </div>
         </div>
       )}
