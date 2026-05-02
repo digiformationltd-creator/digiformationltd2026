@@ -205,6 +205,24 @@ const Auth = () => {
                         <Input id="si-password" name="password" type="password" required placeholder="••••••••" className="pl-9" autoComplete="current-password" />
                       </div>
                     </div>
+                    <div className="flex items-start gap-2">
+                      <Checkbox
+                        id="remember-me"
+                        checked={rememberMe}
+                        onCheckedChange={(c) => setRememberMe(Boolean(c))}
+                        className="mt-0.5"
+                      />
+                      <div className="flex-1">
+                        <Label htmlFor="remember-me" className="text-sm cursor-pointer">
+                          Keep me signed in
+                        </Label>
+                        <p className="text-[10px] opacity-60 leading-tight mt-0.5">
+                          {rememberMe
+                            ? "You'll stay signed in on this device."
+                            : "You'll be signed out automatically after 5 hours."}
+                        </p>
+                      </div>
+                    </div>
                     <Button type="submit" variant="hero" className="w-full rounded-full" disabled={loading}>
                       {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserCircle2 className="w-4 h-4" />}
                       Sign In to Dashboard
