@@ -1,6 +1,6 @@
 import { Link, NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Menu, X, ChevronDown, ArrowRight } from "lucide-react";
+import { Menu, X, ChevronDown, UserCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { navGroups } from "@/data/navigation";
 import logo from "@/assets/digiformation-logo.png";
@@ -92,8 +92,9 @@ const DigiNav = () => {
           {/* CTA */}
           <div className="flex items-center gap-2">
             <Button asChild variant="hero" size="sm" className="rounded-full hidden sm:inline-flex">
-              <Link to="/#contact">
-                Free Consultation <ArrowRight className="w-3.5 h-3.5" />
+              <Link to="/auth" aria-label="Sign in to client dashboard">
+                <UserCircle2 className="w-4 h-4" />
+                Client Dashboard
               </Link>
             </Button>
             <button
@@ -150,7 +151,10 @@ const DigiNav = () => {
               ))}
             </div>
             <Button asChild variant="hero" className="w-full mt-3 rounded-full">
-              <Link to="/#contact" onClick={() => setOpen(false)}>Free Consultation</Link>
+              <Link to="/auth" onClick={() => setOpen(false)}>
+                <UserCircle2 className="w-4 h-4" />
+                Client Dashboard
+              </Link>
             </Button>
           </div>
         </div>
