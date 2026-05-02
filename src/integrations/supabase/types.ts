@@ -14,6 +14,237 @@ export type Database = {
   }
   public: {
     Tables: {
+      client_company_details: {
+        Row: {
+          accounts_filing_due: string | null
+          address_expire: string | null
+          auth_code: string | null
+          company_address: string | null
+          company_name: string | null
+          company_number: string | null
+          confirmation_due: string | null
+          created_at: string
+          director_name: string | null
+          id: string
+          incorporation_date: string | null
+          registered_address: string | null
+          sic_code: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accounts_filing_due?: string | null
+          address_expire?: string | null
+          auth_code?: string | null
+          company_address?: string | null
+          company_name?: string | null
+          company_number?: string | null
+          confirmation_due?: string | null
+          created_at?: string
+          director_name?: string | null
+          id?: string
+          incorporation_date?: string | null
+          registered_address?: string | null
+          sic_code?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accounts_filing_due?: string | null
+          address_expire?: string | null
+          auth_code?: string | null
+          company_address?: string | null
+          company_name?: string | null
+          company_number?: string | null
+          confirmation_due?: string | null
+          created_at?: string
+          director_name?: string | null
+          id?: string
+          incorporation_date?: string | null
+          registered_address?: string | null
+          sic_code?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      client_documents: {
+        Row: {
+          created_at: string
+          doc_date: string
+          file_size: string | null
+          file_type: string | null
+          file_url: string | null
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          doc_date?: string
+          file_size?: string | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          name: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          doc_date?: string
+          file_size?: string | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      client_orders: {
+        Row: {
+          amount_gbp: number
+          created_at: string
+          id: string
+          order_date: string
+          order_ref: string
+          service: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          amount_gbp?: number
+          created_at?: string
+          id?: string
+          order_date?: string
+          order_ref: string
+          service: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          amount_gbp?: number
+          created_at?: string
+          id?: string
+          order_date?: string
+          order_ref?: string
+          service?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      client_subscriptions: {
+        Row: {
+          created_at: string
+          id: string
+          next_billing: string | null
+          period: string
+          plan_name: string
+          price_gbp: number
+          renewal_date: string | null
+          start_date: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          next_billing?: string | null
+          period?: string
+          plan_name: string
+          price_gbp?: number
+          renewal_date?: string | null
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          next_billing?: string | null
+          period?: string
+          plan_name?: string
+          price_gbp?: number
+          renewal_date?: string | null
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      client_tickets: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          replies_count: number
+          status: string
+          subject: string
+          ticket_ref: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          replies_count?: number
+          status?: string
+          subject: string
+          ticket_ref: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          replies_count?: number
+          status?: string
+          subject?: string
+          ticket_ref?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      client_wallet_transactions: {
+        Row: {
+          amount_gbp: number
+          created_at: string
+          description: string
+          id: string
+          txn_date: string
+          txn_ref: string
+          txn_type: string
+          user_id: string
+        }
+        Insert: {
+          amount_gbp: number
+          created_at?: string
+          description: string
+          id?: string
+          txn_date?: string
+          txn_ref: string
+          txn_type: string
+          user_id: string
+        }
+        Update: {
+          amount_gbp?: number
+          created_at?: string
+          description?: string
+          id?: string
+          txn_date?: string
+          txn_ref?: string
+          txn_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       contact_submissions: {
         Row: {
           country: string
@@ -80,6 +311,42 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          avatar_initials: string | null
+          company_name: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_initials?: string | null
+          company_name?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_initials?: string | null
+          company_name?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       us_llc_state_pricing: {
         Row: {
           created_at: string
@@ -122,6 +389,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       whatsapp_clicks: {
         Row: {
           created_at: string
@@ -154,10 +442,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "client"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -284,6 +578,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "client"],
+    },
   },
 } as const
