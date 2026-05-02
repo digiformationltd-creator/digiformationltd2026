@@ -29,6 +29,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import ResetPassword from "./pages/ResetPassword";
+import Affiliate from "./pages/Affiliate";
 
 const queryClient = new QueryClient();
 
@@ -110,6 +111,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/affiliate" element={<Affiliate />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
