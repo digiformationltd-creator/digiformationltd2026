@@ -14,6 +14,7 @@ const moreLinks = [
   { name: "About", path: "/#about" },
   { name: "Blog", path: "/blog" },
   { name: "FAQ", path: "/faq" },
+  { name: "Affiliate / Join Us", path: "/affiliate" },
 ];
 
 const DigiNav = () => {
@@ -28,11 +29,11 @@ const DigiNav = () => {
 
   return (
     <header className="fixed top-0 inset-x-0 z-50">
-      <div className="container mx-auto mt-4 px-4">
-        <nav className="flex items-center justify-between pl-2 pr-3 py-2.5">
+      <div className="container mx-auto mt-1 sm:mt-2 xl:mt-4 px-3 sm:px-4">
+        <nav className="flex items-center justify-between pl-1 sm:pl-2 pr-2 sm:pr-3 py-1.5 sm:py-2 xl:py-2.5">
           {/* Logo */}
           <Link to="/" className="flex items-center" aria-label="Digiformation home">
-            <img src={logo} alt="Digiformation" className="h-28 md:h-32 w-auto object-contain" />
+            <img src={logo} alt="Digiformation" className="h-16 sm:h-24 md:h-28 xl:h-32 w-auto object-contain" />
           </Link>
 
           {/* Desktop links */}
@@ -106,8 +107,8 @@ const DigiNav = () => {
 
       {/* Mobile drawer */}
       {open && (
-        <div className="xl:hidden container mx-auto mt-3 px-4">
-          <div className="glass rounded-2xl p-4 max-h-[calc(100vh-8rem)] overflow-y-auto">
+        <div className="xl:hidden container mx-auto mt-2 px-3 sm:px-4">
+          <div className="glass rounded-2xl p-3 sm:p-4 max-h-[calc(100vh-6rem)] overflow-y-auto">
             <Link to="/" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm rounded-lg hover:bg-primary/10">
               Home
             </Link>
