@@ -12,6 +12,7 @@ import {
   CalendarDays, ShoppingBag, Wallet, Building2, FileText, UserCog,
   MapPin, ShoppingCart, Ticket, LifeBuoy, LogOut, UserCircle2,
   ChevronRight, Loader2, Inbox, Plus, Download, ArrowUpRight,
+  Handshake, Link2, TrendingUp, Copy, Megaphone, GraduationCap,
 } from "lucide-react";
 import logo from "@/assets/digiformation-logo.png";
 
