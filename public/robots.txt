@@ -1,4 +1,41 @@
+# Digiformation Ltd — robots.txt (2026)
+# https://digiformation.uk
+
 User-agent: *
 Allow: /
+Disallow: /dashboard
+Disallow: /auth
+Disallow: /reset-password
+Disallow: /client-area
 
+# AI / LLM crawlers — allow indexing for brand visibility
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# Block bad/aggressive scrapers
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+Host: https://digiformation.uk
 Sitemap: https://digiformation.uk/sitemap.xml
