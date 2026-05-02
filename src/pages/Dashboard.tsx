@@ -336,6 +336,8 @@ const Dashboard = () => {
             </div>
           )}
 
+          {active === "affiliate" && <AffiliateDashboardSection user={user} displayName={displayName} />}
+
           {active === "tickets" && (
             <EmptyState
               icon={Ticket}
