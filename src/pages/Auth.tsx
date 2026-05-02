@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { ShieldCheck, UserCircle2, Mail, Lock, Loader2, ArrowLeft } from "lucide-react";
 import logo from "@/assets/digiformation-logo.png";
