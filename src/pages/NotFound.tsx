@@ -30,9 +30,7 @@ const NotFound = () => {
         <div className="container mx-auto px-4 py-16 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-3 mb-6 justify-center">
-              <span className="h-px w-7 bg-primary" />
               <span className="text-xs uppercase tracking-[0.18em] font-semibold">Error 404</span>
-              <span className="h-px w-7 bg-primary" />
             </div>
 
             <h1 className="text-7xl md:text-9xl font-bold leading-none tracking-tight text-gradient mb-6">
