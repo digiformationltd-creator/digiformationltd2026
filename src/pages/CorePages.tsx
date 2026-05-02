@@ -1623,8 +1623,9 @@ const LegalSection = ({
 export const Privacy = () => {
   useEffect(() => {
     setMeta(
-      "Digiformation Ltd | Privacy Policy & Terms of Service",
-      "Read Digiformation Ltd's Privacy Policy and Terms of Service. Learn how we protect your data, handle company registration services, and ensure compliance."
+      "Privacy Policy & Terms of Service — Digiformation Ltd (GDPR & UK DPA Compliant)",
+      "Read Digiformation Ltd's GDPR & UK Data Protection Act compliant Privacy Policy and Terms of Service. How we protect client data during UK LTD, US LLC and banking services worldwide.",
+      "Digiformation privacy policy, GDPR privacy, UK DPA compliance, terms of service company formation, data protection worldwide"
     );
   }, []);
 
