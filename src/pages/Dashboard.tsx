@@ -256,11 +256,11 @@ const Dashboard = () => {
           <Button
             variant="ghost"
             size="icon"
-            className="rounded-full"
+            className="rounded-full w-12 h-12"
             onClick={() => setMenuOpen(true)}
             aria-label="Open menu"
           >
-            <Menu className="w-5 h-5" />
+            <Menu className="w-7 h-7" />
           </Button>
           <div className="flex items-center gap-2 sm:gap-3">
             <div
