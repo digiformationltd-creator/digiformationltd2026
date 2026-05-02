@@ -136,7 +136,11 @@ const Dashboard = () => {
       }
     }
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY") {
+        navigate("/reset-password", { replace: true });
+        return;
+      }
       setUser(session?.user ?? null);
       if (!session) navigate("/auth", { replace: true });
     });

@@ -26,6 +26,7 @@ import BankingProviderPage from "./pages/BankingProviderPage";
 import WhatsAppFloat from "./components/WhatsAppFloat";
 import AIAssistant from "./components/AIAssistant";
 import ScrollToTop from "./components/ScrollToTop";
+import RecoveryRedirect from "./components/RecoveryRedirect";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import ResetPassword from "./pages/ResetPassword";
@@ -40,6 +41,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <ScrollToTop />
+        <RecoveryRedirect />
         <Routes>
           <Route path="/" element={<Index />} />
 
