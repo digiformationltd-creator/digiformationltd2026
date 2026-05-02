@@ -52,9 +52,9 @@ import { bankingProviders } from "@/data/banking";
 import heroWeb from "@/assets/card-hero-web.jpg";
 
 /* ---------- helpers ---------- */
-const setMeta = (title: string, description: string) => {
+const setMeta = (title: string, description: string, keywords?: string) => {
   document.title = title;
-  const set = (n: string, c: string) => {
+  const setName = (n: string, c: string) => {
     let el = document.querySelector(`meta[name="${n}"]`) as HTMLMetaElement | null;
     if (!el) {
       el = document.createElement("meta");
@@ -63,7 +63,33 @@ const setMeta = (title: string, description: string) => {
     }
     el.setAttribute("content", c);
   };
-  set("description", description);
+  const setProp = (p: string, c: string) => {
+    let el = document.querySelector(`meta[property="${p}"]`) as HTMLMetaElement | null;
+    if (!el) {
+      el = document.createElement("meta");
+      el.setAttribute("property", p);
+      document.head.appendChild(el);
+    }
+    el.setAttribute("content", c);
+  };
+  setName("description", description);
+  if (keywords) setName("keywords", keywords);
+  setName("robots", "index, follow, max-snippet:-1, max-image-preview:large");
+  setProp("og:title", title);
+  setProp("og:description", description);
+  setProp("og:type", "website");
+  setProp("og:url", window.location.href);
+  setName("twitter:card", "summary_large_image");
+  setName("twitter:title", title);
+  setName("twitter:description", description);
+  // canonical
+  let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+  if (!canonical) {
+    canonical = document.createElement("link");
+    canonical.rel = "canonical";
+    document.head.appendChild(canonical);
+  }
+  canonical.href = window.location.origin + window.location.pathname;
 };
 
 const injectJsonLd = (id: string, data: object) => {
@@ -114,8 +140,9 @@ export const Contact = () => {
 
   useEffect(() => {
     setMeta(
-      "Contact Digiformation Ltd – UK Company Formation & Business Services",
-      "Contact Digiformation Ltd for UK LTD & LLC formation, address services, ID verification and annual compliance. Reach us via email, WhatsApp or our inquiry form."
+      "Contact Digiformation Ltd — UK LTD & US LLC Formation Support (Worldwide)",
+      "Contact Digiformation Ltd for UK Limited Company & US LLC formation, registered office address, Companies House ID verification and annual compliance. WhatsApp, email or inquiry form — for clients in Pakistan, India, UAE, UK, USA & worldwide.",
+      "contact Digiformation, UK company formation contact, US LLC formation help, Companies House support, registered office contact, ID verification help worldwide"
     );
     const cleanup = injectJsonLd("contact-page-schema", {
       "@context": "https://schema.org",
@@ -1008,8 +1035,9 @@ const PackageCard = ({ p }: { p: DetailPkg }) => (
 export const Pricing = () => {
   useEffect(() => {
     setMeta(
-      "Transparent Pricing — UK & US Formation, Compliance & Banking | Digiformation",
-      "All Digiformation pricing in one place — UK formation, compliance, USA company services and banking. Fixed fees, no hidden costs."
+      "Pricing & Packages 2026 — UK LTD, US LLC, Banking & Compliance | Digiformation",
+      "Transparent 2026 pricing for UK Limited Company formation, US LLC formation, business banking (Tide, Wise, Mercury, Airwallex) and annual compliance. Fixed fees, no hidden costs — for non-residents in Pakistan, India, UAE, Bangladesh, Morocco & worldwide.",
+      "UK LTD pricing 2026, US LLC formation cost, business banking packages, Companies House fees, Digiformation pricing, non resident formation cost worldwide"
     );
   }, []);
 
@@ -1133,8 +1161,9 @@ export const FAQ = () => {
 
   useEffect(() => {
     setMeta(
-      "UK Company FAQ – Digiformation Ltd | Registration, Taxes & Compliance",
-      "Discover answers to common questions about UK company registration, taxes, compliance, ID verification, and business services offered by Digiformation Ltd."
+      "UK & US Company Formation FAQ 2026 — Companies House, EIN, ITIN, BOI | Digiformation",
+      "Answers to the most-asked 2026 questions on UK Limited Company registration, US LLC formation, Companies House ID verification, EIN, ITIN, BOI report, VAT and business banking — for non-resident founders worldwide.",
+      "UK company formation FAQ 2026, US LLC FAQ, Companies House ID verification FAQ, EIN ITIN BOI FAQ, non resident formation questions worldwide"
     );
     return injectJsonLd("faq-jsonld", {
       "@context": "https://schema.org",
@@ -1289,8 +1318,9 @@ const blogSections = [
 export const Blog = () => {
   useEffect(() => {
     setMeta(
-      "UK Company Registration & Business Tips | Digiformation Ltd",
-      "Learn how to register a UK company, comply with HMRC rules, verify your ID, and manage your business efficiently with Digiformation Ltd."
+      "Digiformation Blog 2026 — UK LTD, US LLC, Stripe, PayPal & Banking Guides Worldwide",
+      "Expert 2026 guides for non-resident founders: UK LTD & US LLC formation, Stripe, PayPal, Payoneer, Wise, WorldFirst, Tide, Amazon FBA, eBay, Shopify and compliance — written for entrepreneurs in Pakistan, India, UAE, Bangladesh, Morocco & worldwide.",
+      "UK LTD blog 2026, US LLC guide, Stripe non resident, PayPal worldwide, Payoneer Wise WorldFirst, Amazon FBA UK, Shopify worldwide, ecommerce formation blog"
     );
     return injectJsonLd("blog-jsonld", {
       "@context": "https://schema.org",
@@ -1387,8 +1417,9 @@ export const WebDevelopment = () => {
 
   useEffect(() => {
     setMeta(
-      "Web Design & Development Services UK | Digiformation Ltd",
-      "Get a conversion-focused website from Digiformation Ltd. Custom design, WordPress, Shopify, landing pages & ongoing support. Request a free quote."
+      "Business Website Development 2026 — Shopify, WordPress & Custom Web Design (Worldwide)",
+      "Conversion-focused business website development in 2026 — Shopify, WooCommerce, WordPress, custom React builds, landing pages and ongoing support. SEO-ready websites for founders in UK, USA, Pakistan, India, UAE & worldwide.",
+      "business website development 2026, Shopify development, WordPress design, custom web development, ecommerce website worldwide, conversion landing pages"
     );
     return injectJsonLd("web-faq-jsonld", {
       "@context": "https://schema.org",
@@ -1424,7 +1455,7 @@ export const WebDevelopment = () => {
             </div>
             <div className="relative hidden lg:block">
               <div className="relative rounded-2xl overflow-hidden glass shadow-elegant aspect-[4/3]">
-                <img src={heroWeb} alt="Web Development" className="w-full h-full object-cover" />
+                <img src={heroWeb} alt="Business website development — Shopify, WordPress and custom React builds for global founders" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-tr from-background/40 via-transparent to-transparent" />
               </div>
             </div>
@@ -1592,8 +1623,9 @@ const LegalSection = ({
 export const Privacy = () => {
   useEffect(() => {
     setMeta(
-      "Digiformation Ltd | Privacy Policy & Terms of Service",
-      "Read Digiformation Ltd's Privacy Policy and Terms of Service. Learn how we protect your data, handle company registration services, and ensure compliance."
+      "Privacy Policy & Terms of Service — Digiformation Ltd (GDPR & UK DPA Compliant)",
+      "Read Digiformation Ltd's GDPR & UK Data Protection Act compliant Privacy Policy and Terms of Service. How we protect client data during UK LTD, US LLC and banking services worldwide.",
+      "Digiformation privacy policy, GDPR privacy, UK DPA compliance, terms of service company formation, data protection worldwide"
     );
   }, []);
 
