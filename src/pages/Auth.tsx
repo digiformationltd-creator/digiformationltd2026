@@ -56,6 +56,12 @@ const Auth = () => {
     if (!pv.success) return toast.error(pv.error.issues[0].message);
 
     setLoading(true);
+    localStorage.setItem("df_remember_me", String(rememberMe));
+    if (rememberMe) {
+      localStorage.removeItem("df_session_started_at");
+    } else {
+      localStorage.setItem("df_session_started_at", String(Date.now()));
+    }
     const { error } = await supabase.auth.signInWithPassword({ email: ev.data, password: pv.data });
     setLoading(false);
     if (error) {
