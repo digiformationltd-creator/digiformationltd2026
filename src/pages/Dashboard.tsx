@@ -96,27 +96,65 @@ const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [company, setCompany] = useState<CompanyDetails | null>(null);
-  const [active, setActive] = useState<SectionId>("subscriptions");
+  const [active, setActive] = useState<SectionId>("overview");
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     document.title = "Client Dashboard | DigiFormation Ltd";
 
+    // Enforce 5-hour max session when user did NOT check "Keep me signed in"
+    const SESSION_MAX_MS = 5 * 60 * 60 * 1000; // 5 hours
+    const remember = localStorage.getItem("df_remember_me") !== "false";
+    const startedAtRaw = localStorage.getItem("df_session_started_at");
+
+    const enforceExpiry = async () => {
+      if (remember) return;
+      const startedAt = startedAtRaw ? Number(startedAtRaw) : NaN;
+      if (!startedAt || Number.isNaN(startedAt)) return;
+      if (Date.now() - startedAt >= SESSION_MAX_MS) {
+        localStorage.removeItem("df_session_started_at");
+        await supabase.auth.signOut();
+        toast.info("Your 5-hour session has expired. Please sign in again.");
+        navigate("/auth", { replace: true });
+        return true;
+      }
+      return false;
+    };
+
+    let expiryTimer: number | undefined;
+    if (!remember && startedAtRaw) {
+      const startedAt = Number(startedAtRaw);
+      const remaining = SESSION_MAX_MS - (Date.now() - startedAt);
+      if (remaining > 0) {
+        expiryTimer = window.setTimeout(async () => {
+          localStorage.removeItem("df_session_started_at");
+          await supabase.auth.signOut();
+          toast.info("Your 5-hour session has expired. Please sign in again.");
+          navigate("/auth", { replace: true });
+        }, remaining);
+      }
+    }
+
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       setUser(session?.user ?? null);
       if (!session) navigate("/auth", { replace: true });
     });
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) {
         navigate("/auth", { replace: true });
         return;
       }
+      const expired = await enforceExpiry();
+      if (expired) return;
       setUser(session.user);
     });
 
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      sub.subscription.unsubscribe();
+      if (expiryTimer) window.clearTimeout(expiryTimer);
+    };
   }, [navigate]);
 
   useEffect(() => {
