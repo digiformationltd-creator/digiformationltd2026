@@ -14,6 +14,11 @@ const setMeta = (name: string, content: string) => {
   }
   el.setAttribute("content", content);
 };
+const setProp = (p: string, c: string) => {
+  let el = document.querySelector(`meta[property="${p}"]`) as HTMLMetaElement | null;
+  if (!el) { el = document.createElement("meta"); el.setAttribute("property", p); document.head.appendChild(el); }
+  el.setAttribute("content", c);
+};
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -24,6 +29,17 @@ const BlogPost = () => {
     document.title = post.metaTitle;
     setMeta("description", post.metaDescription);
     setMeta("keywords", post.keywords);
+    setMeta("robots", "index, follow, max-snippet:-1, max-image-preview:large");
+    setMeta("author", "Digiformation Ltd");
+    setProp("og:title", post.metaTitle);
+    setProp("og:description", post.metaDescription);
+    setProp("og:type", "article");
+    setProp("og:url", `${window.location.origin}/blog/${post.slug}`);
+    setProp("article:published_time", post.date);
+    setProp("article:section", post.category);
+    setMeta("twitter:card", "summary_large_image");
+    setMeta("twitter:title", post.metaTitle);
+    setMeta("twitter:description", post.metaDescription);
 
     let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
     if (!canonical) {
