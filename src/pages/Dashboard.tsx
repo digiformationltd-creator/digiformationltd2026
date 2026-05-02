@@ -172,8 +172,7 @@ const Dashboard = () => {
             <Link to="/" className="flex items-center gap-3" onClick={() => setMenuOpen(false)}>
               <img src={logo} alt="DigiFormation Ltd" className="h-20 sm:h-24 w-auto object-contain" />
               <div className="leading-tight">
-                <div className="text-sm font-semibold">DigiFormation Ltd</div>
-                <div className="text-[10px] opacity-60">Client Portal</div>
+                <div className="text-sm font-semibold">Client Portal</div>
               </div>
             </Link>
           </div>
