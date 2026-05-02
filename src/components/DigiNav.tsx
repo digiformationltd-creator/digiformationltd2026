@@ -14,8 +14,6 @@ const moreLinks = [
   { name: "About", path: "/#about" },
   { name: "Blog", path: "/blog" },
   { name: "FAQ", path: "/faq" },
-  { name: "Client Area", path: "/client-area" },
-  { name: "Contact", path: "/#contact" },
 ];
 
 const DigiNav = () => {
@@ -77,8 +75,6 @@ const DigiNav = () => {
                     { name: "About", path: "/#about" },
                     { name: "Blog", path: "/blog" },
                     { name: "FAQ", path: "/faq" },
-                    { name: "Client Area", path: "/client-area" },
-                    { name: "Contact", path: "/#contact" },
                   ].map((l) => (
                     <Link key={l.path} to={l.path} className="block px-4 py-2 text-sm rounded-md hover:bg-primary/10 transition">
                       {l.name}
