@@ -124,8 +124,7 @@ const Auth = () => {
       <div className="flex-1 flex items-center justify-center px-4 pb-12">
         <div className="w-full max-w-md">
           <div className="flex flex-col items-center mb-6">
-            <img src={logo} alt="DigiFormation Ltd" className="h-20 w-auto object-contain mb-3" />
-            <div className="text-base font-semibold tracking-tight">DigiFormation Ltd</div>
+            <img src={logo} alt="DigiFormation Ltd" className="h-36 sm:h-44 w-auto object-contain mb-4" />
             <div className="inline-flex items-center gap-2 text-xs px-3 py-1.5 rounded-full glass">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Secure client login · 256-bit encrypted</span>
