@@ -1455,7 +1455,7 @@ export const WebDevelopment = () => {
             </div>
             <div className="relative hidden lg:block">
               <div className="relative rounded-2xl overflow-hidden glass shadow-elegant aspect-[4/3]">
-                <img src={heroWeb} alt="Web Development" className="w-full h-full object-cover" />
+                <img src={heroWeb} alt="Business website development — Shopify, WordPress and custom React builds for global founders" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-tr from-background/40 via-transparent to-transparent" />
               </div>
             </div>

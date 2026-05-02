@@ -170,7 +170,7 @@ const Dashboard = () => {
         <SheetContent side="left" className="p-0 w-[280px] sm:w-[320px] bg-sidebar border-r border-border/40 flex flex-col">
           <div className="p-5 border-b border-border/40">
             <Link to="/" className="flex items-center gap-3" onClick={() => setMenuOpen(false)}>
-              <img src={logo} alt="DigiFormation Ltd" className="h-20 sm:h-24 w-auto object-contain" />
+              <img src={logo} alt="Digiformation Ltd logo — UK LTD alt="DigiFormation Ltd" US LLC formation for non-residents worldwide" className="h-20 sm:h-24 w-auto object-contain" />
               <div className="leading-tight">
                 <div className="text-sm font-semibold">Client Portal</div>
               </div>

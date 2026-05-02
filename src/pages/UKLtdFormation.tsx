@@ -234,7 +234,7 @@ const UKLtdFormation = () => {
             </div>
             <div className="relative hidden lg:block">
               <div className="relative rounded-2xl overflow-hidden glass shadow-elegant aspect-[4/3]">
-                <img src={heroImg} alt="UK LTD Formation" className="w-full h-full object-cover" />
+                <img src={heroImg} alt="Register a UK Limited Company online — Companies House formation for non-residents worldwide" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-tr from-background/40 via-transparent to-transparent" />
               </div>
             </div>
