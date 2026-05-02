@@ -1,4 +1,4 @@
-ns# Digiformation Ltd — robots.txt (2026)
+# Digiformation Ltd — robots.txt (2026)
 # https://digiformation.uk
 
 User-agent: *
