@@ -13,15 +13,15 @@ export const ukServices: NavItem[] = [
 ];
 
 export const ukCompliance: NavItem[] = [
-  { name: "Company Name Change", path: "/uk-compliance/company-name-change" },
-  { name: "Company Address Change", path: "/uk-compliance/company-address-change" },
-  { name: "Annual Accounts Filing", path: "/uk-compliance/annual-accounts-filing" },
-  { name: "Confirmation Statement", path: "/uk-compliance/confirmation-statement" },
-  { name: "Director Appoint & Remove", path: "/uk-compliance/director-appoint-remove" },
-  { name: "Shareholder Appoint & Remove", path: "/uk-compliance/shareholder-appoint-remove" },
-  { name: "PSC & Secretary Appoint & Remove", path: "/uk-compliance/psc-secretary-appoint-remove" },
-  { name: "Company Residence Change", path: "/uk-compliance/company-residence-change" },
-  { name: "AD01 Form Post Service", path: "/uk-compliance/ad01-form-post" },
+  { name: "Change UK Company Name (NM01)", path: "/uk-compliance/company-name-change" },
+  { name: "Change Registered Office Address (AD01)", path: "/uk-compliance/company-address-change" },
+  { name: "File Annual Accounts (UK LTD)", path: "/uk-compliance/annual-accounts-filing" },
+  { name: "File Confirmation Statement (CS01)", path: "/uk-compliance/confirmation-statement" },
+  { name: "Appoint or Remove Director", path: "/uk-compliance/director-appoint-remove" },
+  { name: "Appoint or Remove Shareholder", path: "/uk-compliance/shareholder-appoint-remove" },
+  { name: "Appoint or Remove PSC & Secretary", path: "/uk-compliance/psc-secretary-appoint-remove" },
+  { name: "Change Company Residence Status", path: "/uk-compliance/company-residence-change" },
+  { name: "AD01 Postal Filing Service", path: "/uk-compliance/ad01-form-post" },
 ];
 
 export const usaServices: NavItem[] = [
