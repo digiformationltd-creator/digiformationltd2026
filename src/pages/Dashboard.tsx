@@ -143,8 +143,15 @@ const Dashboard = () => {
         navigate("/reset-password", { replace: true });
         return;
       }
-      setUser(session?.user ?? null);
-      if (!session) navigate("/auth", { replace: true });
+      if (event === "SIGNED_OUT") {
+        setUser(null);
+        navigate("/auth", { replace: true });
+        return;
+      }
+      // Only update user on sign-in or initial session; ignore TOKEN_REFRESHED/USER_UPDATED to prevent blink
+      if (event === "SIGNED_IN" || event === "INITIAL_SESSION") {
+        setUser((prev) => (prev?.id === session?.user?.id ? prev : session?.user ?? null));
+      }
     });
 
     supabase.auth.getSession().then(async ({ data: { session } }) => {
@@ -154,7 +161,7 @@ const Dashboard = () => {
       }
       const expired = await enforceExpiry();
       if (expired) return;
-      setUser(session.user);
+      setUser((prev) => (prev?.id === session.user.id ? prev : session.user));
     });
 
     return () => {
@@ -165,16 +172,18 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!user) return;
+    let cancelled = false;
     (async () => {
-      setLoading(true);
       const [{ data: prof }, { data: comp }] = await Promise.all([
         supabase.from("profiles").select("full_name,email,phone,company_name,avatar_initials").eq("user_id", user.id).maybeSingle(),
         supabase.from("client_company_details").select("*").eq("user_id", user.id).maybeSingle(),
       ]);
+      if (cancelled) return;
       setProfile(prof as Profile);
       setCompany(comp as CompanyDetails);
       setLoading(false);
     })();
+    return () => { cancelled = true; };
   }, [user]);
 
   const handleSignOut = async () => {
