@@ -13,7 +13,9 @@ import {
   MapPin, ShoppingCart, Ticket, LifeBuoy, LogOut, UserCircle2,
   ChevronRight, Loader2, Inbox, Plus, Download, ArrowUpRight,
   Handshake, Link2, TrendingUp, Copy, Megaphone, GraduationCap, LayoutDashboard,
+  Menu,
 } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import logo from "@/assets/digiformation-logo.png";
 
 type SectionId =
@@ -98,6 +100,7 @@ const Dashboard = () => {
   const [company, setCompany] = useState<CompanyDetails | null>(null);
   const [active, setActive] = useState<SectionId>("overview");
   const [loading, setLoading] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     document.title = "Client Dashboard | DigiFormation Ltd";
@@ -192,65 +195,74 @@ const Dashboard = () => {
   const displayName = profile?.full_name || user.email?.split("@")[0] || "Client";
 
   return (
-    <div className="min-h-screen bg-gradient-hero grid-pattern flex">
-      {/* Sidebar — always visible: icon-only on mobile, full on lg */}
-      <aside className="sticky top-0 z-40 h-screen w-16 lg:w-72 shrink-0 glass border-r border-border/40 flex flex-col transition-all">
-        <div className="p-2 lg:p-5 border-b border-border/40">
-          <Link to="/" className="flex items-center gap-3 justify-center lg:justify-start">
-            <img src={logo} alt="DigiFormation Ltd" className="h-10 lg:h-16 w-auto object-contain" />
-            <div className="leading-tight hidden lg:block">
-              <div className="text-sm font-semibold">DigiFormation Ltd</div>
-              <div className="text-[10px] opacity-60">Client Portal</div>
-            </div>
-          </Link>
-        </div>
+    <div className="min-h-screen bg-gradient-hero grid-pattern">
+      <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
+        <SheetContent side="left" className="p-0 w-[280px] sm:w-[320px] bg-sidebar border-r border-border/40 flex flex-col">
+          <div className="p-5 border-b border-border/40">
+            <Link to="/" className="flex items-center gap-3" onClick={() => setMenuOpen(false)}>
+              <img src={logo} alt="DigiFormation Ltd" className="h-12 w-auto object-contain" />
+              <div className="leading-tight">
+                <div className="text-sm font-semibold">DigiFormation Ltd</div>
+                <div className="text-[10px] opacity-60">Client Portal</div>
+              </div>
+            </Link>
+          </div>
 
-        <div className="p-2 lg:p-5 border-b border-border/40">
-          <div className="flex items-center gap-3 justify-center lg:justify-start">
-            <div className="w-10 h-10 lg:w-11 lg:h-11 rounded-full bg-gradient-brand grid place-items-center font-semibold text-xs lg:text-sm shadow-glow shrink-0">
-              {initials}
-            </div>
-            <div className="min-w-0 flex-1 hidden lg:block">
-              <div className="text-sm font-semibold truncate">{displayName}</div>
-              <div className="text-xs opacity-70 truncate">{user.email}</div>
+          <div className="p-5 border-b border-border/40">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-full bg-gradient-brand grid place-items-center font-semibold text-sm shadow-glow shrink-0">
+                {initials}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-semibold truncate">{displayName}</div>
+                <div className="text-xs opacity-70 truncate">{user.email}</div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <nav className="flex-1 overflow-y-auto p-2 lg:p-3">
-          {menu.map((m) => {
-            const Icon = m.icon;
-            const isActive = active === m.id;
-            return (
-              <button
-                key={m.id}
-                onClick={() => setActive(m.id)}
-                title={m.label}
-                className={`w-full flex items-center gap-3 px-2 lg:px-3 py-2.5 rounded-lg text-sm transition justify-center lg:justify-start ${
-                  isActive ? "bg-primary/15 text-foreground" : "hover:bg-primary/10 opacity-80"
-                }`}
-              >
-                <Icon className="w-5 h-5 lg:w-4 lg:h-4 shrink-0" />
-                <span className="flex-1 text-left hidden lg:inline">{m.label}</span>
-                {isActive && <ChevronRight className="w-3.5 h-3.5 hidden lg:inline" />}
-              </button>
-            );
-          })}
-        </nav>
+          <nav className="flex-1 overflow-y-auto p-3">
+            {menu.map((m) => {
+              const Icon = m.icon;
+              const isActive = active === m.id;
+              return (
+                <button
+                  key={m.id}
+                  onClick={() => { setActive(m.id); setMenuOpen(false); }}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition ${
+                    isActive ? "bg-primary/15 text-foreground" : "hover:bg-primary/10 opacity-80"
+                  }`}
+                >
+                  <Icon className="w-4 h-4 shrink-0" />
+                  <span className="flex-1 text-left">{m.label}</span>
+                  {isActive && <ChevronRight className="w-3.5 h-3.5" />}
+                </button>
+              );
+            })}
+          </nav>
 
-        <div className="p-2 lg:p-3 border-t border-border/40">
-          <Button onClick={handleSignOut} variant="outline" className="w-full rounded-full px-2" title="Sign Out">
-            <LogOut className="w-4 h-4" />
-            <span className="hidden lg:inline">Sign Out</span>
-          </Button>
-        </div>
-      </aside>
+          <div className="p-3 border-t border-border/40">
+            <Button onClick={handleSignOut} variant="outline" className="w-full rounded-full">
+              <LogOut className="w-4 h-4" />
+              <span>Sign Out</span>
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* Main */}
-      <main className="flex-1 min-w-0">
+      <main className="min-w-0">
         {/* Top bar */}
         <header className="sticky top-0 z-20 glass border-b border-border/40 px-4 sm:px-8 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full"
+              onClick={() => setMenuOpen(true)}
+              aria-label="Open menu"
+            >
+              <Menu className="w-5 h-5" />
+            </Button>
             <div>
               <div className="text-xs opacity-70">Client Dashboard</div>
               <h1 className="text-base sm:text-lg font-semibold">
