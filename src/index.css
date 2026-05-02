@@ -245,9 +245,27 @@ body p, body span, body li, body label, body small, body div {
   }
 }
 
-/* Accent text — clean white, no shimmer */
+/* Accent text — white with a soft moving grey inner glow */
+@keyframes headline-glow-pulse {
+  0%, 100% {
+    text-shadow:
+      0 0 8px hsl(220 6% 70% / 0.35),
+      0 0 22px hsl(220 8% 55% / 0.25),
+      0 0 40px hsl(220 10% 40% / 0.15);
+  }
+  50% {
+    text-shadow:
+      0 0 14px hsl(220 6% 80% / 0.55),
+      0 0 36px hsl(220 8% 60% / 0.45),
+      0 0 70px hsl(220 10% 50% / 0.30);
+  }
+}
 .headline-accent-shimmer {
   color: hsl(0 0% 100%);
+  animation: headline-glow-pulse 3.5s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .headline-accent-shimmer { animation: none; }
 }
 
 .animate-float { animation: float 6s ease-in-out infinite; }
