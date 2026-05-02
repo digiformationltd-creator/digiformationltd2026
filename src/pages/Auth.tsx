@@ -26,6 +26,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState<"signin" | "signup">("signin");
+  const [showForgot, setShowForgot] = useState(false);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -93,6 +94,23 @@ const Auth = () => {
     }
     toast.success("Account created! Please check your email to verify.");
     setTab("signin");
+  };
+
+  const handleForgot = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const email = String(fd.get("email") || "");
+    const ev = emailSchema.safeParse(email);
+    if (!ev.success) return toast.error(ev.error.issues[0].message);
+
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(ev.data, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setLoading(false);
+    // Always show same generic message (avoid email enumeration)
+    toast.success("If an account exists for that email, a reset link has been sent.");
+    setShowForgot(false);
   };
 
   return (
