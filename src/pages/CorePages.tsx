@@ -1161,8 +1161,9 @@ export const FAQ = () => {
 
   useEffect(() => {
     setMeta(
-      "UK Company FAQ – Digiformation Ltd | Registration, Taxes & Compliance",
-      "Discover answers to common questions about UK company registration, taxes, compliance, ID verification, and business services offered by Digiformation Ltd."
+      "UK & US Company Formation FAQ 2026 — Companies House, EIN, ITIN, BOI | Digiformation",
+      "Answers to the most-asked 2026 questions on UK Limited Company registration, US LLC formation, Companies House ID verification, EIN, ITIN, BOI report, VAT and business banking — for non-resident founders worldwide.",
+      "UK company formation FAQ 2026, US LLC FAQ, Companies House ID verification FAQ, EIN ITIN BOI FAQ, non resident formation questions worldwide"
     );
     return injectJsonLd("faq-jsonld", {
       "@context": "https://schema.org",
