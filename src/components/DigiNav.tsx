@@ -14,7 +14,6 @@ const moreLinks = [
   { name: "About", path: "/#about" },
   { name: "Blog", path: "/blog" },
   { name: "FAQ", path: "/faq" },
-  { name: "Affiliate Program", path: "/affiliate" },
 ];
 
 const DigiNav = () => {
