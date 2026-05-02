@@ -1105,55 +1105,112 @@ export const Pricing = () => {
 };
 
 /* ---------- FAQ ---------- */
-const faqList = [
+type FaqItem = { q: string; a: string; category: string };
+
+const faqList: FaqItem[] = [
+  // 📍 Company Formation
   {
+    category: "Company Formation",
+    q: "What are the requirements for UK LTD company formation?",
+    a: "To register a UK LTD company, you need: ID Card or Passport picture, Live Selfie, Holding Selfie, Home Address, Residential Bank Statement, Email Address, Company Name, Business Category, Business Subcategory, and SIC Codes (Standard Industrial Classification Codes). These details are required for identity verification and to define the nature of your business during company registration.",
+  },
+  {
+    category: "Company Formation",
+    q: "What is the processing time for UK company formation?",
+    a: "The standard processing time, including ID verification, is 3 to 5 business days.",
+  },
+  {
+    category: "Company Formation",
     q: "In which US states can I register my LLC through Digiformation Ltd?",
-    a: "You can register your LLC in the following U.S. states through Digiformation Ltd: Montana, Wyoming, Texas, Florida, New Mexico, Colorado, Missouri, Kentucky and more.",
+    a: "You can register your LLC in the following U.S. states: Montana, Wyoming, Texas, Florida, New Mexico, Colorado, Missouri, Kentucky and more.",
   },
   {
-    q: "How do I register a UK company online?",
-    a: "We guide you step-by-step: choose company type, provide director/shareholder details, submit documents, and get your company incorporated with Companies House.",
-  },
-  {
-    q: "What documents are required for UK company registration?",
-    a: "Valid ID, proof of address, company name, director and shareholder details. Depending on the company type, you may need SIC codes or additional compliance documents.",
-  },
-  {
-    q: "How do I verify my ID for UK company registration?",
-    a: "Digiformation Ltd requires passport or national ID for verification. This is mandatory to comply with Companies House and anti-money laundering regulations.",
-  },
-  {
-    q: "What is a UTR number and why is it important?",
-    a: "A Unique Taxpayer Reference (UTR) is issued by HMRC to each company. It's used for tax filings, annual returns, and communication with HMRC.",
-  },
-  {
-    q: "How often do I need to file taxes for my UK company?",
-    a: "Annual Corporation Tax return must be filed within 12 months of the accounting period end. VAT, PAYE, and other filings may be required depending on your business.",
-  },
-  {
-    q: "What is an annual confirmation statement?",
-    a: "The confirmation statement (previously annual return) is a mandatory document filed yearly with Companies House to confirm company details are accurate.",
-  },
-  {
+    category: "Company Formation",
     q: "Can foreign nationals register a UK company?",
     a: "Yes. Digiformation Ltd supports international clients with incorporation, ID verification, and compliance guidance.",
   },
+
+  // 📍 Address & Documentation
   {
-    q: "Can I open a UK business bank account or Payoneer account?",
-    a: "Yes. Digiformation Ltd assists in setting up Payoneer accounts and provides guidance for UK business bank accounts to handle international transactions.",
+    category: "Address & Documentation",
+    q: "Can I receive documents on your registered office address?",
+    a: "Yes, we provide a physical UK registered office address for one year along with a secure client portal. All official documents such as UTR Number, Authentication Code and Activation Code are received at this address and uploaded to your portal. Timeline: Authentication Code 7–10 days, Activation Code 7–10 days, UTR Number 15–20 days. Documents are shared via portal, email, or WhatsApp. Scanned copies are free, while physical deliveries (e.g., bank cards) may include additional charges.",
   },
   {
-    q: "What are common mistakes when registering a UK company?",
-    a: "Choosing the wrong company type, incorrect director/shareholder info, missing documents, and ignoring tax obligations. We guide clients to avoid these errors.",
+    category: "Address & Documentation",
+    q: "Is the registered office address a physical UK address?",
+    a: "Yes, it is a real physical UK address used for official company registration and government correspondence.",
   },
   {
-    q: "How do I update company information after registration?",
-    a: "You can update directors, shareholders, company address, and SIC codes via Companies House. Digiformation Ltd provides ongoing support for all updates.",
+    category: "Address & Documentation",
+    q: "What is the difference between Registered Office Address, Correspondence Address, and Home Address?",
+    a: "Registered Office Address: official company address used for government communication. Correspondence Address: used for general communication (optional). Home Address: your personal address used for verification.",
   },
   {
+    category: "Address & Documentation",
+    q: "Can I use my friend's UK address for company registration?",
+    a: "Yes, you can use your friend's address if they can reliably receive important documents like the Authentication Code, UTR Number and Activation Code. Otherwise, you can use our professional registered address service.",
+  },
+  {
+    category: "Address & Documentation",
+    q: "What if I don't have access to my registered address or authentication code?",
+    a: "No problem — we provide a complete solution. You only need your Company Number, and we will provide a new registered address and update your company details with Companies House. Service Charges: £100.",
+  },
+
+  // 📍 ID Verification
+  {
+    category: "ID Verification",
+    q: "What are the requirements for ID verification?",
+    a: "ID Verification Requirements: ID Card or Passport picture, Holding Selfie, Live Selfie, Home Address, Residential Bank Statement, and Email Address.",
+  },
+  {
+    category: "ID Verification",
+    q: "How long does ID verification take?",
+    a: "ID verification typically takes 24 to 48 business hours.",
+  },
+  {
+    category: "ID Verification",
+    q: "Can ID verification be done using a Pakistani ID card, or is a passport required?",
+    a: "Yes, ID verification can be completed using a Pakistani ID card. However, for bank account creation, a passport or driving license is required.",
+  },
+
+  // 📍 Banking & Accounts
+  {
+    category: "Banking & Accounts",
+    q: "What are the requirements for UK business bank accounts?",
+    a: "General requirements for most UK business bank accounts: UK Company Number, UK Phone Number, Company Website, Passport or Driving License, Live Selfie Verification, and a Gmail ID & Password (you can provide one or we can arrange it). Important: most banks require a passport and live selfie verification. Wise does NOT require live selfie verification, and Payoneer can be created without a passport.",
+  },
+  {
+    category: "Banking & Accounts",
+    q: "I want to open a UK bank account — what do I need?",
+    a: "To open a UK business bank account, you must first have a UK registered company. Then you'll need a Passport or Driving License, your company details, and verification documents. We provide complete guidance and support throughout the process.",
+  },
+  {
+    category: "Banking & Accounts",
+    q: "Can I open a bank account using a UK resident's identity?",
+    a: "We do not deal with physical banks. However, for virtual banks that do not support Pakistani identity, we can assist if a UK resident completes ID verification and the account is created under their name.",
+  },
+
+  // 📍 Access & Support
+  {
+    category: "Access & Support",
+    q: "How can I access my company?",
+    a: "You will receive access to a secure client portal where you can view and download documents, access company details, and receive ongoing updates.",
+  },
+  {
+    category: "Access & Support",
     q: "Does Digiformation Ltd provide advisory services after registration?",
-    a: "Yes, we offer continuous support for compliance, tax filing, and business growth solutions.",
+    a: "Yes, we offer continuous support for compliance, tax filing, banking and business growth solutions.",
   },
+];
+
+const faqCategories = [
+  "All",
+  "Company Formation",
+  "Address & Documentation",
+  "ID Verification",
+  "Banking & Accounts",
+  "Access & Support",
 ];
 
 export const FAQ = () => {
