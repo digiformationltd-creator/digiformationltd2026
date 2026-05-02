@@ -252,31 +252,26 @@ const Dashboard = () => {
       {/* Main */}
       <main className="min-w-0">
         {/* Top bar */}
-        <header className="sticky top-0 z-20 glass border-b border-border/40 px-4 sm:px-8 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full"
-              onClick={() => setMenuOpen(true)}
-              aria-label="Open menu"
+        <header className="sticky top-0 z-20 glass border-b border-border/40 px-4 sm:px-6 py-3 flex items-center justify-between">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full"
+            onClick={() => setMenuOpen(true)}
+            aria-label="Open menu"
+          >
+            <Menu className="w-5 h-5" />
+          </Button>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div
+              className="w-9 h-9 rounded-full bg-gradient-brand grid place-items-center font-semibold text-xs shadow-glow"
+              title={displayName}
             >
-              <Menu className="w-5 h-5" />
-            </Button>
-            <div>
-              <div className="text-xs opacity-70">Client Dashboard</div>
-              <h1 className="text-base sm:text-lg font-semibold">
-                {menu.find((m) => m.id === active)?.label}
-              </h1>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="text-xs opacity-70 hidden sm:block">
-              Signed in as <span className="opacity-100 font-medium">{user.email}</span>
+              {initials}
             </div>
             <Button onClick={handleSignOut} variant="hero" size="sm" className="rounded-full">
               <LogOut className="w-4 h-4" />
-              <span>Logout</span>
+              <span className="hidden sm:inline">Logout</span>
             </Button>
           </div>
         </header>
