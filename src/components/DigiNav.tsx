@@ -1,6 +1,6 @@
 import { Link, NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Menu, X, ChevronDown, UserCircle2 } from "lucide-react";
+import { Menu, X, ChevronDown, UserCircle2, Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { navGroups } from "@/data/navigation";
 import logo from "@/assets/digiformation-logo.png";
@@ -14,7 +14,7 @@ const moreLinks = [
   { name: "About", path: "/#about" },
   { name: "Blog", path: "/blog" },
   { name: "FAQ", path: "/faq" },
-  { name: "Affiliate / Join Us", path: "/affiliate" },
+  { name: "Affiliate Program", path: "/affiliate" },
 ];
 
 const DigiNav = () => {
@@ -76,6 +76,7 @@ const DigiNav = () => {
                     { name: "About", path: "/#about" },
                     { name: "Blog", path: "/blog" },
                     { name: "FAQ", path: "/faq" },
+                    { name: "Affiliate Program", path: "/affiliate" },
                   ].map((l) => (
                     <Link key={l.path} to={l.path} className="block px-4 py-2 text-sm rounded-md hover:bg-primary/10 transition">
                       {l.name}
@@ -88,6 +89,12 @@ const DigiNav = () => {
 
           {/* CTA */}
           <div className="flex items-center gap-1.5 sm:gap-2">
+            <Button asChild variant="outline" size="sm" className="rounded-full hidden sm:inline-flex">
+              <Link to="/affiliate" aria-label="Join the affiliate program">
+                <Handshake className="w-4 h-4" />
+                <span>Join Us</span>
+              </Link>
+            </Button>
             <Button asChild variant="hero" size="sm" className="rounded-full">
               <Link to="/auth" aria-label="Sign in to client dashboard">
                 <UserCircle2 className="w-4 h-4" />
@@ -148,7 +155,13 @@ const DigiNav = () => {
                 </Link>
               ))}
             </div>
-            <Button asChild variant="hero" className="w-full mt-3 rounded-full">
+            <Button asChild variant="outline" className="w-full mt-3 rounded-full">
+              <Link to="/affiliate" onClick={() => setOpen(false)}>
+                <Handshake className="w-4 h-4" />
+                Join Us
+              </Link>
+            </Button>
+            <Button asChild variant="hero" className="w-full mt-2 rounded-full">
               <Link to="/auth" onClick={() => setOpen(false)}>
                 <UserCircle2 className="w-4 h-4" />
                 Client Dashboard

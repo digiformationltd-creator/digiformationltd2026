@@ -30,7 +30,7 @@ const menu: { id: SectionId; label: string; icon: any }[] = [
   { id: "documents", label: "Documents", icon: FileText },
   { id: "editAccount", label: "Edit Account", icon: UserCog },
   { id: "newServices", label: "Order New Services", icon: ShoppingCart },
-  { id: "affiliate", label: "Affiliate Dashboard", icon: Handshake },
+  { id: "affiliate", label: "Affiliate Program", icon: Handshake },
   { id: "tickets", label: "My Tickets", icon: Ticket },
   { id: "openTicket", label: "Open a Ticket", icon: LifeBuoy },
 ];
