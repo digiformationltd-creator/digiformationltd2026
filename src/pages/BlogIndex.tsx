@@ -18,15 +18,27 @@ const setMeta = (name: string, content: string) => {
 const BlogIndex = () => {
   useEffect(() => {
     document.title =
-      "Digiformation Blog | UK LTD, US LLC, PayPal, Stripe, Payoneer, Wise & E-commerce Guides";
+      "Digiformation Blog 2026 — UK LTD, US LLC, Stripe, PayPal, Banking & E-commerce Guides Worldwide";
     setMeta(
       "description",
-      "Expert guides for entrepreneurs: UK LTD & US LLC formation, PayPal, Stripe, Payoneer, Wise, WorldFirst, Tide, Amazon FBA, eBay, Shopify and more — from Digiformation Ltd."
+      "Expert 2026 guides for non-resident founders worldwide — UK Limited Company & US LLC formation, Stripe, PayPal, Payoneer, Wise, WorldFirst, Tide, Amazon FBA, eBay, Shopify, BOI, EIN, ITIN, VAT and Companies House compliance."
     );
     setMeta(
       "keywords",
-      "Digiformation blog, UK LTD blog, US LLC blog, PayPal Pakistan, Stripe Pakistan, Payoneer guide, Wise business, WorldFirst, Amazon FBA UK, eBay seller UK, Shopify Pakistan"
+      "Digiformation blog, UK LTD blog 2026, US LLC blog, Stripe non resident, PayPal worldwide, Payoneer guide, Wise business, WorldFirst, Amazon FBA UK, eBay seller, Shopify worldwide, BOI report, EIN ITIN, Companies House ID verification"
     );
+    setMeta("robots", "index, follow, max-snippet:-1, max-image-preview:large");
+    const setProp = (p: string, c: string) => {
+      let el = document.querySelector(`meta[property="${p}"]`) as HTMLMetaElement | null;
+      if (!el) { el = document.createElement("meta"); el.setAttribute("property", p); document.head.appendChild(el); }
+      el.setAttribute("content", c);
+    };
+    setProp("og:title", document.title);
+    setProp("og:description", "Expert 2026 guides for non-resident founders worldwide — UK LTD & US LLC formation, banking, payment gateways and compliance.");
+    setProp("og:type", "website");
+    setProp("og:url", `${window.location.origin}/blog`);
+    setMeta("twitter:card", "summary_large_image");
+    setMeta("twitter:title", document.title);
     let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
     if (!canonical) {
       canonical = document.createElement("link");
