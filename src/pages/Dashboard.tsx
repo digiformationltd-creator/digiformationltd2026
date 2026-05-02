@@ -148,20 +148,17 @@ const Dashboard = () => {
         navigate("/auth", { replace: true });
         return;
       }
-      // Only update user on sign-in or initial session; ignore TOKEN_REFRESHED/USER_UPDATED to prevent blink
-      if (event === "SIGNED_IN" || event === "INITIAL_SESSION") {
-        setUser((prev) => (prev?.id === session?.user?.id ? prev : session?.user ?? null));
+      // Handle initial session + sign in. INITIAL_SESSION always fires once on mount,
+      // so we don't need a separate getSession() call (which would cause duplicate refreshes).
+      if (event === "INITIAL_SESSION" || event === "SIGNED_IN") {
+        if (!session) {
+          navigate("/auth", { replace: true });
+          return;
+        }
+        // Defer expiry check so we don't block the listener
+        setTimeout(() => { enforceExpiry(); }, 0);
+        setUser((prev) => (prev?.id === session.user.id ? prev : session.user));
       }
-    });
-
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session) {
-        navigate("/auth", { replace: true });
-        return;
-      }
-      const expired = await enforceExpiry();
-      if (expired) return;
-      setUser((prev) => (prev?.id === session.user.id ? prev : session.user));
     });
 
     return () => {

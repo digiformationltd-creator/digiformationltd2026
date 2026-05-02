@@ -40,9 +40,8 @@ const Auth = () => {
     document.title = "Client Dashboard Login | DigiFormation Ltd";
     const isRecovery = /[#&?]type=recovery(&|$)/.test(window.location.hash || "");
     if (isRecovery) return; // let RecoveryRedirect handle it
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) navigate("/dashboard", { replace: true });
-    });
+    // INITIAL_SESSION fires automatically on mount with current session, so no need
+    // to call getSession() separately (which would cause an extra token refresh).
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "PASSWORD_RECOVERY") return;
       if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {

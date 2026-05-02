@@ -21,23 +21,24 @@ const RecoveryRedirect = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Hash check runs on every route change
   useEffect(() => {
-    // 1. Hash check on mount + route change
     const hash = window.location.hash || "";
     const isRecoveryHash = /[#&?]type=recovery(&|$)/.test(hash);
     if (isRecoveryHash && location.pathname !== "/reset-password") {
       navigate("/reset-password" + hash, { replace: true });
-      return;
     }
+  }, [location.pathname, navigate]);
 
-    // 2. Auth event listener
+  // Auth event listener mounted ONCE (avoid recreating on every route change)
+  useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY" && window.location.pathname !== "/reset-password") {
         navigate("/reset-password", { replace: true });
       }
     });
     return () => sub.subscription.unsubscribe();
-  }, [location.pathname, navigate]);
+  }, [navigate]);
 
   return null;
 };
