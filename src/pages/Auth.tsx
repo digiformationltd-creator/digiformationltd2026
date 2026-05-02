@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { ShieldCheck, UserCircle2, Mail, Lock, Loader2, ArrowLeft } from "lucide-react";
+import { ShieldCheck, UserCircle2, Mail, Lock, Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import logo from "@/assets/digiformation-logo.png";
 import { z } from "zod";
 
@@ -28,6 +28,8 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState<"signin" | "signup">("signin");
   const [showForgot, setShowForgot] = useState(false);
+  const [showSignInPassword, setShowSignInPassword] = useState(false);
+  const [showSignUpPassword, setShowSignUpPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState<boolean>(() => {
     const v = localStorage.getItem("df_remember_me");
     return v === null ? true : v === "true";
@@ -43,7 +45,9 @@ const Auth = () => {
     });
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "PASSWORD_RECOVERY") return;
-      if (session) navigate("/dashboard", { replace: true });
+      if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {
+        navigate("/dashboard", { replace: true });
+      }
     });
     return () => sub.subscription.unsubscribe();
   }, [navigate]);
@@ -74,6 +78,7 @@ const Auth = () => {
       return toast.error(msg);
     }
     toast.success("Welcome back!");
+    navigate("/dashboard", { replace: true });
   };
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -205,7 +210,23 @@ const Auth = () => {
                       </div>
                       <div className="relative mt-1.5">
                         <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 opacity-60" />
-                        <Input id="si-password" name="password" type="password" required placeholder="••••••••" className="pl-9" autoComplete="current-password" />
+                        <Input
+                          id="si-password"
+                          name="password"
+                          type={showSignInPassword ? "text" : "password"}
+                          required
+                          placeholder="••••••••"
+                          className="pl-9 pr-11"
+                          autoComplete="current-password"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowSignInPassword((v) => !v)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 opacity-70 hover:opacity-100 transition"
+                          aria-label={showSignInPassword ? "Hide password" : "Show password"}
+                        >
+                          {showSignInPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
@@ -246,7 +267,25 @@ const Auth = () => {
                   </div>
                   <div>
                     <Label htmlFor="su-password">Password</Label>
-                    <Input id="su-password" name="password" type="password" required placeholder="Min 8 chars · Aa1!" className="mt-1.5" autoComplete="new-password" />
+                    <div className="relative mt-1.5">
+                      <Input
+                        id="su-password"
+                        name="password"
+                        type={showSignUpPassword ? "text" : "password"}
+                        required
+                        placeholder="Min 8 chars · Aa1!"
+                        className="pr-11"
+                        autoComplete="new-password"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowSignUpPassword((v) => !v)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 opacity-70 hover:opacity-100 transition"
+                        aria-label={showSignUpPassword ? "Hide password" : "Show password"}
+                      >
+                        {showSignUpPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
                     <p className="text-[10px] opacity-60 mt-1">
                       Must include uppercase, lowercase, number & symbol. Leaked passwords are blocked.
                     </p>
