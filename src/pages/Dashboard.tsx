@@ -18,7 +18,8 @@ import logo from "@/assets/digiformation-logo.png";
 
 type SectionId =
   | "subscriptions" | "orders" | "wallet" | "company" | "documents"
-  | "editAccount" | "editAddress" | "newServices" | "tickets" | "openTicket";
+  | "editAccount" | "editAddress" | "newServices" | "tickets" | "openTicket"
+  | "affiliate";
 
 const menu: { id: SectionId; label: string; icon: any }[] = [
   { id: "subscriptions", label: "Subscriptions", icon: CalendarDays },
@@ -29,6 +30,7 @@ const menu: { id: SectionId; label: string; icon: any }[] = [
   { id: "documents", label: "Documents", icon: FileText },
   { id: "editAccount", label: "Edit Account", icon: UserCog },
   { id: "newServices", label: "Order New Services", icon: ShoppingCart },
+  { id: "affiliate", label: "Affiliate Dashboard", icon: Handshake },
   { id: "tickets", label: "My Tickets", icon: Ticket },
   { id: "openTicket", label: "Open a Ticket", icon: LifeBuoy },
 ];
