@@ -99,7 +99,7 @@ const DigiNav = () => {
               <Link to="/auth" aria-label="Sign in to client dashboard">
                 <UserCircle2 className="w-4 h-4" />
                 <span className="hidden sm:inline">Client Dashboard</span>
-                <span className="sm:hidden text-xs">Client Dashboard</span>
+                <span className="sm:hidden text-xs">Login</span>
               </Link>
             </Button>
             <button
