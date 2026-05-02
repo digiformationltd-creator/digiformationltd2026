@@ -258,8 +258,14 @@ const Dashboard = () => {
               </h1>
             </div>
           </div>
-          <div className="text-xs opacity-70 hidden sm:block">
-            Signed in as <span className="opacity-100 font-medium">{user.email}</span>
+          <div className="flex items-center gap-3">
+            <div className="text-xs opacity-70 hidden sm:block">
+              Signed in as <span className="opacity-100 font-medium">{user.email}</span>
+            </div>
+            <Button onClick={handleSignOut} variant="hero" size="sm" className="rounded-full">
+              <LogOut className="w-4 h-4" />
+              <span>Logout</span>
+            </Button>
           </div>
         </header>
 
