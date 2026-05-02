@@ -68,7 +68,7 @@ const DigiServicesSlider = () => {
   // Auto-rotate: advance one card every 4s, pause on hover/drag
   useEffect(() => {
     if (paused) return;
-    const id = setInterval(() => setActive((a) => (a + 1) % total), 4000);
+    const id = setInterval(() => setActive((a) => (a + 1) % total), 2500);
     return () => clearInterval(id);
   }, [paused]);
 
