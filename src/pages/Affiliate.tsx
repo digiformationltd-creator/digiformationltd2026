@@ -134,32 +134,33 @@ const Affiliate = () => {
         </div>
       </section>
 
-      {/* What We Teach You — Top Priority */}
+      {/* Why partner with us — combined: training (priority) + benefits */}
       <section className="container mx-auto px-4 py-10 md:py-14">
         <div className="glass rounded-3xl p-6 md:p-10 border border-primary/20">
-          <div className="max-w-3xl mb-8">
+          <div className="max-w-3xl mb-8 text-center mx-auto">
             <div className="inline-flex items-center gap-2 text-xs px-3 py-1.5 rounded-full bg-primary/15 text-primary mb-3">
               <GraduationCap className="w-3.5 h-3.5" />
-              <span>Our #1 Priority — 100% Hands-on Training</span>
+              <span>Why choose DigiFormation as your partner</span>
             </div>
             <h2 className="text-2xl md:text-4xl font-bold mb-3">
-              We train our B2B partners <span className="text-primary">from zero to selling</span>
+              We train you <span className="text-primary">from zero to selling</span> — then keep paying you
             </h2>
             <p className="opacity-80 text-sm md:text-base">
               You don't need prior marketing experience. Our team personally teaches every B2B
-              partner & reseller how to generate orders — step by step. We sit with you, set up
-              your campaigns, and guide you manually until you're confident and profitable.
+              partner & reseller advertising, marketing funnels and order generation — step by step,
+              manually. Here's everything you get when you join us:
             </p>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[
               { icon: Megaphone, title: "Advertising — done with you", desc: "We manually set up your Facebook, Google & TikTok ads, write the copy, pick the audiences and launch your first campaigns together." },
-              { icon: Target, title: "Marketing strategy", desc: "Learn exactly which offers convert, which audiences to target and how to position UK Ltd, USA LLC & banking services in your market." },
+              { icon: Target, title: "Marketing funnel & strategy", desc: "Learn the exact marketing methods, offers and audiences that convert — for UK Ltd, USA LLC, banking and compliance services." },
               { icon: Rocket, title: "Order generation playbook", desc: "Proven scripts, funnels and follow-up flows that turn clicks into paid orders — the same system our in-house team uses every day." },
               { icon: LineChart, title: "Ads optimisation & scaling", desc: "We show you how to read the numbers, kill losing ads, scale winners and lower your cost per order week after week." },
               { icon: Users, title: "1-on-1 manual guidance", desc: "Direct WhatsApp & screen-share sessions with our partner team. Ask anything, anytime — no bots, no tickets, real humans." },
               { icon: GraduationCap, title: "Lifetime learning access", desc: "Ongoing updates, new ad creatives, fresh offers and market insights — so you stay ahead as the industry evolves." },
+              ...benefits.map((b) => ({ icon: b.icon, title: b.title, desc: b.desc })),
             ].map((item) => (
               <div key={item.title} className="rounded-2xl p-5 bg-background/30 border border-border/60 hover:-translate-y-0.5 transition">
                 <div className="w-10 h-10 rounded-lg bg-primary/15 grid place-items-center mb-3">
@@ -171,28 +172,11 @@ const Affiliate = () => {
             ))}
           </div>
 
-          <div className="mt-6 text-sm opacity-80 border-t border-border/40 pt-5">
+          <div className="mt-6 text-sm opacity-80 border-t border-border/40 pt-5 text-center">
             <strong className="text-foreground">In short:</strong> we don't just hand you a referral
-            link and disappear. We teach you advertising, marketing and order generation —
-            and we keep guiding you manually until you're earning consistently. Everything else
-            (commissions, dashboard, payouts) comes after that.
+            link and disappear. We teach you advertising, marketing and order generation — and
+            keep guiding you manually until you're earning consistently.
           </div>
-        </div>
-      </section>
-
-      {/* Benefits */}
-      <section className="container mx-auto px-4 py-10 md:py-14">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">Why partner with us</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {benefits.map((b) => (
-            <div key={b.title} className="glass rounded-2xl p-5 hover:-translate-y-0.5 transition">
-              <div className="w-10 h-10 rounded-lg bg-primary/15 grid place-items-center mb-3">
-                <b.icon className="w-5 h-5 text-primary" />
-              </div>
-              <h3 className="font-semibold mb-1">{b.title}</h3>
-              <p className="text-sm opacity-75">{b.desc}</p>
-            </div>
-          ))}
         </div>
       </section>
 
