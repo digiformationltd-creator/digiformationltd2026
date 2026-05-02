@@ -170,7 +170,7 @@ const Dashboard = () => {
         <SheetContent side="left" className="p-0 w-[280px] sm:w-[320px] bg-sidebar border-r border-border/40 flex flex-col">
           <div className="p-5 border-b border-border/40">
             <Link to="/" className="flex items-center gap-3" onClick={() => setMenuOpen(false)}>
-              <img src={logo} alt="DigiFormation Ltd" className="h-12 w-auto object-contain" />
+              <img src={logo} alt="DigiFormation Ltd" className="h-20 sm:h-24 w-auto object-contain" />
               <div className="leading-tight">
                 <div className="text-sm font-semibold">DigiFormation Ltd</div>
                 <div className="text-[10px] opacity-60">Client Portal</div>
@@ -226,21 +226,21 @@ const Dashboard = () => {
           <Button
             variant="ghost"
             size="icon"
-            className="rounded-full w-10 h-10"
+            className="rounded-full w-12 h-12 sm:w-14 sm:h-14"
             onClick={() => setMenuOpen(true)}
             aria-label="Open menu"
           >
-            <Menu className="w-5 h-5" />
+            <Menu className="!w-7 !h-7 sm:!w-8 sm:!h-8" />
           </Button>
           <div className="flex items-center gap-2 sm:gap-3">
             <div
-              className="w-10 h-10 rounded-full bg-gradient-brand grid place-items-center font-semibold text-xs shadow-glow"
+              className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-brand grid place-items-center font-semibold text-sm shadow-glow"
               title={displayName}
             >
               {initials}
             </div>
-            <Button onClick={handleSignOut} variant="hero" size="sm" className="rounded-full h-10">
-              <LogOut className="w-4 h-4" />
+            <Button onClick={handleSignOut} variant="hero" size="sm" className="rounded-full h-12 sm:h-14 px-4">
+              <LogOut className="w-5 h-5" />
               <span className="hidden sm:inline">Logout</span>
             </Button>
           </div>
