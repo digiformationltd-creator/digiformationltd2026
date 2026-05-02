@@ -78,9 +78,6 @@ const DigiHero = () => {
               Register Your USA Company <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
-          <Button asChild variant="ghostGlow" size="lg" className="rounded-full">
-            <a href="#services">Explore All Services</a>
-          </Button>
         </div>
 
       </div>
