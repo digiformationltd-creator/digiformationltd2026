@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Mail, Clock, MapPin, Facebook, Instagram, Youtube, Linkedin, Building2 } from "lucide-react";
+import { Mail, Clock, MapPin, Facebook, Instagram, Youtube, Linkedin, Building2, Handshake, UserCircle2 } from "lucide-react";
 import logo from "@/assets/digiformation-logo.png";
 import NewsletterForm from "./NewsletterForm";
 
@@ -89,6 +89,43 @@ const DigiFooter = () => {
             >
               <WhatsAppIcon className="w-4 h-4" /> WhatsApp Us
             </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Affiliate / B2B strip */}
+      <div className="border-b border-border/60 bg-primary/5">
+        <div className="container mx-auto px-4 py-8 grid gap-6 md:grid-cols-[1.4fr_auto] items-center">
+          <div className="flex items-start gap-4">
+            <div className="hidden sm:grid w-12 h-12 rounded-xl bg-primary/15 place-items-center flex-shrink-0">
+              <Handshake className="w-6 h-6 text-primary" />
+            </div>
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.2em] font-semibold text-primary mb-1">Affiliate · B2B · Reseller</div>
+              <h3 className="text-xl md:text-2xl font-bold tracking-tight">
+                Earn with us — Join our Partner Program
+              </h3>
+              <p className="opacity-80 mt-1 text-sm">
+                Personal referral link · live order tracking · recurring commissions.{" "}
+                <a href="mailto:Info@digiformation.uk?subject=B2B%20Rate%20List%20Request" className="underline hover:text-primary">
+                  Mail us for B2B rate list
+                </a>.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              to="/affiliate"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition"
+            >
+              <Handshake className="w-4 h-4" /> Join Us
+            </Link>
+            <Link
+              to="/auth"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass font-semibold text-sm hover:bg-primary/10 transition"
+            >
+              <UserCircle2 className="w-4 h-4" /> Partner Login
+            </Link>
           </div>
         </div>
       </div>
