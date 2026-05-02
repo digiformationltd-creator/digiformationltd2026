@@ -45,7 +45,9 @@ const Auth = () => {
     });
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "PASSWORD_RECOVERY") return;
-      if (session) navigate("/dashboard", { replace: true });
+      if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {
+        navigate("/dashboard", { replace: true });
+      }
     });
     return () => sub.subscription.unsubscribe();
   }, [navigate]);
@@ -76,6 +78,7 @@ const Auth = () => {
       return toast.error(msg);
     }
     toast.success("Welcome back!");
+    navigate("/dashboard", { replace: true });
   };
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
