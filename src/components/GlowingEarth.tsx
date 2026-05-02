@@ -1,8 +1,8 @@
 import earthMap from "@/assets/earth-map.jpg";
 
 /**
- * GlowingEarth — static still earth with a soft halo. No animations.
- * Lightweight: pure CSS, no JS, no rotation, no scripts.
+ * GlowingEarth — slowly rotating earth with a soft halo.
+ * Lightweight: pure CSS, no JS.
  */
 const GlowingEarth = () => {
   return (
@@ -67,12 +67,20 @@ const GlowingEarth = () => {
         .earth-texture {
           position: absolute;
           inset: 0;
-          background-repeat: no-repeat;
-          background-size: cover;
-          background-position: center;
+          background-repeat: repeat-x;
+          background-size: 200% 100%;
+          background-position: 0% center;
           opacity: 0.92;
           mix-blend-mode: screen;
           filter: brightness(0.9) contrast(1.1) hue-rotate(-8deg);
+          animation: earth-spin 60s linear infinite;
+        }
+        @keyframes earth-spin {
+          from { background-position: 0% center; }
+          to   { background-position: -200% center; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .earth-texture { animation: none; }
         }
         .earth-shade {
           position: absolute;
