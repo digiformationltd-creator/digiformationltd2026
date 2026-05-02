@@ -194,7 +194,7 @@ const Dashboard = () => {
       <aside className={`${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 fixed lg:sticky top-0 left-0 z-40 h-screen w-72 glass border-r border-border/40 flex flex-col transition-transform`}>
         <div className="p-5 border-b border-border/40">
           <Link to="/" className="flex items-center gap-3">
-            <img src={logo} alt="DigiFormation Ltd" className="h-10 w-auto object-contain" />
+            <img src={logo} alt="DigiFormation Ltd" className="h-16 sm:h-20 w-auto object-contain" />
             <div className="leading-tight">
               <div className="text-sm font-semibold">DigiFormation Ltd</div>
               <div className="text-[10px] opacity-60">Client Portal</div>
