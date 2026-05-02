@@ -155,7 +155,13 @@ const DigiNav = () => {
                 </Link>
               ))}
             </div>
-            <Button asChild variant="hero" className="w-full mt-3 rounded-full">
+            <Button asChild variant="outline" className="w-full mt-3 rounded-full">
+              <Link to="/affiliate" onClick={() => setOpen(false)}>
+                <Handshake className="w-4 h-4" />
+                Join Us
+              </Link>
+            </Button>
+            <Button asChild variant="hero" className="w-full mt-2 rounded-full">
               <Link to="/auth" onClick={() => setOpen(false)}>
                 <UserCircle2 className="w-4 h-4" />
                 Client Dashboard
