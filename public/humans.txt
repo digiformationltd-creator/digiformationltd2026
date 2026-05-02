@@ -1,0 +1,10 @@
+/* TEAM */
+Founder: Muhammad Haroon
+Company: Digiformation Ltd
+Location: United Kingdom
+Site: https://digiformation.uk
+
+/* SITE */
+Last update: 2026
+Standards: HTML5, CSS3, TypeScript, React 18, Vite 5, Tailwind CSS
+Components: shadcn/ui, lucide-react, framer-motion
