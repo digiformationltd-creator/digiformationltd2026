@@ -46,14 +46,7 @@ const benefits = [
   { icon: Handshake, title: "Dedicated Support", desc: "Direct WhatsApp line to our partner team for queries & escalations." },
 ];
 
-const dashboardPreview = [
-  { label: "Your Referral Link", value: "digiformation.uk/?ref=YOUR-CODE" },
-  { label: "Total Clicks", value: "—" },
-  { label: "Signups", value: "—" },
-  { label: "Paid Orders", value: "—" },
-  { label: "Pending Commission", value: "£ —" },
-  { label: "Lifetime Earnings", value: "£ —" },
-];
+
 
 const Affiliate = () => {
   const [loading, setLoading] = useState(false);
