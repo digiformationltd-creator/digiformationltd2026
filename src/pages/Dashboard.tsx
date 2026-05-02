@@ -100,6 +100,7 @@ const Dashboard = () => {
   const [company, setCompany] = useState<CompanyDetails | null>(null);
   const [active, setActive] = useState<SectionId>("overview");
   const [loading, setLoading] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     document.title = "Client Dashboard | DigiFormation Ltd";
