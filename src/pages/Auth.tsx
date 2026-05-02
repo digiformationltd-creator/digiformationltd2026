@@ -171,8 +171,8 @@ const Auth = () => {
 
           <p className="text-center text-xs opacity-70 mt-5">
             Need help? Email{" "}
-            <a href="mailto:khurram@digiformation.co.uk" className="underline">
-              khurram@digiformation.co.uk
+            <a href="mailto:digiformationltd@gmail.com" className="underline">
+              digiformationltd@gmail.com
             </a>
           </p>
         </div>
