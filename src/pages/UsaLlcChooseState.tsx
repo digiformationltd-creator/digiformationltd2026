@@ -146,7 +146,7 @@ const UsaLlcChooseState = () => {
             </div>
             <div className="relative hidden lg:block">
               <div className="relative rounded-2xl overflow-hidden glass shadow-elegant aspect-[4/3]">
-                <img src={heroImg} alt="Form a US LLC for non-residents — Delaware alt="US LLC Formation" Wyoming LLC formation worldwide" className="w-full h-full object-cover" />
+                <img src={heroImg} alt="Form a US LLC for non-residents — Delaware & Wyoming LLC formation worldwide" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-tr from-background/40 via-transparent to-transparent" />
               </div>
             </div>

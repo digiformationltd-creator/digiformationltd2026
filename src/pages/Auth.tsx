@@ -133,7 +133,7 @@ const Auth = () => {
       <div className="flex-1 flex items-start sm:items-center justify-center px-4 pb-6">
         <div className="w-full max-w-md">
           <div className="flex flex-col items-center mb-3 sm:mb-4">
-            <img src={logo} alt="Digiformation Ltd logo — UK LTD alt="DigiFormation Ltd" US LLC formation for non-residents worldwide" className="h-20 sm:h-24 w-auto object-contain mb-2" />
+            <img src={logo} alt="Digiformation Ltd logo — UK LTD & US LLC formation for non-residents worldwide" className="h-20 sm:h-24 w-auto object-contain mb-2" />
             <div className="inline-flex items-center gap-2 text-xs px-3 py-1 rounded-full glass">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Secure client login · 256-bit encrypted</span>
