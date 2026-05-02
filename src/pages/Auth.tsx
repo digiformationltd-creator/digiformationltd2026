@@ -33,13 +33,16 @@ const Auth = () => {
     return v === null ? true : v === "true";
   });
 
-  // Redirect if already logged in
+  // Redirect if already logged in (but NOT during password recovery)
   useEffect(() => {
     document.title = "Client Dashboard Login | DigiFormation Ltd";
+    const isRecovery = /[#&?]type=recovery(&|$)/.test(window.location.hash || "");
+    if (isRecovery) return; // let RecoveryRedirect handle it
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) navigate("/dashboard", { replace: true });
     });
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY") return;
       if (session) navigate("/dashboard", { replace: true });
     });
     return () => sub.subscription.unsubscribe();
