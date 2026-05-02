@@ -11,7 +11,15 @@ import logo from "@/assets/digiformation-logo.png";
 import { z } from "zod";
 
 const emailSchema = z.string().trim().email("Please enter a valid email").max(255);
-const passwordSchema = z.string().min(8, "Password must be at least 8 characters").max(72);
+const passwordSchema = z
+  .string()
+  .min(8, "Password must be at least 8 characters")
+  .max(72, "Password too long")
+  .regex(/[A-Z]/, "Password must include an uppercase letter")
+  .regex(/[a-z]/, "Password must include a lowercase letter")
+  .regex(/[0-9]/, "Password must include a number")
+  .regex(/[^A-Za-z0-9]/, "Password must include a symbol (e.g. !@#$)");
+const signinPasswordSchema = z.string().min(1, "Password is required").max(72);
 const nameSchema = z.string().trim().min(2, "Please enter your full name").max(100);
 
 const Auth = () => {
@@ -38,7 +46,7 @@ const Auth = () => {
     const password = String(fd.get("password") || "");
     const ev = emailSchema.safeParse(email);
     if (!ev.success) return toast.error(ev.error.issues[0].message);
-    const pv = passwordSchema.safeParse(password);
+    const pv = signinPasswordSchema.safeParse(password);
     if (!pv.success) return toast.error(pv.error.issues[0].message);
 
     setLoading(true);
