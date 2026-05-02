@@ -146,26 +146,61 @@ const Auth = () => {
               </TabsList>
 
               <TabsContent value="signin">
-                <form onSubmit={handleSignIn} className="space-y-4">
-                  <div>
-                    <Label htmlFor="si-email">Email</Label>
-                    <div className="relative mt-1.5">
-                      <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 opacity-60" />
-                      <Input id="si-email" name="email" type="email" required placeholder="Enter your email" className="pl-9" autoComplete="email" />
+                {showForgot ? (
+                  <form onSubmit={handleForgot} className="space-y-4">
+                    <p className="text-xs opacity-70">
+                      Enter your account email and we'll send you a secure link to reset your password.
+                    </p>
+                    <div>
+                      <Label htmlFor="fp-email">Email</Label>
+                      <div className="relative mt-1.5">
+                        <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 opacity-60" />
+                        <Input id="fp-email" name="email" type="email" required placeholder="Enter your email" className="pl-9" autoComplete="email" />
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <Label htmlFor="si-password">Password</Label>
-                    <div className="relative mt-1.5">
-                      <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 opacity-60" />
-                      <Input id="si-password" name="password" type="password" required placeholder="••••••••" className="pl-9" autoComplete="current-password" />
+                    <Button type="submit" variant="hero" className="w-full rounded-full" disabled={loading}>
+                      {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
+                      Send Reset Link
+                    </Button>
+                    <button
+                      type="button"
+                      onClick={() => setShowForgot(false)}
+                      className="text-xs opacity-70 hover:opacity-100 underline w-full text-center"
+                    >
+                      ← Back to sign in
+                    </button>
+                  </form>
+                ) : (
+                  <form onSubmit={handleSignIn} className="space-y-4">
+                    <div>
+                      <Label htmlFor="si-email">Email</Label>
+                      <div className="relative mt-1.5">
+                        <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 opacity-60" />
+                        <Input id="si-email" name="email" type="email" required placeholder="Enter your email" className="pl-9" autoComplete="email" />
+                      </div>
                     </div>
-                  </div>
-                  <Button type="submit" variant="hero" className="w-full rounded-full" disabled={loading}>
-                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserCircle2 className="w-4 h-4" />}
-                    Sign In to Dashboard
-                  </Button>
-                </form>
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="si-password">Password</Label>
+                        <button
+                          type="button"
+                          onClick={() => setShowForgot(true)}
+                          className="text-xs opacity-70 hover:opacity-100 underline"
+                        >
+                          Forgot password?
+                        </button>
+                      </div>
+                      <div className="relative mt-1.5">
+                        <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 opacity-60" />
+                        <Input id="si-password" name="password" type="password" required placeholder="••••••••" className="pl-9" autoComplete="current-password" />
+                      </div>
+                    </div>
+                    <Button type="submit" variant="hero" className="w-full rounded-full" disabled={loading}>
+                      {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserCircle2 className="w-4 h-4" />}
+                      Sign In to Dashboard
+                    </Button>
+                  </form>
+                )}
               </TabsContent>
 
               <TabsContent value="signup">
