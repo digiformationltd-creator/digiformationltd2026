@@ -16,9 +16,9 @@ const cases = [
     tag: "We launch your US business end-to-end",
     title: "LLC Formation",
     points: [
-      "File your LLC in 10 days",
-      "EIN with Bank",
-      "Approved Bank in 10 days",
+      "LLC Formation",
+      "EIN",
+      "Banks",
     ],
     href: "/pricing",
   },
