@@ -52,13 +52,13 @@ export const navGroups: NavGroup[] = [
   { label: "UK Services", basePath: "/uk-services", items: ukServices },
   { label: "UK Compliance", basePath: "/uk-compliance", items: ukCompliance },
   { label: "USA Services", basePath: "/usa-services", items: usaServices },
-  { label: "Banking & Payments", basePath: "/banks-payment-solutions", items: banking },
+  { label: "Business Bank Accounts", basePath: "/banks-payment-solutions", items: banking },
 ];
 
 export const simpleLinks: NavItem[] = [
   { name: "Home", path: "/" },
-  { name: "Packages", path: "/pricing" },
-  { name: "Web Development", path: "/web-development" },
+  { name: "Pricing & Packages", path: "/pricing" },
+  { name: "Business Website Development", path: "/web-development" },
   { name: "Blog", path: "/blog" },
   { name: "FAQ", path: "/faq" },
   { name: "About", path: "/about" },
