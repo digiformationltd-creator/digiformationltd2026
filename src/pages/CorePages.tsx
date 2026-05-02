@@ -866,7 +866,7 @@ const webDevPackages: DetailPkg[] = [
   },
   {
     name: "React Basic",
-    price: "£60",
+    price: "£30",
     note: "Website Package",
     tone: "from-emerald-500/20 to-emerald-500/5",
     ring: "ring-emerald-500/40",
@@ -882,7 +882,7 @@ const webDevPackages: DetailPkg[] = [
   },
   {
     name: "React Standard",
-    price: "£120",
+    price: "£60",
     badge: "Most Popular",
     note: "Website Package",
     tone: "from-sky-500/25 to-sky-500/5",
@@ -903,7 +903,7 @@ const webDevPackages: DetailPkg[] = [
   },
   {
     name: "React Premium",
-    price: "£300",
+    price: "£150",
     note: "Website Package",
     tone: "from-amber-400/25 to-amber-400/5",
     ring: "ring-amber-400/60",
