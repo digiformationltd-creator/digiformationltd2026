@@ -115,27 +115,27 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-gradient-hero grid-pattern flex flex-col">
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 pt-3 pb-2">
         <Link to="/" className="inline-flex items-center gap-2 text-sm hover:opacity-80 transition">
           <ArrowLeft className="w-4 h-4" /> Back to website
         </Link>
       </div>
 
-      <div className="flex-1 flex items-center justify-center px-4 pb-12">
+      <div className="flex-1 flex items-start sm:items-center justify-center px-4 pb-6">
         <div className="w-full max-w-md">
-          <div className="flex flex-col items-center mb-6">
-            <img src={logo} alt="DigiFormation Ltd" className="h-36 sm:h-44 w-auto object-contain mb-4" />
-            <div className="inline-flex items-center gap-2 text-xs px-3 py-1.5 rounded-full glass">
+          <div className="flex flex-col items-center mb-3 sm:mb-4">
+            <img src={logo} alt="DigiFormation Ltd" className="h-20 sm:h-24 w-auto object-contain mb-2" />
+            <div className="inline-flex items-center gap-2 text-xs px-3 py-1 rounded-full glass">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Secure client login · 256-bit encrypted</span>
             </div>
           </div>
 
-          <div className="glass rounded-2xl p-6 sm:p-8 shadow-elegant">
-            <div className="flex flex-col items-center mb-5">
-              <UserCircle2 className="w-10 h-10 mb-2 opacity-80" />
-              <h1 className="text-xl font-semibold">Client Dashboard</h1>
-              <p className="text-xs opacity-70 mt-1">Manage your company, orders & subscriptions</p>
+          <div className="glass rounded-2xl p-5 sm:p-6 shadow-elegant">
+            <div className="flex flex-col items-center mb-4">
+              <UserCircle2 className="w-8 h-8 mb-1 opacity-80" />
+              <h1 className="text-lg font-semibold">Client Dashboard</h1>
+              <p className="text-xs opacity-70 mt-0.5">Manage your company, orders & subscriptions</p>
             </div>
 
             <Tabs value={tab} onValueChange={(v) => setTab(v as "signin" | "signup")}>
