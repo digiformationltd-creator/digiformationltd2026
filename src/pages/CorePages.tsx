@@ -1214,13 +1214,14 @@ const faqCategories = [
 ];
 
 export const FAQ = () => {
-  const [open, setOpen] = useState<number | null>(0);
+  const [open, setOpen] = useState<string | null>(faqList[0]?.q ?? null);
+  const [activeCat, setActiveCat] = useState<string>("All");
 
   useEffect(() => {
     setMeta(
       "UK & US Company Formation FAQ 2026 — Companies House, EIN, ITIN, BOI | Digiformation",
       "Answers to the most-asked 2026 questions on UK Limited Company registration, US LLC formation, Companies House ID verification, EIN, ITIN, BOI report, VAT and business banking — for non-resident founders worldwide.",
-      "UK company formation FAQ 2026, US LLC FAQ, Companies House ID verification FAQ, EIN ITIN BOI FAQ, non resident formation questions worldwide"
+      "UK company formation FAQ 2026, US LLC FAQ, Companies House ID verification FAQ, EIN ITIN BOI FAQ, non resident formation questions worldwide, UK registered office address FAQ, SIC codes FAQ"
     );
     return injectJsonLd("faq-jsonld", {
       "@context": "https://schema.org",
@@ -1232,6 +1233,8 @@ export const FAQ = () => {
       })),
     });
   }, []);
+
+  const visibleFaqs = activeCat === "All" ? faqList : faqList.filter((f) => f.category === activeCat);
 
   return (
     <Layout>
@@ -1246,33 +1249,58 @@ export const FAQ = () => {
               Frequently asked <em className="not-italic text-gradient">questions</em>
             </h1>
             <p className="mt-8 text-lg md:text-xl leading-relaxed opacity-90">
-              Answers to the most common questions about UK & US company formation, banking, compliance and ongoing support.
+              Answers to the most common questions about UK & US company formation, registered office address, ID verification, banking and ongoing support.
             </p>
           </div>
         </div>
       </section>
 
       <section className="py-10">
-        <div className="container mx-auto px-4 max-w-3xl space-y-3">
-          {faqList.map((f, i) => {
-            const isOpen = open === i;
-            return (
-              <button
-                key={f.q}
-                type="button"
-                onClick={() => setOpen(isOpen ? null : i)}
-                className="w-full text-left glass rounded-2xl p-6 transition-all hover:shadow-elegant"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <h3 className="font-display text-lg md:text-xl font-semibold leading-snug">
-                    {f.q}
-                  </h3>
-                  <ChevronDown className={`w-5 h-5 mt-1 flex-shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`} />
-                </div>
-                {isOpen && <p className="mt-4 opacity-85 leading-relaxed">{f.a}</p>}
-              </button>
-            );
-          })}
+        <div className="container mx-auto px-4 max-w-3xl">
+          <div className="flex flex-wrap gap-2 mb-8">
+            {faqCategories.map((cat) => {
+              const active = activeCat === cat;
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setActiveCat(cat)}
+                  className={`px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-[0.14em] transition-all border ${
+                    active
+                      ? "bg-primary text-primary-foreground border-primary shadow-glow"
+                      : "bg-transparent border-border/60 hover:border-primary/60 opacity-80 hover:opacity-100"
+                  }`}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="space-y-3">
+            {visibleFaqs.map((f) => {
+              const isOpen = open === f.q;
+              return (
+                <button
+                  key={f.q}
+                  type="button"
+                  onClick={() => setOpen(isOpen ? null : f.q)}
+                  className="w-full text-left glass rounded-2xl p-6 transition-all hover:shadow-elegant"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <div className="text-[10px] uppercase tracking-[0.18em] opacity-60 mb-2">{f.category}</div>
+                      <h3 className="font-display text-lg md:text-xl font-semibold leading-snug">
+                        {f.q}
+                      </h3>
+                    </div>
+                    <ChevronDown className={`w-5 h-5 mt-1 flex-shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                  </div>
+                  {isOpen && <p className="mt-4 opacity-85 leading-relaxed whitespace-pre-line">{f.a}</p>}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </section>
 
