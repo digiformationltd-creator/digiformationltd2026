@@ -46,14 +46,7 @@ const benefits = [
   { icon: Handshake, title: "Dedicated Support", desc: "Direct WhatsApp line to our partner team for queries & escalations." },
 ];
 
-const dashboardPreview = [
-  { label: "Your Referral Link", value: "digiformation.uk/?ref=YOUR-CODE" },
-  { label: "Total Clicks", value: "—" },
-  { label: "Signups", value: "—" },
-  { label: "Paid Orders", value: "—" },
-  { label: "Pending Commission", value: "£ —" },
-  { label: "Lifetime Earnings", value: "£ —" },
-];
+
 
 const Affiliate = () => {
   const [loading, setLoading] = useState(false);
@@ -180,29 +173,21 @@ const Affiliate = () => {
         </div>
       </section>
 
-      {/* Dashboard preview */}
-      <section className="container mx-auto px-4 py-10 md:py-14">
-        <div className="glass rounded-3xl p-6 md:p-10">
-          <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
-            <div>
-              <div className="text-xs uppercase tracking-widest opacity-70">Affiliate Dashboard</div>
-              <h2 className="text-2xl md:text-3xl font-bold">Everything you need, in one place</h2>
-            </div>
-            <Button asChild variant="hero" size="sm" className="rounded-full">
-              <Link to="/auth"><UserCircle2 className="w-4 h-4" /> Login to Portal</Link>
-            </Button>
+      {/* Dashboard mention — full live data lives inside Client Dashboard → Affiliate */}
+      <section className="container mx-auto px-4 py-8 md:py-10">
+        <div className="glass rounded-3xl p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="text-xs uppercase tracking-widest opacity-70 mb-1">Inside your dashboard</div>
+            <h2 className="text-xl md:text-2xl font-bold">
+              Your referral link, clicks, signups, paid orders, pending commission & lifetime earnings — all live in one place
+            </h2>
+            <p className="text-sm opacity-75 mt-2">
+              Once approved, sign in to your Client Dashboard and open the <strong>Affiliate</strong> tab to track everything in real-time.
+            </p>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {dashboardPreview.map((d) => (
-              <div key={d.label} className="rounded-xl border border-border/60 p-4 bg-background/30">
-                <div className="text-[11px] uppercase tracking-widest opacity-70">{d.label}</div>
-                <div className="font-mono text-sm mt-1 break-all">{d.value}</div>
-              </div>
-            ))}
-          </div>
-          <p className="text-xs opacity-70 mt-5">
-            * Live data appears in your portal once your application is approved.
-          </p>
+          <Button asChild variant="hero" size="lg" className="rounded-full shrink-0">
+            <Link to="/dashboard"><UserCircle2 className="w-4 h-4" /> Open Dashboard</Link>
+          </Button>
         </div>
       </section>
 

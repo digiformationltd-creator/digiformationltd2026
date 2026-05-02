@@ -12,12 +12,14 @@ import {
   CalendarDays, ShoppingBag, Wallet, Building2, FileText, UserCog,
   MapPin, ShoppingCart, Ticket, LifeBuoy, LogOut, UserCircle2,
   ChevronRight, Loader2, Inbox, Plus, Download, ArrowUpRight,
+  Handshake, Link2, TrendingUp, Copy, Megaphone, GraduationCap,
 } from "lucide-react";
 import logo from "@/assets/digiformation-logo.png";
 
 type SectionId =
   | "subscriptions" | "orders" | "wallet" | "company" | "documents"
-  | "editAccount" | "editAddress" | "newServices" | "tickets" | "openTicket";
+  | "editAccount" | "editAddress" | "newServices" | "tickets" | "openTicket"
+  | "affiliate";
 
 const menu: { id: SectionId; label: string; icon: any }[] = [
   { id: "subscriptions", label: "Subscriptions", icon: CalendarDays },
@@ -28,6 +30,7 @@ const menu: { id: SectionId; label: string; icon: any }[] = [
   { id: "documents", label: "Documents", icon: FileText },
   { id: "editAccount", label: "Edit Account", icon: UserCog },
   { id: "newServices", label: "Order New Services", icon: ShoppingCart },
+  { id: "affiliate", label: "Affiliate Dashboard", icon: Handshake },
   { id: "tickets", label: "My Tickets", icon: Ticket },
   { id: "openTicket", label: "Open a Ticket", icon: LifeBuoy },
 ];
@@ -333,6 +336,8 @@ const Dashboard = () => {
             </div>
           )}
 
+          {active === "affiliate" && <AffiliateDashboardSection user={user} displayName={displayName} />}
+
           {active === "tickets" && (
             <EmptyState
               icon={Ticket}
@@ -513,6 +518,126 @@ const OpenTicketForm = ({ userId, onSubmitted }: { userId: string; onSubmitted: 
       </Button>
       <p className="text-xs opacity-70">Our team typically responds within 24 hours at <a href="mailto:digiformationltd@gmail.com" className="underline">digiformationltd@gmail.com</a>.</p>
     </form>
+  );
+};
+
+/* ---- Affiliate Dashboard Section ---- */
+
+const AffiliateDashboardSection = ({ user, displayName }: { user: User; displayName: string }) => {
+  const refCode = (user.id?.slice(0, 8) || "YOURCODE").toUpperCase();
+  const refLink = `https://digiformation.uk/?ref=${refCode}`;
+
+  const stats = [
+    { label: "Total Clicks", value: "0", icon: Link2 },
+    { label: "Signups", value: "0", icon: UserCircle2 },
+    { label: "Paid Orders", value: "0", icon: ShoppingBag },
+    { label: "Pending Commission", value: "£0.00", icon: Wallet },
+    { label: "Lifetime Earnings", value: "£0.00", icon: TrendingUp },
+    { label: "Tier", value: "Starter", icon: Handshake },
+  ];
+
+  const trainingItems = [
+    { icon: Megaphone, title: "Advertising — done with you", desc: "We manually set up your Facebook, Google & TikTok ads and launch your first campaigns together." },
+    { icon: GraduationCap, title: "Marketing funnel & strategy", desc: "Learn the exact methods, offers and audiences that convert in the formations market." },
+    { icon: TrendingUp, title: "Order generation playbook", desc: "Proven scripts, funnels and follow-ups that turn clicks into paid orders." },
+    { icon: Handshake, title: "1-on-1 manual guidance", desc: "Direct WhatsApp & screen-share sessions with our partner team — real humans, anytime." },
+  ];
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(refLink);
+      toast.success("Referral link copied");
+    } catch {
+      toast.error("Could not copy");
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Welcome + referral link */}
+      <div className="glass rounded-2xl p-6">
+        <div className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-full bg-primary/15 text-primary inline-flex w-fit mb-3">
+          <Handshake className="w-3.5 h-3.5" />
+          <span>Affiliate / B2B Partner</span>
+        </div>
+        <h2 className="text-xl sm:text-2xl font-semibold mb-1">Welcome, {displayName}</h2>
+        <p className="text-sm opacity-75 mb-5">Share your unique link, refer clients and earn recurring commissions on every paid order.</p>
+
+        <Label htmlFor="ref-link" className="text-xs uppercase tracking-widest opacity-70">Your referral link</Label>
+        <div className="flex flex-col sm:flex-row gap-2 mt-2">
+          <Input id="ref-link" value={refLink} readOnly className="font-mono text-sm" />
+          <Button onClick={copyLink} variant="hero" className="rounded-full shrink-0">
+            <Copy className="w-4 h-4" /> Copy Link
+          </Button>
+        </div>
+      </div>
+
+      {/* Stats grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        {stats.map((s) => {
+          const Icon = s.icon;
+          return (
+            <div key={s.label} className="glass rounded-2xl p-5">
+              <Icon className="w-5 h-5 opacity-70 mb-2" />
+              <div className="text-[11px] uppercase tracking-widest opacity-70">{s.label}</div>
+              <div className="text-xl font-semibold mt-1">{s.value}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Recent referrals empty state */}
+      <div className="glass rounded-2xl p-6">
+        <h3 className="font-semibold mb-1">Recent Referred Orders</h3>
+        <p className="text-xs opacity-70 mb-4">Live orders placed through your link will appear here.</p>
+        <EmptyState
+          icon={Inbox}
+          title="No referred orders yet"
+          description="Share your link with clients, agencies or audiences. Once they place a paid order, it will show up here with status and commission."
+        />
+      </div>
+
+      {/* Training & support */}
+      <div className="glass rounded-2xl p-6">
+        <h3 className="font-semibold mb-1">Your training & support</h3>
+        <p className="text-xs opacity-70 mb-4">We teach you advertising, marketing and order generation — manually, step by step.</p>
+        <div className="grid sm:grid-cols-2 gap-4">
+          {trainingItems.map((t) => {
+            const Icon = t.icon;
+            return (
+              <div key={t.title} className="rounded-xl border border-border/60 p-4 bg-background/30">
+                <div className="w-9 h-9 rounded-lg bg-primary/15 grid place-items-center mb-2">
+                  <Icon className="w-4 h-4 text-primary" />
+                </div>
+                <div className="font-semibold text-sm">{t.title}</div>
+                <p className="text-xs opacity-75 mt-1">{t.desc}</p>
+              </div>
+            );
+          })}
+        </div>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <Button asChild variant="hero" className="rounded-full">
+            <a href="https://wa.me/923164467464?text=Hi%2C%20I%27m%20a%20DigiFormation%20partner%20and%20need%20guidance" target="_blank" rel="noopener noreferrer">
+              <Handshake className="w-4 h-4" /> WhatsApp Partner Team
+            </a>
+          </Button>
+          <Button asChild variant="outline" className="rounded-full">
+            <a href="mailto:Info@digiformation.uk?subject=Partner%20Support%20Request">
+              Email Support
+            </a>
+          </Button>
+        </div>
+      </div>
+
+      {/* Payout info */}
+      <div className="glass rounded-2xl p-6">
+        <h3 className="font-semibold mb-1">Payouts</h3>
+        <p className="text-sm opacity-75">
+          Commissions are paid monthly via bank transfer or wallet credit once your pending balance reaches <strong>£50</strong>.
+          Payout settings will appear here once your first commission is earned.
+        </p>
+      </div>
+    </div>
   );
 };
 
