@@ -162,7 +162,10 @@ const Auth = () => {
                   </div>
                   <div>
                     <Label htmlFor="su-password">Password</Label>
-                    <Input id="su-password" name="password" type="password" required placeholder="At least 8 characters" className="mt-1.5" autoComplete="new-password" />
+                    <Input id="su-password" name="password" type="password" required placeholder="Min 8 chars · Aa1!" className="mt-1.5" autoComplete="new-password" />
+                    <p className="text-[10px] opacity-60 mt-1">
+                      Must include uppercase, lowercase, number & symbol. Leaked passwords are blocked.
+                    </p>
                   </div>
                   <Button type="submit" variant="hero" className="w-full rounded-full" disabled={loading}>
                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserCircle2 className="w-4 h-4" />}
