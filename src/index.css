@@ -245,33 +245,9 @@ body p, body span, body li, body label, body small, body div {
   }
 }
 
-@keyframes headline-shimmer {
-  0%   { background-position: -150% center; }
-  100% { background-position: 250% center; }
-}
-
-/* White text with a diagonal grey light slash sweeping across */
+/* Accent text — clean white, no shimmer */
 .headline-accent-shimmer {
-  background-image: linear-gradient(
-    115deg,
-    hsl(0 0% 100%) 0%,
-    hsl(0 0% 100%) 38%,
-    hsl(220 6% 55%) 48%,
-    hsl(220 6% 45%) 50%,
-    hsl(220 6% 55%) 52%,
-    hsl(0 0% 100%) 62%,
-    hsl(0 0% 100%) 100%
-  );
-  background-size: 250% 100%;
-  background-repeat: no-repeat;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: headline-shimmer 5s linear infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .headline-accent-shimmer { animation: none; color: hsl(0 0% 100%); }
+  color: hsl(0 0% 100%);
 }
 
 .animate-float { animation: float 6s ease-in-out infinite; }
