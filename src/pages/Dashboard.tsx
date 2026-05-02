@@ -323,7 +323,7 @@ const Dashboard = () => {
                       <div className="flex items-center justify-between mt-4">
                         <span className="font-semibold text-sm">{s.price}</span>
                         <Button asChild size="sm" variant="hero" className="rounded-full">
-                          <Link to="/pricing">Order <ArrowUpRight className="w-3.5 h-3.5" /></Link>
+                          <Link to={(s as any).link || "/pricing"}>Order <ArrowUpRight className="w-3.5 h-3.5" /></Link>
                         </Button>
                       </div>
                     </div>
