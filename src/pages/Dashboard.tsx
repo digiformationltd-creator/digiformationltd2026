@@ -23,10 +23,10 @@ const menu: { id: SectionId; label: string; icon: any }[] = [
   { id: "subscriptions", label: "Subscriptions", icon: CalendarDays },
   { id: "orders", label: "My Orders", icon: ShoppingBag },
   { id: "wallet", label: "My Wallet", icon: Wallet },
-  { id: "company", label: "Company Details", icon: Building2 },
+  { id: "company", label: "My Companies", icon: Building2 },
+  { id: "editAddress", label: "My Addresses", icon: MapPin },
   { id: "documents", label: "Documents", icon: FileText },
   { id: "editAccount", label: "Edit Account", icon: UserCog },
-  { id: "editAddress", label: "Edit Address", icon: MapPin },
   { id: "newServices", label: "Order New Services", icon: ShoppingCart },
   { id: "tickets", label: "My Tickets", icon: Ticket },
   { id: "openTicket", label: "Open a Ticket", icon: LifeBuoy },
@@ -94,7 +94,7 @@ const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    document.title = "Client Dashboard | Digiformation";
+    document.title = "Client Dashboard | DigiFormation Ltd";
 
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       setUser(session?.user ?? null);
@@ -148,8 +148,12 @@ const Dashboard = () => {
       {/* Sidebar */}
       <aside className={`${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 fixed lg:sticky top-0 left-0 z-40 h-screen w-72 glass border-r border-border/40 flex flex-col transition-transform`}>
         <div className="p-5 border-b border-border/40">
-          <Link to="/" className="flex items-center gap-2">
-            <img src={logo} alt="Digiformation" className="h-12 w-auto object-contain" />
+          <Link to="/" className="flex items-center gap-3">
+            <img src={logo} alt="DigiFormation Ltd" className="h-10 w-auto object-contain" />
+            <div className="leading-tight">
+              <div className="text-sm font-semibold">DigiFormation Ltd</div>
+              <div className="text-[10px] opacity-60">Client Portal</div>
+            </div>
           </Link>
         </div>
 
