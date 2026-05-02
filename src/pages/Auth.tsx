@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { ShieldCheck, UserCircle2, Mail, Lock, Loader2, ArrowLeft } from "lucide-react";
 import logo from "@/assets/digiformation-logo.png";
@@ -27,6 +28,10 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState<"signin" | "signup">("signin");
   const [showForgot, setShowForgot] = useState(false);
+  const [rememberMe, setRememberMe] = useState<boolean>(() => {
+    const v = localStorage.getItem("df_remember_me");
+    return v === null ? true : v === "true";
+  });
 
   // Redirect if already logged in
   useEffect(() => {
@@ -51,6 +56,12 @@ const Auth = () => {
     if (!pv.success) return toast.error(pv.error.issues[0].message);
 
     setLoading(true);
+    localStorage.setItem("df_remember_me", String(rememberMe));
+    if (rememberMe) {
+      localStorage.removeItem("df_session_started_at");
+    } else {
+      localStorage.setItem("df_session_started_at", String(Date.now()));
+    }
     const { error } = await supabase.auth.signInWithPassword({ email: ev.data, password: pv.data });
     setLoading(false);
     if (error) {
@@ -192,6 +203,24 @@ const Auth = () => {
                       <div className="relative mt-1.5">
                         <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 opacity-60" />
                         <Input id="si-password" name="password" type="password" required placeholder="••••••••" className="pl-9" autoComplete="current-password" />
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Checkbox
+                        id="remember-me"
+                        checked={rememberMe}
+                        onCheckedChange={(c) => setRememberMe(Boolean(c))}
+                        className="mt-0.5"
+                      />
+                      <div className="flex-1">
+                        <Label htmlFor="remember-me" className="text-sm cursor-pointer">
+                          Keep me signed in
+                        </Label>
+                        <p className="text-[10px] opacity-60 leading-tight mt-0.5">
+                          {rememberMe
+                            ? "You'll stay signed in on this device."
+                            : "You'll be signed out automatically after 5 hours."}
+                        </p>
                       </div>
                     </div>
                     <Button type="submit" variant="hero" className="w-full rounded-full" disabled={loading}>
