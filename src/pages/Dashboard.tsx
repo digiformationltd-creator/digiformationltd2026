@@ -266,6 +266,53 @@ const Dashboard = () => {
         </header>
 
         <div className="p-4 sm:p-8 max-w-6xl mx-auto">
+          {active === "overview" && (
+            <div className="space-y-6">
+              <div className="glass rounded-2xl p-6 sm:p-8">
+                <div className="text-xs opacity-70">Welcome back</div>
+                <h2 className="text-2xl sm:text-3xl font-semibold mt-1">{displayName}</h2>
+                <p className="text-sm opacity-75 mt-2 max-w-xl">
+                  This is your client dashboard. Manage your company, track orders, raise tickets and order new services from one place.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {[
+                  { label: "Subscriptions", value: "0", icon: CalendarDays, id: "subscriptions" as SectionId },
+                  { label: "Orders", value: "0", icon: ShoppingBag, id: "orders" as SectionId },
+                  { label: "Wallet", value: "£0.00", icon: Wallet, id: "wallet" as SectionId },
+                  { label: "Tickets", value: "0", icon: Ticket, id: "tickets" as SectionId },
+                ].map((s) => {
+                  const Icon = s.icon;
+                  return (
+                    <button
+                      key={s.label}
+                      onClick={() => setActive(s.id)}
+                      className="glass rounded-2xl p-5 text-left hover:shadow-glow transition"
+                    >
+                      <Icon className="w-5 h-5 opacity-70 mb-2" />
+                      <div className="text-[11px] uppercase tracking-widest opacity-70">{s.label}</div>
+                      <div className="text-xl font-semibold mt-1">{s.value}</div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <button onClick={() => setActive("newServices")} className="glass rounded-2xl p-6 text-left hover:shadow-glow transition">
+                  <ShoppingCart className="w-6 h-6 opacity-80 mb-2" />
+                  <div className="font-semibold">Order New Services</div>
+                  <p className="text-xs opacity-70 mt-1">Browse formations, addresses, compliance and more.</p>
+                </button>
+                <button onClick={() => setActive("openTicket")} className="glass rounded-2xl p-6 text-left hover:shadow-glow transition">
+                  <LifeBuoy className="w-6 h-6 opacity-80 mb-2" />
+                  <div className="font-semibold">Need help?</div>
+                  <p className="text-xs opacity-70 mt-1">Open a support ticket — we usually reply within 24h.</p>
+                </button>
+              </div>
+            </div>
+          )}
+
           {active === "subscriptions" && (
             <EmptyState
               icon={CalendarDays}
