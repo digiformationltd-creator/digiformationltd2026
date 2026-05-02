@@ -28,6 +28,10 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState<"signin" | "signup">("signin");
   const [showForgot, setShowForgot] = useState(false);
+  const [rememberMe, setRememberMe] = useState<boolean>(() => {
+    const v = localStorage.getItem("df_remember_me");
+    return v === null ? true : v === "true";
+  });
 
   // Redirect if already logged in
   useEffect(() => {
