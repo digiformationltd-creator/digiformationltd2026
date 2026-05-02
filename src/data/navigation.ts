@@ -2,12 +2,12 @@ export type NavItem = { name: string; path: string };
 export type NavGroup = { label: string; basePath?: string; items: NavItem[] };
 
 export const ukServices: NavItem[] = [
-  { name: "UK LTD Formation", path: "/uk-services/uk-ltd-formation" },
-  { name: "LTD ID Verification", path: "/uk-services/ltd-id-verification" },
+  { name: "Register UK Limited Company", path: "/uk-services/uk-ltd-formation" },
+  { name: "Companies House ID Verification", path: "/uk-services/ltd-id-verification" },
   { name: "Registered Office Address", path: "/uk-services/registered-office-address" },
-  { name: "Company Annual Filing", path: "/uk-services/company-annual-filing" },
-  { name: "UTR Number Service", path: "/uk-services/utr-number" },
-  { name: "Auth Code Service", path: "/uk-services/auth-code" },
+  { name: "Confirmation Statement Filing", path: "/uk-services/company-annual-filing" },
+  { name: "Get UTR Number (HMRC)", path: "/uk-services/utr-number" },
+  { name: "Companies House Authentication Code", path: "/uk-services/auth-code" },
   { name: "Activation Code Service", path: "/uk-services/activation-code" },
   { name: "UK VAT Registration & Submission", path: "/uk-services/uk-vat-registration" },
 ];
@@ -25,11 +25,11 @@ export const ukCompliance: NavItem[] = [
 ];
 
 export const usaServices: NavItem[] = [
-  { name: "US LLC Formation", path: "/usa-services/us-llc-formation" },
+  { name: "Form US LLC for Non-Residents", path: "/usa-services/us-llc-formation" },
   { name: "EIN Number", path: "/usa-services/ein-number" },
   { name: "ITIN Number", path: "/usa-services/itin-number" },
-  { name: "Annual Tax Filing", path: "/usa-services/annual-tax-filing" },
-  { name: "BIO Report", path: "/usa-services/bio-report" },
+  { name: "US LLC Annual Tax Return", path: "/usa-services/annual-tax-filing" },
+  { name: "BOI Report (Beneficial Ownership)", path: "/usa-services/bio-report" },
 ];
 
 export const banking: NavItem[] = [
@@ -52,13 +52,13 @@ export const navGroups: NavGroup[] = [
   { label: "UK Services", basePath: "/uk-services", items: ukServices },
   { label: "UK Compliance", basePath: "/uk-compliance", items: ukCompliance },
   { label: "USA Services", basePath: "/usa-services", items: usaServices },
-  { label: "Banking & Payments", basePath: "/banks-payment-solutions", items: banking },
+  { label: "Business Bank Accounts", basePath: "/banks-payment-solutions", items: banking },
 ];
 
 export const simpleLinks: NavItem[] = [
   { name: "Home", path: "/" },
-  { name: "Packages", path: "/pricing" },
-  { name: "Web Development", path: "/web-development" },
+  { name: "Pricing & Packages", path: "/pricing" },
+  { name: "Business Website Development", path: "/web-development" },
   { name: "Blog", path: "/blog" },
   { name: "FAQ", path: "/faq" },
   { name: "About", path: "/about" },

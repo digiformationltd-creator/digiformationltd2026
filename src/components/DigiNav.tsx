@@ -38,7 +38,7 @@ const DigiNav = () => {
           {/* Desktop links */}
           <div className="hidden xl:flex items-center gap-6">
             <NavLink to="/" className="text-sm hover:opacity-80 transition">Home</NavLink>
-            <NavLink to="/pricing" className="text-sm hover:opacity-80 transition">Packages</NavLink>
+            <NavLink to="/pricing" className="text-sm hover:opacity-80 transition">Pricing</NavLink>
             {navGroups.map((g) => (
               <div key={g.label} className="relative group">
                 <button className="flex items-center gap-1 text-sm hover:opacity-80 transition">
@@ -119,7 +119,7 @@ const DigiNav = () => {
               Home
             </Link>
             <Link to="/pricing" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm rounded-lg hover:bg-primary/10">
-              Packages
+              Pricing
             </Link>
             {navGroups.map((g) => (
               <div key={g.label} className="border-t border-border/40 mt-1 pt-1">
