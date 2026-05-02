@@ -256,20 +256,20 @@ const Dashboard = () => {
           <Button
             variant="ghost"
             size="icon"
-            className="rounded-full w-12 h-12"
+            className="rounded-full w-10 h-10"
             onClick={() => setMenuOpen(true)}
             aria-label="Open menu"
           >
-            <Menu className="w-7 h-7" />
+            <Menu className="w-5 h-5" />
           </Button>
           <div className="flex items-center gap-2 sm:gap-3">
             <div
-              className="w-9 h-9 rounded-full bg-gradient-brand grid place-items-center font-semibold text-xs shadow-glow"
+              className="w-10 h-10 rounded-full bg-gradient-brand grid place-items-center font-semibold text-xs shadow-glow"
               title={displayName}
             >
               {initials}
             </div>
-            <Button onClick={handleSignOut} variant="hero" size="sm" className="rounded-full">
+            <Button onClick={handleSignOut} variant="hero" size="sm" className="rounded-full h-10">
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Logout</span>
             </Button>
