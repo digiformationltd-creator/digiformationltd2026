@@ -14,8 +14,6 @@ const moreLinks = [
   { name: "About", path: "/#about" },
   { name: "Blog", path: "/blog" },
   { name: "FAQ", path: "/faq" },
-  { name: "Client Area", path: "/client-area" },
-  { name: "Contact", path: "/#contact" },
 ];
 
 const DigiNav = () => {
@@ -77,8 +75,6 @@ const DigiNav = () => {
                     { name: "About", path: "/#about" },
                     { name: "Blog", path: "/blog" },
                     { name: "FAQ", path: "/faq" },
-                    { name: "Client Area", path: "/client-area" },
-                    { name: "Contact", path: "/#contact" },
                   ].map((l) => (
                     <Link key={l.path} to={l.path} className="block px-4 py-2 text-sm rounded-md hover:bg-primary/10 transition">
                       {l.name}
@@ -112,6 +108,12 @@ const DigiNav = () => {
       {open && (
         <div className="xl:hidden container mx-auto mt-3 px-4">
           <div className="glass rounded-2xl p-4 max-h-[calc(100vh-8rem)] overflow-y-auto">
+            <Button asChild variant="hero" className="w-full mb-3 rounded-full">
+              <Link to="/auth" onClick={() => setOpen(false)}>
+                <UserCircle2 className="w-4 h-4" />
+                Client Dashboard
+              </Link>
+            </Button>
             <Link to="/" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm rounded-lg hover:bg-primary/10">
               Home
             </Link>
@@ -150,12 +152,6 @@ const DigiNav = () => {
                 </Link>
               ))}
             </div>
-            <Button asChild variant="hero" className="w-full mt-3 rounded-full">
-              <Link to="/auth" onClick={() => setOpen(false)}>
-                <UserCircle2 className="w-4 h-4" />
-                Client Dashboard
-              </Link>
-            </Button>
           </div>
         </div>
       )}
