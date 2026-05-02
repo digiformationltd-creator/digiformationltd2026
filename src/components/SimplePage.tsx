@@ -26,7 +26,6 @@ const SimplePage = ({ eyebrow, title, description, children }: SimplePageProps) 
         <div className="container mx-auto px-4 py-12 md:py-16 relative">
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-3 mb-6">
-              <span className="h-px w-7 bg-primary" />
               <span className="text-xs uppercase tracking-[0.18em] font-semibold">{eyebrow}</span>
             </div>
             <h1 className="text-5xl md:text-7xl font-bold leading-[1.02]">

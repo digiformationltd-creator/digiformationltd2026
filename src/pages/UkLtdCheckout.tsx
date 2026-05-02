@@ -93,7 +93,6 @@ const UkLtdCheckout = () => {
             <ArrowLeft className="w-4 h-4" /> Back to jurisdictions
           </Link>
           <div className="inline-flex items-center gap-3 mb-4">
-            <span className="h-px w-7 bg-primary" />
             <span className="text-xs uppercase tracking-[0.18em] font-semibold">Step 3 of 3 — Checkout</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-bold leading-tight">

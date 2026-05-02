@@ -48,7 +48,6 @@ const BankingProviderPage = () => {
           <div className="grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-14 items-center">
             <div className="max-w-3xl">
               <div className="inline-flex items-center gap-3 mb-6">
-                <span className="h-px w-7 bg-primary" />
                 <span className="text-xs uppercase tracking-[0.18em] font-semibold">Banks & Payment Solutions</span>
               </div>
               <h1 className="text-5xl md:text-7xl font-bold leading-[1.02] tracking-tight">

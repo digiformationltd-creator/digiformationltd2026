@@ -212,7 +212,6 @@ const UKLtdFormation = () => {
           <div className="grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-14 items-center">
             <div className="max-w-3xl">
               <div className="inline-flex items-center gap-3 mb-6">
-                <span className="h-px w-7 bg-primary" />
                 <span className="text-xs uppercase tracking-[0.18em] font-semibold">UK Services</span>
               </div>
               <h1
@@ -263,7 +262,6 @@ const UKLtdFormation = () => {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
             <div>
               <div className="inline-flex items-center gap-3 mb-5">
-                <span className="h-px w-7 bg-primary" />
                 <span className="text-xs uppercase tracking-[0.18em] font-semibold">What You Get</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-8">
@@ -292,7 +290,6 @@ const UKLtdFormation = () => {
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-14">
             <div className="inline-flex items-center gap-3 mb-5">
-              <span className="h-px w-7 bg-primary" />
               <span className="text-xs uppercase tracking-[0.18em] font-semibold">Packages</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold leading-tight">

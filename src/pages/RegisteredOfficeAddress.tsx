@@ -148,7 +148,6 @@ const RegisteredOfficeAddress = () => {
         <div className="container mx-auto px-4 py-12 md:py-14 relative">
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-3 mb-6">
-              <span className="h-px w-7 bg-primary" />
               <span className="text-xs uppercase tracking-[0.18em] font-semibold">UK Services · Compliance</span>
             </div>
             <h1 className="text-5xl md:text-7xl font-bold leading-[1.02] tracking-tight">
@@ -173,7 +172,6 @@ const RegisteredOfficeAddress = () => {
       <section className="py-10 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="inline-flex items-center gap-3 mb-5">
-            <span className="h-px w-7 bg-primary" />
             <span className="text-xs uppercase tracking-[0.18em] font-semibold">Why You Need It</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-12">
@@ -195,7 +193,6 @@ const RegisteredOfficeAddress = () => {
         <div className="container mx-auto px-4">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <div className="inline-flex items-center gap-3 mb-5">
-              <span className="h-px w-7 bg-primary" />
               <span className="text-xs uppercase tracking-[0.18em] font-semibold">Packages</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold leading-tight">

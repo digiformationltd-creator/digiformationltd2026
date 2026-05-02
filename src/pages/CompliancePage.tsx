@@ -68,7 +68,6 @@ const CompliancePage = () => {
         <div className="container mx-auto px-4 py-12 md:py-14 relative">
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-3 mb-6">
-              <span className="h-px w-7 bg-primary" />
               <span className="text-xs uppercase tracking-[0.18em] font-semibold">{page.eyebrow}</span>
             </div>
             <h1 className="text-5xl md:text-7xl font-bold leading-[1.02] tracking-tight">
@@ -92,7 +91,6 @@ const CompliancePage = () => {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
             <div>
               <div className="inline-flex items-center gap-3 mb-5">
-                <span className="h-px w-7 bg-primary" />
                 <span className="text-xs uppercase tracking-[0.18em] font-semibold">Service Overview</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-8">
@@ -119,7 +117,6 @@ const CompliancePage = () => {
       <section className="py-10 bg-muted/20 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-5xl">
           <div className="inline-flex items-center gap-3 mb-5">
-            <span className="h-px w-7 bg-primary" />
             <span className="text-xs uppercase tracking-[0.18em] font-semibold">Requirements</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-4">
