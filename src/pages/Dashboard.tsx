@@ -55,12 +55,15 @@ interface CompanyDetails {
 }
 
 const services = [
-  { name: "Registered Address", price: "£49.99/yr", desc: "Use our address for your company", icon: MapPin },
-  { name: "Confirmation Statement", price: "£13.99", desc: "Annual confirmation filing", icon: FileText },
-  { name: "Accounts Filing", price: "£49.99", desc: "Annual accounts submission", icon: FileText },
-  { name: "Director Change", price: "£29.99", desc: "Add or remove a director", icon: UserCog },
-  { name: "Share Certificate", price: "£19.99", desc: "Official share certificate", icon: FileText },
-  { name: "VAT Registration", price: "£99.99", desc: "Register for VAT with HMRC", icon: Building2 },
+  { name: "Registered Office Address", price: "£40/yr", desc: "Use our address for your company (1 year contract)", icon: MapPin, link: "/uk-services/registered-office-address" },
+  { name: "Business Service Address", price: "£60/yr", desc: "Use for company registration & marketing", icon: MapPin, link: "/uk-services/registered-office-address" },
+  { name: "Director Service Address", price: "£20/yr", desc: "Address for 1 Director (1 year contract)", icon: UserCog, link: "/uk-services/director-service-address" },
+  { name: "Confirmation Statement", price: "£80", desc: "Annual confirmation filing with Companies House", icon: FileText, link: "/uk-compliance/confirmation-statement" },
+  { name: "Annual Accounts Filing", price: "From £120", desc: "Annual accounts submission to HMRC", icon: FileText, link: "/uk-compliance/annual-accounts-filing" },
+  { name: "Director Appoint / Remove", price: "£10", desc: "Add or remove a director", icon: UserCog, link: "/uk-compliance/director-appoint-remove" },
+  { name: "Company Name Change", price: "£30", desc: "Change your registered company name", icon: Building2, link: "/uk-compliance/company-name-change" },
+  { name: "Company Address Change", price: "£10", desc: "Update your registered office address", icon: MapPin, link: "/uk-compliance/company-address-change" },
+  { name: "EIN Number (US)", price: "$30", desc: "EIN registration with IRS for your US LLC", icon: FileText, link: "/usa-services/ein-number" },
 ];
 
 const StatusBadge = ({ status }: { status: string }) => {
