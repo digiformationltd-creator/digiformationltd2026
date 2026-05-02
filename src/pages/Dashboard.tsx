@@ -105,39 +105,6 @@ const Dashboard = () => {
   useEffect(() => {
     document.title = "Client Dashboard | DigiFormation Ltd";
 
-    // Enforce 5-hour max session when user did NOT check "Keep me signed in"
-    const SESSION_MAX_MS = 5 * 60 * 60 * 1000; // 5 hours
-    const remember = localStorage.getItem("df_remember_me") !== "false";
-    const startedAtRaw = localStorage.getItem("df_session_started_at");
-
-    const enforceExpiry = async () => {
-      if (remember) return;
-      const startedAt = startedAtRaw ? Number(startedAtRaw) : NaN;
-      if (!startedAt || Number.isNaN(startedAt)) return;
-      if (Date.now() - startedAt >= SESSION_MAX_MS) {
-        localStorage.removeItem("df_session_started_at");
-        await supabase.auth.signOut();
-        toast.info("Your 5-hour session has expired. Please sign in again.");
-        navigate("/auth", { replace: true });
-        return true;
-      }
-      return false;
-    };
-
-    let expiryTimer: number | undefined;
-    if (!remember && startedAtRaw) {
-      const startedAt = Number(startedAtRaw);
-      const remaining = SESSION_MAX_MS - (Date.now() - startedAt);
-      if (remaining > 0) {
-        expiryTimer = window.setTimeout(async () => {
-          localStorage.removeItem("df_session_started_at");
-          await supabase.auth.signOut();
-          toast.info("Your 5-hour session has expired. Please sign in again.");
-          navigate("/auth", { replace: true });
-        }, remaining);
-      }
-    }
-
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "PASSWORD_RECOVERY") {
         navigate("/reset-password", { replace: true });
@@ -155,15 +122,12 @@ const Dashboard = () => {
           navigate("/auth", { replace: true });
           return;
         }
-        // Defer expiry check so we don't block the listener
-        setTimeout(() => { enforceExpiry(); }, 0);
         setUser((prev) => (prev?.id === session.user.id ? prev : session.user));
       }
     });
 
     return () => {
       sub.subscription.unsubscribe();
-      if (expiryTimer) window.clearTimeout(expiryTimer);
     };
   }, [navigate]);
 
