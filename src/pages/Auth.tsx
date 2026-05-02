@@ -132,10 +132,10 @@ const Auth = () => {
           </div>
 
           <div className="glass rounded-2xl p-5 sm:p-6 shadow-elegant">
-            <div className="flex flex-col items-center mb-5">
-              <UserCircle2 className="w-10 h-10 mb-2 opacity-80" />
-              <h1 className="text-xl font-semibold">Client Dashboard</h1>
-              <p className="text-xs opacity-70 mt-1">Manage your company, orders & subscriptions</p>
+            <div className="flex flex-col items-center mb-4">
+              <UserCircle2 className="w-8 h-8 mb-1 opacity-80" />
+              <h1 className="text-lg font-semibold">Client Dashboard</h1>
+              <p className="text-xs opacity-70 mt-0.5">Manage your company, orders & subscriptions</p>
             </div>
 
             <Tabs value={tab} onValueChange={(v) => setTab(v as "signin" | "signup")}>
