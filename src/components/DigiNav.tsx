@@ -87,11 +87,12 @@ const DigiNav = () => {
           </div>
 
           {/* CTA */}
-          <div className="flex items-center gap-2">
-            <Button asChild variant="hero" size="sm" className="rounded-full hidden sm:inline-flex">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <Button asChild variant="hero" size="sm" className="rounded-full">
               <Link to="/auth" aria-label="Sign in to client dashboard">
                 <UserCircle2 className="w-4 h-4" />
-                Client Dashboard
+                <span className="hidden sm:inline">Client Dashboard</span>
+                <span className="sm:hidden text-xs">Login</span>
               </Link>
             </Button>
             <button
