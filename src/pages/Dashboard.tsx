@@ -55,6 +55,7 @@ interface CompanyDetails {
   director_name: string | null;
   company_address: string | null;
   registered_address: string | null;
+  correspondence_address: string | null;
   address_expire: string | null;
   confirmation_due: string | null;
   accounts_filing_due: string | null;
@@ -459,6 +460,7 @@ interface AddressRow {
   start_date: string | null;
   expire_date: string | null;
   status: string;
+  notes: string | null;
 }
 
 const MyCompaniesSection = ({ userId, companies, onChange }: { userId: string; companies: CompanyDetails[]; onChange: (c: CompanyDetails[]) => void }) => {
