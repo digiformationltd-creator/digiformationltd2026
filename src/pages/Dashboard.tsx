@@ -355,7 +355,7 @@ const Dashboard = () => {
             <EditAccountForm profile={profile} email={user.email || ""} onSaved={(p) => setProfile(p)} />
           )}
 
-          {active === "editAddress" && <MyAddressesSection userId={user.id} />}
+          {active === "editAddress" && <MyAddressesSection userId={user.id} editable={isAdmin} />}
 
           {active === "newServices" && (
             <div>
