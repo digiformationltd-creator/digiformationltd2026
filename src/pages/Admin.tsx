@@ -261,7 +261,8 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
 
   const tabs = [
     { id: "profile", label: "Profile" },
-    { id: "company", label: "Company" },
+    { id: "company", label: `Companies (${companies.length})` },
+    { id: "addresses", label: `Addresses (${addresses.length})` },
     { id: "orders", label: `Orders (${orders.length})` },
     { id: "subs", label: `Subs (${subs.length})` },
     { id: "wallet", label: `Wallet (${wallet.length})` },
@@ -293,27 +294,70 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
         )}
 
         {tab === "company" && (
-          <div className="space-y-4">
-            <div className="grid md:grid-cols-2 gap-4">
-              <Field label="Company Name" value={company.company_name} onChange={(v) => setCompany({ ...company, company_name: v })} />
-              <Field label="Company Number" value={company.company_number} onChange={(v) => setCompany({ ...company, company_number: v })} />
-              <Field label="Director Name" value={company.director_name} onChange={(v) => setCompany({ ...company, director_name: v })} />
-              <Field label="SIC Code" value={company.sic_code} onChange={(v) => setCompany({ ...company, sic_code: v })} />
-              <Field label="Auth Code" value={company.auth_code} onChange={(v) => setCompany({ ...company, auth_code: v })} />
-              <Field label="Incorporation Date" type="date" value={company.incorporation_date} onChange={(v) => setCompany({ ...company, incorporation_date: v })} />
-              <Field label="Address Expire" type="date" value={company.address_expire} onChange={(v) => setCompany({ ...company, address_expire: v })} />
-              <Field label="Confirmation Due" type="date" value={company.confirmation_due} onChange={(v) => setCompany({ ...company, confirmation_due: v })} />
-              <Field label="Accounts Filing Due" type="date" value={company.accounts_filing_due} onChange={(v) => setCompany({ ...company, accounts_filing_due: v })} />
-            </div>
-            <div>
-              <Label>Company Address</Label>
-              <Textarea value={company.company_address || ""} onChange={(e) => setCompany({ ...company, company_address: e.target.value })} />
-            </div>
-            <div>
-              <Label>Registered Address</Label>
-              <Textarea value={company.registered_address || ""} onChange={(e) => setCompany({ ...company, registered_address: e.target.value })} />
-            </div>
-            <Button onClick={saveCompany} disabled={saving}><Save className="w-4 h-4 mr-2" />Save Company</Button>
+          <div className="space-y-6">
+            <Button onClick={addCompany} size="sm"><Plus className="w-4 h-4 mr-2" />Add Company</Button>
+            {companies.length === 0 && <p className="text-sm text-muted-foreground">No companies yet. Click "Add Company" to create one.</p>}
+            {companies.map((c, idx) => (
+              <div key={c.id} className="border border-border/40 rounded-xl p-4 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold">Company #{idx + 1}{c.company_name ? ` — ${c.company_name}` : ""}</h3>
+                  <Button variant="ghost" size="sm" onClick={() => deleteRow("client_company_details", c.id)}><Trash2 className="w-4 h-4" /></Button>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <Field label="Company Name" value={c.company_name} onChange={(v) => updateCompanyField(c.id, { company_name: v })} />
+                  <Field label="Company Number" value={c.company_number} onChange={(v) => updateCompanyField(c.id, { company_number: v })} />
+                  <Field label="Director Name" value={c.director_name} onChange={(v) => updateCompanyField(c.id, { director_name: v })} />
+                  <Field label="SIC Code" value={c.sic_code} onChange={(v) => updateCompanyField(c.id, { sic_code: v })} />
+                  <Field label="Auth Code" value={c.auth_code} onChange={(v) => updateCompanyField(c.id, { auth_code: v })} />
+                  <Field label="Incorporation Date" type="date" value={c.incorporation_date} onChange={(v) => updateCompanyField(c.id, { incorporation_date: v })} />
+                  <Field label="Address Expire" type="date" value={c.address_expire} onChange={(v) => updateCompanyField(c.id, { address_expire: v })} />
+                  <Field label="Confirmation Due" type="date" value={c.confirmation_due} onChange={(v) => updateCompanyField(c.id, { confirmation_due: v })} />
+                  <Field label="Accounts Filing Due" type="date" value={c.accounts_filing_due} onChange={(v) => updateCompanyField(c.id, { accounts_filing_due: v })} />
+                </div>
+                <div>
+                  <Label>Registered Office Address</Label>
+                  <Textarea value={c.registered_address || ""} onChange={(e) => updateCompanyField(c.id, { registered_address: e.target.value })} />
+                </div>
+                <div>
+                  <Label>Correspondence Address <span className="text-muted-foreground text-xs">(optional)</span></Label>
+                  <Textarea value={c.correspondence_address || ""} onChange={(e) => updateCompanyField(c.id, { correspondence_address: e.target.value })} placeholder="Leave blank if not purchased" />
+                </div>
+                <Button onClick={() => saveCompany(c)} disabled={saving} size="sm"><Save className="w-4 h-4 mr-2" />Save Company</Button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {tab === "addresses" && (
+          <div className="space-y-6">
+            <Button onClick={addAddress} size="sm"><Plus className="w-4 h-4 mr-2" />Add Address</Button>
+            {addresses.length === 0 && <p className="text-sm text-muted-foreground">No addresses yet. Click "Add Address" to create one.</p>}
+            {addresses.map((a, idx) => (
+              <div key={a.id} className="border border-border/40 rounded-xl p-4 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold">Address #{idx + 1}{a.label ? ` — ${a.label}` : ""}</h3>
+                  <Button variant="ghost" size="sm" onClick={() => deleteRow("client_addresses", a.id)}><Trash2 className="w-4 h-4" /></Button>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <Field label="Label" value={a.label} onChange={(v) => updateAddressField(a.id, { label: v })} />
+                  <Field label="Service Type" value={a.service_type} onChange={(v) => updateAddressField(a.id, { service_type: v })} />
+                  <Field label="Address Line 1" value={a.address_line1} onChange={(v) => updateAddressField(a.id, { address_line1: v })} />
+                  <Field label="Address Line 2" value={a.address_line2} onChange={(v) => updateAddressField(a.id, { address_line2: v })} />
+                  <Field label="City" value={a.city} onChange={(v) => updateAddressField(a.id, { city: v })} />
+                  <Field label="County" value={a.county} onChange={(v) => updateAddressField(a.id, { county: v })} />
+                  <Field label="Postcode" value={a.postcode} onChange={(v) => updateAddressField(a.id, { postcode: v })} />
+                  <Field label="Country" value={a.country} onChange={(v) => updateAddressField(a.id, { country: v })} />
+                  <Field label="Start Date" type="date" value={a.start_date} onChange={(v) => updateAddressField(a.id, { start_date: v })} />
+                  <Field label="Expire Date" type="date" value={a.expire_date} onChange={(v) => updateAddressField(a.id, { expire_date: v })} />
+                  <Field label="Status" value={a.status} onChange={(v) => updateAddressField(a.id, { status: v })} />
+                </div>
+                <div>
+                  <Label>Notes</Label>
+                  <Textarea value={a.notes || ""} onChange={(e) => updateAddressField(a.id, { notes: e.target.value })} />
+                </div>
+                <Button onClick={() => saveAddress(a)} disabled={saving} size="sm"><Save className="w-4 h-4 mr-2" />Save Address</Button>
+              </div>
+            ))}
           </div>
         )}
 
