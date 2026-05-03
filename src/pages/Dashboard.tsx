@@ -376,11 +376,7 @@ const Dashboard = () => {
           )}
 
           {active === "documents" && (
-            <EmptyState
-              icon={FileText}
-              title="No documents yet"
-              description="Certificates, memorandums, confirmation statements and letters will be available to download here."
-            />
+            <ClientDocumentsSection userId={user.id} />
           )}
 
           {active === "editAccount" && (
