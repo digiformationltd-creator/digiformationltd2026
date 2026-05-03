@@ -168,7 +168,8 @@ const Dashboard = () => {
   }
 
   const initials = profile?.avatar_initials || (profile?.full_name?.slice(0, 2) || user.email?.slice(0, 2) || "U").toUpperCase();
-  const displayName = profile?.full_name || user.email?.split("@")[0] || "Client";
+  const primaryCompanyName = companies[0]?.company_name?.trim();
+  const displayName = primaryCompanyName || profile?.company_name || profile?.full_name || user.email?.split("@")[0] || "Client";
 
   return (
     <div className="min-h-screen bg-gradient-hero grid-pattern">
