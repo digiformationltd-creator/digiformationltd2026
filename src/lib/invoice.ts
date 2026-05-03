@@ -68,7 +68,7 @@ const COMPANY = {
   name: "Digiformation Ltd",
   tagline: "UK Company Formations & Compliance",
   address: "United Kingdom",
-  email: "digiformationltd@gmail.com",
+  email: "info@digiformation.uk",
   website: "digiformation.com",
 };
 

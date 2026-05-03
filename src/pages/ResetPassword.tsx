@@ -315,8 +315,8 @@ const ResetPassword = () => {
 
           <p className="text-center text-xs opacity-70 mt-5">
             Need help? Email{" "}
-            <a href="mailto:digiformationltd@gmail.com" className="underline">
-              digiformationltd@gmail.com
+            <a href="mailto:info@digiformation.uk" className="underline">
+              info@digiformation.uk
             </a>
           </p>
         </div>
