@@ -598,10 +598,29 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
                   if (upErr) { toast.error(upErr.message); return; }
                   const sizeKb = file.size < 1024 * 1024 ? `${(file.size / 1024).toFixed(1)} KB` : `${(file.size / 1024 / 1024).toFixed(2)} MB`;
                   const ext = file.name.split(".").pop()?.toUpperCase() || "FILE";
-                  const { error: insErr } = await supabase.from("client_documents").insert({
+                  const { data: docRow, error: insErr } = await supabase.from("client_documents").insert({
                     user_id: userId, name: file.name, file_url: path, file_type: ext, file_size: sizeKb,
-                  });
-                  if (insErr) toast.error(insErr.message); else { toast.success("Document uploaded"); reload(); }
+                  }).select().single();
+                  if (insErr) toast.error(insErr.message);
+                  else {
+                    toast.success("Document uploaded");
+                    if (profile.email) {
+                      supabase.functions.invoke("send-transactional-email", {
+                        body: {
+                          templateName: "document-uploaded",
+                          recipientEmail: profile.email,
+                          idempotencyKey: `doc-uploaded-${docRow?.id}`,
+                          templateData: {
+                            customerName: profile.full_name,
+                            documentName: file.name,
+                            docDate: new Date().toISOString().slice(0, 10),
+                            loginUrl: `${window.location.origin}/dashboard`,
+                          },
+                        },
+                      }).catch(console.error);
+                    }
+                    reload();
+                  }
                   e.target.value = "";
                 }}
               />
