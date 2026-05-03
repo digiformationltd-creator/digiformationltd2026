@@ -586,17 +586,56 @@ const MyCompaniesSection = ({ userId, companies, onChange }: { userId: string; c
 
 const MyAddressesSection = ({ userId }: { userId: string }) => {
   const [rows, setRows] = useState<AddressRow[] | null>(null);
+  const [savingId, setSavingId] = useState<string | null>(null);
+  const [adding, setAdding] = useState(false);
+
+  const load = async () => {
+    const { data } = await supabase
+      .from("client_addresses")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+    setRows((data as AddressRow[]) || []);
+  };
 
   useEffect(() => {
-    (async () => {
-      const { data } = await supabase
-        .from("client_addresses")
-        .select("*")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false });
-      setRows((data as AddressRow[]) || []);
-    })();
+    load();
   }, [userId]);
+
+  const updateField = (id: string, patch: Partial<AddressRow>) => {
+    setRows(prev => (prev || []).map(a => a.id === id ? { ...a, ...patch } : a));
+  };
+
+  const addAddress = async () => {
+    setAdding(true);
+    const { data, error } = await supabase
+      .from("client_addresses")
+      .insert({ user_id: userId, label: "New Address", service_type: "registered_office", country: "United Kingdom", status: "active" })
+      .select()
+      .single();
+    setAdding(false);
+    if (error) return toast.error(error.message);
+    setRows(prev => [data as AddressRow, ...(prev || [])]);
+    toast.success("New address form added — fill in the details and Save.");
+  };
+
+  const saveAddress = async (a: AddressRow) => {
+    setSavingId(a.id);
+    const { id, ...rest } = a as any;
+    const cleaned = { ...rest };
+    ["start_date", "expire_date"].forEach(k => { if (cleaned[k] === "") cleaned[k] = null; });
+    const { error } = await supabase.from("client_addresses").update(cleaned).eq("id", id);
+    setSavingId(null);
+    if (error) toast.error(error.message); else toast.success("Address saved");
+  };
+
+  const deleteAddress = async (id: string) => {
+    if (!confirm("Delete this address?")) return;
+    const { error } = await supabase.from("client_addresses").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    setRows(prev => (prev || []).filter(a => a.id !== id));
+    toast.success("Address removed");
+  };
 
   if (rows === null) {
     return <div className="glass rounded-2xl p-10 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto opacity-60" /></div>;
