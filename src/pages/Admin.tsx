@@ -432,15 +432,30 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
         {tab === "orders" && (
           <div className="space-y-3">
             <NewOrderForm onCreate={addOrder} />
-            {orders.map(o => (
-              <div key={o.id} className="border border-border/40 rounded-lg p-3 grid md:grid-cols-5 gap-2 items-center">
+            {orders.map(o => {
+              const linkedInvoice = invoices.find(i => i.order_id === o.id);
+              return (
+              <div key={o.id} className="border border-border/40 rounded-lg p-3 grid md:grid-cols-6 gap-2 items-center">
                 <Input defaultValue={o.order_ref} onBlur={(e) => updateOrder(o.id, { order_ref: e.target.value })} placeholder="Ref" />
                 <Input defaultValue={o.service} onBlur={(e) => updateOrder(o.id, { service: e.target.value })} placeholder="Service" />
                 <Input defaultValue={o.status} onBlur={(e) => updateOrder(o.id, { status: e.target.value })} placeholder="Status" />
                 <Input type="number" defaultValue={o.amount_gbp} onBlur={(e) => updateOrder(o.id, { amount_gbp: parseFloat(e.target.value) || 0 })} placeholder="£" />
+                <div className="flex items-center gap-2">
+                  {linkedInvoice ? (
+                    <>
+                      <Badge variant="secondary" className="text-xs">Invoice created</Badge>
+                      <Button size="sm" variant="outline" onClick={() => downloadInvoicePdf(linkedInvoice)} title={linkedInvoice.invoice_number}>
+                        <Download className="w-3.5 h-3.5" />
+                      </Button>
+                    </>
+                  ) : (
+                    <Badge variant="outline" className="text-xs text-muted-foreground">Not created</Badge>
+                  )}
+                </div>
                 <Button variant="ghost" size="sm" onClick={() => deleteRow("client_orders", o.id)}><Trash2 className="w-4 h-4" /></Button>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
