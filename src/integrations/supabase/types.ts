@@ -506,6 +506,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      sync_missing_client_profiles: { Args: never; Returns: number }
     }
     Enums: {
       app_role: "admin" | "client"
