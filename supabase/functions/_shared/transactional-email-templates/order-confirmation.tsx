@@ -1,6 +1,6 @@
 import * as React from 'npm:react@18.3.1'
 import {
-  Body, Container, Head, Heading, Html, Preview, Section, Text, Hr,
+  Body, Button, Container, Head, Heading, Html, Preview, Section, Text, Hr,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
@@ -12,6 +12,8 @@ interface Props {
   packageName?: string
   price?: string
   orderRef?: string
+  invoiceNumber?: string
+  invoiceUrl?: string
   notes?: string
 }
 
@@ -21,6 +23,8 @@ const OrderConfirmationEmail = ({
   packageName,
   price,
   orderRef,
+  invoiceNumber,
+  invoiceUrl,
   notes,
 }: Props) => (
   <Html lang="en" dir="ltr">
@@ -41,8 +45,18 @@ const OrderConfirmationEmail = ({
           {service && <Text style={cardLine}><strong>Service:</strong> {service}</Text>}
           {packageName && <Text style={cardLine}><strong>Package:</strong> {packageName}</Text>}
           {price && <Text style={cardLine}><strong>Price:</strong> {price}</Text>}
-          {orderRef && <Text style={cardLine}><strong>Reference:</strong> {orderRef}</Text>}
+          {orderRef && <Text style={cardLine}><strong>Order Ref:</strong> {orderRef}</Text>}
+          {invoiceNumber && <Text style={cardLine}><strong>Invoice:</strong> {invoiceNumber}</Text>}
         </Section>
+
+        {invoiceUrl && (
+          <Section style={{ textAlign: 'center', margin: '8px 0 24px' }}>
+            <Button href={invoiceUrl} style={button}>
+              Download Invoice (PDF)
+            </Button>
+            <Text style={muted}>Link valid for 7 days. You can also view it anytime in your dashboard.</Text>
+          </Section>
+        )}
 
         {notes && (
           <>
@@ -69,6 +83,8 @@ export const template = {
     packageName: 'Silver',
     price: '£170',
     orderRef: 'ORD-12345',
+    invoiceNumber: 'INV-12345',
+    invoiceUrl: 'https://example.com/invoice.pdf',
     notes: 'Please contact me on WhatsApp.',
   },
 } satisfies TemplateEntry
@@ -81,5 +97,7 @@ const label = { fontSize: '12px', color: '#71717a', textTransform: 'uppercase' a
 const card = { background: '#f4f4f5', borderRadius: '12px', padding: '16px 20px', margin: '12px 0 20px' }
 const cardLabel = { fontSize: '12px', color: '#71717a', textTransform: 'uppercase' as const, letterSpacing: '0.08em', margin: '0 0 8px' }
 const cardLine = { fontSize: '14px', color: '#18181b', margin: '4px 0' }
+const button = { backgroundColor: '#10b981', color: '#ffffff', padding: '12px 24px', borderRadius: '8px', fontSize: '14px', fontWeight: 'bold', textDecoration: 'none', display: 'inline-block' }
+const muted = { fontSize: '12px', color: '#71717a', margin: '12px 0 0' }
 const hr = { borderColor: '#e4e4e7', margin: '24px 0' }
 const footer = { fontSize: '12px', color: '#71717a', margin: '8px 0 0' }
