@@ -101,6 +101,14 @@ const Auth = () => {
         : error.message;
       return toast.error(msg);
     }
+    supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: "welcome",
+        recipientEmail: ev.data,
+        idempotencyKey: `welcome-${ev.data}`,
+        templateData: { customerName: nv.data, loginUrl: `${window.location.origin}/auth` },
+      },
+    }).catch((err) => console.error("welcome email failed", err));
     toast.success("Account created! Please check your email to verify.");
     setTab("signin");
   };

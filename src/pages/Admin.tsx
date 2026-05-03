@@ -254,15 +254,40 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
         status: "Unpaid",
       });
       if (invErr) toast.error(`Order saved but invoice failed: ${invErr.message}`);
-      else toast.success(`Order ${ref} + Invoice ${number} created`);
+      else {
+        toast.success(`Order ${ref} + Invoice ${number} created`);
+        if (profile.email) {
+          supabase.functions.invoke("send-transactional-email", {
+            body: {
+              templateName: "invoice-issued",
+              recipientEmail: profile.email,
+              idempotencyKey: `invoice-issued-${number}`,
+              templateData: { customerName: profile.full_name, invoiceNumber: number, service: description, amount: `£${total}` },
+            },
+          }).catch(console.error);
+        }
+      }
     } else {
       toast.success(`Order ${ref} added`);
     }
     reload();
   };
   const updateOrder = async (id: string, patch: any) => {
+    const prev = orders.find(o => o.id === id);
     const { error } = await supabase.from("client_orders").update(patch).eq("id", id);
-    if (error) toast.error(error.message); else reload();
+    if (error) { toast.error(error.message); return; }
+    // If status moved to Completed, send completion email
+    if (patch.status && patch.status !== prev?.status && /complete/i.test(patch.status) && profile.email) {
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "order-completed",
+          recipientEmail: profile.email,
+          idempotencyKey: `order-completed-${id}`,
+          templateData: { customerName: profile.full_name, orderRef: prev?.order_ref, service: prev?.service },
+        },
+      }).catch(console.error);
+    }
+    reload();
   };
   const deleteRow = async (table: any, id: string) => {
     const { error } = await supabase.from(table).delete().eq("id", id);
@@ -284,8 +309,8 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
     if (error) toast.error(error.message); else { toast.success(`Invoice ${number} created`); reload(); }
   };
   const updateInvoice = async (id: string, patch: any) => {
-    // auto-recalc totals if amount/vat change
     const current = invoices.find(i => i.id === id);
+    const prevStatus = current?.status;
     if (current) {
       const merged = { ...current, ...patch };
       const amount = parseFloat(merged.amount_gbp) || 0;
@@ -295,7 +320,18 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
       patch = { ...patch, vat_gbp: vat, total_gbp: total };
     }
     const { error } = await supabase.from("invoices").update(patch).eq("id", id);
-    if (error) toast.error(error.message); else reload();
+    if (error) { toast.error(error.message); return; }
+    if (patch.status && patch.status !== prevStatus && /paid/i.test(patch.status) && profile.email) {
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "invoice-paid",
+          recipientEmail: profile.email,
+          idempotencyKey: `invoice-paid-${id}`,
+          templateData: { customerName: profile.full_name, invoiceNumber: current?.invoice_number, amount: `£${current?.total_gbp}`, service: current?.service_description },
+        },
+      }).catch(console.error);
+    }
+    reload();
   };
 
   const addSub = async () => {
@@ -562,10 +598,29 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
                   if (upErr) { toast.error(upErr.message); return; }
                   const sizeKb = file.size < 1024 * 1024 ? `${(file.size / 1024).toFixed(1)} KB` : `${(file.size / 1024 / 1024).toFixed(2)} MB`;
                   const ext = file.name.split(".").pop()?.toUpperCase() || "FILE";
-                  const { error: insErr } = await supabase.from("client_documents").insert({
+                  const { data: docRow, error: insErr } = await supabase.from("client_documents").insert({
                     user_id: userId, name: file.name, file_url: path, file_type: ext, file_size: sizeKb,
-                  });
-                  if (insErr) toast.error(insErr.message); else { toast.success("Document uploaded"); reload(); }
+                  }).select().single();
+                  if (insErr) toast.error(insErr.message);
+                  else {
+                    toast.success("Document uploaded");
+                    if (profile.email) {
+                      supabase.functions.invoke("send-transactional-email", {
+                        body: {
+                          templateName: "document-uploaded",
+                          recipientEmail: profile.email,
+                          idempotencyKey: `doc-uploaded-${docRow?.id}`,
+                          templateData: {
+                            customerName: profile.full_name,
+                            documentName: file.name,
+                            docDate: new Date().toISOString().slice(0, 10),
+                            loginUrl: `${window.location.origin}/dashboard`,
+                          },
+                        },
+                      }).catch(console.error);
+                    }
+                    reload();
+                  }
                   e.target.value = "";
                 }}
               />
