@@ -474,7 +474,71 @@ interface AddressRow {
   status: string;
 }
 
-const MyAddressesSection = ({ userId }: { userId: string }) => {
+const MyCompaniesSection = ({ userId, companies, onChange }: { userId: string; companies: CompanyDetails[]; onChange: (c: CompanyDetails[]) => void }) => {
+  const [adding, setAdding] = useState(false);
+
+  const addCompany = async () => {
+    setAdding(true);
+    const { data, error } = await supabase
+      .from("client_company_details")
+      .insert({ user_id: userId, company_name: "New Company" })
+      .select()
+      .single();
+    setAdding(false);
+    if (error) { toast.error(error.message); return; }
+    onChange([...companies, data as CompanyDetails]);
+    toast.success("New company added — your admin will fill in the details.");
+  };
+
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <p className="text-sm opacity-70">All companies registered under your account. Add another to manage multiple companies from one portal.</p>
+        <Button variant="hero" size="sm" className="rounded-full" onClick={addCompany} disabled={adding}>
+          <Plus className="w-4 h-4" /> Add Company
+        </Button>
+      </div>
+
+      {companies.length === 0 ? (
+        <EmptyState
+          icon={Building2}
+          title="No company details on file"
+          description="Once you incorporate a company through us, all its details — company number, addresses, filing dates and authentication code — will appear here. Or click ‘Add Company’ to start a new entry."
+          action={<Button asChild variant="hero" className="rounded-full"><Link to="/uk-services/uk-ltd-formation">Form a UK Company</Link></Button>}
+        />
+      ) : (
+        companies.map((c, idx) => (
+          <div key={c.id} className="glass rounded-2xl p-6 sm:p-8">
+            <div className="flex items-center gap-2 mb-1">
+              <Badge variant="outline">Company #{idx + 1}</Badge>
+            </div>
+            <h2 className="text-xl font-semibold mb-1">{c.company_name || "Company"}</h2>
+            <p className="text-xs opacity-70 mb-6">Company No: {c.company_number || "—"}</p>
+            <div className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
+              {[
+                ["Director Name", c.director_name],
+                ["Incorporation Date", c.incorporation_date],
+                ["Company Address", c.company_address],
+                ["Registered Address", c.registered_address],
+                ["Address Expire", c.address_expire],
+                ["Confirmation Due", c.confirmation_due],
+                ["Accounts Filing Due", c.accounts_filing_due],
+                ["Auth Code", c.auth_code],
+                ["SIC Code", c.sic_code],
+              ].map(([l, v]) => (
+                <div key={l as string}>
+                  <div className="text-[11px] uppercase tracking-wider opacity-60">{l}</div>
+                  <div className="text-sm mt-1">{(v as string) || "—"}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  );
+};
+
   const [rows, setRows] = useState<AddressRow[] | null>(null);
 
   useEffect(() => {
