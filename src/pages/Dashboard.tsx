@@ -584,7 +584,7 @@ const MyCompaniesSection = ({ userId, companies, onChange }: { userId: string; c
   );
 };
 
-const MyAddressesSection = ({ userId }: { userId: string }) => {
+const MyAddressesSection = ({ userId, editable = false }: { userId: string; editable?: boolean }) => {
   const [rows, setRows] = useState<AddressRow[] | null>(null);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
@@ -644,19 +644,19 @@ const MyAddressesSection = ({ userId }: { userId: string }) => {
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between gap-3 flex-wrap">
-        <p className="text-sm opacity-70">Manage registered office, business service, and director address records.</p>
-        <Button variant="hero" size="sm" className="rounded-full" onClick={addAddress} disabled={adding}>
+        <p className="text-sm opacity-70">{editable ? "Manage registered office, business service, and director address records." : "Standalone address services you have purchased from DigiFormation Ltd."}</p>
+        {editable && <Button variant="hero" size="sm" className="rounded-full" onClick={addAddress} disabled={adding}>
           {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Add Address
-        </Button>
+        </Button>}
       </div>
       {rows.length === 0 && <EmptyState icon={MapPin} title="No addresses on file" description="Add an address record here when a standalone address service is active." />}
       {rows.map((a) => (
         <div key={a.id} className="glass rounded-2xl p-6 sm:p-8 space-y-4">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2"><MapPin className="w-4 h-4 opacity-70" /><h3 className="font-semibold">{a.label || "Address"}</h3><StatusBadge status={a.status === "active" ? "Active" : "Expired"} /></div>
-            <Button variant="ghost" size="sm" onClick={() => deleteAddress(a.id)} aria-label="Delete address"><Trash2 className="w-4 h-4 text-destructive" /></Button>
+            {editable && <Button variant="ghost" size="sm" onClick={() => deleteAddress(a.id)} aria-label="Delete address"><Trash2 className="w-4 h-4 text-destructive" /></Button>}
           </div>
-          <div className="grid sm:grid-cols-2 gap-4">
+          {editable ? <div className="grid sm:grid-cols-2 gap-4">
             <AddressField label="Label" value={a.label} onChange={(v) => updateField(a.id, { label: v })} />
             <AddressField label="Service Type" value={a.service_type} onChange={(v) => updateField(a.id, { service_type: v })} />
             <AddressField label="Address Line 1" value={a.address_line1} onChange={(v) => updateField(a.id, { address_line1: v })} />
@@ -668,7 +668,7 @@ const MyAddressesSection = ({ userId }: { userId: string }) => {
             <AddressField label="Start Date" type="date" value={a.start_date} onChange={(v) => updateField(a.id, { start_date: v })} />
             <AddressField label="Expiry Date" type="date" value={a.expire_date} onChange={(v) => updateField(a.id, { expire_date: v })} />
             <AddressField label="Status" value={a.status} onChange={(v) => updateField(a.id, { status: v })} />
-          </div>
+          </div> : <p className="text-sm opacity-80">{[a.address_line1, a.address_line2, a.city, a.county, a.postcode, a.country].filter(Boolean).join(", ") || "—"}</p>}
           <div>
             <Label className="text-[11px] uppercase tracking-wider opacity-60">Notes</Label>
             <Textarea value={a.notes || ""} onChange={(e) => updateField(a.id, { notes: e.target.value })} className="mt-1.5" rows={3} />
