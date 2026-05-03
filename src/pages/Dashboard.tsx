@@ -819,14 +819,29 @@ const OpenTicketForm = ({ userId, onSubmitted }: { userId: string; onSubmitted: 
     if (message.trim().length < 10) return toast.error("Please describe your issue (min 10 chars)");
     setSubmitting(true);
     const ref = `TKT-${Date.now().toString().slice(-6)}`;
+    const trimmedSubject = subject.trim().slice(0, 200);
+    const trimmedMessage = message.trim().slice(0, 5000);
     const { error } = await supabase.from("client_tickets").insert({
       user_id: userId,
       ticket_ref: ref,
-      subject: subject.trim().slice(0, 200),
-      message: message.trim().slice(0, 5000),
+      subject: trimmedSubject,
+      message: trimmedMessage,
     });
     setSubmitting(false);
     if (error) return toast.error(error.message);
+    // Send ticket confirmation email
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user?.email) {
+      const { data: prof } = await supabase.from("profiles").select("full_name").eq("user_id", userId).maybeSingle();
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "ticket-received",
+          recipientEmail: user.email,
+          idempotencyKey: `ticket-${ref}`,
+          templateData: { customerName: prof?.full_name, ticketRef: ref, subject: trimmedSubject, message: trimmedMessage },
+        },
+      }).catch(console.error);
+    }
     toast.success(`Ticket ${ref} submitted`);
     setSubject(""); setMessage("");
     onSubmitted();
