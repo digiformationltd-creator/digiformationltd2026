@@ -174,11 +174,29 @@ const DigiNav = () => {
               </div>
             ))}
             <div className="border-t border-border/40 mt-1 pt-1">
-              {moreLinks.map((l) => (
-                <Link key={l.path} to={l.path} onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm rounded-lg hover:bg-primary/10">
-                  {l.name}
-                </Link>
-              ))}
+              <Link to="/web-development" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm rounded-lg hover:bg-primary/10">
+                Web Dev
+              </Link>
+              <button
+                onClick={() => setOpenGroup(openGroup === "__more" ? null : "__more")}
+                className="flex items-center justify-between w-full px-4 py-2.5 text-sm rounded-lg hover:bg-primary/10"
+              >
+                More
+                <ChevronDown className={`w-4 h-4 transition-transform ${openGroup === "__more" ? "rotate-180" : ""}`} />
+              </button>
+              {openGroup === "__more" && (
+                <div className="pl-4">
+                  {[
+                    { name: "About", path: "/#about" },
+                    { name: "Blog", path: "/blog" },
+                    { name: "FAQ", path: "/faq" },
+                  ].map((l) => (
+                    <Link key={l.path} to={l.path} onClick={() => setOpen(false)} className="block px-4 py-2 text-sm rounded-md hover:bg-primary/10 opacity-80">
+                      {l.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
             <Button asChild variant="outline" className="w-full mt-3 rounded-full">
               <Link to="/affiliate" onClick={() => setOpen(false)}>
