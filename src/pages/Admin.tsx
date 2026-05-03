@@ -687,4 +687,71 @@ const NewOrderForm = ({ onCreate }: { onCreate: (code: string, desc: string, amo
   );
 };
 
+const CompanyFormSection = ({
+  userId, companies, saving, updateCompanyField, saveCompany, deleteRow, reload,
+}: {
+  userId: string;
+  companies: any[];
+  saving: boolean;
+  updateCompanyField: (id: string, patch: any) => void;
+  saveCompany: (c: any) => void;
+  deleteRow: (table: any, id: string) => void;
+  reload: () => Promise<void>;
+}) => {
+  const [creating, setCreating] = useState(false);
+
+  // Auto-create a blank company form if none exists, so admin sees a fillable form immediately.
+  useEffect(() => {
+    (async () => {
+      if (companies.length === 0 && !creating) {
+        setCreating(true);
+        const { error } = await supabase.from("client_company_details").insert({ user_id: userId, company_name: "" });
+        if (!error) await reload();
+        setCreating(false);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [companies.length, userId]);
+
+  return (
+    <div className="space-y-6">
+      {companies.length === 0 && (
+        <p className="text-sm text-muted-foreground flex items-center gap-2">
+          <Loader2 className="w-4 h-4 animate-spin" /> Preparing company form…
+        </p>
+      )}
+      {companies.map((c, idx) => (
+        <div key={c.id} className="border border-border/40 rounded-xl p-4 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold">Company Details{c.company_name ? ` — ${c.company_name}` : ""}</h3>
+            {companies.length > 1 && (
+              <Button variant="ghost" size="sm" onClick={() => deleteRow("client_company_details", c.id)}><Trash2 className="w-4 h-4" /></Button>
+            )}
+          </div>
+          <div className="grid md:grid-cols-2 gap-4">
+            <Field label="Company Name" value={c.company_name} onChange={(v) => updateCompanyField(c.id, { company_name: v })} />
+            <Field label="Company Number" value={c.company_number} onChange={(v) => updateCompanyField(c.id, { company_number: v })} />
+            <Field label="Director Name" value={c.director_name} onChange={(v) => updateCompanyField(c.id, { director_name: v })} />
+            <Field label="SIC Code" value={c.sic_code} onChange={(v) => updateCompanyField(c.id, { sic_code: v })} />
+            <Field label="UTR / Auth Code" value={c.auth_code} onChange={(v) => updateCompanyField(c.id, { auth_code: v })} />
+            <Field label="Incorporation Date" type="date" value={c.incorporation_date} onChange={(v) => updateCompanyField(c.id, { incorporation_date: v })} />
+            <Field label="Address Expire" type="date" value={c.address_expire} onChange={(v) => updateCompanyField(c.id, { address_expire: v })} />
+            <Field label="Confirmation Due" type="date" value={c.confirmation_due} onChange={(v) => updateCompanyField(c.id, { confirmation_due: v })} />
+            <Field label="Accounts Filing Due" type="date" value={c.accounts_filing_due} onChange={(v) => updateCompanyField(c.id, { accounts_filing_due: v })} />
+          </div>
+          <div>
+            <Label>Registered Office Address</Label>
+            <Textarea value={c.registered_address || ""} onChange={(e) => updateCompanyField(c.id, { registered_address: e.target.value })} />
+          </div>
+          <div>
+            <Label>Correspondence Address <span className="text-muted-foreground text-xs">(optional)</span></Label>
+            <Textarea value={c.correspondence_address || ""} onChange={(e) => updateCompanyField(c.id, { correspondence_address: e.target.value })} placeholder="Leave blank if not purchased" />
+          </div>
+          <Button onClick={() => saveCompany(c)} disabled={saving} size="sm"><Save className="w-4 h-4 mr-2" />Save Company</Button>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 export default Admin;
