@@ -219,9 +219,14 @@ const UKLtdFormation = () => {
               >
                 {current.lead} <em className="not-italic text-gradient">{current.accent}</em>
               </h1>
-              <p className="mt-8 text-lg md:text-xl leading-relaxed max-w-2xl opacity-90">
-                Fast, compliant, and fully supported UK LTD registration with UTR, ID verification, and registered office services.
-              </p>
+              <ul className="mt-8 grid grid-cols-2 gap-x-6 gap-y-3 max-w-xl">
+                {heroChecks.map((c) => (
+                  <li key={c} className="flex items-center gap-2 text-sm md:text-base">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="opacity-90">{c}</span>
+                  </li>
+                ))}
+              </ul>
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
                 <Button asChild variant="hero" size="lg" className="rounded-full">
                   <Link to="/uk-services/uk-ltd-formation/choose-jurisdiction">Get Started <ArrowRight className="w-4 h-4" /></Link>
