@@ -19,14 +19,13 @@ const trustSignals = [
   { icon: ShieldCheck, label: "Dedicated Support Team" },
 ];
 
-const whatYouGet = [
-  "Companies House incorporation",
-  "Digital & printed company documents",
-  "UTR registration",
-  "Company authentication code",
-  "Registered office & director service address",
-  "ID verification",
-  "Ongoing support",
+const heroChecks = [
+  "Companies House Filing",
+  "UTR Number",
+  "Authentication Code",
+  "Registered Office",
+  "ID Verification",
+  "Fast Turnaround",
 ];
 
 type Pkg = {
