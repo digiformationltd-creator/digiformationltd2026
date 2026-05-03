@@ -691,6 +691,28 @@ const AddressField = ({ label, value, onChange, type = "text" }: { label: string
   </div>
 );
 
+const ClientOrdersSection = ({ rows, onBrowse }: { rows: any[]; onBrowse: () => void }) => {
+  const fmt = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n || 0);
+  if (rows.length === 0) return <EmptyState icon={ShoppingBag} title="No orders yet" description="Your service orders will appear here automatically once placed." action={<Button variant="hero" className="rounded-full" onClick={onBrowse}><Plus className="w-4 h-4" /> Place First Order</Button>} />;
+  return <div className="space-y-3"><p className="text-sm opacity-70">Your orders are generated automatically from service requests.</p>{rows.map((o) => <div key={o.id} className="glass rounded-xl p-4 flex items-center justify-between gap-3 flex-wrap"><div><div className="font-mono font-semibold text-primary">{o.order_ref}</div><div className="text-sm">{o.service}</div><div className="text-xs opacity-60">{o.order_date} • {fmt(Number(o.amount_gbp))}</div></div><StatusBadge status={o.status} /></div>)}</div>;
+};
+
+const ClientSubscriptionsSection = ({ rows, onBrowse }: { rows: any[]; onBrowse: () => void }) => {
+  const fmt = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n || 0);
+  if (rows.length === 0) return <EmptyState icon={CalendarDays} title="No active subscriptions" description="Recurring services like address renewals will appear here automatically." action={<Button variant="hero" className="rounded-full" onClick={onBrowse}><Plus className="w-4 h-4" /> Browse Services</Button>} />;
+  return <div className="space-y-3"><p className="text-sm opacity-70">Your recurring services and renewal dates.</p>{rows.map((s) => <div key={s.id} className="glass rounded-xl p-4 flex items-center justify-between gap-3 flex-wrap"><div><div className="font-semibold">{s.plan_name}</div><div className="text-xs opacity-60">{fmt(Number(s.price_gbp))} / {s.period} • Renewal: {s.renewal_date || s.next_billing || "—"}</div></div><StatusBadge status={s.status} /></div>)}</div>;
+};
+
+const ClientWalletSection = ({ rows, balance }: { rows: any[]; balance: number }) => {
+  const fmt = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n || 0);
+  return <div className="space-y-5"><div className="glass rounded-2xl p-6"><div className="text-xs opacity-70">Current Balance</div><div className="text-3xl font-semibold mt-1">{fmt(balance)}</div></div>{rows.length === 0 ? <EmptyState icon={Wallet} title="No transactions yet" description="Wallet top-ups, payments and refunds will be tracked here automatically." /> : <div className="space-y-3">{rows.map((w) => <div key={w.id} className="glass rounded-xl p-4 flex items-center justify-between gap-3"><div><div className="font-medium">{w.description}</div><div className="text-xs opacity-60">{w.txn_ref} • {w.txn_date} • {w.txn_type}</div></div><div className="font-semibold">{fmt(Number(w.amount_gbp))}</div></div>)}</div>}</div>;
+};
+
+const ClientTicketsSection = ({ rows, onOpen }: { rows: any[]; onOpen: () => void }) => {
+  if (rows.length === 0) return <EmptyState icon={Ticket} title="No support tickets" description="Any support requests you raise will be tracked here with replies from our team." action={<Button variant="hero" className="rounded-full" onClick={onOpen}><Plus className="w-4 h-4" /> Open a Ticket</Button>} />;
+  return <div className="space-y-3"><div className="flex justify-end"><Button variant="hero" size="sm" className="rounded-full" onClick={onOpen}><Plus className="w-4 h-4" /> Open Ticket</Button></div>{rows.map((t) => <div key={t.id} className="glass rounded-xl p-4"><div className="flex items-center justify-between gap-3 flex-wrap"><div><div className="font-mono text-xs text-primary">{t.ticket_ref}</div><div className="font-semibold">{t.subject}</div></div><StatusBadge status={t.status} /></div><p className="text-sm opacity-75 mt-2 line-clamp-2">{t.message}</p><div className="text-xs opacity-60 mt-2">{new Date(t.created_at).toLocaleString()}</div></div>)}</div>;
+};
+
 const ClientDocumentsSection = ({ userId }: { userId: string }) => {
   const [rows, setRows] = useState<any[] | null>(null);
   useEffect(() => {
