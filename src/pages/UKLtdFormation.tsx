@@ -277,7 +277,7 @@ const UKLtdFormation = () => {
             </div>
             <div className="glass rounded-2xl p-8 md:p-10">
               <div className="space-y-4">
-                {whatYouGet.map((item) => (
+                {heroChecks.map((item) => (
                   <div key={item} className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5 text-primary" />
                     <p className="opacity-90">{item}</p>
