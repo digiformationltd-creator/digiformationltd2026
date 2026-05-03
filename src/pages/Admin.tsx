@@ -222,10 +222,43 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
     if (error) toast.error(error.message); else toast.success("Address saved");
   };
 
-  const addOrder = async () => {
-    const ref = await generateOrderNumber("O");
-    const { error } = await supabase.from("client_orders").insert({ user_id: userId, order_ref: ref, service: "New Service", status: "Pending", amount_gbp: 0 });
-    if (error) toast.error(error.message); else { toast.success(`Order ${ref} added`); reload(); }
+  const addOrder = async (
+    serviceCode: string = "O",
+    serviceDescription?: string,
+    amount: number = 0,
+    vatRate: number = 0,
+    autoInvoice: boolean = true,
+  ) => {
+    const ref = await generateOrderNumber(serviceCode);
+    const description = serviceDescription || SERVICE_CODES[serviceCode] || "New Service";
+    const { data: orderRow, error } = await supabase
+      .from("client_orders")
+      .insert({ user_id: userId, order_ref: ref, service: description, status: "Pending", amount_gbp: amount })
+      .select()
+      .single();
+    if (error) { toast.error(error.message); return; }
+
+    if (autoInvoice) {
+      const number = await generateInvoiceNumber(serviceCode);
+      const vat = +(amount * vatRate / 100).toFixed(2);
+      const total = +(amount + vat).toFixed(2);
+      const { error: invErr } = await supabase.from("invoices").insert({
+        user_id: userId,
+        order_id: orderRow?.id,
+        invoice_number: number,
+        service_code: serviceCode,
+        service_description: description,
+        bill_to_name: profile.full_name || null,
+        bill_to_email: profile.email || null,
+        amount_gbp: amount, vat_rate: vatRate, vat_gbp: vat, total_gbp: total,
+        status: "Unpaid",
+      });
+      if (invErr) toast.error(`Order saved but invoice failed: ${invErr.message}`);
+      else toast.success(`Order ${ref} + Invoice ${number} created`);
+    } else {
+      toast.success(`Order ${ref} added`);
+    }
+    reload();
   };
   const updateOrder = async (id: string, patch: any) => {
     const { error } = await supabase.from("client_orders").update(patch).eq("id", id);
@@ -398,7 +431,7 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
 
         {tab === "orders" && (
           <div className="space-y-3">
-            <Button onClick={addOrder} size="sm"><Plus className="w-4 h-4 mr-2" />Add Order</Button>
+            <NewOrderForm onCreate={addOrder} />
             {orders.map(o => (
               <div key={o.id} className="border border-border/40 rounded-lg p-3 grid md:grid-cols-5 gap-2 items-center">
                 <Input defaultValue={o.order_ref} onBlur={(e) => updateOrder(o.id, { order_ref: e.target.value })} placeholder="Ref" />
@@ -598,5 +631,68 @@ const Field = ({ label, value, onChange, type = "text" }: { label: string; value
     <Input type={type} value={value || ""} onChange={(e) => onChange(e.target.value)} />
   </div>
 );
+
+const NewOrderForm = ({ onCreate }: { onCreate: (code: string, desc: string, amount: number, vatRate: number, autoInvoice: boolean) => Promise<void> }) => {
+  const [code, setCode] = useState("O");
+  const [desc, setDesc] = useState("");
+  const [amount, setAmount] = useState("");
+  const [vatRate, setVatRate] = useState("0");
+  const [autoInvoice, setAutoInvoice] = useState(true);
+  const [busy, setBusy] = useState(false);
+
+  const submit = async () => {
+    setBusy(true);
+    await onCreate(
+      code,
+      desc || SERVICE_CODES[code] || "Service",
+      parseFloat(amount) || 0,
+      parseFloat(vatRate) || 0,
+      autoInvoice,
+    );
+    setBusy(false);
+    setDesc(""); setAmount(""); setVatRate("0");
+  };
+
+  return (
+    <div className="border border-border/40 rounded-xl p-4 space-y-3 bg-muted/20">
+      <div className="font-semibold text-sm flex items-center gap-2"><Plus className="w-4 h-4" />New Order {autoInvoice && <Badge variant="secondary" className="text-xs">+ auto invoice</Badge>}</div>
+      <div className="grid md:grid-cols-4 gap-3">
+        <div>
+          <Label>Service</Label>
+          <Select value={code} onValueChange={(v) => { setCode(v); if (!desc) setDesc(SERVICE_CODES[v] || ""); }}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {Object.entries(SERVICE_CODES).map(([c, l]) => (
+                <SelectItem key={c} value={c}>{c} — {l}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <Label>Description</Label>
+          <Input value={desc} onChange={(e) => setDesc(e.target.value)} placeholder={SERVICE_CODES[code]} />
+        </div>
+        <div>
+          <Label>Amount (£)</Label>
+          <Input type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" />
+        </div>
+        <div>
+          <Label>VAT Rate (%)</Label>
+          <Input type="number" step="0.01" value={vatRate} onChange={(e) => setVatRate(e.target.value)} placeholder="0" />
+        </div>
+        <div className="flex items-center gap-2 md:col-span-2">
+          <input id="auto-inv" type="checkbox" checked={autoInvoice} onChange={(e) => setAutoInvoice(e.target.checked)} className="w-4 h-4" />
+          <Label htmlFor="auto-inv" className="cursor-pointer">Auto-generate invoice</Label>
+        </div>
+        <div className="md:col-span-1 flex items-end">
+          <Button onClick={submit} disabled={busy} size="sm" className="w-full">
+            {busy ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
+            Create
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default Admin;
