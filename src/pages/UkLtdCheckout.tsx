@@ -84,21 +84,47 @@ const UkLtdCheckout = () => {
     const priceStr = formatGBP(price);
     const pagePath = window.location.pathname + window.location.search;
 
+    // If logged-in: generate invoice PDF + create order/invoice rows
+    let invoiceNumber: string | undefined;
+    let invoiceUrl: string | undefined;
+    let finalOrderRef = orderRef;
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      try {
+        const { data: inv, error: invErr } = await supabase.functions.invoke("generate-invoice", {
+          body: {
+            service,
+            packageName,
+            amount_gbp: price,
+            currency: "GBP",
+            customer: { full_name: form.full_name, email: form.email, address: form.country },
+            notes: form.message,
+          },
+        });
+        if (invErr) throw invErr;
+        invoiceNumber = (inv as any)?.invoiceNumber;
+        invoiceUrl = (inv as any)?.invoiceUrl;
+        if ((inv as any)?.orderRef) finalOrderRef = (inv as any).orderRef;
+      } catch (err) {
+        console.error("invoice generation failed", err);
+      }
+    }
+
     if (form.email) {
       supabase.functions.invoke("send-transactional-email", {
         body: {
           templateName: "order-confirmation",
           recipientEmail: form.email,
-          idempotencyKey: `order-confirm-${orderRef}`,
-          templateData: { customerName: form.full_name, service, packageName, price: priceStr, orderRef, notes: form.message },
+          idempotencyKey: `order-confirm-${finalOrderRef}`,
+          templateData: { customerName: form.full_name, service, packageName, price: priceStr, orderRef: finalOrderRef, invoiceNumber, invoiceUrl, notes: form.message },
         },
       }).catch((err) => console.error("order-confirmation failed", err));
     }
     supabase.functions.invoke("send-transactional-email", {
       body: {
         templateName: "order-notification",
-        idempotencyKey: `order-notify-${orderRef}`,
-        templateData: { customerName: form.full_name, customerEmail: form.email, whatsapp: form.whatsapp, country: form.country, service, packageName, price: priceStr, orderRef, pagePath, notes: form.message },
+        idempotencyKey: `order-notify-${finalOrderRef}`,
+        templateData: { customerName: form.full_name, customerEmail: form.email, whatsapp: form.whatsapp, country: form.country, service, packageName, price: priceStr, orderRef: finalOrderRef, invoiceNumber, pagePath, notes: form.message },
       },
     }).catch((err) => console.error("order-notification failed", err));
 
