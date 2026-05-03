@@ -517,6 +517,7 @@ const MyCompaniesSection = ({ userId, companies, onChange }: { userId: string; c
     { key: "accounts_filing_due", label: "Accounts Filing Due", type: "date" },
     { key: "company_address", label: "Company Address", textarea: true },
     { key: "registered_address", label: "Registered Address", textarea: true },
+    { key: "correspondence_address", label: "Correspondence Address", textarea: true },
   ];
 
   return (
