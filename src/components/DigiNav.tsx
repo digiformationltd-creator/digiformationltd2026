@@ -205,10 +205,18 @@ const DigiNav = () => {
               </Link>
             </Button>
             {user ? (
-              <Button onClick={() => { setOpen(false); handleLogout(); }} variant="hero" className="w-full mt-2 rounded-full">
-                <LogOut className="w-4 h-4" />
-                Logout
-              </Button>
+              <>
+                <Button asChild variant="hero" className="w-full mt-2 rounded-full">
+                  <Link to="/dashboard" onClick={() => setOpen(false)}>
+                    <LayoutDashboard className="w-4 h-4" />
+                    Client Dashboard
+                  </Link>
+                </Button>
+                <Button onClick={() => { setOpen(false); handleLogout(); }} variant="outline" className="w-full mt-2 rounded-full">
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </Button>
+              </>
             ) : (
               <Button asChild variant="hero" className="w-full mt-2 rounded-full">
                 <Link to="/auth" onClick={() => setOpen(false)}>
