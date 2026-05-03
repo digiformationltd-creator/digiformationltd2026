@@ -49,6 +49,7 @@ interface Profile {
 }
 
 interface CompanyDetails {
+  id: string;
   company_name: string | null;
   company_number: string | null;
   director_name: string | null;
