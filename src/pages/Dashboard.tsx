@@ -596,6 +596,8 @@ const ClientDocumentsSection = ({ userId }: { userId: string }) => {
     </div>
   );
 };
+
+const OpenTicketForm = ({ userId, onSubmitted }: { userId: string; onSubmitted: () => void }) => {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
