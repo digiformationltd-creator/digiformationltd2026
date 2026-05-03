@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import logo from "@/assets/digiformation-logo.png";
+import { downloadInvoicePdf } from "@/lib/invoice";
 
 type SectionId =
   | "overview" | "subscriptions" | "orders" | "invoices" | "wallet" | "company" | "documents"
