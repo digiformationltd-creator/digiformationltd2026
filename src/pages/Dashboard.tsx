@@ -641,44 +641,55 @@ const MyAddressesSection = ({ userId }: { userId: string }) => {
     return <div className="glass rounded-2xl p-10 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto opacity-60" /></div>;
   }
 
-  if (rows.length === 0) {
-    return (
-      <EmptyState
-        icon={MapPin}
-        title="No addresses on file"
-        description="If you've purchased a standalone Registered Office Address or Director Service Address (without a company), it will appear here. Need one? Order below."
-        action={<Button asChild variant="hero" className="rounded-full"><Link to="/uk-services/registered-office-address">Order Registered Address</Link></Button>}
-      />
-    );
-  }
-
-  const formatAddr = (a: AddressRow) =>
-    [a.address_line1, a.address_line2, a.city, a.county, a.postcode, a.country].filter(Boolean).join(", ");
-
   return (
-    <div className="space-y-4">
-      <p className="text-sm opacity-70">Standalone address services you have purchased from DigiFormation Ltd.</p>
+    <div className="space-y-5">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <p className="text-sm opacity-70">Manage registered office, business service, and director address records.</p>
+        <Button variant="hero" size="sm" className="rounded-full" onClick={addAddress} disabled={adding}>
+          {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Add Address
+        </Button>
+      </div>
+      {rows.length === 0 && <EmptyState icon={MapPin} title="No addresses on file" description="Add an address record here when a standalone address service is active." />}
       {rows.map((a) => (
-        <div key={a.id} className="glass rounded-2xl p-6">
-          <div className="flex items-start justify-between gap-4 flex-wrap">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <MapPin className="w-4 h-4 opacity-70" />
-                <h3 className="font-semibold">{a.label}</h3>
-                <StatusBadge status={a.status === "active" ? "Active" : "Expired"} />
-              </div>
-              <p className="text-sm opacity-80">{formatAddr(a) || "—"}</p>
-            </div>
-            <div className="text-xs opacity-70 text-right">
-              {a.start_date && <div>Start: {a.start_date}</div>}
-              {a.expire_date && <div>Expires: {a.expire_date}</div>}
-            </div>
+        <div key={a.id} className="glass rounded-2xl p-6 sm:p-8 space-y-4">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2"><MapPin className="w-4 h-4 opacity-70" /><h3 className="font-semibold">{a.label || "Address"}</h3><StatusBadge status={a.status === "active" ? "Active" : "Expired"} /></div>
+            <Button variant="ghost" size="sm" onClick={() => deleteAddress(a.id)} aria-label="Delete address"><Trash2 className="w-4 h-4 text-destructive" /></Button>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <AddressField label="Label" value={a.label} onChange={(v) => updateField(a.id, { label: v })} />
+            <AddressField label="Service Type" value={a.service_type} onChange={(v) => updateField(a.id, { service_type: v })} />
+            <AddressField label="Address Line 1" value={a.address_line1} onChange={(v) => updateField(a.id, { address_line1: v })} />
+            <AddressField label="Address Line 2" value={a.address_line2} onChange={(v) => updateField(a.id, { address_line2: v })} />
+            <AddressField label="City" value={a.city} onChange={(v) => updateField(a.id, { city: v })} />
+            <AddressField label="County" value={a.county} onChange={(v) => updateField(a.id, { county: v })} />
+            <AddressField label="Postcode" value={a.postcode} onChange={(v) => updateField(a.id, { postcode: v })} />
+            <AddressField label="Country" value={a.country} onChange={(v) => updateField(a.id, { country: v })} />
+            <AddressField label="Start Date" type="date" value={a.start_date} onChange={(v) => updateField(a.id, { start_date: v })} />
+            <AddressField label="Expiry Date" type="date" value={a.expire_date} onChange={(v) => updateField(a.id, { expire_date: v })} />
+            <AddressField label="Status" value={a.status} onChange={(v) => updateField(a.id, { status: v })} />
+          </div>
+          <div>
+            <Label className="text-[11px] uppercase tracking-wider opacity-60">Notes</Label>
+            <Textarea value={a.notes || ""} onChange={(e) => updateField(a.id, { notes: e.target.value })} className="mt-1.5" rows={3} />
+          </div>
+          <div className="flex justify-end">
+            <Button variant="hero" size="sm" className="rounded-full" onClick={() => saveAddress(a)} disabled={savingId === a.id}>
+              {savingId === a.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Save className="w-4 h-4" /> Save Address</>}
+            </Button>
           </div>
         </div>
       ))}
     </div>
   );
 };
+
+const AddressField = ({ label, value, onChange, type = "text" }: { label: string; value: any; onChange: (v: string) => void; type?: string }) => (
+  <div>
+    <Label className="text-[11px] uppercase tracking-wider opacity-60">{label}</Label>
+    <Input type={type} value={value || ""} onChange={(e) => onChange(e.target.value)} className="mt-1.5" />
+  </div>
+);
 
 const ClientDocumentsSection = ({ userId }: { userId: string }) => {
   const [rows, setRows] = useState<any[] | null>(null);
