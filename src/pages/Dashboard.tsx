@@ -13,7 +13,7 @@ import {
   MapPin, ShoppingCart, Ticket, LifeBuoy, LogOut, UserCircle2,
   ChevronRight, Loader2, Inbox, Plus, Download, ArrowUpRight,
   Handshake, Link2, TrendingUp, Copy, Megaphone, GraduationCap, LayoutDashboard,
-  Menu, ShieldCheck,
+  Menu, ShieldCheck, Save, Trash2,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import logo from "@/assets/digiformation-logo.png";
@@ -55,6 +55,7 @@ interface CompanyDetails {
   director_name: string | null;
   company_address: string | null;
   registered_address: string | null;
+  correspondence_address: string | null;
   address_expire: string | null;
   confirmation_due: string | null;
   accounts_filing_due: string | null;
@@ -101,6 +102,10 @@ const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [companies, setCompanies] = useState<CompanyDetails[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [subscriptions, setSubscriptions] = useState<any[]>([]);
+  const [walletRows, setWalletRows] = useState<any[]>([]);
+  const [tickets, setTickets] = useState<any[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [active, setActive] = useState<SectionId>("overview");
   const [loading, setLoading] = useState(true);
@@ -139,14 +144,22 @@ const Dashboard = () => {
     if (!user) return;
     let cancelled = false;
     (async () => {
-      const [{ data: prof }, { data: comps }, { data: role }] = await Promise.all([
+      const [{ data: prof }, { data: comps }, { data: role }, { data: orderRows }, { data: subRows }, { data: walletData }, { data: ticketRows }] = await Promise.all([
         supabase.from("profiles").select("full_name,email,phone,company_name,avatar_initials").eq("user_id", user.id).maybeSingle(),
         supabase.from("client_company_details").select("*").eq("user_id", user.id).order("created_at", { ascending: true }),
         supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle(),
+        supabase.from("client_orders").select("*").eq("user_id", user.id).order("order_date", { ascending: false }),
+        supabase.from("client_subscriptions").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
+        supabase.from("client_wallet_transactions").select("*").eq("user_id", user.id).order("txn_date", { ascending: false }),
+        supabase.from("client_tickets").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
       ]);
       if (cancelled) return;
       setProfile(prof as Profile);
       setCompanies((comps as CompanyDetails[]) || []);
+      setOrders(orderRows || []);
+      setSubscriptions(subRows || []);
+      setWalletRows(walletData || []);
+      setTickets(ticketRows || []);
       setIsAdmin(user.email?.toLowerCase() === "info@digiformation.uk" || !!role);
       setLoading(false);
     })();
@@ -170,6 +183,8 @@ const Dashboard = () => {
   const initials = profile?.avatar_initials || (profile?.full_name?.slice(0, 2) || user.email?.slice(0, 2) || "U").toUpperCase();
   const primaryCompanyName = companies[0]?.company_name?.trim();
   const displayName = primaryCompanyName || profile?.company_name || profile?.full_name || user.email?.split("@")[0] || "Client";
+  const walletBalance = walletRows.reduce((sum, row) => sum + (row.txn_type === "Debit" ? -Number(row.amount_gbp || 0) : Number(row.amount_gbp || 0)), 0);
+  const formatGBP = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n || 0);
 
   return (
     <div className="min-h-screen bg-gradient-hero grid-pattern">
@@ -273,10 +288,10 @@ const Dashboard = () => {
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {[
-                  { label: "Subscriptions", value: "0", icon: CalendarDays, id: "subscriptions" as SectionId },
-                  { label: "Orders", value: "0", icon: ShoppingBag, id: "orders" as SectionId },
-                  { label: "Wallet", value: "£0.00", icon: Wallet, id: "wallet" as SectionId },
-                  { label: "Tickets", value: "0", icon: Ticket, id: "tickets" as SectionId },
+                  { label: "Subscriptions", value: String(subscriptions.length), icon: CalendarDays, id: "subscriptions" as SectionId },
+                  { label: "Orders", value: String(orders.length), icon: ShoppingBag, id: "orders" as SectionId },
+                  { label: "Wallet", value: formatGBP(walletBalance), icon: Wallet, id: "wallet" as SectionId },
+                  { label: "Tickets", value: String(tickets.length), icon: Ticket, id: "tickets" as SectionId },
                 ].map((s) => {
                   const Icon = s.icon;
                   return (
@@ -309,21 +324,11 @@ const Dashboard = () => {
           )}
 
           {active === "subscriptions" && (
-            <EmptyState
-              icon={CalendarDays}
-              title="No active subscriptions"
-              description="When you purchase a recurring service like Registered Address or Confirmation Statement, your active subscriptions will appear here."
-              action={<Button variant="hero" className="rounded-full" onClick={() => setActive("newServices")}><Plus className="w-4 h-4" /> Browse Services</Button>}
-            />
+            <ClientSubscriptionsSection rows={subscriptions} onBrowse={() => setActive("newServices")} />
           )}
 
           {active === "orders" && (
-            <EmptyState
-              icon={ShoppingBag}
-              title="No orders yet"
-              description="Your service orders — company formations, filings, address services — will be listed here once placed."
-              action={<Button variant="hero" className="rounded-full" onClick={() => setActive("newServices")}><Plus className="w-4 h-4" /> Place First Order</Button>}
-            />
+            <ClientOrdersSection rows={orders} onBrowse={() => setActive("newServices")} />
           )}
 
           {active === "invoices" && (
@@ -331,20 +336,7 @@ const Dashboard = () => {
           )}
 
           {active === "wallet" && (
-            <div className="space-y-5">
-              <div className="glass rounded-2xl p-6">
-                <div className="text-xs opacity-70">Current Balance</div>
-                <div className="text-3xl font-semibold mt-1">£0.00</div>
-                <Button variant="hero" size="sm" className="rounded-full mt-4">
-                  <Plus className="w-4 h-4" /> Top Up Wallet
-                </Button>
-              </div>
-              <EmptyState
-                icon={Wallet}
-                title="No transactions yet"
-                description="All wallet top-ups, payments and refunds will be tracked here for your records."
-              />
-            </div>
+            <ClientWalletSection rows={walletRows} balance={walletBalance} />
           )}
 
           {active === "company" && (
@@ -363,7 +355,7 @@ const Dashboard = () => {
             <EditAccountForm profile={profile} email={user.email || ""} onSaved={(p) => setProfile(p)} />
           )}
 
-          {active === "editAddress" && <MyAddressesSection userId={user.id} />}
+          {active === "editAddress" && <MyAddressesSection userId={user.id} editable={isAdmin} />}
 
           {active === "newServices" && (
             <div>
@@ -392,12 +384,7 @@ const Dashboard = () => {
           {active === "affiliate" && <AffiliateDashboardSection user={user} displayName={displayName} />}
 
           {active === "tickets" && (
-            <EmptyState
-              icon={Ticket}
-              title="No support tickets"
-              description="Any support requests you raise will be tracked here with replies from our team."
-              action={<Button variant="hero" className="rounded-full" onClick={() => setActive("openTicket")}><Plus className="w-4 h-4" /> Open a Ticket</Button>}
-            />
+            <ClientTicketsSection rows={tickets} onOpen={() => setActive("openTicket")} />
           )}
 
           {active === "openTicket" && <OpenTicketForm userId={user.id} onSubmitted={() => setActive("tickets")} />}
@@ -473,6 +460,7 @@ interface AddressRow {
   start_date: string | null;
   expire_date: string | null;
   status: string;
+  notes: string | null;
 }
 
 const MyCompaniesSection = ({ userId, companies, onChange }: { userId: string; companies: CompanyDetails[]; onChange: (c: CompanyDetails[]) => void }) => {
@@ -529,6 +517,7 @@ const MyCompaniesSection = ({ userId, companies, onChange }: { userId: string; c
     { key: "accounts_filing_due", label: "Accounts Filing Due", type: "date" },
     { key: "company_address", label: "Company Address", textarea: true },
     { key: "registered_address", label: "Registered Address", textarea: true },
+    { key: "correspondence_address", label: "Correspondence Address", textarea: true },
   ];
 
   return (
@@ -595,61 +584,133 @@ const MyCompaniesSection = ({ userId, companies, onChange }: { userId: string; c
   );
 };
 
-const MyAddressesSection = ({ userId }: { userId: string }) => {
+const MyAddressesSection = ({ userId, editable = false }: { userId: string; editable?: boolean }) => {
   const [rows, setRows] = useState<AddressRow[] | null>(null);
+  const [savingId, setSavingId] = useState<string | null>(null);
+  const [adding, setAdding] = useState(false);
+
+  const load = async () => {
+    const { data } = await supabase
+      .from("client_addresses")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+    setRows((data as AddressRow[]) || []);
+  };
 
   useEffect(() => {
-    (async () => {
-      const { data } = await supabase
-        .from("client_addresses")
-        .select("*")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false });
-      setRows((data as AddressRow[]) || []);
-    })();
+    load();
   }, [userId]);
+
+  const updateField = (id: string, patch: Partial<AddressRow>) => {
+    setRows(prev => (prev || []).map(a => a.id === id ? { ...a, ...patch } : a));
+  };
+
+  const addAddress = async () => {
+    setAdding(true);
+    const { data, error } = await supabase
+      .from("client_addresses")
+      .insert({ user_id: userId, label: "New Address", service_type: "registered_office", country: "United Kingdom", status: "active" })
+      .select()
+      .single();
+    setAdding(false);
+    if (error) return toast.error(error.message);
+    setRows(prev => [data as AddressRow, ...(prev || [])]);
+    toast.success("New address form added — fill in the details and Save.");
+  };
+
+  const saveAddress = async (a: AddressRow) => {
+    setSavingId(a.id);
+    const { id, ...rest } = a as any;
+    const cleaned = { ...rest };
+    ["start_date", "expire_date"].forEach(k => { if (cleaned[k] === "") cleaned[k] = null; });
+    const { error } = await supabase.from("client_addresses").update(cleaned).eq("id", id);
+    setSavingId(null);
+    if (error) toast.error(error.message); else toast.success("Address saved");
+  };
+
+  const deleteAddress = async (id: string) => {
+    if (!confirm("Delete this address?")) return;
+    const { error } = await supabase.from("client_addresses").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    setRows(prev => (prev || []).filter(a => a.id !== id));
+    toast.success("Address removed");
+  };
 
   if (rows === null) {
     return <div className="glass rounded-2xl p-10 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto opacity-60" /></div>;
   }
 
-  if (rows.length === 0) {
-    return (
-      <EmptyState
-        icon={MapPin}
-        title="No addresses on file"
-        description="If you've purchased a standalone Registered Office Address or Director Service Address (without a company), it will appear here. Need one? Order below."
-        action={<Button asChild variant="hero" className="rounded-full"><Link to="/uk-services/registered-office-address">Order Registered Address</Link></Button>}
-      />
-    );
-  }
-
-  const formatAddr = (a: AddressRow) =>
-    [a.address_line1, a.address_line2, a.city, a.county, a.postcode, a.country].filter(Boolean).join(", ");
-
   return (
-    <div className="space-y-4">
-      <p className="text-sm opacity-70">Standalone address services you have purchased from DigiFormation Ltd.</p>
+    <div className="space-y-5">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <p className="text-sm opacity-70">{editable ? "Manage registered office, business service, and director address records." : "Standalone address services you have purchased from DigiFormation Ltd."}</p>
+        {editable && <Button variant="hero" size="sm" className="rounded-full" onClick={addAddress} disabled={adding}>
+          {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Add Address
+        </Button>}
+      </div>
+      {rows.length === 0 && <EmptyState icon={MapPin} title="No addresses on file" description="Add an address record here when a standalone address service is active." />}
       {rows.map((a) => (
-        <div key={a.id} className="glass rounded-2xl p-6">
-          <div className="flex items-start justify-between gap-4 flex-wrap">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <MapPin className="w-4 h-4 opacity-70" />
-                <h3 className="font-semibold">{a.label}</h3>
-                <StatusBadge status={a.status === "active" ? "Active" : "Expired"} />
-              </div>
-              <p className="text-sm opacity-80">{formatAddr(a) || "—"}</p>
-            </div>
-            <div className="text-xs opacity-70 text-right">
-              {a.start_date && <div>Start: {a.start_date}</div>}
-              {a.expire_date && <div>Expires: {a.expire_date}</div>}
-            </div>
+        <div key={a.id} className="glass rounded-2xl p-6 sm:p-8 space-y-4">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2"><MapPin className="w-4 h-4 opacity-70" /><h3 className="font-semibold">{a.label || "Address"}</h3><StatusBadge status={a.status === "active" ? "Active" : "Expired"} /></div>
+            {editable && <Button variant="ghost" size="sm" onClick={() => deleteAddress(a.id)} aria-label="Delete address"><Trash2 className="w-4 h-4 text-destructive" /></Button>}
           </div>
+          {editable ? <div className="grid sm:grid-cols-2 gap-4">
+            <AddressField label="Label" value={a.label} onChange={(v) => updateField(a.id, { label: v })} />
+            <AddressField label="Service Type" value={a.service_type} onChange={(v) => updateField(a.id, { service_type: v })} />
+            <AddressField label="Address Line 1" value={a.address_line1} onChange={(v) => updateField(a.id, { address_line1: v })} />
+            <AddressField label="Address Line 2" value={a.address_line2} onChange={(v) => updateField(a.id, { address_line2: v })} />
+            <AddressField label="City" value={a.city} onChange={(v) => updateField(a.id, { city: v })} />
+            <AddressField label="County" value={a.county} onChange={(v) => updateField(a.id, { county: v })} />
+            <AddressField label="Postcode" value={a.postcode} onChange={(v) => updateField(a.id, { postcode: v })} />
+            <AddressField label="Country" value={a.country} onChange={(v) => updateField(a.id, { country: v })} />
+            <AddressField label="Start Date" type="date" value={a.start_date} onChange={(v) => updateField(a.id, { start_date: v })} />
+            <AddressField label="Expiry Date" type="date" value={a.expire_date} onChange={(v) => updateField(a.id, { expire_date: v })} />
+            <AddressField label="Status" value={a.status} onChange={(v) => updateField(a.id, { status: v })} />
+          </div> : <p className="text-sm opacity-80">{[a.address_line1, a.address_line2, a.city, a.county, a.postcode, a.country].filter(Boolean).join(", ") || "—"}</p>}
+          {editable && <div>
+            <Label className="text-[11px] uppercase tracking-wider opacity-60">Notes</Label>
+            <Textarea value={a.notes || ""} onChange={(e) => updateField(a.id, { notes: e.target.value })} className="mt-1.5" rows={3} />
+          </div>}
+          {editable && <div className="flex justify-end">
+            <Button variant="hero" size="sm" className="rounded-full" onClick={() => saveAddress(a)} disabled={savingId === a.id}>
+              {savingId === a.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Save className="w-4 h-4" /> Save Address</>}
+            </Button>
+          </div>}
         </div>
       ))}
     </div>
   );
+};
+
+const AddressField = ({ label, value, onChange, type = "text" }: { label: string; value: any; onChange: (v: string) => void; type?: string }) => (
+  <div>
+    <Label className="text-[11px] uppercase tracking-wider opacity-60">{label}</Label>
+    <Input type={type} value={value || ""} onChange={(e) => onChange(e.target.value)} className="mt-1.5" />
+  </div>
+);
+
+const ClientOrdersSection = ({ rows, onBrowse }: { rows: any[]; onBrowse: () => void }) => {
+  const fmt = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n || 0);
+  if (rows.length === 0) return <EmptyState icon={ShoppingBag} title="No orders yet" description="Your service orders will appear here automatically once placed." action={<Button variant="hero" className="rounded-full" onClick={onBrowse}><Plus className="w-4 h-4" /> Place First Order</Button>} />;
+  return <div className="space-y-3"><p className="text-sm opacity-70">Your orders are generated automatically from service requests.</p>{rows.map((o) => <div key={o.id} className="glass rounded-xl p-4 flex items-center justify-between gap-3 flex-wrap"><div><div className="font-mono font-semibold text-primary">{o.order_ref}</div><div className="text-sm">{o.service}</div><div className="text-xs opacity-60">{o.order_date} • {fmt(Number(o.amount_gbp))}</div></div><StatusBadge status={o.status} /></div>)}</div>;
+};
+
+const ClientSubscriptionsSection = ({ rows, onBrowse }: { rows: any[]; onBrowse: () => void }) => {
+  const fmt = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n || 0);
+  if (rows.length === 0) return <EmptyState icon={CalendarDays} title="No active subscriptions" description="Recurring services like address renewals will appear here automatically." action={<Button variant="hero" className="rounded-full" onClick={onBrowse}><Plus className="w-4 h-4" /> Browse Services</Button>} />;
+  return <div className="space-y-3"><p className="text-sm opacity-70">Your recurring services and renewal dates.</p>{rows.map((s) => <div key={s.id} className="glass rounded-xl p-4 flex items-center justify-between gap-3 flex-wrap"><div><div className="font-semibold">{s.plan_name}</div><div className="text-xs opacity-60">{fmt(Number(s.price_gbp))} / {s.period} • Renewal: {s.renewal_date || s.next_billing || "—"}</div></div><StatusBadge status={s.status} /></div>)}</div>;
+};
+
+const ClientWalletSection = ({ rows, balance }: { rows: any[]; balance: number }) => {
+  const fmt = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n || 0);
+  return <div className="space-y-5"><div className="glass rounded-2xl p-6"><div className="text-xs opacity-70">Current Balance</div><div className="text-3xl font-semibold mt-1">{fmt(balance)}</div></div>{rows.length === 0 ? <EmptyState icon={Wallet} title="No transactions yet" description="Wallet top-ups, payments and refunds will be tracked here automatically." /> : <div className="space-y-3">{rows.map((w) => <div key={w.id} className="glass rounded-xl p-4 flex items-center justify-between gap-3"><div><div className="font-medium">{w.description}</div><div className="text-xs opacity-60">{w.txn_ref} • {w.txn_date} • {w.txn_type}</div></div><div className="font-semibold">{fmt(Number(w.amount_gbp))}</div></div>)}</div>}</div>;
+};
+
+const ClientTicketsSection = ({ rows, onOpen }: { rows: any[]; onOpen: () => void }) => {
+  if (rows.length === 0) return <EmptyState icon={Ticket} title="No support tickets" description="Any support requests you raise will be tracked here with replies from our team." action={<Button variant="hero" className="rounded-full" onClick={onOpen}><Plus className="w-4 h-4" /> Open a Ticket</Button>} />;
+  return <div className="space-y-3"><div className="flex justify-end"><Button variant="hero" size="sm" className="rounded-full" onClick={onOpen}><Plus className="w-4 h-4" /> Open Ticket</Button></div>{rows.map((t) => <div key={t.id} className="glass rounded-xl p-4"><div className="flex items-center justify-between gap-3 flex-wrap"><div><div className="font-mono text-xs text-primary">{t.ticket_ref}</div><div className="font-semibold">{t.subject}</div></div><StatusBadge status={t.status} /></div><p className="text-sm opacity-75 mt-2 line-clamp-2">{t.message}</p><div className="text-xs opacity-60 mt-2">{new Date(t.created_at).toLocaleString()}</div></div>)}</div>;
 };
 
 const ClientDocumentsSection = ({ userId }: { userId: string }) => {
