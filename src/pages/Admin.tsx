@@ -143,22 +143,24 @@ const Admin = () => {
 };
 
 const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }) => {
-  const [tab, setTab] = useState<"profile" | "company" | "addresses" | "orders" | "subs" | "wallet" | "docs">("profile");
+  const [tab, setTab] = useState<"profile" | "company" | "addresses" | "orders" | "invoices" | "subs" | "wallet" | "docs">("profile");
   const [profile, setProfile] = useState<any>({});
   const [companies, setCompanies] = useState<any[]>([]);
   const [addresses, setAddresses] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
+  const [invoices, setInvoices] = useState<any[]>([]);
   const [subs, setSubs] = useState<any[]>([]);
   const [wallet, setWallet] = useState<any[]>([]);
   const [docs, setDocs] = useState<any[]>([]);
   const [saving, setSaving] = useState(false);
 
   const reload = async () => {
-    const [p, c, a, o, s, w, d] = await Promise.all([
+    const [p, c, a, o, inv, s, w, d] = await Promise.all([
       supabase.from("profiles").select("*").eq("user_id", userId).maybeSingle(),
       supabase.from("client_company_details").select("*").eq("user_id", userId).order("created_at", { ascending: true }),
       supabase.from("client_addresses").select("*").eq("user_id", userId).order("created_at", { ascending: true }),
       supabase.from("client_orders").select("*").eq("user_id", userId).order("order_date", { ascending: false }),
+      supabase.from("invoices").select("*").eq("user_id", userId).order("issue_date", { ascending: false }),
       supabase.from("client_subscriptions").select("*").eq("user_id", userId),
       supabase.from("client_wallet_transactions").select("*").eq("user_id", userId).order("txn_date", { ascending: false }),
       supabase.from("client_documents").select("*").eq("user_id", userId).order("doc_date", { ascending: false }),
@@ -167,6 +169,7 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
     setCompanies(c.data || []);
     setAddresses(a.data || []);
     setOrders(o.data || []);
+    setInvoices(inv.data || []);
     setSubs(s.data || []);
     setWallet(w.data || []);
     setDocs(d.data || []);
