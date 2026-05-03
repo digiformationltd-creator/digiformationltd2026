@@ -669,15 +669,15 @@ const MyAddressesSection = ({ userId, editable = false }: { userId: string; edit
             <AddressField label="Expiry Date" type="date" value={a.expire_date} onChange={(v) => updateField(a.id, { expire_date: v })} />
             <AddressField label="Status" value={a.status} onChange={(v) => updateField(a.id, { status: v })} />
           </div> : <p className="text-sm opacity-80">{[a.address_line1, a.address_line2, a.city, a.county, a.postcode, a.country].filter(Boolean).join(", ") || "—"}</p>}
-          <div>
+          {editable && <div>
             <Label className="text-[11px] uppercase tracking-wider opacity-60">Notes</Label>
             <Textarea value={a.notes || ""} onChange={(e) => updateField(a.id, { notes: e.target.value })} className="mt-1.5" rows={3} />
-          </div>
-          <div className="flex justify-end">
+          </div>}
+          {editable && <div className="flex justify-end">
             <Button variant="hero" size="sm" className="rounded-full" onClick={() => saveAddress(a)} disabled={savingId === a.id}>
               {savingId === a.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Save className="w-4 h-4" /> Save Address</>}
             </Button>
-          </div>
+          </div>}
         </div>
       ))}
     </div>
