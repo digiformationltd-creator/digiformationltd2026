@@ -309,8 +309,8 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
     if (error) toast.error(error.message); else { toast.success(`Invoice ${number} created`); reload(); }
   };
   const updateInvoice = async (id: string, patch: any) => {
-    // auto-recalc totals if amount/vat change
     const current = invoices.find(i => i.id === id);
+    const prevStatus = current?.status;
     if (current) {
       const merged = { ...current, ...patch };
       const amount = parseFloat(merged.amount_gbp) || 0;
@@ -320,7 +320,18 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
       patch = { ...patch, vat_gbp: vat, total_gbp: total };
     }
     const { error } = await supabase.from("invoices").update(patch).eq("id", id);
-    if (error) toast.error(error.message); else reload();
+    if (error) { toast.error(error.message); return; }
+    if (patch.status && patch.status !== prevStatus && /paid/i.test(patch.status) && profile.email) {
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "invoice-paid",
+          recipientEmail: profile.email,
+          idempotencyKey: `invoice-paid-${id}`,
+          templateData: { customerName: profile.full_name, invoiceNumber: current?.invoice_number, amount: `£${current?.total_gbp}`, service: current?.service_description },
+        },
+      }).catch(console.error);
+    }
+    reload();
   };
 
   const addSub = async () => {
