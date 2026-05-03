@@ -75,16 +75,21 @@ Deno.serve(async (req) => {
 
     const { data: profiles, error: profilesError } = await adminClient
       .from("profiles")
-      .select("user_id, full_name, email, phone, company_name, created_at, user_roles(role)")
+      .select("user_id, full_name, email, phone, company_name, created_at")
       .order("created_at", { ascending: false });
 
     if (profilesError) return json({ error: profilesError.message }, 500);
 
-    const clients = (profiles || []).filter((profile: any) =>
-      !profile.user_roles?.some((r: { role: string }) => r.role === "admin"),
-    );
+    const { data: roles, error: rolesError } = await adminClient
+      .from("user_roles")
+      .select("user_id, role");
 
-    return json({ clients, totalAuthUsers: authUsers.length });
+    if (rolesError) return json({ error: rolesError.message }, 500);
+
+    const adminIds = new Set((roles || []).filter((r: any) => r.role === "admin").map((r: any) => r.user_id));
+    const clients = (profiles || []).filter((p: any) => !adminIds.has(p.user_id));
+
+    return json({ clients, totalAuthUsers: authUsers.length, totalProfiles: profiles?.length || 0 });
   } catch (error) {
     return json({ error: error instanceof Error ? error.message : "Unknown error" }, 500);
   }
