@@ -13,7 +13,7 @@ import {
   MapPin, ShoppingCart, Ticket, LifeBuoy, LogOut, UserCircle2,
   ChevronRight, Loader2, Inbox, Plus, Download, ArrowUpRight,
   Handshake, Link2, TrendingUp, Copy, Megaphone, GraduationCap, LayoutDashboard,
-  Menu, ShieldCheck,
+  Menu, ShieldCheck, Save, Trash2,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import logo from "@/assets/digiformation-logo.png";
@@ -101,6 +101,10 @@ const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [companies, setCompanies] = useState<CompanyDetails[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [subscriptions, setSubscriptions] = useState<any[]>([]);
+  const [walletRows, setWalletRows] = useState<any[]>([]);
+  const [tickets, setTickets] = useState<any[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [active, setActive] = useState<SectionId>("overview");
   const [loading, setLoading] = useState(true);
@@ -139,14 +143,22 @@ const Dashboard = () => {
     if (!user) return;
     let cancelled = false;
     (async () => {
-      const [{ data: prof }, { data: comps }, { data: role }] = await Promise.all([
+      const [{ data: prof }, { data: comps }, { data: role }, { data: orderRows }, { data: subRows }, { data: walletData }, { data: ticketRows }] = await Promise.all([
         supabase.from("profiles").select("full_name,email,phone,company_name,avatar_initials").eq("user_id", user.id).maybeSingle(),
         supabase.from("client_company_details").select("*").eq("user_id", user.id).order("created_at", { ascending: true }),
         supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle(),
+        supabase.from("client_orders").select("*").eq("user_id", user.id).order("order_date", { ascending: false }),
+        supabase.from("client_subscriptions").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
+        supabase.from("client_wallet_transactions").select("*").eq("user_id", user.id).order("txn_date", { ascending: false }),
+        supabase.from("client_tickets").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
       ]);
       if (cancelled) return;
       setProfile(prof as Profile);
       setCompanies((comps as CompanyDetails[]) || []);
+      setOrders(orderRows || []);
+      setSubscriptions(subRows || []);
+      setWalletRows(walletData || []);
+      setTickets(ticketRows || []);
       setIsAdmin(user.email?.toLowerCase() === "info@digiformation.uk" || !!role);
       setLoading(false);
     })();
@@ -170,6 +182,8 @@ const Dashboard = () => {
   const initials = profile?.avatar_initials || (profile?.full_name?.slice(0, 2) || user.email?.slice(0, 2) || "U").toUpperCase();
   const primaryCompanyName = companies[0]?.company_name?.trim();
   const displayName = primaryCompanyName || profile?.company_name || profile?.full_name || user.email?.split("@")[0] || "Client";
+  const walletBalance = walletRows.reduce((sum, row) => sum + (row.txn_type === "Debit" ? -Number(row.amount_gbp || 0) : Number(row.amount_gbp || 0)), 0);
+  const formatGBP = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n || 0);
 
   return (
     <div className="min-h-screen bg-gradient-hero grid-pattern">
@@ -273,10 +287,10 @@ const Dashboard = () => {
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {[
-                  { label: "Subscriptions", value: "0", icon: CalendarDays, id: "subscriptions" as SectionId },
-                  { label: "Orders", value: "0", icon: ShoppingBag, id: "orders" as SectionId },
-                  { label: "Wallet", value: "£0.00", icon: Wallet, id: "wallet" as SectionId },
-                  { label: "Tickets", value: "0", icon: Ticket, id: "tickets" as SectionId },
+                  { label: "Subscriptions", value: String(subscriptions.length), icon: CalendarDays, id: "subscriptions" as SectionId },
+                  { label: "Orders", value: String(orders.length), icon: ShoppingBag, id: "orders" as SectionId },
+                  { label: "Wallet", value: formatGBP(walletBalance), icon: Wallet, id: "wallet" as SectionId },
+                  { label: "Tickets", value: String(tickets.length), icon: Ticket, id: "tickets" as SectionId },
                 ].map((s) => {
                   const Icon = s.icon;
                   return (
