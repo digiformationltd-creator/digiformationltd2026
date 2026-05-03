@@ -32,6 +32,7 @@ import Dashboard from "./pages/Dashboard";
 import ResetPassword from "./pages/ResetPassword";
 import Affiliate from "./pages/Affiliate";
 import Admin from "./pages/Admin";
+import Unsubscribe from "./pages/Unsubscribe";
 
 const queryClient = new QueryClient();
 
@@ -117,6 +118,7 @@ const App = () => (
           <Route path="/affiliate" element={<Affiliate />} />
           <Route path="/admin" element={<Admin />} />
 
+          <Route path="/unsubscribe" element={<Unsubscribe />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <WhatsAppFloat />
