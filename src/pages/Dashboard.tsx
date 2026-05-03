@@ -27,6 +27,7 @@ const menu: { id: SectionId; label: string; icon: any }[] = [
   { id: "overview", label: "Dashboard", icon: LayoutDashboard },
   { id: "subscriptions", label: "Subscriptions", icon: CalendarDays },
   { id: "orders", label: "My Orders", icon: ShoppingBag },
+  { id: "invoices", label: "My Invoices", icon: FileText },
   { id: "wallet", label: "My Wallet", icon: Wallet },
   { id: "company", label: "My Companies", icon: Building2 },
   { id: "editAddress", label: "My Addresses", icon: MapPin },
