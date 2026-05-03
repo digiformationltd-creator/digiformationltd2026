@@ -114,18 +114,10 @@ const DigiNav = () => {
               </Link>
             </Button>
             {user ? (
-              <>
-                <Button asChild variant="hero" className="rounded-full h-9 sm:h-10 px-3 text-xs sm:text-sm">
-                  <Link to="/dashboard" aria-label="Open dashboard">
-                    <LayoutDashboard className="w-4 h-4" />
-                    <span className="hidden sm:inline">Dashboard</span>
-                  </Link>
-                </Button>
-                <Button onClick={handleLogout} variant="outline" className="rounded-full h-9 sm:h-10 px-3 text-xs sm:text-sm" aria-label="Log out">
-                  <LogOut className="w-4 h-4" />
-                  <span className="hidden sm:inline">Logout</span>
-                </Button>
-              </>
+              <Button onClick={handleLogout} variant="hero" className="rounded-full h-9 sm:h-10 px-3 text-xs sm:text-sm" aria-label="Log out">
+                <LogOut className="w-4 h-4" />
+                <span>Logout</span>
+              </Button>
             ) : (
               <Button asChild variant="hero" className="rounded-full h-9 sm:h-10 px-3 text-xs sm:text-sm">
                 <Link to="/auth" aria-label="Sign in to client dashboard">
