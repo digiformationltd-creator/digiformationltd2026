@@ -222,10 +222,43 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
     if (error) toast.error(error.message); else toast.success("Address saved");
   };
 
-  const addOrder = async () => {
-    const ref = await generateOrderNumber("O");
-    const { error } = await supabase.from("client_orders").insert({ user_id: userId, order_ref: ref, service: "New Service", status: "Pending", amount_gbp: 0 });
-    if (error) toast.error(error.message); else { toast.success(`Order ${ref} added`); reload(); }
+  const addOrder = async (
+    serviceCode: string = "O",
+    serviceDescription?: string,
+    amount: number = 0,
+    vatRate: number = 0,
+    autoInvoice: boolean = true,
+  ) => {
+    const ref = await generateOrderNumber(serviceCode);
+    const description = serviceDescription || SERVICE_CODES[serviceCode] || "New Service";
+    const { data: orderRow, error } = await supabase
+      .from("client_orders")
+      .insert({ user_id: userId, order_ref: ref, service: description, status: "Pending", amount_gbp: amount })
+      .select()
+      .single();
+    if (error) { toast.error(error.message); return; }
+
+    if (autoInvoice) {
+      const number = await generateInvoiceNumber(serviceCode);
+      const vat = +(amount * vatRate / 100).toFixed(2);
+      const total = +(amount + vat).toFixed(2);
+      const { error: invErr } = await supabase.from("invoices").insert({
+        user_id: userId,
+        order_id: orderRow?.id,
+        invoice_number: number,
+        service_code: serviceCode,
+        service_description: description,
+        bill_to_name: profile.full_name || null,
+        bill_to_email: profile.email || null,
+        amount_gbp: amount, vat_rate: vatRate, vat_gbp: vat, total_gbp: total,
+        status: "Unpaid",
+      });
+      if (invErr) toast.error(`Order saved but invoice failed: ${invErr.message}`);
+      else toast.success(`Order ${ref} + Invoice ${number} created`);
+    } else {
+      toast.success(`Order ${ref} added`);
+    }
+    reload();
   };
   const updateOrder = async (id: string, patch: any) => {
     const { error } = await supabase.from("client_orders").update(patch).eq("id", id);
