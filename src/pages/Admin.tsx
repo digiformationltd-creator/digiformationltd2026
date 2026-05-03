@@ -431,7 +431,7 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
 
         {tab === "orders" && (
           <div className="space-y-3">
-            <Button onClick={addOrder} size="sm"><Plus className="w-4 h-4 mr-2" />Add Order</Button>
+            <NewOrderForm onCreate={addOrder} />
             {orders.map(o => (
               <div key={o.id} className="border border-border/40 rounded-lg p-3 grid md:grid-cols-5 gap-2 items-center">
                 <Input defaultValue={o.order_ref} onBlur={(e) => updateOrder(o.id, { order_ref: e.target.value })} placeholder="Ref" />
