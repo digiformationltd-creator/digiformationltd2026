@@ -347,39 +347,11 @@ const Dashboard = () => {
           )}
 
           {active === "company" && (
-            <div className="glass rounded-2xl p-6 sm:p-8">
-              {company ? (
-                <>
-                  <h2 className="text-xl font-semibold mb-1">{company.company_name || "Company"}</h2>
-                  <p className="text-xs opacity-70 mb-6">Company No: {company.company_number || "—"}</p>
-                  <div className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
-                    {[
-                      ["Director Name", company.director_name],
-                      ["Incorporation Date", company.incorporation_date],
-                      ["Company Address", company.company_address],
-                      ["Registered Address", company.registered_address],
-                      ["Address Expire", company.address_expire],
-                      ["Confirmation Due", company.confirmation_due],
-                      ["Accounts Filing Due", company.accounts_filing_due],
-                      ["Auth Code", company.auth_code],
-                      ["SIC Code", company.sic_code],
-                    ].map(([l, v]) => (
-                      <div key={l as string}>
-                        <div className="text-[11px] uppercase tracking-wider opacity-60">{l}</div>
-                        <div className="text-sm mt-1">{(v as string) || "—"}</div>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <EmptyState
-                  icon={Building2}
-                  title="No company details on file"
-                  description="Once you incorporate a company through us, all its details — company number, addresses, filing dates and authentication code — will appear here."
-                  action={<Button asChild variant="hero" className="rounded-full"><Link to="/uk-services/uk-ltd-formation">Form a UK Company</Link></Button>}
-                />
-              )}
-            </div>
+            <MyCompaniesSection
+              userId={user.id}
+              companies={companies}
+              onChange={setCompanies}
+            />
           )}
 
           {active === "documents" && (
