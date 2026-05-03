@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowRight, CheckCircle2, Wallet } from "lucide-react";
 import Layout from "@/components/layout/Layout";
@@ -6,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { bankingProviders } from "@/data/banking";
 import heroBanking from "@/assets/card-hero-banking.jpg";
 import heroPayments from "@/assets/card-hero-payments.jpg";
+import { useSeo } from "@/lib/seo";
 
 // Pure-banking accounts vs. payment gateways — drives the hero image.
 const BANKING_SLUGS = new Set(["tide", "wise", "payoneer", "worldfirst", "airwallex", "sunrate", "zionpe", "wallester"]);
@@ -14,17 +14,35 @@ const BankingProviderPage = () => {
   const { slug } = useParams();
   const provider = bankingProviders.find((p) => p.slug === slug);
 
-  useEffect(() => {
-    if (!provider) return;
-    document.title = provider.metaTitle;
-    const meta = (n: string, c: string) => {
-      let el = document.querySelector(`meta[name="${n}"]`) as HTMLMetaElement | null;
-      if (!el) { el = document.createElement("meta"); el.setAttribute("name", n); document.head.appendChild(el); }
-      el.setAttribute("content", c);
-    };
-    meta("description", provider.metaDescription);
-    meta("keywords", provider.keywords);
-  }, [provider]);
+  useSeo(
+    provider
+      ? {
+          title: provider.metaTitle,
+          description: provider.metaDescription,
+          keywords: provider.keywords,
+          type: "product",
+          breadcrumbs: [
+            { name: "Home", path: "/" },
+            { name: "Banking & Payments", path: "/banks-payment-solutions" },
+            { name: provider.name, path: `/banks-payment-solutions/${provider.slug}` },
+          ],
+          jsonLd: {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            name: `${provider.name} Account Setup`,
+            description: provider.metaDescription,
+            provider: { "@type": "Organization", name: "Digiformation Ltd" },
+            areaServed: "Worldwide",
+            offers: {
+              "@type": "Offer",
+              price: provider.setupPrice.replace(/[^0-9.]/g, "") || "0",
+              priceCurrency: "GBP",
+            },
+          },
+        }
+      : { title: "Provider Not Found | Digiformation", description: "Banking provider not found.", noindex: true },
+    [slug]
+  );
 
   if (!provider) {
     return (

@@ -1,25 +1,39 @@
-import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { usaServicePages } from "@/data/usaServices";
+import { useSeo } from "@/lib/seo";
 
 const UsaServicePage = () => {
   const { slug } = useParams();
   const page = usaServicePages.find((p) => p.slug === slug);
 
-  useEffect(() => {
-    if (!page) return;
-    document.title = page.metaTitle;
-    const meta = (n: string, c: string) => {
-      let el = document.querySelector(`meta[name="${n}"]`) as HTMLMetaElement | null;
-      if (!el) { el = document.createElement("meta"); el.setAttribute("name", n); document.head.appendChild(el); }
-      el.setAttribute("content", c);
-    };
-    meta("description", page.metaDescription);
-    meta("keywords", page.keywords);
-  }, [page]);
+  useSeo(
+    page
+      ? {
+          title: page.metaTitle,
+          description: page.metaDescription,
+          keywords: page.keywords,
+          type: "website",
+          breadcrumbs: [
+            { name: "Home", path: "/" },
+            { name: "USA Services", path: "/usa-services" },
+            { name: page.title, path: `/usa-services/${page.slug}` },
+          ],
+          jsonLd: {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            name: page.title,
+            description: page.metaDescription,
+            provider: { "@type": "Organization", name: "Digiformation Ltd" },
+            areaServed: "United States",
+            serviceType: page.title,
+          },
+        }
+      : { title: "Service Not Found | Digiformation", description: "Service not found.", noindex: true },
+    [slug]
+  );
 
   if (!page) {
     return (

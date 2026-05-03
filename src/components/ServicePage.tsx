@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
+import { useSeo, type Crumb } from "@/lib/seo";
 
 type ServicePageProps = {
   eyebrow: string;
@@ -10,6 +11,8 @@ type ServicePageProps = {
   highlights?: string[];
   contactService?: string;
   children?: React.ReactNode;
+  breadcrumbs?: Crumb[];
+  seoKeywords?: string;
 };
 
 const splitTitle = (t: string) => {
@@ -18,7 +21,7 @@ const splitTitle = (t: string) => {
   return { lead: parts.slice(0, -2).join(" "), accent: parts.slice(-2).join(" ") };
 };
 
-const ServicePage = ({ eyebrow, title, description, highlights, contactService, children }: ServicePageProps) => {
+const ServicePage = ({ eyebrow, title, description, highlights, contactService, children, breadcrumbs, seoKeywords }: ServicePageProps) => {
   const contactHref = contactService ? `/contact?service=${encodeURIComponent(contactService)}` : "/contact";
   const { lead, accent } = splitTitle(title);
   const items = highlights ?? [
@@ -27,6 +30,31 @@ const ServicePage = ({ eyebrow, title, description, highlights, contactService, 
     "Dedicated specialist assigned to your case",
     "Status updates at every stage",
   ];
+
+  const seoTitle = `${title} 2026 — ${eyebrow} | Digiformation`.slice(0, 70);
+  useSeo(
+    {
+      title: seoTitle,
+      description: description.slice(0, 158),
+      keywords: seoKeywords || `${title}, ${eyebrow}, Digiformation, 2026, non resident, UK, USA`,
+      type: "website",
+      breadcrumbs: breadcrumbs ?? [
+        { name: "Home", path: "/" },
+        { name: eyebrow, path: typeof window !== "undefined" ? window.location.pathname.split("/").slice(0, 2).join("/") || "/" : "/" },
+        { name: title, path: typeof window !== "undefined" ? window.location.pathname : "/" },
+      ],
+      jsonLd: {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        name: title,
+        description,
+        provider: { "@type": "Organization", name: "Digiformation Ltd" },
+        areaServed: ["United Kingdom", "United States", "Worldwide"],
+      },
+    },
+    [title, description, eyebrow]
+  );
+
 
   return (
     <Layout>
