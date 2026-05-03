@@ -99,6 +99,7 @@ const EmptyState = ({ icon: Icon, title, description, action }: { icon: any; tit
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [companies, setCompanies] = useState<CompanyDetails[]>([]);
@@ -110,6 +111,13 @@ const Dashboard = () => {
   const [active, setActive] = useState<SectionId>("overview");
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Sync active section from ?section= query param (used by the global UserDrawer for deep linking).
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const s = params.get("section") as SectionId | null;
+    if (s && menu.some(m => m.id === s)) setActive(s);
+  }, [location.search]);
 
   useEffect(() => {
     document.title = "Client Dashboard | DigiFormation Ltd";
