@@ -19,14 +19,13 @@ const trustSignals = [
   { icon: ShieldCheck, label: "Dedicated Support Team" },
 ];
 
-const whatYouGet = [
-  "Companies House incorporation",
-  "Digital & printed company documents",
-  "UTR registration",
-  "Company authentication code",
-  "Registered office & director service address",
-  "ID verification",
-  "Ongoing support",
+const heroChecks = [
+  "Companies House Filing",
+  "UTR Number",
+  "Authentication Code",
+  "Registered Office",
+  "ID Verification",
+  "Fast Turnaround",
 ];
 
 type Pkg = {
@@ -220,9 +219,14 @@ const UKLtdFormation = () => {
               >
                 {current.lead} <em className="not-italic text-gradient">{current.accent}</em>
               </h1>
-              <p className="mt-8 text-lg md:text-xl leading-relaxed max-w-2xl opacity-90">
-                Fast, compliant, and fully supported UK LTD registration with UTR, ID verification, and registered office services.
-              </p>
+              <ul className="mt-8 grid grid-cols-2 gap-x-6 gap-y-3 max-w-xl">
+                {heroChecks.map((c) => (
+                  <li key={c} className="flex items-center gap-2 text-sm md:text-base">
+                    <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="opacity-90">{c}</span>
+                  </li>
+                ))}
+              </ul>
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
                 <Button asChild variant="hero" size="lg" className="rounded-full">
                   <Link to="/uk-services/uk-ltd-formation/choose-jurisdiction">Get Started <ArrowRight className="w-4 h-4" /></Link>
@@ -273,7 +277,7 @@ const UKLtdFormation = () => {
             </div>
             <div className="glass rounded-2xl p-8 md:p-10">
               <div className="space-y-4">
-                {whatYouGet.map((item) => (
+                {heroChecks.map((item) => (
                   <div key={item} className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5 text-primary" />
                     <p className="opacity-90">{item}</p>
