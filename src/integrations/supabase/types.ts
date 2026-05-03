@@ -347,6 +347,78 @@ export type Database = {
         }
         Relationships: []
       }
+      invoices: {
+        Row: {
+          amount_gbp: number
+          bill_to_address: string | null
+          bill_to_email: string | null
+          bill_to_name: string | null
+          created_at: string
+          currency: string
+          due_date: string | null
+          id: string
+          invoice_number: string
+          issue_date: string
+          notes: string | null
+          order_id: string | null
+          pdf_url: string | null
+          service_code: string
+          service_description: string
+          status: string
+          total_gbp: number
+          updated_at: string
+          user_id: string
+          vat_gbp: number
+          vat_rate: number
+        }
+        Insert: {
+          amount_gbp?: number
+          bill_to_address?: string | null
+          bill_to_email?: string | null
+          bill_to_name?: string | null
+          created_at?: string
+          currency?: string
+          due_date?: string | null
+          id?: string
+          invoice_number: string
+          issue_date?: string
+          notes?: string | null
+          order_id?: string | null
+          pdf_url?: string | null
+          service_code?: string
+          service_description: string
+          status?: string
+          total_gbp?: number
+          updated_at?: string
+          user_id: string
+          vat_gbp?: number
+          vat_rate?: number
+        }
+        Update: {
+          amount_gbp?: number
+          bill_to_address?: string | null
+          bill_to_email?: string | null
+          bill_to_name?: string | null
+          created_at?: string
+          currency?: string
+          due_date?: string | null
+          id?: string
+          invoice_number?: string
+          issue_date?: string
+          notes?: string | null
+          order_id?: string | null
+          pdf_url?: string | null
+          service_code?: string
+          service_description?: string
+          status?: string
+          total_gbp?: number
+          updated_at?: string
+          user_id?: string
+          vat_gbp?: number
+          vat_rate?: number
+        }
+        Relationships: []
+      }
       newsletter_subscribers: {
         Row: {
           created_at: string
