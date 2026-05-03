@@ -99,7 +99,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [company, setCompany] = useState<CompanyDetails | null>(null);
+  const [companies, setCompanies] = useState<CompanyDetails[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [active, setActive] = useState<SectionId>("overview");
   const [loading, setLoading] = useState(true);
