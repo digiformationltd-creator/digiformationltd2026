@@ -1,6 +1,6 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Menu, X, ChevronDown, UserCircle2, Handshake, LogOut, LayoutDashboard, ShieldCheck } from "lucide-react";
+import { Menu, X, ChevronDown, UserCircle2, Handshake, LogOut, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { navGroups } from "@/data/navigation";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,38 +18,18 @@ const moreLinks = [
   { name: "FAQ", path: "/faq" },
 ];
 
-const ADMIN_EMAIL = "digiformationltd@gmail.com";
-
 const DigiNav = () => {
   const [open, setOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
-
-  const resolveAdmin = async (sessionUser: any) => {
-    if (!sessionUser) {
-      setIsAdmin(false);
-      return;
-    }
-
-    if (sessionUser.email?.toLowerCase() === ADMIN_EMAIL) {
-      setIsAdmin(true);
-      return;
-    }
-
-    const { data } = await supabase.from("user_roles").select("role").eq("user_id", sessionUser.id).eq("role", "admin").maybeSingle();
-    setIsAdmin(!!data);
-  };
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
       setUser(session?.user ?? null);
-      setTimeout(() => resolveAdmin(session?.user), 0);
     });
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
-      await resolveAdmin(session?.user);
     });
     return () => subscription.unsubscribe();
   }, []);
@@ -135,15 +115,6 @@ const DigiNav = () => {
             </Button>
             {user ? (
               <>
-                {isAdmin && (
-                  <Button asChild variant="hero" className="rounded-full inline-flex h-9 sm:h-10 px-3 text-xs sm:text-sm bg-gradient-to-r from-amber-500 to-orange-600 text-white">
-                    <Link to="/admin" aria-label="Admin panel">
-                      <ShieldCheck className="w-4 h-4" />
-                      <span className="hidden sm:inline">Admin Panel</span>
-                      <span className="sm:hidden">Admin</span>
-                    </Link>
-                  </Button>
-                )}
                 <Button asChild variant="hero" className="rounded-full h-9 sm:h-10 px-3 text-xs sm:text-sm">
                   <Link to="/dashboard" aria-label="Open dashboard">
                     <LayoutDashboard className="w-4 h-4" />
@@ -179,16 +150,6 @@ const DigiNav = () => {
       {open && (
         <div className="xl:hidden container mx-auto mt-2 px-3 sm:px-4">
           <div className="glass rounded-2xl p-3 sm:p-4 max-h-[calc(100vh-6rem)] overflow-y-auto">
-            {isAdmin && (
-              <Link
-                to="/admin"
-                onClick={() => setOpen(false)}
-                className="mb-3 flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground px-4 py-3 text-sm font-semibold shadow-glow"
-              >
-                <ShieldCheck className="w-4 h-4" />
-                Admin Panel
-              </Link>
-            )}
             <Link to="/" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm rounded-lg hover:bg-primary/10">
               Home
             </Link>
@@ -235,14 +196,6 @@ const DigiNav = () => {
             </Button>
             {user ? (
               <>
-                {isAdmin && (
-                  <Button asChild variant="outline" className="w-full mt-2 rounded-full">
-                    <Link to="/admin" onClick={() => setOpen(false)}>
-                      <ShieldCheck className="w-4 h-4" />
-                      Admin Panel
-                    </Link>
-                  </Button>
-                )}
                 <Button asChild variant="hero" className="w-full mt-2 rounded-full">
                   <Link to="/dashboard" onClick={() => setOpen(false)}>
                     <LayoutDashboard className="w-4 h-4" />
