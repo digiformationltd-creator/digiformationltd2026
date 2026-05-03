@@ -1,0 +1,1 @@
+ALTER TABLE public.client_company_details ADD COLUMN IF NOT EXISTS utr_number text;

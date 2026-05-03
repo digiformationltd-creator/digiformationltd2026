@@ -713,7 +713,8 @@ const CompanyFormSection = ({
             <Field label="Company Number" value={c.company_number} onChange={(v) => updateCompanyField(c.id, { company_number: v })} />
             <Field label="Director Name" value={c.director_name} onChange={(v) => updateCompanyField(c.id, { director_name: v })} />
             <Field label="SIC Code" value={c.sic_code} onChange={(v) => updateCompanyField(c.id, { sic_code: v })} />
-            <Field label="UTR / Auth Code" value={c.auth_code} onChange={(v) => updateCompanyField(c.id, { auth_code: v })} />
+            <Field label="Auth Code" value={c.auth_code} onChange={(v) => updateCompanyField(c.id, { auth_code: v })} />
+            <Field label="UTR Number" value={(c as any).utr_number} onChange={(v) => updateCompanyField(c.id, { utr_number: v } as any)} />
             <Field label="Incorporation Date" type="date" value={c.incorporation_date} onChange={(v) => updateCompanyField(c.id, { incorporation_date: v })} />
             <Field label="Address Expire" type="date" value={c.address_expire} onChange={(v) => updateCompanyField(c.id, { address_expire: v })} />
             <Field label="Confirmation Due" type="date" value={c.confirmation_due} onChange={(v) => updateCompanyField(c.id, { confirmation_due: v })} />
