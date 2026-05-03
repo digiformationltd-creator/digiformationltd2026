@@ -19,7 +19,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import logo from "@/assets/digiformation-logo.png";
 
 type SectionId =
-  | "overview" | "subscriptions" | "orders" | "wallet" | "company" | "documents"
+  | "overview" | "subscriptions" | "orders" | "invoices" | "wallet" | "company" | "documents"
   | "editAccount" | "editAddress" | "newServices" | "tickets" | "openTicket"
   | "affiliate";
 
