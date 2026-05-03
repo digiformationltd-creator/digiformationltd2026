@@ -6,7 +6,7 @@ import type { TemplateEntry } from './registry.ts'
 
 const SITE_NAME = 'Digiformation Ltd'
 // Business inbox that receives every new order placed on the site.
-const BUSINESS_EMAIL = 'orders@digiformation.uk'
+const BUSINESS_EMAIL = 'info@digiformation.uk'
 
 interface Props {
   customerName?: string
