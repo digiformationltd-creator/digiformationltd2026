@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import logo from "@/assets/digiformation-logo.png";
+import UserDrawer from "@/components/UserDrawer";
 import { downloadInvoicePdf } from "@/lib/invoice";
 
 type SectionId =
@@ -99,6 +100,7 @@ const EmptyState = ({ icon: Icon, title, description, action }: { icon: any; tit
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [companies, setCompanies] = useState<CompanyDetails[]>([]);
@@ -110,6 +112,13 @@ const Dashboard = () => {
   const [active, setActive] = useState<SectionId>("overview");
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Sync active section from ?section= query param (used by the global UserDrawer for deep linking).
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const s = params.get("section") as SectionId | null;
+    if (s && menu.some(m => m.id === s)) setActive(s);
+  }, [location.search]);
 
   useEffect(() => {
     document.title = "Client Dashboard | DigiFormation Ltd";
@@ -390,6 +399,7 @@ const Dashboard = () => {
           {active === "openTicket" && <OpenTicketForm userId={user.id} onSubmitted={() => setActive("tickets")} />}
         </div>
       </main>
+      <UserDrawer />
     </div>
   );
 };

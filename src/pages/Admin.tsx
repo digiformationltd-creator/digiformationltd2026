@@ -374,36 +374,16 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
         )}
 
         {tab === "addresses" && (
-          <div className="space-y-6">
-            <Button onClick={addAddress} size="sm"><Plus className="w-4 h-4 mr-2" />Add Address</Button>
-            {addresses.length === 0 && <p className="text-sm text-muted-foreground">No addresses yet. Click "Add Address" to create one.</p>}
-            {addresses.map((a, idx) => (
-              <div key={a.id} className="border border-border/40 rounded-xl p-4 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold">Address #{idx + 1}{a.label ? ` — ${a.label}` : ""}</h3>
-                  <Button variant="ghost" size="sm" onClick={() => deleteRow("client_addresses", a.id)}><Trash2 className="w-4 h-4" /></Button>
-                </div>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <Field label="Label" value={a.label} onChange={(v) => updateAddressField(a.id, { label: v })} />
-                  <Field label="Service Type" value={a.service_type} onChange={(v) => updateAddressField(a.id, { service_type: v })} />
-                  <Field label="Address Line 1" value={a.address_line1} onChange={(v) => updateAddressField(a.id, { address_line1: v })} />
-                  <Field label="Address Line 2" value={a.address_line2} onChange={(v) => updateAddressField(a.id, { address_line2: v })} />
-                  <Field label="City" value={a.city} onChange={(v) => updateAddressField(a.id, { city: v })} />
-                  <Field label="County" value={a.county} onChange={(v) => updateAddressField(a.id, { county: v })} />
-                  <Field label="Postcode" value={a.postcode} onChange={(v) => updateAddressField(a.id, { postcode: v })} />
-                  <Field label="Country" value={a.country} onChange={(v) => updateAddressField(a.id, { country: v })} />
-                  <Field label="Start Date" type="date" value={a.start_date} onChange={(v) => updateAddressField(a.id, { start_date: v })} />
-                  <Field label="Expire Date" type="date" value={a.expire_date} onChange={(v) => updateAddressField(a.id, { expire_date: v })} />
-                  <Field label="Status" value={a.status} onChange={(v) => updateAddressField(a.id, { status: v })} />
-                </div>
-                <div>
-                  <Label>Notes</Label>
-                  <Textarea value={a.notes || ""} onChange={(e) => updateAddressField(a.id, { notes: e.target.value })} />
-                </div>
-                <Button onClick={() => saveAddress(a)} disabled={saving} size="sm"><Save className="w-4 h-4 mr-2" />Save Address</Button>
-              </div>
-            ))}
-          </div>
+          <AddressFormSection
+            userId={userId}
+            addresses={addresses}
+            saving={saving}
+            updateAddressField={updateAddressField}
+            saveAddress={saveAddress}
+            deleteRow={deleteRow}
+            addAddress={addAddress}
+            reload={reload}
+          />
         )}
 
         {tab === "orders" && (
@@ -748,6 +728,76 @@ const CompanyFormSection = ({
             <Textarea value={c.correspondence_address || ""} onChange={(e) => updateCompanyField(c.id, { correspondence_address: e.target.value })} placeholder="Leave blank if not purchased" />
           </div>
           <Button onClick={() => saveCompany(c)} disabled={saving} size="sm"><Save className="w-4 h-4 mr-2" />Save Company</Button>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const AddressFormSection = ({
+  userId, addresses, saving, updateAddressField, saveAddress, deleteRow, addAddress, reload,
+}: {
+  userId: string;
+  addresses: any[];
+  saving: boolean;
+  updateAddressField: (id: string, patch: any) => void;
+  saveAddress: (a: any) => void;
+  deleteRow: (table: any, id: string) => void;
+  addAddress: () => Promise<void> | void;
+  reload: () => Promise<void>;
+}) => {
+  const [creating, setCreating] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      if (addresses.length === 0 && !creating) {
+        setCreating(true);
+        const { error } = await supabase.from("client_addresses").insert({
+          user_id: userId, label: "", service_type: "registered_office", country: "United Kingdom", status: "active",
+        });
+        if (!error) await reload();
+        setCreating(false);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addresses.length, userId]);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-end">
+        <Button onClick={addAddress} size="sm" variant="outline"><Plus className="w-4 h-4 mr-2" />Add Another Address</Button>
+      </div>
+      {addresses.length === 0 && (
+        <p className="text-sm text-muted-foreground flex items-center gap-2">
+          <Loader2 className="w-4 h-4 animate-spin" /> Preparing address form…
+        </p>
+      )}
+      {addresses.map((a, idx) => (
+        <div key={a.id} className="border border-border/40 rounded-xl p-4 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold">Address #{idx + 1}{a.label ? ` — ${a.label}` : ""}</h3>
+            {addresses.length > 1 && (
+              <Button variant="ghost" size="sm" onClick={() => deleteRow("client_addresses", a.id)}><Trash2 className="w-4 h-4" /></Button>
+            )}
+          </div>
+          <div className="grid md:grid-cols-2 gap-4">
+            <Field label="Label" value={a.label} onChange={(v) => updateAddressField(a.id, { label: v })} />
+            <Field label="Service Type" value={a.service_type} onChange={(v) => updateAddressField(a.id, { service_type: v })} />
+            <Field label="Address Line 1" value={a.address_line1} onChange={(v) => updateAddressField(a.id, { address_line1: v })} />
+            <Field label="Address Line 2" value={a.address_line2} onChange={(v) => updateAddressField(a.id, { address_line2: v })} />
+            <Field label="City" value={a.city} onChange={(v) => updateAddressField(a.id, { city: v })} />
+            <Field label="County" value={a.county} onChange={(v) => updateAddressField(a.id, { county: v })} />
+            <Field label="Postcode" value={a.postcode} onChange={(v) => updateAddressField(a.id, { postcode: v })} />
+            <Field label="Country" value={a.country} onChange={(v) => updateAddressField(a.id, { country: v })} />
+            <Field label="Start Date" type="date" value={a.start_date} onChange={(v) => updateAddressField(a.id, { start_date: v })} />
+            <Field label="Expire Date" type="date" value={a.expire_date} onChange={(v) => updateAddressField(a.id, { expire_date: v })} />
+            <Field label="Status" value={a.status} onChange={(v) => updateAddressField(a.id, { status: v })} />
+          </div>
+          <div>
+            <Label>Notes</Label>
+            <Textarea value={a.notes || ""} onChange={(e) => updateAddressField(a.id, { notes: e.target.value })} />
+          </div>
+          <Button onClick={() => saveAddress(a)} disabled={saving} size="sm"><Save className="w-4 h-4 mr-2" />Save Address</Button>
         </div>
       ))}
     </div>
