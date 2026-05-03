@@ -27,6 +27,7 @@ const Admin = () => {
   const [clients, setClients] = useState<ClientRow[]>([]);
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
+  const [loadingClients, setLoadingClients] = useState(false);
 
   useSeo({ title: "Admin Panel | Digiformation", description: "Internal admin panel", noindex: true });
 
@@ -43,11 +44,25 @@ const Admin = () => {
       }
       if (!isAdmin) { toast.error("Admin access required"); navigate("/dashboard"); return; }
       setAuthorized(true);
-      const { data: profiles } = await supabase.from("profiles").select("user_id, full_name, email, phone, company_name, created_at").order("created_at", { ascending: false });
-      setClients(profiles || []);
+      await loadClients();
       setLoading(false);
     })();
   }, [navigate]);
+
+  const loadClients = async () => {
+    setLoadingClients(true);
+    const { data, error } = await supabase.functions.invoke("admin-clients", { method: "GET" });
+    setLoadingClients(false);
+    if (error) {
+      toast.error(error.message || "Unable to load clients");
+      return;
+    }
+    if (data?.error) {
+      toast.error(data.error);
+      return;
+    }
+    setClients(data?.clients || []);
+  };
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
@@ -67,12 +82,18 @@ const Admin = () => {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <div className="flex items-center gap-3 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+          <div className="flex items-center gap-3">
           <ShieldCheck className="w-8 h-8 text-primary" />
           <div>
             <h1 className="text-3xl font-bold">Admin Panel</h1>
             <p className="text-muted-foreground text-sm">Manage clients and their data</p>
           </div>
+          </div>
+          <Button variant="outline" onClick={loadClients} disabled={loadingClients}>
+            {loadingClients ? <Loader2 className="w-4 h-4 animate-spin" /> : <Users className="w-4 h-4" />}
+            Refresh Clients
+          </Button>
         </div>
 
         <div className="glass rounded-2xl p-4 mb-4 flex items-center gap-3">
