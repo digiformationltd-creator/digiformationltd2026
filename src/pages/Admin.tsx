@@ -223,9 +223,9 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
   };
 
   const addOrder = async () => {
-    const ref = "ORD-" + Date.now().toString().slice(-6);
+    const ref = await generateOrderNumber("O");
     const { error } = await supabase.from("client_orders").insert({ user_id: userId, order_ref: ref, service: "New Service", status: "Pending", amount_gbp: 0 });
-    if (error) toast.error(error.message); else { toast.success("Order added"); reload(); }
+    if (error) toast.error(error.message); else { toast.success(`Order ${ref} added`); reload(); }
   };
   const updateOrder = async (id: string, patch: any) => {
     const { error } = await supabase.from("client_orders").update(patch).eq("id", id);
@@ -234,6 +234,35 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
   const deleteRow = async (table: any, id: string) => {
     const { error } = await supabase.from(table).delete().eq("id", id);
     if (error) toast.error(error.message); else { toast.success("Deleted"); reload(); }
+  };
+
+  const addInvoice = async (serviceCode = "O") => {
+    const number = await generateInvoiceNumber(serviceCode);
+    const { error } = await supabase.from("invoices").insert({
+      user_id: userId,
+      invoice_number: number,
+      service_code: serviceCode,
+      service_description: SERVICE_CODES[serviceCode] || "Service",
+      bill_to_name: profile.full_name || null,
+      bill_to_email: profile.email || null,
+      amount_gbp: 0, vat_rate: 0, vat_gbp: 0, total_gbp: 0,
+      status: "Unpaid",
+    });
+    if (error) toast.error(error.message); else { toast.success(`Invoice ${number} created`); reload(); }
+  };
+  const updateInvoice = async (id: string, patch: any) => {
+    // auto-recalc totals if amount/vat change
+    const current = invoices.find(i => i.id === id);
+    if (current) {
+      const merged = { ...current, ...patch };
+      const amount = parseFloat(merged.amount_gbp) || 0;
+      const rate = parseFloat(merged.vat_rate) || 0;
+      const vat = +(amount * rate / 100).toFixed(2);
+      const total = +(amount + vat).toFixed(2);
+      patch = { ...patch, vat_gbp: vat, total_gbp: total };
+    }
+    const { error } = await supabase.from("invoices").update(patch).eq("id", id);
+    if (error) toast.error(error.message); else reload();
   };
 
   const addSub = async () => {
