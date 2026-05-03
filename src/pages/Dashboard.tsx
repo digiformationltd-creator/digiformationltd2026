@@ -602,6 +602,45 @@ const ClientDocumentsSection = ({ userId }: { userId: string }) => {
   );
 };
 
+const ClientInvoicesSection = ({ userId }: { userId: string }) => {
+  const [rows, setRows] = useState<any[] | null>(null);
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("invoices")
+        .select("*")
+        .eq("user_id", userId)
+        .order("issue_date", { ascending: false });
+      setRows(data || []);
+    })();
+  }, [userId]);
+
+  if (rows === null) return <div className="glass rounded-2xl p-10 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto opacity-60" /></div>;
+  if (rows.length === 0) return (
+    <EmptyState icon={FileText} title="No invoices yet" description="Invoices for your purchased services will appear here. You can download each one as a PDF." />
+  );
+
+  const fmt = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n || 0);
+
+  return (
+    <div className="space-y-3">
+      <p className="text-sm opacity-70">Your invoices. Read-only — download as PDF for your records.</p>
+      {rows.map((i) => (
+        <div key={i.id} className="glass rounded-xl p-4 flex items-center justify-between gap-3 flex-wrap">
+          <div className="min-w-0">
+            <div className="font-mono font-semibold text-primary">{i.invoice_number}</div>
+            <div className="text-sm truncate">{i.service_description}</div>
+            <div className="text-xs opacity-60">Issued {i.issue_date} • {i.status} • {fmt(Number(i.total_gbp))}</div>
+          </div>
+          <Button size="sm" variant="outline" onClick={() => downloadInvoicePdf(i)}>
+            <Download className="w-4 h-4 mr-2" />Download PDF
+          </Button>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 const OpenTicketForm = ({ userId, onSubmitted }: { userId: string; onSubmitted: () => void }) => {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
