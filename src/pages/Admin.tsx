@@ -254,7 +254,19 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
         status: "Unpaid",
       });
       if (invErr) toast.error(`Order saved but invoice failed: ${invErr.message}`);
-      else toast.success(`Order ${ref} + Invoice ${number} created`);
+      else {
+        toast.success(`Order ${ref} + Invoice ${number} created`);
+        if (profile.email) {
+          supabase.functions.invoke("send-transactional-email", {
+            body: {
+              templateName: "invoice-issued",
+              recipientEmail: profile.email,
+              idempotencyKey: `invoice-issued-${number}`,
+              templateData: { customerName: profile.full_name, invoiceNumber: number, service: description, amount: `£${total}` },
+            },
+          }).catch(console.error);
+        }
+      }
     } else {
       toast.success(`Order ${ref} added`);
     }
