@@ -261,8 +261,21 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
     reload();
   };
   const updateOrder = async (id: string, patch: any) => {
+    const prev = orders.find(o => o.id === id);
     const { error } = await supabase.from("client_orders").update(patch).eq("id", id);
-    if (error) toast.error(error.message); else reload();
+    if (error) { toast.error(error.message); return; }
+    // If status moved to Completed, send completion email
+    if (patch.status && patch.status !== prev?.status && /complete/i.test(patch.status) && profile.email) {
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "order-completed",
+          recipientEmail: profile.email,
+          idempotencyKey: `order-completed-${id}`,
+          templateData: { customerName: profile.full_name, orderRef: prev?.order_ref, service: prev?.service },
+        },
+      }).catch(console.error);
+    }
+    reload();
   };
   const deleteRow = async (table: any, id: string) => {
     const { error } = await supabase.from(table).delete().eq("id", id);
