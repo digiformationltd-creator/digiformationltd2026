@@ -521,6 +521,7 @@ const MyCompaniesSection = ({ userId, companies, onChange }: { userId: string; c
     { key: "director_name", label: "Director Name" },
     { key: "sic_code", label: "SIC Code" },
     { key: "auth_code", label: "Auth Code" },
+    { key: "utr_number" as any, label: "UTR Number" },
     { key: "incorporation_date", label: "Incorporation Date", type: "date" },
     { key: "address_expire", label: "Address Expire", type: "date" },
     { key: "confirmation_due", label: "Confirmation Due", type: "date" },
