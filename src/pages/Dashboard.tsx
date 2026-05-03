@@ -13,7 +13,7 @@ import {
   MapPin, ShoppingCart, Ticket, LifeBuoy, LogOut, UserCircle2,
   ChevronRight, Loader2, Inbox, Plus, Download, ArrowUpRight,
   Handshake, Link2, TrendingUp, Copy, Megaphone, GraduationCap, LayoutDashboard,
-  Menu,
+  Menu, ShieldCheck,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import logo from "@/assets/digiformation-logo.png";
@@ -98,6 +98,7 @@ const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [company, setCompany] = useState<CompanyDetails | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [active, setActive] = useState<SectionId>("overview");
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -135,13 +136,15 @@ const Dashboard = () => {
     if (!user) return;
     let cancelled = false;
     (async () => {
-      const [{ data: prof }, { data: comp }] = await Promise.all([
+      const [{ data: prof }, { data: comp }, { data: role }] = await Promise.all([
         supabase.from("profiles").select("full_name,email,phone,company_name,avatar_initials").eq("user_id", user.id).maybeSingle(),
         supabase.from("client_company_details").select("*").eq("user_id", user.id).maybeSingle(),
+        supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle(),
       ]);
       if (cancelled) return;
       setProfile(prof as Profile);
       setCompany(comp as CompanyDetails);
+      setIsAdmin(user.email?.toLowerCase() === "digiformationltd@gmail.com" || !!role);
       setLoading(false);
     })();
     return () => { cancelled = true; };
@@ -190,6 +193,14 @@ const Dashboard = () => {
           </div>
 
           <nav className="flex-1 overflow-y-auto p-3">
+            {isAdmin && (
+              <Button asChild variant="hero" className="w-full mb-3 rounded-full justify-start">
+                <Link to="/admin" onClick={() => setMenuOpen(false)}>
+                  <ShieldCheck className="w-4 h-4" />
+                  Admin Panel
+                </Link>
+              </Button>
+            )}
             {menu.map((m) => {
               const Icon = m.icon;
               const isActive = active === m.id;
