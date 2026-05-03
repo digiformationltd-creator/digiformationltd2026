@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
+import { useSeo, type Crumb } from "@/lib/seo";
 
 type ServicePageProps = {
   eyebrow: string;
@@ -10,6 +11,8 @@ type ServicePageProps = {
   highlights?: string[];
   contactService?: string;
   children?: React.ReactNode;
+  breadcrumbs?: Crumb[];
+  seoKeywords?: string;
 };
 
 const splitTitle = (t: string) => {
