@@ -190,6 +190,7 @@ export const Contact = () => {
       return;
     }
     setSubmitting(true);
+    const orderRef = `CONTACT-${Date.now().toString(36).toUpperCase()}`;
 
     // Save to database (non-blocking for UX — log error but still proceed)
     const { error: dbError } = await supabase.from("contact_submissions").insert({
@@ -206,6 +207,24 @@ export const Contact = () => {
     if (dbError) {
       console.error("Failed to save submission:", dbError);
     }
+
+    if (form.email) {
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "order-confirmation",
+          recipientEmail: form.email,
+          idempotencyKey: `order-confirm-${orderRef}`,
+          templateData: { customerName: form.fullName, service: form.service || "Inquiry", orderRef, notes: form.message },
+        },
+      }).catch((err) => console.error("order-confirmation failed", err));
+    }
+    supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: "order-notification",
+        idempotencyKey: `order-notify-${orderRef}`,
+        templateData: { customerName: form.fullName, customerEmail: form.email, whatsapp: form.whatsapp, country: form.country, service: form.service || "Inquiry", orderRef, pagePath: window.location.pathname, notes: form.message },
+      },
+    }).catch((err) => console.error("order-notification failed", err));
 
     const text =
       `Hello Digiformation,%0A%0A` +

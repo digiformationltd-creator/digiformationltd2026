@@ -69,8 +69,10 @@ const UsaLlcCheckout = () => {
     e.preventDefault();
     if (!pricing) return;
     setSubmitting(true);
+    const orderRef = `USLLC-${Date.now().toString(36).toUpperCase()}`;
     const summary =
       `[U.S. LLC Order]\n` +
+      `Ref: ${orderRef}\n` +
       `State: ${pricing.state_name} (${pricing.state_code})\n` +
       `Package: ${packageName} — ${formatUSD(price)}\n\n` +
       `Customer note:\n${form.message || "(none provided)"}`;
@@ -91,6 +93,29 @@ const UsaLlcCheckout = () => {
       toast({ title: "Submission failed", description: error.message, variant: "destructive" });
       return;
     }
+
+    const service = `US LLC Formation — ${pricing.state_name}`;
+    const priceStr = formatUSD(price);
+    const pagePath = window.location.pathname + window.location.search;
+
+    if (form.email) {
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "order-confirmation",
+          recipientEmail: form.email,
+          idempotencyKey: `order-confirm-${orderRef}`,
+          templateData: { customerName: form.full_name, service, packageName, price: priceStr, orderRef, notes: form.message },
+        },
+      }).catch((err) => console.error("order-confirmation failed", err));
+    }
+    supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: "order-notification",
+        idempotencyKey: `order-notify-${orderRef}`,
+        templateData: { customerName: form.full_name, customerEmail: form.email, whatsapp: form.whatsapp, country: form.country, service, packageName, price: priceStr, orderRef, pagePath, notes: form.message },
+      },
+    }).catch((err) => console.error("order-notification failed", err));
+
     setSubmitted(true);
     toast({ title: "Order received!", description: "Our team will contact you within 24 hours." });
   };

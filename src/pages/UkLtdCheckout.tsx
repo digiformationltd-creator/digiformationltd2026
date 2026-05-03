@@ -55,8 +55,10 @@ const UkLtdCheckout = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+    const orderRef = `UKLTD-${Date.now().toString(36).toUpperCase()}`;
     const summary =
       `[UK LTD Order]\n` +
+      `Ref: ${orderRef}\n` +
       `Jurisdiction: ${jurName} (${jurCode})\n` +
       `Package: ${packageName} — ${formatGBP(price)}\n\n` +
       `Customer note:\n${form.message || "(none provided)"}`;
@@ -77,6 +79,29 @@ const UkLtdCheckout = () => {
       toast({ title: "Submission failed", description: error.message, variant: "destructive" });
       return;
     }
+
+    const service = `UK LTD Formation — ${jurName}`;
+    const priceStr = formatGBP(price);
+    const pagePath = window.location.pathname + window.location.search;
+
+    if (form.email) {
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "order-confirmation",
+          recipientEmail: form.email,
+          idempotencyKey: `order-confirm-${orderRef}`,
+          templateData: { customerName: form.full_name, service, packageName, price: priceStr, orderRef, notes: form.message },
+        },
+      }).catch((err) => console.error("order-confirmation failed", err));
+    }
+    supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: "order-notification",
+        idempotencyKey: `order-notify-${orderRef}`,
+        templateData: { customerName: form.full_name, customerEmail: form.email, whatsapp: form.whatsapp, country: form.country, service, packageName, price: priceStr, orderRef, pagePath, notes: form.message },
+      },
+    }).catch((err) => console.error("order-notification failed", err));
+
     setSubmitted(true);
     toast({ title: "Order received!", description: "Our team will contact you within 24 hours." });
   };
