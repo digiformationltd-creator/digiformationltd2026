@@ -80,6 +80,7 @@ export type Database = {
           company_name: string | null
           company_number: string | null
           confirmation_due: string | null
+          correspondence_address: string | null
           created_at: string
           director_name: string | null
           id: string
@@ -97,6 +98,7 @@ export type Database = {
           company_name?: string | null
           company_number?: string | null
           confirmation_due?: string | null
+          correspondence_address?: string | null
           created_at?: string
           director_name?: string | null
           id?: string
@@ -114,6 +116,7 @@ export type Database = {
           company_name?: string | null
           company_number?: string | null
           confirmation_due?: string | null
+          correspondence_address?: string | null
           created_at?: string
           director_name?: string | null
           id?: string
