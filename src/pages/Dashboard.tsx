@@ -539,6 +539,7 @@ const MyCompaniesSection = ({ userId, companies, onChange }: { userId: string; c
   );
 };
 
+const MyAddressesSection = ({ userId }: { userId: string }) => {
   const [rows, setRows] = useState<AddressRow[] | null>(null);
 
   useEffect(() => {
