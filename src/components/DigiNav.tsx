@@ -1,8 +1,10 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Menu, X, ChevronDown, UserCircle2, Handshake } from "lucide-react";
+import { Menu, X, ChevronDown, UserCircle2, Handshake, LogOut, LayoutDashboard, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { navGroups } from "@/data/navigation";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import logo from "@/assets/digiformation-logo.png";
 
 const topLinks = [
@@ -19,6 +21,35 @@ const moreLinks = [
 const DigiNav = () => {
   const [open, setOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        setTimeout(async () => {
+          const { data } = await supabase.from("user_roles").select("role").eq("user_id", session.user.id).eq("role", "admin").maybeSingle();
+          setIsAdmin(!!data);
+        }, 0);
+      } else setIsAdmin(false);
+    });
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        const { data } = await supabase.from("user_roles").select("role").eq("user_id", session.user.id).eq("role", "admin").maybeSingle();
+        setIsAdmin(!!data);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Logged out");
+    navigate("/");
+  };
 
   useEffect(() => {
     if (open) document.body.style.overflow = "hidden";
@@ -93,13 +124,36 @@ const DigiNav = () => {
                 <span>Join Us</span>
               </Link>
             </Button>
-            <Button asChild variant="hero" className="rounded-full h-9 sm:h-10 px-3 text-xs sm:text-sm">
-              <Link to="/auth" aria-label="Sign in to client dashboard">
-                <UserCircle2 className="w-4 h-4" />
-                <span className="hidden sm:inline">Client Dashboard</span>
-                <span className="sm:hidden">Login</span>
-              </Link>
-            </Button>
+            {user ? (
+              <>
+                {isAdmin && (
+                  <Button asChild variant="outline" className="rounded-full hidden sm:inline-flex h-9 sm:h-10 px-3 text-xs sm:text-sm">
+                    <Link to="/admin" aria-label="Admin panel">
+                      <ShieldCheck className="w-4 h-4" />
+                      <span>Admin</span>
+                    </Link>
+                  </Button>
+                )}
+                <Button asChild variant="hero" className="rounded-full h-9 sm:h-10 px-3 text-xs sm:text-sm">
+                  <Link to="/dashboard" aria-label="Open dashboard">
+                    <LayoutDashboard className="w-4 h-4" />
+                    <span className="hidden sm:inline">Dashboard</span>
+                  </Link>
+                </Button>
+                <Button onClick={handleLogout} variant="outline" className="rounded-full h-9 sm:h-10 px-3 text-xs sm:text-sm" aria-label="Log out">
+                  <LogOut className="w-4 h-4" />
+                  <span className="hidden sm:inline">Logout</span>
+                </Button>
+              </>
+            ) : (
+              <Button asChild variant="hero" className="rounded-full h-9 sm:h-10 px-3 text-xs sm:text-sm">
+                <Link to="/auth" aria-label="Sign in to client dashboard">
+                  <UserCircle2 className="w-4 h-4" />
+                  <span className="hidden sm:inline">Client Dashboard</span>
+                  <span className="sm:hidden">Login</span>
+                </Link>
+              </Button>
+            )}
             <button
               aria-label="Toggle menu"
               onClick={() => setOpen(!open)}
@@ -159,12 +213,35 @@ const DigiNav = () => {
                 Join Us
               </Link>
             </Button>
-            <Button asChild variant="hero" className="w-full mt-2 rounded-full">
-              <Link to="/auth" onClick={() => setOpen(false)}>
-                <UserCircle2 className="w-4 h-4" />
-                Client Dashboard
-              </Link>
-            </Button>
+            {user ? (
+              <>
+                {isAdmin && (
+                  <Button asChild variant="outline" className="w-full mt-2 rounded-full">
+                    <Link to="/admin" onClick={() => setOpen(false)}>
+                      <ShieldCheck className="w-4 h-4" />
+                      Admin Panel
+                    </Link>
+                  </Button>
+                )}
+                <Button asChild variant="hero" className="w-full mt-2 rounded-full">
+                  <Link to="/dashboard" onClick={() => setOpen(false)}>
+                    <LayoutDashboard className="w-4 h-4" />
+                    Dashboard
+                  </Link>
+                </Button>
+                <Button onClick={() => { setOpen(false); handleLogout(); }} variant="outline" className="w-full mt-2 rounded-full">
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <Button asChild variant="hero" className="w-full mt-2 rounded-full">
+                <Link to="/auth" onClick={() => setOpen(false)}>
+                  <UserCircle2 className="w-4 h-4" />
+                  Client Dashboard
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       )}
