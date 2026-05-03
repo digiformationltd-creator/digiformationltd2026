@@ -411,6 +411,106 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
           </div>
         )}
 
+        {tab === "invoices" && (
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-sm text-muted-foreground">Create invoice for:</span>
+              {Object.entries(SERVICE_CODES).map(([code, label]) => (
+                <Button key={code} onClick={() => addInvoice(code)} size="sm" variant="outline">
+                  <Plus className="w-3 h-3 mr-1" />{code} — {label}
+                </Button>
+              ))}
+            </div>
+            {invoices.length === 0 && <p className="text-sm text-muted-foreground">No invoices yet. Pick a service code above to generate one (auto-numbered as DF + code + date + sequence).</p>}
+            {invoices.map(i => (
+              <div key={i.id} className="border border-border/40 rounded-xl p-4 space-y-3">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div>
+                    <div className="font-mono font-semibold text-primary">{i.invoice_number}</div>
+                    <div className="text-xs text-muted-foreground">Issued {i.issue_date} • Status: {i.status}</div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" onClick={() => downloadInvoicePdf(i)}>
+                      <Download className="w-3 h-3 mr-1" />PDF
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => deleteRow("invoices", i.id)}><Trash2 className="w-4 h-4" /></Button>
+                  </div>
+                </div>
+                <div className="grid md:grid-cols-2 gap-3">
+                  <div>
+                    <Label>Service Code</Label>
+                    <Select value={i.service_code} onValueChange={(v) => updateInvoice(i.id, { service_code: v, service_description: SERVICE_CODES[v] || i.service_description })}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {Object.entries(SERVICE_CODES).map(([code, label]) => (
+                          <SelectItem key={code} value={code}>{code} — {label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Status</Label>
+                    <Select value={i.status} onValueChange={(v) => updateInvoice(i.id, { status: v })}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Unpaid">Unpaid</SelectItem>
+                        <SelectItem value="Paid">Paid</SelectItem>
+                        <SelectItem value="Overdue">Overdue</SelectItem>
+                        <SelectItem value="Cancelled">Cancelled</SelectItem>
+                        <SelectItem value="Refunded">Refunded</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label>Service Description</Label>
+                    <Input defaultValue={i.service_description} onBlur={(e) => updateInvoice(i.id, { service_description: e.target.value })} />
+                  </div>
+                  <div>
+                    <Label>Issue Date</Label>
+                    <Input type="date" defaultValue={i.issue_date} onBlur={(e) => updateInvoice(i.id, { issue_date: e.target.value })} />
+                  </div>
+                  <div>
+                    <Label>Due Date</Label>
+                    <Input type="date" defaultValue={i.due_date || ""} onBlur={(e) => updateInvoice(i.id, { due_date: e.target.value || null })} />
+                  </div>
+                  <div>
+                    <Label>Bill To Name</Label>
+                    <Input defaultValue={i.bill_to_name || ""} onBlur={(e) => updateInvoice(i.id, { bill_to_name: e.target.value })} />
+                  </div>
+                  <div>
+                    <Label>Bill To Email</Label>
+                    <Input defaultValue={i.bill_to_email || ""} onBlur={(e) => updateInvoice(i.id, { bill_to_email: e.target.value })} />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label>Bill To Address</Label>
+                    <Textarea defaultValue={i.bill_to_address || ""} onBlur={(e) => updateInvoice(i.id, { bill_to_address: e.target.value })} />
+                  </div>
+                  <div>
+                    <Label>Amount (£)</Label>
+                    <Input type="number" step="0.01" defaultValue={i.amount_gbp} onBlur={(e) => updateInvoice(i.id, { amount_gbp: parseFloat(e.target.value) || 0 })} />
+                  </div>
+                  <div>
+                    <Label>VAT Rate (%)</Label>
+                    <Input type="number" step="0.01" defaultValue={i.vat_rate} onBlur={(e) => updateInvoice(i.id, { vat_rate: parseFloat(e.target.value) || 0 })} />
+                  </div>
+                  <div>
+                    <Label>VAT (£)</Label>
+                    <Input value={Number(i.vat_gbp).toFixed(2)} disabled />
+                  </div>
+                  <div>
+                    <Label>Total (£)</Label>
+                    <Input value={Number(i.total_gbp).toFixed(2)} disabled className="font-bold text-primary" />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label>Notes</Label>
+                    <Textarea defaultValue={i.notes || ""} onBlur={(e) => updateInvoice(i.id, { notes: e.target.value })} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {tab === "subs" && (
           <div className="space-y-3">
             <Button onClick={addSub} size="sm"><Plus className="w-4 h-4 mr-2" />Add Subscription</Button>
