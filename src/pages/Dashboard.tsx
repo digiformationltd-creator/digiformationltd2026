@@ -552,7 +552,50 @@ const MyAddressesSection = ({ userId }: { userId: string }) => {
   );
 };
 
-const OpenTicketForm = ({ userId, onSubmitted }: { userId: string; onSubmitted: () => void }) => {
+const ClientDocumentsSection = ({ userId }: { userId: string }) => {
+  const [rows, setRows] = useState<any[] | null>(null);
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("client_documents")
+        .select("*")
+        .eq("user_id", userId)
+        .order("doc_date", { ascending: false });
+      setRows(data || []);
+    })();
+  }, [userId]);
+
+  const download = async (path: string, name: string) => {
+    const { data, error } = await supabase.storage.from("client-docs").createSignedUrl(path, 60, { download: name });
+    if (error) { toast.error(error.message); return; }
+    window.open(data.signedUrl, "_blank");
+  };
+
+  if (rows === null) return <div className="glass rounded-2xl p-10 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto opacity-60" /></div>;
+  if (rows.length === 0) return (
+    <EmptyState icon={FileText} title="No documents yet" description="Certificates, memorandums, confirmation statements and letters will be available to download here." />
+  );
+
+  return (
+    <div className="space-y-3">
+      <p className="text-sm opacity-70">Documents uploaded by DigiFormation. You can download them but cannot edit.</p>
+      {rows.map((d) => (
+        <div key={d.id} className="glass rounded-xl p-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <FileText className="w-5 h-5 opacity-70 shrink-0" />
+            <div className="min-w-0">
+              <div className="font-medium truncate">{d.name}</div>
+              <div className="text-xs opacity-60">{[d.file_type, d.file_size, d.doc_date].filter(Boolean).join(" • ")}</div>
+            </div>
+          </div>
+          <Button size="sm" variant="outline" onClick={() => download(d.file_url, d.name)} disabled={!d.file_url}>
+            <Download className="w-4 h-4 mr-2" />Download
+          </Button>
+        </div>
+      ))}
+    </div>
+  );
+};
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
