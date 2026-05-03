@@ -409,14 +409,45 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
 
         {tab === "docs" && (
           <div className="space-y-3">
-            <Button onClick={addDoc} size="sm"><Plus className="w-4 h-4 mr-2" />Add Document</Button>
+            <div className="flex items-center gap-3">
+              <input
+                type="file"
+                id="admin-doc-upload"
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  const path = `${userId}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+                  const { error: upErr } = await supabase.storage.from("client-docs").upload(path, file, { upsert: false, contentType: file.type });
+                  if (upErr) { toast.error(upErr.message); return; }
+                  const sizeKb = file.size < 1024 * 1024 ? `${(file.size / 1024).toFixed(1)} KB` : `${(file.size / 1024 / 1024).toFixed(2)} MB`;
+                  const ext = file.name.split(".").pop()?.toUpperCase() || "FILE";
+                  const { error: insErr } = await supabase.from("client_documents").insert({
+                    user_id: userId, name: file.name, file_url: path, file_type: ext, file_size: sizeKb,
+                  });
+                  if (insErr) toast.error(insErr.message); else { toast.success("Document uploaded"); reload(); }
+                  e.target.value = "";
+                }}
+              />
+              <Button size="sm" onClick={() => document.getElementById("admin-doc-upload")?.click()}>
+                <Plus className="w-4 h-4 mr-2" />Upload Document
+              </Button>
+              <p className="text-xs text-muted-foreground">PDF, images, or any file. Stored privately — only this client can download.</p>
+            </div>
             {docs.map(d => (
-              <div key={d.id} className="border border-border/40 rounded-lg p-3 grid md:grid-cols-5 gap-2 items-center">
-                <Input defaultValue={d.name} onBlur={(e) => updateDoc(d.id, { name: e.target.value })} placeholder="Name" />
+              <div key={d.id} className="border border-border/40 rounded-lg p-3 grid md:grid-cols-6 gap-2 items-center">
+                <Input defaultValue={d.name} onBlur={(e) => updateDoc(d.id, { name: e.target.value })} placeholder="Name" className="md:col-span-2" />
                 <Input defaultValue={d.file_type || ""} onBlur={(e) => updateDoc(d.id, { file_type: e.target.value })} placeholder="Type" />
                 <Input defaultValue={d.file_size || ""} onBlur={(e) => updateDoc(d.id, { file_size: e.target.value })} placeholder="Size" />
-                <Input defaultValue={d.file_url || ""} onBlur={(e) => updateDoc(d.id, { file_url: e.target.value })} placeholder="URL" />
-                <Button variant="ghost" size="sm" onClick={() => deleteRow("client_documents", d.id)}><Trash2 className="w-4 h-4" /></Button>
+                <Button variant="outline" size="sm" onClick={async () => {
+                  if (!d.file_url) return toast.error("No file attached");
+                  const { data, error } = await supabase.storage.from("client-docs").createSignedUrl(d.file_url, 60);
+                  if (error) toast.error(error.message); else window.open(data.signedUrl, "_blank");
+                }}>View</Button>
+                <Button variant="ghost" size="sm" onClick={async () => {
+                  if (d.file_url) await supabase.storage.from("client-docs").remove([d.file_url]);
+                  await deleteRow("client_documents", d.id);
+                }}><Trash2 className="w-4 h-4" /></Button>
               </div>
             ))}
           </div>
