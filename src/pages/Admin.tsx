@@ -141,9 +141,10 @@ const Admin = () => {
 };
 
 const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }) => {
-  const [tab, setTab] = useState<"profile" | "company" | "orders" | "subs" | "wallet" | "docs">("profile");
+  const [tab, setTab] = useState<"profile" | "company" | "addresses" | "orders" | "subs" | "wallet" | "docs">("profile");
   const [profile, setProfile] = useState<any>({});
-  const [company, setCompany] = useState<any>({});
+  const [companies, setCompanies] = useState<any[]>([]);
+  const [addresses, setAddresses] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [subs, setSubs] = useState<any[]>([]);
   const [wallet, setWallet] = useState<any[]>([]);
@@ -151,16 +152,18 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
   const [saving, setSaving] = useState(false);
 
   const reload = async () => {
-    const [p, c, o, s, w, d] = await Promise.all([
+    const [p, c, a, o, s, w, d] = await Promise.all([
       supabase.from("profiles").select("*").eq("user_id", userId).maybeSingle(),
-      supabase.from("client_company_details").select("*").eq("user_id", userId).maybeSingle(),
+      supabase.from("client_company_details").select("*").eq("user_id", userId).order("created_at", { ascending: true }),
+      supabase.from("client_addresses").select("*").eq("user_id", userId).order("created_at", { ascending: true }),
       supabase.from("client_orders").select("*").eq("user_id", userId).order("order_date", { ascending: false }),
       supabase.from("client_subscriptions").select("*").eq("user_id", userId),
       supabase.from("client_wallet_transactions").select("*").eq("user_id", userId).order("txn_date", { ascending: false }),
       supabase.from("client_documents").select("*").eq("user_id", userId).order("doc_date", { ascending: false }),
     ]);
     setProfile(p.data || { user_id: userId });
-    setCompany(c.data || { user_id: userId });
+    setCompanies(c.data || []);
+    setAddresses(a.data || []);
     setOrders(o.data || []);
     setSubs(s.data || []);
     setWallet(w.data || []);
