@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.sync_missing_client_profiles();
