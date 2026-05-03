@@ -147,7 +147,7 @@ const Dashboard = () => {
       if (cancelled) return;
       setProfile(prof as Profile);
       setCompanies((comps as CompanyDetails[]) || []);
-      setIsAdmin(user.email?.toLowerCase() === "digiformationltd@gmail.com" || !!role);
+      setIsAdmin(user.email?.toLowerCase() === "info@digiformation.uk" || !!role);
       setLoading(false);
     })();
     return () => { cancelled = true; };
@@ -772,7 +772,7 @@ const OpenTicketForm = ({ userId, onSubmitted }: { userId: string; onSubmitted: 
       <Button type="submit" variant="hero" className="rounded-full" disabled={submitting}>
         {submitting && <Loader2 className="w-4 h-4 animate-spin" />} Submit Ticket
       </Button>
-      <p className="text-xs opacity-70">Our team typically responds within 24 hours at <a href="mailto:digiformationltd@gmail.com" className="underline">digiformationltd@gmail.com</a>.</p>
+      <p className="text-xs opacity-70">Our team typically responds within 24 hours at <a href="mailto:info@digiformation.uk" className="underline">info@digiformation.uk</a>.</p>
     </form>
   );
 };

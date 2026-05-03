@@ -37,7 +37,7 @@ const Admin = () => {
     (async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { navigate("/auth"); return; }
-      const ownerEmail = "digiformationltd@gmail.com";
+      const ownerEmail = "info@digiformation.uk";
       const isOwner = session.user.email?.toLowerCase() === ownerEmail;
       let isAdmin = isOwner;
       if (!isAdmin) {
