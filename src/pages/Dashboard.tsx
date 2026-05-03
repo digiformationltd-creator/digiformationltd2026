@@ -139,14 +139,14 @@ const Dashboard = () => {
     if (!user) return;
     let cancelled = false;
     (async () => {
-      const [{ data: prof }, { data: comp }, { data: role }] = await Promise.all([
+      const [{ data: prof }, { data: comps }, { data: role }] = await Promise.all([
         supabase.from("profiles").select("full_name,email,phone,company_name,avatar_initials").eq("user_id", user.id).maybeSingle(),
-        supabase.from("client_company_details").select("*").eq("user_id", user.id).maybeSingle(),
+        supabase.from("client_company_details").select("*").eq("user_id", user.id).order("created_at", { ascending: true }),
         supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle(),
       ]);
       if (cancelled) return;
       setProfile(prof as Profile);
-      setCompany(comp as CompanyDetails);
+      setCompanies((comps as CompanyDetails[]) || []);
       setIsAdmin(user.email?.toLowerCase() === "digiformationltd@gmail.com" || !!role);
       setLoading(false);
     })();
