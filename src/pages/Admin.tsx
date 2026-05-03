@@ -298,6 +298,7 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
     { id: "company", label: `Companies (${companies.length})` },
     { id: "addresses", label: `Addresses (${addresses.length})` },
     { id: "orders", label: `Orders (${orders.length})` },
+    { id: "invoices", label: `Invoices (${invoices.length})` },
     { id: "subs", label: `Subs (${subs.length})` },
     { id: "wallet", label: `Wallet (${wallet.length})` },
     { id: "docs", label: `Docs (${docs.length})` },
