@@ -181,27 +181,40 @@ const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }
     if (error) toast.error(error.message); else toast.success("Profile updated");
   };
 
-  const saveCompany = async () => {
+  const addCompany = async () => {
+    const { error } = await supabase.from("client_company_details").insert({ user_id: userId, company_name: "New Company" });
+    if (error) toast.error(error.message); else { toast.success("Company added"); reload(); }
+  };
+  const updateCompanyField = (id: string, patch: any) => {
+    setCompanies(prev => prev.map(c => c.id === id ? { ...c, ...patch } : c));
+  };
+  const saveCompany = async (c: any) => {
     setSaving(true);
-    const payload = {
-      user_id: userId,
-      company_name: company.company_name || null,
-      company_number: company.company_number || null,
-      director_name: company.director_name || null,
-      company_address: company.company_address || null,
-      registered_address: company.registered_address || null,
-      sic_code: company.sic_code || null,
-      auth_code: company.auth_code || null,
-      incorporation_date: company.incorporation_date || null,
-      address_expire: company.address_expire || null,
-      confirmation_due: company.confirmation_due || null,
-      accounts_filing_due: company.accounts_filing_due || null,
-    };
-    const { error } = company.id
-      ? await supabase.from("client_company_details").update(payload).eq("id", company.id)
-      : await supabase.from("client_company_details").insert(payload);
+    const { id, created_at, updated_at, ...payload } = c;
+    const cleaned: any = { ...payload };
+    ["incorporation_date", "address_expire", "confirmation_due", "accounts_filing_due"].forEach(k => {
+      if (cleaned[k] === "") cleaned[k] = null;
+    });
+    const { error } = await supabase.from("client_company_details").update(cleaned).eq("id", id);
     setSaving(false);
-    if (error) toast.error(error.message); else { toast.success("Company saved"); reload(); }
+    if (error) toast.error(error.message); else toast.success("Company saved");
+  };
+
+  const addAddress = async () => {
+    const { error } = await supabase.from("client_addresses").insert({ user_id: userId, label: "New Address", service_type: "registered_office" });
+    if (error) toast.error(error.message); else { toast.success("Address added"); reload(); }
+  };
+  const updateAddressField = (id: string, patch: any) => {
+    setAddresses(prev => prev.map(a => a.id === id ? { ...a, ...patch } : a));
+  };
+  const saveAddress = async (a: any) => {
+    setSaving(true);
+    const { id, created_at, updated_at, ...payload } = a;
+    const cleaned: any = { ...payload };
+    ["start_date", "expire_date"].forEach(k => { if (cleaned[k] === "") cleaned[k] = null; });
+    const { error } = await supabase.from("client_addresses").update(cleaned).eq("id", id);
+    setSaving(false);
+    if (error) toast.error(error.message); else toast.success("Address saved");
   };
 
   const addOrder = async () => {
