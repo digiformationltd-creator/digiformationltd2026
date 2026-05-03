@@ -127,10 +127,11 @@ const DigiNav = () => {
             {user ? (
               <>
                 {isAdmin && (
-                  <Button asChild variant="outline" className="rounded-full hidden sm:inline-flex h-9 sm:h-10 px-3 text-xs sm:text-sm">
+                  <Button asChild variant="hero" className="rounded-full inline-flex h-9 sm:h-10 px-3 text-xs sm:text-sm bg-gradient-to-r from-amber-500 to-orange-600 text-white">
                     <Link to="/admin" aria-label="Admin panel">
                       <ShieldCheck className="w-4 h-4" />
-                      <span>Admin</span>
+                      <span className="hidden sm:inline">Admin Panel</span>
+                      <span className="sm:hidden">Admin</span>
                     </Link>
                   </Button>
                 )}
