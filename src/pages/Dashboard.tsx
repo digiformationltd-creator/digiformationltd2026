@@ -323,21 +323,11 @@ const Dashboard = () => {
           )}
 
           {active === "subscriptions" && (
-            <EmptyState
-              icon={CalendarDays}
-              title="No active subscriptions"
-              description="When you purchase a recurring service like Registered Address or Confirmation Statement, your active subscriptions will appear here."
-              action={<Button variant="hero" className="rounded-full" onClick={() => setActive("newServices")}><Plus className="w-4 h-4" /> Browse Services</Button>}
-            />
+            <ClientSubscriptionsSection rows={subscriptions} onBrowse={() => setActive("newServices")} />
           )}
 
           {active === "orders" && (
-            <EmptyState
-              icon={ShoppingBag}
-              title="No orders yet"
-              description="Your service orders — company formations, filings, address services — will be listed here once placed."
-              action={<Button variant="hero" className="rounded-full" onClick={() => setActive("newServices")}><Plus className="w-4 h-4" /> Place First Order</Button>}
-            />
+            <ClientOrdersSection rows={orders} onBrowse={() => setActive("newServices")} />
           )}
 
           {active === "invoices" && (
@@ -345,20 +335,7 @@ const Dashboard = () => {
           )}
 
           {active === "wallet" && (
-            <div className="space-y-5">
-              <div className="glass rounded-2xl p-6">
-                <div className="text-xs opacity-70">Current Balance</div>
-                <div className="text-3xl font-semibold mt-1">£0.00</div>
-                <Button variant="hero" size="sm" className="rounded-full mt-4">
-                  <Plus className="w-4 h-4" /> Top Up Wallet
-                </Button>
-              </div>
-              <EmptyState
-                icon={Wallet}
-                title="No transactions yet"
-                description="All wallet top-ups, payments and refunds will be tracked here for your records."
-              />
-            </div>
+            <ClientWalletSection rows={walletRows} balance={walletBalance} />
           )}
 
           {active === "company" && (
@@ -406,12 +383,7 @@ const Dashboard = () => {
           {active === "affiliate" && <AffiliateDashboardSection user={user} displayName={displayName} />}
 
           {active === "tickets" && (
-            <EmptyState
-              icon={Ticket}
-              title="No support tickets"
-              description="Any support requests you raise will be tracked here with replies from our team."
-              action={<Button variant="hero" className="rounded-full" onClick={() => setActive("openTicket")}><Plus className="w-4 h-4" /> Open a Ticket</Button>}
-            />
+            <ClientTicketsSection rows={tickets} onOpen={() => setActive("openTicket")} />
           )}
 
           {active === "openTicket" && <OpenTicketForm userId={user.id} onSubmitted={() => setActive("tickets")} />}
