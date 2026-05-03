@@ -213,12 +213,35 @@ const DigiNav = () => {
                 Join Us
               </Link>
             </Button>
-            <Button asChild variant="hero" className="w-full mt-2 rounded-full">
-              <Link to="/auth" onClick={() => setOpen(false)}>
-                <UserCircle2 className="w-4 h-4" />
-                Client Dashboard
-              </Link>
-            </Button>
+            {user ? (
+              <>
+                {isAdmin && (
+                  <Button asChild variant="outline" className="w-full mt-2 rounded-full">
+                    <Link to="/admin" onClick={() => setOpen(false)}>
+                      <ShieldCheck className="w-4 h-4" />
+                      Admin Panel
+                    </Link>
+                  </Button>
+                )}
+                <Button asChild variant="hero" className="w-full mt-2 rounded-full">
+                  <Link to="/dashboard" onClick={() => setOpen(false)}>
+                    <LayoutDashboard className="w-4 h-4" />
+                    Dashboard
+                  </Link>
+                </Button>
+                <Button onClick={() => { setOpen(false); handleLogout(); }} variant="outline" className="w-full mt-2 rounded-full">
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <Button asChild variant="hero" className="w-full mt-2 rounded-full">
+                <Link to="/auth" onClick={() => setOpen(false)}>
+                  <UserCircle2 className="w-4 h-4" />
+                  Client Dashboard
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       )}
