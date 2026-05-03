@@ -34,8 +34,14 @@ const Admin = () => {
     (async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { navigate("/auth"); return; }
-      const { data: role } = await supabase.from("user_roles").select("role").eq("user_id", session.user.id).eq("role", "admin").maybeSingle();
-      if (!role) { toast.error("Admin access required"); navigate("/dashboard"); return; }
+      const ownerEmail = "digiformationltd@gmail.com";
+      const isOwner = session.user.email?.toLowerCase() === ownerEmail;
+      let isAdmin = isOwner;
+      if (!isAdmin) {
+        const { data: role } = await supabase.from("user_roles").select("role").eq("user_id", session.user.id).eq("role", "admin").maybeSingle();
+        isAdmin = !!role;
+      }
+      if (!isAdmin) { toast.error("Admin access required"); navigate("/dashboard"); return; }
       setAuthorized(true);
       const { data: profiles } = await supabase.from("profiles").select("user_id, full_name, email, phone, company_name, created_at").order("created_at", { ascending: false });
       setClients(profiles || []);
