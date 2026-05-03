@@ -89,6 +89,7 @@ export type Database = {
           sic_code: string | null
           updated_at: string
           user_id: string
+          utr_number: string | null
         }
         Insert: {
           accounts_filing_due?: string | null
@@ -107,6 +108,7 @@ export type Database = {
           sic_code?: string | null
           updated_at?: string
           user_id: string
+          utr_number?: string | null
         }
         Update: {
           accounts_filing_due?: string | null
@@ -125,6 +127,7 @@ export type Database = {
           sic_code?: string | null
           updated_at?: string
           user_id?: string
+          utr_number?: string | null
         }
         Relationships: []
       }
