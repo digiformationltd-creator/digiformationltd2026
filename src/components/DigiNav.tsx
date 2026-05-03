@@ -18,6 +18,8 @@ const moreLinks = [
   { name: "FAQ", path: "/faq" },
 ];
 
+const ADMIN_EMAIL = "digiformationltd@gmail.com";
+
 const DigiNav = () => {
   const [open, setOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState<string | null>(null);
@@ -25,22 +27,29 @@ const DigiNav = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
+  const resolveAdmin = async (sessionUser: any) => {
+    if (!sessionUser) {
+      setIsAdmin(false);
+      return;
+    }
+
+    if (sessionUser.email?.toLowerCase() === ADMIN_EMAIL) {
+      setIsAdmin(true);
+      return;
+    }
+
+    const { data } = await supabase.from("user_roles").select("role").eq("user_id", sessionUser.id).eq("role", "admin").maybeSingle();
+    setIsAdmin(!!data);
+  };
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
       setUser(session?.user ?? null);
-      if (session?.user) {
-        setTimeout(async () => {
-          const { data } = await supabase.from("user_roles").select("role").eq("user_id", session.user.id).eq("role", "admin").maybeSingle();
-          setIsAdmin(!!data);
-        }, 0);
-      } else setIsAdmin(false);
+      setTimeout(() => resolveAdmin(session?.user), 0);
     });
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       setUser(session?.user ?? null);
-      if (session?.user) {
-        const { data } = await supabase.from("user_roles").select("role").eq("user_id", session.user.id).eq("role", "admin").maybeSingle();
-        setIsAdmin(!!data);
-      }
+      await resolveAdmin(session?.user);
     });
     return () => subscription.unsubscribe();
   }, []);
@@ -170,6 +179,16 @@ const DigiNav = () => {
       {open && (
         <div className="xl:hidden container mx-auto mt-2 px-3 sm:px-4">
           <div className="glass rounded-2xl p-3 sm:p-4 max-h-[calc(100vh-6rem)] overflow-y-auto">
+            {isAdmin && (
+              <Link
+                to="/admin"
+                onClick={() => setOpen(false)}
+                className="mb-3 flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground px-4 py-3 text-sm font-semibold shadow-glow"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                Admin Panel
+              </Link>
+            )}
             <Link to="/" onClick={() => setOpen(false)} className="block px-4 py-2.5 text-sm rounded-lg hover:bg-primary/10">
               Home
             </Link>
