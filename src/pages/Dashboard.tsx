@@ -323,6 +323,10 @@ const Dashboard = () => {
             />
           )}
 
+          {active === "invoices" && (
+            <ClientInvoicesSection userId={user.id} />
+          )}
+
           {active === "wallet" && (
             <div className="space-y-5">
               <div className="glass rounded-2xl p-6">
