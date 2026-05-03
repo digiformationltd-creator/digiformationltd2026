@@ -632,4 +632,67 @@ const Field = ({ label, value, onChange, type = "text" }: { label: string; value
   </div>
 );
 
+const NewOrderForm = ({ onCreate }: { onCreate: (code: string, desc: string, amount: number, vatRate: number, autoInvoice: boolean) => Promise<void> }) => {
+  const [code, setCode] = useState("O");
+  const [desc, setDesc] = useState("");
+  const [amount, setAmount] = useState("");
+  const [vatRate, setVatRate] = useState("0");
+  const [autoInvoice, setAutoInvoice] = useState(true);
+  const [busy, setBusy] = useState(false);
+
+  const submit = async () => {
+    setBusy(true);
+    await onCreate(
+      code,
+      desc || SERVICE_CODES[code] || "Service",
+      parseFloat(amount) || 0,
+      parseFloat(vatRate) || 0,
+      autoInvoice,
+    );
+    setBusy(false);
+    setDesc(""); setAmount(""); setVatRate("0");
+  };
+
+  return (
+    <div className="border border-border/40 rounded-xl p-4 space-y-3 bg-muted/20">
+      <div className="font-semibold text-sm flex items-center gap-2"><Plus className="w-4 h-4" />New Order {autoInvoice && <Badge variant="secondary" className="text-xs">+ auto invoice</Badge>}</div>
+      <div className="grid md:grid-cols-4 gap-3">
+        <div>
+          <Label>Service</Label>
+          <Select value={code} onValueChange={(v) => { setCode(v); if (!desc) setDesc(SERVICE_CODES[v] || ""); }}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {Object.entries(SERVICE_CODES).map(([c, l]) => (
+                <SelectItem key={c} value={c}>{c} — {l}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="md:col-span-2">
+          <Label>Description</Label>
+          <Input value={desc} onChange={(e) => setDesc(e.target.value)} placeholder={SERVICE_CODES[code]} />
+        </div>
+        <div>
+          <Label>Amount (£)</Label>
+          <Input type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" />
+        </div>
+        <div>
+          <Label>VAT Rate (%)</Label>
+          <Input type="number" step="0.01" value={vatRate} onChange={(e) => setVatRate(e.target.value)} placeholder="0" />
+        </div>
+        <div className="flex items-center gap-2 md:col-span-2">
+          <input id="auto-inv" type="checkbox" checked={autoInvoice} onChange={(e) => setAutoInvoice(e.target.checked)} className="w-4 h-4" />
+          <Label htmlFor="auto-inv" className="cursor-pointer">Auto-generate invoice</Label>
+        </div>
+        <div className="md:col-span-1 flex items-end">
+          <Button onClick={submit} disabled={busy} size="sm" className="w-full">
+            {busy ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
+            Create
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default Admin;
