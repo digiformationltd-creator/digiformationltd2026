@@ -27,6 +27,8 @@ const socials = [
 
 const DigiFooter = () => {
   const year = new Date().getFullYear();
+  const { pathname } = useLocation();
+  const hideCtas = pathname.startsWith("/admin") || pathname.startsWith("/dashboard");
 
   const localBusinessSchema = {
     "@context": "https://schema.org",
