@@ -627,9 +627,7 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
                   e.target.value = "";
                 }}
               />
-              <Button size="sm" onClick={() => document.getElementById("admin-doc-upload")?.click()}>
-                <Plus className="w-4 h-4 mr-2" />Upload Document
-              </Button>
+              <Button size="sm" onClick={() => document.getElementById("admin-doc-upload")?.click()}>Upload Document</Button>
               <p className="text-xs text-muted-foreground">PDF, images, or any file. Stored privately — only this client can download.</p>
             </div>
             {docs.map(d => (
@@ -685,7 +683,7 @@ const NewOrderForm = ({ onCreate }: { onCreate: (code: string, desc: string, amo
 
   return (
     <div className="border border-border/40 rounded-xl p-4 space-y-3 bg-muted/20">
-      <div className="font-semibold text-sm flex items-center gap-2"><Plus className="w-4 h-4" />New Order {autoInvoice && <Badge variant="secondary" className="text-xs">+ auto invoice</Badge>}</div>
+      <div className="font-semibold text-sm flex items-center gap-2">New Order {autoInvoice && <Badge variant="secondary" className="text-xs">auto invoice</Badge>}</div>
       <div className="grid md:grid-cols-4 gap-3">
         <div>
           <Label>Service</Label>
@@ -716,7 +714,7 @@ const NewOrderForm = ({ onCreate }: { onCreate: (code: string, desc: string, amo
         </div>
         <div className="md:col-span-1 flex items-end">
           <Button onClick={submit} disabled={busy} size="sm" className="w-full">
-            {busy ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
+            {busy && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             Create
           </Button>
         </div>
