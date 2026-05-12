@@ -754,8 +754,8 @@ const CompanyFormSection = ({
         <div className="border border-dashed border-border rounded-xl p-8 text-center space-y-3">
           <p className="text-sm text-muted-foreground">No company on file for this client yet.</p>
           <Button onClick={addBlankCompany} disabled={creating} size="sm">
-            {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
-            Add Company
+            {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+            Create Company Details
           </Button>
         </div>
       )}
