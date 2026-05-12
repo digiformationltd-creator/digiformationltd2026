@@ -72,7 +72,7 @@ const DigiFooter = () => {
       />
 
       {/* Top CTA strip */}
-      {!hideCtas && (
+      {!hideCtas && (<>
       <div className="border-b border-border/60">
         <div className="container mx-auto px-4 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
