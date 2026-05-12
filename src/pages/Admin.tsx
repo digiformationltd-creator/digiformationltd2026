@@ -127,7 +127,11 @@ const Admin = () => {
                     <td className="p-3 hidden md:table-cell">{c.company_name || "—"}</td>
                     <td className="p-3 hidden lg:table-cell text-muted-foreground">{new Date(c.created_at).toLocaleDateString()}</td>
                     <td className="p-3 text-right">
-                      <Button size="sm" onClick={() => setSelected(c.user_id)}>Manage</Button>
+                      <div className="flex gap-1.5 justify-end flex-wrap">
+                        <Button size="sm" variant="outline" onClick={() => { setInitialTab("company"); setSelected(c.user_id); }}>Company</Button>
+                        <Button size="sm" variant="outline" onClick={() => { setInitialTab("addresses"); setSelected(c.user_id); }}>Address</Button>
+                        <Button size="sm" onClick={() => { setInitialTab("profile"); setSelected(c.user_id); }}>Manage</Button>
+                      </div>
                     </td>
                   </tr>
                 ))}
