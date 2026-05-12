@@ -170,9 +170,9 @@ const UkLtdCheckout = () => {
               </Button>
             </div>
           ) : (
-            <div className="grid lg:grid-cols-[1fr_380px] gap-8">
-              {/* Form */}
-              <form onSubmit={handleSubmit} className="glass rounded-3xl p-6 md:p-8 space-y-5">
+            <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[1fr_380px]">
+              {/* Form fields */}
+              <form id="uk-ltd-checkout-form" onSubmit={handleSubmit} className="glass rounded-3xl p-6 md:p-8 space-y-5 lg:row-start-1 lg:col-start-1">
                 <h2 className="text-2xl font-bold">Your details</h2>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Field label="Full name" value={form.full_name} onChange={(v) => setForm({ ...form, full_name: v })} required minLength={2} />
@@ -192,16 +192,10 @@ const UkLtdCheckout = () => {
                     placeholder="Tell us your proposed company name, alternatives, and business activity..."
                   />
                 </div>
-                <Button type="submit" variant="hero" size="lg" disabled={submitting} className="rounded-full w-full">
-                  {submitting ? (<><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</>) : (<>Submit order <ArrowRight className="w-4 h-4" /></>)}
-                </Button>
-                <p className="text-xs opacity-70 text-center">
-                  After submission our team will reach out via email/WhatsApp with secure payment instructions.
-                </p>
               </form>
 
               {/* Summary */}
-              <aside className="glass rounded-3xl p-6 md:p-8 h-fit lg:sticky lg:top-24">
+              <aside className="glass rounded-3xl p-6 md:p-8 lg:row-start-1 lg:row-span-2 lg:col-start-2 lg:h-fit lg:sticky lg:top-24">
                 <h3 className="text-sm uppercase tracking-[0.16em] opacity-70 mb-4">Order Summary</h3>
 
                 <div className="flex items-center gap-2 mb-4 px-3 py-2 rounded-xl bg-primary/10 text-primary">
@@ -239,6 +233,16 @@ const UkLtdCheckout = () => {
                   </div>
                 </div>
               </aside>
+
+              {/* Submit (always after summary on mobile) */}
+              <div className="lg:row-start-2 lg:col-start-1 space-y-3">
+                <Button type="submit" form="uk-ltd-checkout-form" variant="hero" size="lg" disabled={submitting} className="rounded-full w-full">
+                  {submitting ? (<><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</>) : (<>Submit order <ArrowRight className="w-4 h-4" /></>)}
+                </Button>
+                <p className="text-xs opacity-70 text-center">
+                  After submission our team will reach out via email/WhatsApp with secure payment instructions.
+                </p>
+              </div>
             </div>
           )}
         </div>
