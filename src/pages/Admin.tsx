@@ -369,8 +369,8 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
 
   const tabs = [
     { id: "profile", label: "Profile" },
-    { id: "company", label: `Companies (${companies.length})` },
-    { id: "addresses", label: `Addresses (${addresses.length})` },
+    { id: "company", label: `Company (${companies.length})` },
+    { id: "addresses", label: `Address (${addresses.length})` },
     { id: "orders", label: `Orders (${orders.length})` },
     { id: "invoices", label: `Invoices (${invoices.length})` },
     { id: "subs", label: `Subs (${subs.length})` },
