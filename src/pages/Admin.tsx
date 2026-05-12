@@ -740,25 +740,24 @@ const CompanyFormSection = ({
 }) => {
   const [creating, setCreating] = useState(false);
 
-  // Auto-create a blank company form if none exists, so admin sees a fillable form immediately.
-  useEffect(() => {
-    (async () => {
-      if (companies.length === 0 && !creating) {
-        setCreating(true);
-        const { error } = await supabase.from("client_company_details").insert({ user_id: userId, company_name: "" });
-        if (!error) await reload();
-        setCreating(false);
-      }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [companies.length, userId]);
+  const addBlankCompany = async () => {
+    setCreating(true);
+    const { error } = await supabase.from("client_company_details").insert({ user_id: userId, company_name: "" });
+    setCreating(false);
+    if (error) { toast.error(error.message); return; }
+    await reload();
+  };
 
   return (
     <div className="space-y-6">
       {companies.length === 0 && (
-        <p className="text-sm text-muted-foreground flex items-center gap-2">
-          <Loader2 className="w-4 h-4 animate-spin" /> Preparing company form…
-        </p>
+        <div className="border border-dashed border-border rounded-xl p-8 text-center space-y-3">
+          <p className="text-sm text-muted-foreground">No company on file for this client yet.</p>
+          <Button onClick={addBlankCompany} disabled={creating} size="sm">
+            {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
+            Add Company
+          </Button>
+        </div>
       )}
       {companies.map((c, idx) => (
         <div key={c.id} className="border border-border/40 rounded-xl p-4 space-y-4">
@@ -809,19 +808,15 @@ const AddressFormSection = ({
 }) => {
   const [creating, setCreating] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      if (addresses.length === 0 && !creating) {
-        setCreating(true);
-        const { error } = await supabase.from("client_addresses").insert({
-          user_id: userId, label: "", service_type: "registered_office", country: "United Kingdom", status: "active",
-        });
-        if (!error) await reload();
-        setCreating(false);
-      }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addresses.length, userId]);
+  const addBlankAddress = async () => {
+    setCreating(true);
+    const { error } = await supabase.from("client_addresses").insert({
+      user_id: userId, label: "", service_type: "registered_office", country: "United Kingdom", status: "active",
+    });
+    setCreating(false);
+    if (error) { toast.error(error.message); return; }
+    await reload();
+  };
 
   return (
     <div className="space-y-6">
@@ -829,9 +824,13 @@ const AddressFormSection = ({
         <Button onClick={addAddress} size="sm" variant="outline"><Plus className="w-4 h-4 mr-2" />Add Another Address</Button>
       </div>
       {addresses.length === 0 && (
-        <p className="text-sm text-muted-foreground flex items-center gap-2">
-          <Loader2 className="w-4 h-4 animate-spin" /> Preparing address form…
-        </p>
+        <div className="border border-dashed border-border rounded-xl p-8 text-center space-y-3">
+          <p className="text-sm text-muted-foreground">No addresses on file for this client yet.</p>
+          <Button onClick={addBlankAddress} disabled={creating} size="sm">
+            {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
+            Add Address
+          </Button>
+        </div>
       )}
       {addresses.map((a, idx) => (
         <div key={a.id} className="border border-border/40 rounded-xl p-4 space-y-4">
