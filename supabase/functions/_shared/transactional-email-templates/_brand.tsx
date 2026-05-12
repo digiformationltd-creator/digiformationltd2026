@@ -27,7 +27,7 @@ export const BrandEmail = ({ preview, greeting, heading, children }: ShellProps)
     <Body style={main}>
       <Container style={container}>
         <Section style={logoBar}>
-          <Img src={LOGO_URL} alt={SITE_NAME} width="160" height="auto" style={logoImg} />
+          <Img src={LOGO_URL} alt={SITE_NAME} width="170" style={logoImg} />
         </Section>
         <Section style={accentBar} />
         <Section style={contentWrap}>
@@ -63,13 +63,27 @@ export const SectionTitle = ({ children }: { children: React.ReactNode }) => (
 export const styles = {
   text: { fontSize: '14px', color: '#3f3f46', lineHeight: '1.6', margin: '0 0 16px' },
   link: { color: INK, textDecoration: 'underline' },
-  button: { backgroundColor: INK, color: '#ffffff', padding: '12px 24px', borderRadius: '6px', fontSize: '14px', fontWeight: 'bold' as const, textDecoration: 'none', display: 'inline-block', letterSpacing: '0.04em' },
-  card: { background: GREY_PANEL, borderRadius: '8px', padding: '16px 20px', margin: '8px 0 20px', borderLeft: `3px solid ${INK}` },
+  button: { backgroundColor: INK, color: '#ffffff', padding: '12px 26px', borderRadius: '4px', fontSize: '13px', fontWeight: 'bold' as const, textDecoration: 'none', display: 'inline-block', letterSpacing: '0.08em', textTransform: 'uppercase' as const },
+  card: { background: GREY_PANEL, borderRadius: '6px', padding: '16px 20px', margin: '8px 0 20px', borderLeft: `3px solid ${INK}` },
   cardLine: { fontSize: '14px', color: '#18181b', margin: '6px 0' },
   muted: { fontSize: '12px', color: MUTED, margin: '12px 0 0' },
   label: { fontSize: '11px', color: MUTED, textTransform: 'uppercase' as const, letterSpacing: '0.12em', margin: '20px 0 6px', fontWeight: 'bold' as const },
 }
 
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif', margin: 0, padding: '24px 0' }
+const main = { backgroundColor: '#f4f4f5', fontFamily: 'Arial, Helvetica, sans-serif', margin: 0, padding: '24px 0' }
 const container = { padding: '0', maxWidth: '600px', backgroundColor: '#ffffff', border: `1px solid ${GREY_LIGHT}` }
-const logoBar = { padding: '24px 32
+const logoBar = { padding: '28px 32px 16px', backgroundColor: '#ffffff', textAlign: 'left' as const }
+const logoImg = { display: 'block', height: 'auto' }
+const accentBar = { height: '3px', backgroundColor: INK, lineHeight: '3px', fontSize: 0 }
+const contentWrap = { padding: '24px 32px 8px' }
+const greetingStyle = { fontSize: '15px', color: INK, margin: '0 0 14px' }
+const h1 = { fontSize: '20px', fontWeight: 'bold' as const, color: INK, margin: '0 0 18px', lineHeight: '1.35' }
+const sectionTitle = { fontSize: '13px', fontWeight: 'bold' as const, color: INK, textTransform: 'uppercase' as const, letterSpacing: '0.1em', margin: '16px 0 8px' }
+const text = { fontSize: '14px', color: '#3f3f46', lineHeight: '1.6', margin: '0 0 16px' }
+const card = { background: GREY_PANEL, borderRadius: '6px', padding: '16px 20px', margin: '8px 0 20px', borderLeft: `3px solid ${INK}` }
+const cardLine = { fontSize: '14px', color: '#18181b', margin: '6px 0' }
+const hr = { borderColor: GREY_LIGHT, margin: '24px 0' }
+const footer = { fontSize: '13px', color: '#3f3f46', lineHeight: '1.6', margin: '8px 0 24px' }
+const linkStyle = { color: INK, textDecoration: 'underline' }
+const footerBand = { backgroundColor: GREY_PANEL, padding: '14px 32px', borderTop: `1px solid ${GREY_LIGHT}` }
+const footerBandText = { fontSize: '11px', fontWeight: 'bold' as const, color: INK, letterSpacing: '0.18em', textAlign: 'center' as const, margin: 0 }
