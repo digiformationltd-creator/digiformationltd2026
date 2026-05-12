@@ -26,7 +26,7 @@ interface Body {
 }
 
 const SITE_NAME = 'Digiformation Ltd'
-const SITE_ADDRESS = 'United Kingdom'
+const SITE_ADDRESS = ''
 const SITE_PHONE = '+44 7438 351454'
 const SITE_EMAIL = 'info@digiformation.uk'
 const SITE_WEB = 'www.digiformation.uk'
