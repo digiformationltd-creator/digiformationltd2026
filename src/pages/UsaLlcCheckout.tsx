@@ -69,7 +69,7 @@ const UsaLlcCheckout = () => {
     e.preventDefault();
     if (!pricing) return;
     setSubmitting(true);
-    const orderRef = `USLLC-${Date.now().toString(36).toUpperCase()}`;
+    const orderRef = buildOrderRef({ service: "LLC Formation", packageName, currency: "USD" });
     const summary =
       `[U.S. LLC Order]\n` +
       `Ref: ${orderRef}\n` +
@@ -112,6 +112,7 @@ const UsaLlcCheckout = () => {
             currency: "USD",
             customer: { full_name: form.full_name, email: form.email, address: form.country },
             notes: form.message,
+            orderRef,
           },
         });
         if (invErr) throw invErr;
