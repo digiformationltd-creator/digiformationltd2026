@@ -816,8 +816,73 @@ const ClientOrdersSection = ({ rows, onBrowse }: { rows: any[]; onBrowse: () => 
 
 const ClientSubscriptionsSection = ({ rows, onBrowse }: { rows: any[]; onBrowse: () => void }) => {
   const fmt = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n || 0);
+  const fmtDate = (d: string | null) => d ? new Date(d).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—";
   if (rows.length === 0) return <EmptyState icon={CalendarDays} title="No active subscriptions" description="Recurring services like address renewals will appear here automatically." action={<Button variant="hero" className="rounded-full" onClick={onBrowse}><Plus className="w-4 h-4" /> Browse Services</Button>} />;
-  return <div className="space-y-3"><p className="text-sm opacity-70">Your recurring services and renewal dates.</p>{rows.map((s) => <div key={s.id} className="glass rounded-xl p-4 flex items-center justify-between gap-3 flex-wrap"><div><div className="font-semibold">{s.plan_name}</div><div className="text-xs opacity-60">{fmt(Number(s.price_gbp))} / {s.period} • Renewal: {s.renewal_date || s.next_billing || "—"}</div></div><StatusBadge status={s.status} /></div>)}</div>;
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div>
+          <h3 className="text-lg font-semibold">My Subscriptions</h3>
+          <p className="text-sm opacity-70">Manage recurring services, view renewal dates and take action on each subscription.</p>
+        </div>
+        <Button variant="hero" size="sm" className="rounded-full" onClick={onBrowse}><Plus className="w-4 h-4" /> Browse Services</Button>
+      </div>
+
+      {/* Desktop table */}
+      <div className="glass rounded-2xl overflow-hidden hidden md:block">
+        <table className="w-full text-sm">
+          <thead className="bg-primary/5 text-left text-xs uppercase tracking-wider opacity-80">
+            <tr>
+              <th className="px-5 py-3 font-semibold">Subscription</th>
+              <th className="px-5 py-3 font-semibold">Status</th>
+              <th className="px-5 py-3 font-semibold">Start Date</th>
+              <th className="px-5 py-3 font-semibold">Next Payment</th>
+              <th className="px-5 py-3 font-semibold">Total</th>
+              <th className="px-5 py-3 font-semibold text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border/40">
+            {rows.map((s) => (
+              <tr key={s.id} className="hover:bg-primary/5 transition-colors">
+                <td className="px-5 py-4">
+                  <div className="font-mono text-xs text-primary">#{String(s.id).slice(0, 8).toUpperCase()}</div>
+                  <div className="font-semibold">{s.plan_name}</div>
+                </td>
+                <td className="px-5 py-4"><StatusBadge status={s.status} /></td>
+                <td className="px-5 py-4 whitespace-nowrap">{fmtDate(s.start_date)}</td>
+                <td className="px-5 py-4 whitespace-nowrap">{fmtDate(s.next_billing || s.renewal_date)}</td>
+                <td className="px-5 py-4 whitespace-nowrap font-semibold">{fmt(Number(s.price_gbp))} <span className="opacity-60 font-normal text-xs">/ {s.period}</span></td>
+                <td className="px-5 py-4 text-right">
+                  <Button size="sm" variant="outline" className="rounded-full">View</Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile cards */}
+      <div className="space-y-3 md:hidden">
+        {rows.map((s) => (
+          <div key={s.id} className="glass rounded-xl p-4 space-y-3">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="font-mono text-[10px] text-primary">#{String(s.id).slice(0, 8).toUpperCase()}</div>
+                <div className="font-semibold">{s.plan_name}</div>
+              </div>
+              <StatusBadge status={s.status} />
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div><div className="opacity-60">Start</div><div className="font-medium">{fmtDate(s.start_date)}</div></div>
+              <div><div className="opacity-60">Next Payment</div><div className="font-medium">{fmtDate(s.next_billing || s.renewal_date)}</div></div>
+              <div className="col-span-2"><div className="opacity-60">Total</div><div className="font-semibold">{fmt(Number(s.price_gbp))} <span className="opacity-60 font-normal">/ {s.period}</span></div></div>
+            </div>
+            <Button size="sm" variant="outline" className="rounded-full w-full">View</Button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 const ClientWalletSection = ({ rows, balance }: { rows: any[]; balance: number }) => {
