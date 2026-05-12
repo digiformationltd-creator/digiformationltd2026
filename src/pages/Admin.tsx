@@ -191,10 +191,6 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
     if (error) toast.error(error.message); else toast.success("Profile updated");
   };
 
-  const addCompany = async () => {
-    const { error } = await supabase.from("client_company_details").insert({ user_id: userId, company_name: "New Company" });
-    if (error) toast.error(error.message); else { toast.success("Company added"); reload(); }
-  };
   const updateCompanyField = (id: string, patch: any) => {
     setCompanies(prev => prev.map(c => c.id === id ? { ...c, ...patch } : c));
   };
@@ -210,10 +206,6 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
     if (error) toast.error(error.message); else toast.success("Company saved");
   };
 
-  const addAddress = async () => {
-    const { error } = await supabase.from("client_addresses").insert({ user_id: userId, label: "New Address", service_type: "registered_office" });
-    if (error) toast.error(error.message); else { toast.success("Address added"); reload(); }
-  };
   const updateAddressField = (id: string, patch: any) => {
     setAddresses(prev => prev.map(a => a.id === id ? { ...a, ...patch } : a));
   };
@@ -422,7 +414,6 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
             updateAddressField={updateAddressField}
             saveAddress={saveAddress}
             deleteRow={deleteRow}
-            addAddress={addAddress}
             reload={reload}
           />
         )}
@@ -734,25 +725,11 @@ const CompanyFormSection = ({
   deleteRow: (table: any, id: string) => void;
   reload: () => Promise<void>;
 }) => {
-  const [creating, setCreating] = useState(false);
-
-  const addBlankCompany = async () => {
-    setCreating(true);
-    const { error } = await supabase.from("client_company_details").insert({ user_id: userId, company_name: "" });
-    setCreating(false);
-    if (error) { toast.error(error.message); return; }
-    await reload();
-  };
-
   return (
     <div className="space-y-6">
       {companies.length === 0 && (
         <div className="border border-dashed border-border rounded-xl p-8 text-center space-y-3">
           <p className="text-sm text-muted-foreground">No company on file for this client yet.</p>
-          <Button onClick={addBlankCompany} disabled={creating} size="sm">
-            {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-            Create Company Details
-          </Button>
         </div>
       )}
       {companies.map((c, idx) => (
@@ -791,7 +768,7 @@ const CompanyFormSection = ({
 };
 
 const AddressFormSection = ({
-  userId, addresses, saving, updateAddressField, saveAddress, deleteRow, addAddress, reload,
+  userId, addresses, saving, updateAddressField, saveAddress, deleteRow, reload,
 }: {
   userId: string;
   addresses: any[];
@@ -799,30 +776,13 @@ const AddressFormSection = ({
   updateAddressField: (id: string, patch: any) => void;
   saveAddress: (a: any) => void;
   deleteRow: (table: any, id: string) => void;
-  addAddress: () => Promise<void> | void;
   reload: () => Promise<void>;
 }) => {
-  const [creating, setCreating] = useState(false);
-
-  const addBlankAddress = async () => {
-    setCreating(true);
-    const { error } = await supabase.from("client_addresses").insert({
-      user_id: userId, label: "", service_type: "registered_office", country: "United Kingdom", status: "active",
-    });
-    setCreating(false);
-    if (error) { toast.error(error.message); return; }
-    await reload();
-  };
-
   return (
     <div className="space-y-6">
       {addresses.length === 0 && (
         <div className="border border-dashed border-border rounded-xl p-8 text-center space-y-3">
           <p className="text-sm text-muted-foreground">No address on file for this client yet.</p>
-          <Button onClick={addBlankAddress} disabled={creating} size="sm">
-            {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-            Create Address
-          </Button>
         </div>
       )}
       {addresses.map((a, idx) => (
