@@ -643,9 +643,7 @@ const Row = ({ label, value, multiline = false }: { label: string; value?: strin
     <span className={multiline ? "opacity-90 whitespace-pre-line" : "opacity-90"}>{value?.trim() || "—"}</span>
   </div>
 );
-    </div>
-  );
-};
+
 
 const MyAddressesSection = ({ userId, editable = false }: { userId: string; editable?: boolean }) => {
   const [rows, setRows] = useState<AddressRow[] | null>(null);
