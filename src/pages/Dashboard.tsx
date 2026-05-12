@@ -703,9 +703,6 @@ const MyAddressesSection = ({ userId, editable = false }: { userId: string; edit
     <div className="space-y-5">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <p className="text-sm opacity-70">{editable ? "Manage registered office, business service, and director address records." : "Standalone address services you have purchased from DigiFormation Ltd."}</p>
-        {editable && <Button variant="hero" size="sm" className="rounded-full" onClick={addAddress} disabled={adding}>
-          {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Add Address
-        </Button>}
       </div>
       {rows.length === 0 && <EmptyState icon={MapPin} title="No addresses on file" description="Add an address record here when a standalone address service is active." />}
       <div className="grid sm:grid-cols-2 gap-5">
