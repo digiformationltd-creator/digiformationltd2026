@@ -800,9 +800,6 @@ const AddressCard = ({
     </div>
   );
 };
-    </div>
-  );
-};
 
 const AddressField = ({ label, value, onChange, type = "text" }: { label: string; value: any; onChange: (v: string) => void; type?: string }) => (
   <div>
