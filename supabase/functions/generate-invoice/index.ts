@@ -3,7 +3,7 @@
 // invoices, and return a short-lived signed URL the email can link to.
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { jsPDF } from 'npm:jspdf@2.5.2'
-import { LOGO_JPG_BASE64 } from './logo.ts'
+import { LOGO_PNG_BASE64 } from './logo.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -84,10 +84,10 @@ function buildPdf(opts: {
   // ------- Header: logo (left) + INVOICE (right) -------
   let y = M + 60
   try {
-    // Logo width 120pt, height auto (~120pt for square logo)
+    // Logo width 130pt, height auto (square transparent PNG)
     doc.addImage(
-      `data:image/jpeg;base64,${LOGO_JPG_BASE64}`,
-      'JPEG', M, M + 16, 120, 120, undefined, 'FAST',
+      `data:image/png;base64,${LOGO_PNG_BASE64}`,
+      'PNG', M, M + 8, 130, 130, undefined, 'FAST',
     )
   } catch (_) {
     doc.setFont('helvetica', 'bold').setFontSize(18).setTextColor(...INK)
