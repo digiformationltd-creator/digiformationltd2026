@@ -5,6 +5,7 @@ import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { buildOrderRef } from "@/lib/orderRef";
 
 const JURISDICTIONS: Record<string, string> = {
   EW: "England & Wales",
