@@ -768,7 +768,7 @@ const CompanyFormSection = ({
 };
 
 const AddressFormSection = ({
-  userId, addresses, saving, updateAddressField, saveAddress, deleteRow, addAddress, reload,
+  userId, addresses, saving, updateAddressField, saveAddress, deleteRow, reload,
 }: {
   userId: string;
   addresses: any[];
@@ -776,30 +776,13 @@ const AddressFormSection = ({
   updateAddressField: (id: string, patch: any) => void;
   saveAddress: (a: any) => void;
   deleteRow: (table: any, id: string) => void;
-  addAddress: () => Promise<void> | void;
   reload: () => Promise<void>;
 }) => {
-  const [creating, setCreating] = useState(false);
-
-  const addBlankAddress = async () => {
-    setCreating(true);
-    const { error } = await supabase.from("client_addresses").insert({
-      user_id: userId, label: "", service_type: "registered_office", country: "United Kingdom", status: "active",
-    });
-    setCreating(false);
-    if (error) { toast.error(error.message); return; }
-    await reload();
-  };
-
   return (
     <div className="space-y-6">
       {addresses.length === 0 && (
         <div className="border border-dashed border-border rounded-xl p-8 text-center space-y-3">
           <p className="text-sm text-muted-foreground">No address on file for this client yet.</p>
-          <Button onClick={addBlankAddress} disabled={creating} size="sm">
-            {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-            Create Address
-          </Button>
         </div>
       )}
       {addresses.map((a, idx) => (
