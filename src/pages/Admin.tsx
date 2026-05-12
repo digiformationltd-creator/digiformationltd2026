@@ -29,6 +29,7 @@ const Admin = () => {
   const [clients, setClients] = useState<ClientRow[]>([]);
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
+  const [initialTab, setInitialTab] = useState<"profile" | "company" | "addresses">("profile");
   const [loadingClients, setLoadingClients] = useState(false);
 
   useSeo({ title: "Admin Panel | Digiformation", description: "Internal admin panel", noindex: true });
