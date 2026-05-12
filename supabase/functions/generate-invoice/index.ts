@@ -26,7 +26,7 @@ interface Body {
 }
 
 const SITE_NAME = 'Digiformation Ltd'
-const SITE_ADDRESS = 'United Kingdom'
+const SITE_ADDRESS = ''
 const SITE_PHONE = '+44 7438 351454'
 const SITE_EMAIL = 'info@digiformation.uk'
 const SITE_WEB = 'www.digiformation.uk'
@@ -223,23 +223,32 @@ function buildPdf(opts: {
   doc.text(SITE_NAME, M, y)
   y += 22
 
-  // ------- Bottom band: Payment Method | Contact & Address -------
-  const bandY = H - 130
+  // ------- Bottom band: Payment Method | Contact -------
+  const bandY = H - 180
   doc.setFillColor(...GREY_LIGHT)
   doc.rect(M, bandY, W - M * 2, 28, 'F')
   doc.setFont('helvetica', 'bold').setFontSize(10).setTextColor(...INK)
   doc.text('PAYMENT METHOD:', M + 14, bandY + 18)
-  doc.text('CONTACT & ADDRESS:', W - M - 14, bandY + 18, { align: 'right' })
+  doc.text('CONTACT:', W - M - 14, bandY + 18, { align: 'right' })
 
-  const infoY = bandY + 46
+  const infoY = bandY + 44
+  doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...INK)
+  doc.text('UBL (United Bank Limited)', M + 14, infoY)
+  doc.setFont('helvetica', 'normal').setTextColor(60)
+  doc.text('Account Title: Muhammad Haroon', M + 14, infoY + 12)
+  doc.text('Account No: 1482314848734', M + 14, infoY + 24)
+  doc.text('IBAN: PK21UNIL0109000314848734', M + 14, infoY + 36)
+
+  doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...INK)
+  doc.text('NayaPay / SadaPay / JazzCash / EasyPaisa / HBL', M + 14, infoY + 56)
+  doc.setFont('helvetica', 'normal').setTextColor(60)
+  doc.text('Account Title: Muhammad Haroon', M + 14, infoY + 68)
+  doc.text('Number: 03034226759', M + 14, infoY + 80)
+
   doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(60)
-  doc.text('Bank transfer / Card on request.', M + 14, infoY)
-  doc.text('Contact us to receive secure payment details.', M + 14, infoY + 14)
-
   doc.text(SITE_PHONE, W - M - 14, infoY, { align: 'right' })
   doc.text(SITE_EMAIL, W - M - 14, infoY + 14, { align: 'right' })
   doc.text(SITE_WEB,   W - M - 14, infoY + 28, { align: 'right' })
-  doc.text(SITE_ADDRESS, W - M - 14, infoY + 42, { align: 'right' })
 
   // ------- Thank you footer -------
   doc.setFont('helvetica', 'bold').setFontSize(11).setTextColor(...INK)
