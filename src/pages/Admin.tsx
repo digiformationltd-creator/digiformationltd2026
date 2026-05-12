@@ -191,10 +191,6 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
     if (error) toast.error(error.message); else toast.success("Profile updated");
   };
 
-  const addCompany = async () => {
-    const { error } = await supabase.from("client_company_details").insert({ user_id: userId, company_name: "New Company" });
-    if (error) toast.error(error.message); else { toast.success("Company added"); reload(); }
-  };
   const updateCompanyField = (id: string, patch: any) => {
     setCompanies(prev => prev.map(c => c.id === id ? { ...c, ...patch } : c));
   };
@@ -210,10 +206,6 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
     if (error) toast.error(error.message); else toast.success("Company saved");
   };
 
-  const addAddress = async () => {
-    const { error } = await supabase.from("client_addresses").insert({ user_id: userId, label: "New Address", service_type: "registered_office" });
-    if (error) toast.error(error.message); else { toast.success("Address added"); reload(); }
-  };
   const updateAddressField = (id: string, patch: any) => {
     setAddresses(prev => prev.map(a => a.id === id ? { ...a, ...patch } : a));
   };
@@ -422,7 +414,6 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
             updateAddressField={updateAddressField}
             saveAddress={saveAddress}
             deleteRow={deleteRow}
-            addAddress={addAddress}
             reload={reload}
           />
         )}
