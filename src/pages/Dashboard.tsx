@@ -534,17 +534,14 @@ const MyCompaniesSection = ({ userId, companies, onChange }: { userId: string; c
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between gap-3 flex-wrap">
-        <p className="text-sm opacity-70">All companies under your account. Click <strong>+ Add Company</strong> to manage another company in the same portal.</p>
-        <Button variant="hero" size="sm" className="rounded-full" onClick={addCompany} disabled={adding}>
-          <Plus className="w-4 h-4" /> Add Company
-        </Button>
+        <p className="text-sm opacity-70">Your registered company details. Contact our team if anything needs updating.</p>
       </div>
 
       {companies.length === 0 && (
         <EmptyState
           icon={Building2}
           title="No company details on file"
-          description="Click ‘+ Add Company’ above to create the first company entry, or order a new UK formation."
+          description="Your company details will appear here once added by our team. Order a UK formation to get started."
           action={<Button asChild variant="hero" className="rounded-full"><Link to="/uk-services/uk-ltd-formation">Form a UK Company</Link></Button>}
         />
       )}
