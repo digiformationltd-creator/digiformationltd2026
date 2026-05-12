@@ -191,7 +191,7 @@ export const Contact = () => {
       return;
     }
     setSubmitting(true);
-    const orderRef = buildOrderRef({ service: form.service || "Inquiry" });
+    const orderRef = await buildOrderRef({});
 
     // Save to database (non-blocking for UX — log error but still proceed)
     const { error: dbError } = await supabase.from("contact_submissions").insert({

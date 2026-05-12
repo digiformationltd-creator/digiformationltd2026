@@ -56,7 +56,7 @@ const UkLtdCheckout = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    const orderRef = buildOrderRef({ service: "LTD Formation", packageName, currency: "GBP" });
+    const orderRef = await buildOrderRef({ packageName, currency: "GBP" });
     const summary =
       `[UK LTD Order]\n` +
       `Ref: ${orderRef}\n` +
