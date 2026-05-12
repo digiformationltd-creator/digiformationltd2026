@@ -711,36 +711,95 @@ const MyAddressesSection = ({ userId, editable = false }: { userId: string; edit
         </Button>}
       </div>
       {rows.length === 0 && <EmptyState icon={MapPin} title="No addresses on file" description="Add an address record here when a standalone address service is active." />}
-      {rows.map((a) => (
-        <div key={a.id} className="glass rounded-2xl p-6 sm:p-8 space-y-4">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2"><MapPin className="w-4 h-4 opacity-70" /><h3 className="font-semibold">{a.label || "Address"}</h3><StatusBadge status={a.status === "active" ? "Active" : "Expired"} /></div>
-            {editable && <Button variant="ghost" size="sm" onClick={() => deleteAddress(a.id)} aria-label="Delete address"><Trash2 className="w-4 h-4 text-destructive" /></Button>}
+      <div className="grid sm:grid-cols-2 gap-5">
+        {rows.map((a) => (
+          <AddressCard
+            key={a.id}
+            address={a}
+            editable={editable}
+            saving={savingId === a.id}
+            onChange={(patch) => updateField(a.id, patch)}
+            onSave={() => saveAddress(a)}
+            onDelete={() => deleteAddress(a.id)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const AddressCard = ({
+  address: a, editable, saving, onChange, onSave, onDelete,
+}: {
+  address: AddressRow; editable: boolean; saving: boolean;
+  onChange: (patch: Partial<AddressRow>) => void;
+  onSave: () => void; onDelete: () => void;
+}) => {
+  const [open, setOpen] = useState(false);
+  const fullAddress = [a.address_line1, a.address_line2, a.city, a.county, a.postcode, a.country].filter(Boolean).join(", ");
+
+  return (
+    <div className="glass rounded-2xl overflow-hidden">
+      <div className="px-6 pt-5 pb-3 border-b border-border/40 flex items-center justify-between gap-2">
+        <h3 className="font-bold text-lg uppercase tracking-wide truncate">{a.label?.trim() || "Address"}</h3>
+        <StatusBadge status={a.status === "active" ? "Active" : "Expired"} />
+      </div>
+      <div className="p-6 space-y-3 text-sm">
+        <Row label="Service Type:" value={(a.service_type || "").replace(/_/g, " ")} />
+        <Row label="Postcode:" value={a.postcode} />
+        <Row label="Address" value={fullAddress} multiline />
+        {(editable || a.start_date || a.expire_date) && (
+          <button
+            type="button"
+            onClick={() => setOpen(o => !o)}
+            className="inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 underline hover:opacity-80 mt-2"
+          >
+            {open ? "Hide Info" : "View More Info"}
+            <ChevronDown className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`} />
+          </button>
+        )}
+        {open && (
+          <div className="pt-4 mt-2 border-t border-border/40 space-y-4">
+            {editable ? (
+              <>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <AddressField label="Label" value={a.label} onChange={(v) => onChange({ label: v })} />
+                  <AddressField label="Service Type" value={a.service_type} onChange={(v) => onChange({ service_type: v })} />
+                  <AddressField label="Address Line 1" value={a.address_line1} onChange={(v) => onChange({ address_line1: v })} />
+                  <AddressField label="Address Line 2" value={a.address_line2} onChange={(v) => onChange({ address_line2: v })} />
+                  <AddressField label="City" value={a.city} onChange={(v) => onChange({ city: v })} />
+                  <AddressField label="County" value={a.county} onChange={(v) => onChange({ county: v })} />
+                  <AddressField label="Postcode" value={a.postcode} onChange={(v) => onChange({ postcode: v })} />
+                  <AddressField label="Country" value={a.country} onChange={(v) => onChange({ country: v })} />
+                  <AddressField label="Start Date" type="date" value={a.start_date} onChange={(v) => onChange({ start_date: v })} />
+                  <AddressField label="Expiry Date" type="date" value={a.expire_date} onChange={(v) => onChange({ expire_date: v })} />
+                  <AddressField label="Status" value={a.status} onChange={(v) => onChange({ status: v })} />
+                </div>
+                <div>
+                  <Label className="text-[11px] uppercase tracking-wider opacity-60">Notes</Label>
+                  <Textarea value={a.notes || ""} onChange={(e) => onChange({ notes: e.target.value })} className="mt-1.5" rows={3} />
+                </div>
+                <div className="flex justify-between items-center">
+                  <Button variant="ghost" size="sm" onClick={onDelete} className="text-destructive">
+                    <Trash2 className="w-4 h-4 mr-1" /> Delete
+                  </Button>
+                  <Button variant="hero" size="sm" className="rounded-full" onClick={onSave} disabled={saving}>
+                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Save className="w-4 h-4" /> Save</>}
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div><Label className="text-[11px] uppercase tracking-wider opacity-60">Start Date</Label><div className="mt-1">{a.start_date || "—"}</div></div>
+                <div><Label className="text-[11px] uppercase tracking-wider opacity-60">Expiry Date</Label><div className="mt-1">{a.expire_date || "—"}</div></div>
+              </div>
+            )}
           </div>
-          {editable ? <div className="grid sm:grid-cols-2 gap-4">
-            <AddressField label="Label" value={a.label} onChange={(v) => updateField(a.id, { label: v })} />
-            <AddressField label="Service Type" value={a.service_type} onChange={(v) => updateField(a.id, { service_type: v })} />
-            <AddressField label="Address Line 1" value={a.address_line1} onChange={(v) => updateField(a.id, { address_line1: v })} />
-            <AddressField label="Address Line 2" value={a.address_line2} onChange={(v) => updateField(a.id, { address_line2: v })} />
-            <AddressField label="City" value={a.city} onChange={(v) => updateField(a.id, { city: v })} />
-            <AddressField label="County" value={a.county} onChange={(v) => updateField(a.id, { county: v })} />
-            <AddressField label="Postcode" value={a.postcode} onChange={(v) => updateField(a.id, { postcode: v })} />
-            <AddressField label="Country" value={a.country} onChange={(v) => updateField(a.id, { country: v })} />
-            <AddressField label="Start Date" type="date" value={a.start_date} onChange={(v) => updateField(a.id, { start_date: v })} />
-            <AddressField label="Expiry Date" type="date" value={a.expire_date} onChange={(v) => updateField(a.id, { expire_date: v })} />
-            <AddressField label="Status" value={a.status} onChange={(v) => updateField(a.id, { status: v })} />
-          </div> : <p className="text-sm opacity-80">{[a.address_line1, a.address_line2, a.city, a.county, a.postcode, a.country].filter(Boolean).join(", ") || "—"}</p>}
-          {editable && <div>
-            <Label className="text-[11px] uppercase tracking-wider opacity-60">Notes</Label>
-            <Textarea value={a.notes || ""} onChange={(e) => updateField(a.id, { notes: e.target.value })} className="mt-1.5" rows={3} />
-          </div>}
-          {editable && <div className="flex justify-end">
-            <Button variant="hero" size="sm" className="rounded-full" onClick={() => saveAddress(a)} disabled={savingId === a.id}>
-              {savingId === a.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Save className="w-4 h-4" /> Save Address</>}
-            </Button>
-          </div>}
-        </div>
-      ))}
+        )}
+      </div>
+    </div>
+  );
+};
     </div>
   );
 };
