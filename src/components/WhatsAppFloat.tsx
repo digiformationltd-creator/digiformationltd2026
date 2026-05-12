@@ -18,6 +18,7 @@ const buildMessage = (pathname: string): string => {
 
 const WhatsAppFloat = () => {
   const { pathname } = useLocation();
+  if (pathname !== "/") return null;
   const text = encodeURIComponent(buildMessage(pathname));
 
   return (
