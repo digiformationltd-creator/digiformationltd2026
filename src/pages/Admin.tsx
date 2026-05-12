@@ -147,8 +147,8 @@ const Admin = () => {
   );
 };
 
-const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }) => {
-  const [tab, setTab] = useState<"profile" | "company" | "addresses" | "orders" | "invoices" | "subs" | "wallet" | "docs">("profile");
+const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: string; initialTab?: "profile" | "company" | "addresses"; onBack: () => void }) => {
+  const [tab, setTab] = useState<"profile" | "company" | "addresses" | "orders" | "invoices" | "subs" | "wallet" | "docs">(initialTab);
   const [profile, setProfile] = useState<any>({});
   const [companies, setCompanies] = useState<any[]>([]);
   const [addresses, setAddresses] = useState<any[]>([]);
