@@ -3,7 +3,7 @@
 // invoices, and return a short-lived signed URL the email can link to.
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { jsPDF } from 'npm:jspdf@2.5.2'
-import { LOGO_PNG_BASE64 } from './logo.ts'
+import { LOGO_JPG_BASE64 } from './logo.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
