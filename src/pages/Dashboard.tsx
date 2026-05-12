@@ -549,48 +549,100 @@ const MyCompaniesSection = ({ userId, companies, onChange }: { userId: string; c
         />
       )}
 
-      {companies.map((c, idx) => (
-        <div key={c.id} className="glass rounded-2xl p-6 sm:p-8 space-y-4">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <Badge variant="outline">Company #{idx + 1}</Badge>
-              {c.company_name && <h3 className="font-semibold">{c.company_name}</h3>}
+      <div className="grid sm:grid-cols-2 gap-5">
+        {companies.map((c, idx) => (
+          <CompanyCard
+            key={c.id}
+            company={c}
+            index={idx}
+            fields={fields}
+            saving={savingId === c.id}
+            onChange={(patch) => updateField(c.id, patch)}
+            onSave={() => saveCompany(c)}
+            onDelete={() => deleteCompany(c.id)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const CompanyCard = ({
+  company: c, index: idx, fields, saving, onChange, onSave, onDelete,
+}: {
+  company: CompanyDetails; index: number;
+  fields: { key: keyof CompanyDetails; label: string; type?: string; textarea?: boolean }[];
+  saving: boolean;
+  onChange: (patch: Partial<CompanyDetails>) => void;
+  onSave: () => void; onDelete: () => void;
+}) => {
+  const [open, setOpen] = useState(false);
+  const summaryAddress = (c.company_address || c.registered_address || c.correspondence_address || "").trim();
+
+  return (
+    <div className="glass rounded-2xl overflow-hidden">
+      <div className="px-6 pt-5 pb-3 border-b border-border/40">
+        <h3 className="font-bold text-lg uppercase tracking-wide">{c.company_name?.trim() || `Company #${idx + 1}`}</h3>
+      </div>
+      <div className="p-6 space-y-3 text-sm">
+        <Row label="Company No:" value={c.company_number} />
+        <Row label="Director's Name:" value={c.director_name} />
+        <Row label="Company Address" value={summaryAddress} multiline />
+        <button
+          type="button"
+          onClick={() => setOpen(o => !o)}
+          className="inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 underline hover:opacity-80 mt-2"
+        >
+          {open ? "Hide Info" : "View More Info"}
+          <ChevronDown className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`} />
+        </button>
+        {open && (
+          <div className="pt-4 mt-2 border-t border-border/40 space-y-4">
+            <div className="grid sm:grid-cols-2 gap-3">
+              {fields.filter(f => !f.textarea).map(f => (
+                <div key={f.key as string}>
+                  <Label className="text-[11px] uppercase tracking-wider opacity-60">{f.label}</Label>
+                  <Input
+                    type={f.type || "text"}
+                    value={(c[f.key] as string) || ""}
+                    onChange={(e) => onChange({ [f.key]: e.target.value } as any)}
+                    className="mt-1.5"
+                  />
+                </div>
+              ))}
             </div>
-            <Button variant="ghost" size="sm" onClick={() => deleteCompany(c.id)} aria-label="Delete company">
-              <span className="text-destructive text-xs">Delete</span>
-            </Button>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {fields.filter(f => !f.textarea).map(f => (
+            {fields.filter(f => f.textarea).map(f => (
               <div key={f.key as string}>
                 <Label className="text-[11px] uppercase tracking-wider opacity-60">{f.label}</Label>
-                <Input
-                  type={f.type || "text"}
+                <Textarea
                   value={(c[f.key] as string) || ""}
-                  onChange={(e) => updateField(c.id, { [f.key]: e.target.value } as any)}
+                  onChange={(e) => onChange({ [f.key]: e.target.value } as any)}
                   className="mt-1.5"
+                  rows={2}
                 />
               </div>
             ))}
-          </div>
-          {fields.filter(f => f.textarea).map(f => (
-            <div key={f.key as string}>
-              <Label className="text-[11px] uppercase tracking-wider opacity-60">{f.label}</Label>
-              <Textarea
-                value={(c[f.key] as string) || ""}
-                onChange={(e) => updateField(c.id, { [f.key]: e.target.value } as any)}
-                className="mt-1.5"
-                rows={2}
-              />
+            <div className="flex justify-between items-center">
+              <Button variant="ghost" size="sm" onClick={onDelete} className="text-destructive">
+                <Trash2 className="w-4 h-4 mr-1" /> Delete
+              </Button>
+              <Button variant="hero" size="sm" className="rounded-full" onClick={onSave} disabled={saving}>
+                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Save className="w-4 h-4" /> Save</>}
+              </Button>
             </div>
-          ))}
-          <div className="flex justify-end">
-            <Button variant="hero" size="sm" className="rounded-full" onClick={() => saveCompany(c)} disabled={savingId === c.id}>
-              {savingId === c.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Save Company</>}
-            </Button>
           </div>
-        </div>
-      ))}
+        )}
+      </div>
+    </div>
+  );
+};
+
+const Row = ({ label, value, multiline = false }: { label: string; value?: string | null; multiline?: boolean }) => (
+  <div className={multiline ? "grid grid-cols-[140px_1fr] gap-3 items-start" : "grid grid-cols-[140px_1fr] gap-3 items-center"}>
+    <span className="font-semibold opacity-90">{label}</span>
+    <span className={multiline ? "opacity-90 whitespace-pre-line" : "opacity-90"}>{value?.trim() || "—"}</span>
+  </div>
+);
     </div>
   );
 };
