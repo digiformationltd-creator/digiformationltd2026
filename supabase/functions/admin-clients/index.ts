@@ -40,6 +40,55 @@ Deno.serve(async (req) => {
       return json({ error: "Admin access required" }, 403);
     }
 
+    // POST — create new client user
+    if (req.method === "POST") {
+      const body = await req.json().catch(() => ({}));
+      const email = String(body.email || "").trim().toLowerCase();
+      const password = String(body.password || "").trim();
+      const fullName = String(body.full_name || "").trim();
+      const phone = String(body.phone || "").trim();
+      const companyName = String(body.company_name || "").trim();
+
+      if (!email || !password) {
+        return json({ error: "Email and password are required" }, 400);
+      }
+      if (password.length < 6) {
+        return json({ error: "Password must be at least 6 characters" }, 400);
+      }
+
+      const { data: newUser, error: createErr } = await adminClient.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true,
+        user_metadata: { full_name: fullName || email.split("@")[0] },
+      });
+
+      if (createErr || !newUser?.user) {
+        return json({ error: createErr?.message || "Failed to create user" }, 500);
+      }
+
+      const userId = newUser.user.id;
+
+      // Insert profile
+      await adminClient.from("profiles").upsert({
+        user_id: userId,
+        full_name: fullName || email.split("@")[0],
+        email,
+        phone: phone || null,
+        company_name: companyName || null,
+        avatar_initials: (fullName || email).slice(0, 2).toUpperCase(),
+      }, { onConflict: "user_id" });
+
+      // Ensure client role
+      await adminClient.from("user_roles").upsert({
+        user_id: userId,
+        role: "client",
+      }, { onConflict: "user_id,role" });
+
+      return json({ success: true, user_id: userId, email });
+    }
+
+    // GET — list all clients (existing behavior)
     let page = 1;
     let totalPages = 1;
     const authUsers: Array<{ id: string; email?: string | null; raw_user_meta_data?: Record<string, unknown> | null; created_at?: string }> = [];
