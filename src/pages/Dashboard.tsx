@@ -630,7 +630,6 @@ const Row = ({ label, value, multiline = false }: { label: string; value?: strin
 const MyAddressesSection = ({ userId, editable = false }: { userId: string; editable?: boolean }) => {
   const [rows, setRows] = useState<AddressRow[] | null>(null);
   const [savingId, setSavingId] = useState<string | null>(null);
-  const [adding, setAdding] = useState(false);
 
   const load = async () => {
     const { data } = await supabase
@@ -647,19 +646,6 @@ const MyAddressesSection = ({ userId, editable = false }: { userId: string; edit
 
   const updateField = (id: string, patch: Partial<AddressRow>) => {
     setRows(prev => (prev || []).map(a => a.id === id ? { ...a, ...patch } : a));
-  };
-
-  const addAddress = async () => {
-    setAdding(true);
-    const { data, error } = await supabase
-      .from("client_addresses")
-      .insert({ user_id: userId, label: "New Address", service_type: "registered_office", country: "United Kingdom", status: "active" })
-      .select()
-      .single();
-    setAdding(false);
-    if (error) return toast.error(error.message);
-    setRows(prev => [data as AddressRow, ...(prev || [])]);
-    toast.success("Address form added — fill in the details and Save.");
   };
 
   const saveAddress = async (a: AddressRow) => {
