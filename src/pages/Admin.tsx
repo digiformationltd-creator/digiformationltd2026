@@ -80,7 +80,7 @@ const Admin = () => {
   if (loading) return <Layout><div className="container mx-auto py-20 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto" /></div></Layout>;
   if (!authorized) return null;
 
-  if (selected) return <Layout><ClientDetail userId={selected} onBack={() => setSelected(null)} /></Layout>;
+  if (selected) return <Layout><ClientDetail userId={selected} initialTab={initialTab} onBack={() => setSelected(null)} /></Layout>;
 
   return (
     <Layout>
