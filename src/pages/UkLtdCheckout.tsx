@@ -131,7 +131,7 @@ const UkLtdCheckout = () => {
     }).catch((err) => console.error("order-notification failed", err));
 
     setSubmitted(true);
-    toast({ title: "Order received!", description: "Our team will contact you within 24 hours." });
+    toast({ title: "Order received!", description: "Our team will contact you as soon as possible." });
   };
 
   return (
@@ -162,7 +162,7 @@ const UkLtdCheckout = () => {
               <h2 className="text-3xl font-bold mb-3">Order received</h2>
               <p className="opacity-80 mb-6">
                 Thank you! Your order for a <strong>{packageName}</strong> package in{" "}
-                <strong>{jurName}</strong> has been submitted. Our team will contact you within 24 hours to
+                <strong>{jurName}</strong> has been submitted. Our team will contact you as soon as possible to
                 complete payment and start the incorporation process.
               </p>
               <Button asChild variant="hero" className="rounded-full">
