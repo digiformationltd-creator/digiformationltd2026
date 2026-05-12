@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import {
   CalendarDays, ShoppingBag, Wallet, Building2, FileText, UserCog,
   MapPin, ShoppingCart, Ticket, LifeBuoy, LogOut, UserCircle2,
-  ChevronRight, Loader2, Inbox, Plus, Download, ArrowUpRight,
+  ChevronRight, Loader2, Inbox, Download, ArrowUpRight,
   Handshake, Link2, TrendingUp, Copy, Megaphone, GraduationCap, LayoutDashboard,
   Menu, ShieldCheck, Save, Trash2, ChevronDown,
 } from "lucide-react";
@@ -487,7 +487,7 @@ const MyCompaniesSection = ({ userId, companies, onChange }: { userId: string; c
     setAdding(false);
     if (error) { toast.error(error.message); return; }
     onChange([...companies, data as CompanyDetails]);
-    toast.success("New company form added — fill in the details and Save.");
+    toast.success("Company form added — fill in the details and Save.");
   };
 
   const updateField = (id: string, patch: Partial<CompanyDetails>) => {
@@ -674,7 +674,7 @@ const MyAddressesSection = ({ userId, editable = false }: { userId: string; edit
     setAdding(false);
     if (error) return toast.error(error.message);
     setRows(prev => [data as AddressRow, ...(prev || [])]);
-    toast.success("New address form added — fill in the details and Save.");
+    toast.success("Address form added — fill in the details and Save.");
   };
 
   const saveAddress = async (a: AddressRow) => {
