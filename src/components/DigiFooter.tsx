@@ -132,6 +132,7 @@ const DigiFooter = () => {
           </div>
         </div>
       </div>
+      )}
 
       {/* Main grid */}
       <div className="container mx-auto px-4 py-10 sm:py-14 grid gap-8 sm:gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
