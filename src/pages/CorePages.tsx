@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { buildOrderRef } from "@/lib/orderRef";
 import {
   ArrowRight,
   CheckCircle2,
@@ -190,7 +191,7 @@ export const Contact = () => {
       return;
     }
     setSubmitting(true);
-    const orderRef = `CONTACT-${Date.now().toString(36).toUpperCase()}`;
+    const orderRef = buildOrderRef({ service: form.service || "Inquiry" });
 
     // Save to database (non-blocking for UX — log error but still proceed)
     const { error: dbError } = await supabase.from("contact_submissions").insert({

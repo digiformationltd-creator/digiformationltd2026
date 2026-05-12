@@ -21,6 +21,7 @@ interface Body {
     address?: string
   }
   notes?: string
+  orderRef?: string
 }
 
 const SITE_NAME = 'Digiformation Ltd'
@@ -183,7 +184,9 @@ Deno.serve(async (req) => {
     }
 
     const admin = createClient(supabaseUrl, serviceKey)
-    const { orderRef, invoiceNumber } = genRefs()
+    const generated = genRefs()
+    const orderRef = body.orderRef && body.orderRef.trim() ? body.orderRef.trim() : generated.orderRef
+    const invoiceNumber = generated.invoiceNumber
     const issueDate = new Date().toISOString().slice(0, 10)
     const currency = body.currency ?? 'GBP'
 

@@ -5,6 +5,7 @@ import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { buildOrderRef } from "@/lib/orderRef";
 
 const JURISDICTIONS: Record<string, string> = {
   EW: "England & Wales",
@@ -55,7 +56,7 @@ const UkLtdCheckout = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    const orderRef = `UKLTD-${Date.now().toString(36).toUpperCase()}`;
+    const orderRef = buildOrderRef({ service: "LTD Formation", packageName, currency: "GBP" });
     const summary =
       `[UK LTD Order]\n` +
       `Ref: ${orderRef}\n` +
@@ -99,6 +100,7 @@ const UkLtdCheckout = () => {
             currency: "GBP",
             customer: { full_name: form.full_name, email: form.email, address: form.country },
             notes: form.message,
+            orderRef,
           },
         });
         if (invErr) throw invErr;
