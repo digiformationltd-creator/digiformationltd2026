@@ -704,7 +704,7 @@ const MyAddressesSection = ({ userId, editable = false }: { userId: string; edit
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <p className="text-sm opacity-70">{editable ? "Manage registered office, business service, and director address records." : "Standalone address services you have purchased from DigiFormation Ltd."}</p>
       </div>
-      {rows.length === 0 && <EmptyState icon={MapPin} title="No addresses on file" description="Add an address record here when a standalone address service is active." />}
+      {rows.length === 0 && <EmptyState icon={MapPin} title="No address on file" description="Address details will appear here once added by our team." />}
       <div className="grid sm:grid-cols-2 gap-5">
         {rows.map((a) => (
           <AddressCard
