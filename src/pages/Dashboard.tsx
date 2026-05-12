@@ -31,8 +31,8 @@ const menu: { id: SectionId; label: string; icon: any }[] = [
   { id: "orders", label: "My Orders", icon: ShoppingBag },
   { id: "invoices", label: "My Invoices", icon: FileText },
   { id: "wallet", label: "My Wallet", icon: Wallet },
-  { id: "company", label: "My Companies", icon: Building2 },
-  { id: "editAddress", label: "My Addresses", icon: MapPin },
+  { id: "company", label: "My Company", icon: Building2 },
+  { id: "editAddress", label: "My Address", icon: MapPin },
   { id: "documents", label: "Documents", icon: FileText },
   { id: "editAccount", label: "Edit Account", icon: UserCog },
   { id: "newServices", label: "Order New Services", icon: ShoppingCart },
@@ -534,17 +534,14 @@ const MyCompaniesSection = ({ userId, companies, onChange }: { userId: string; c
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between gap-3 flex-wrap">
-        <p className="text-sm opacity-70">All companies under your account. Click <strong>+ Add Company</strong> to manage another company in the same portal.</p>
-        <Button variant="hero" size="sm" className="rounded-full" onClick={addCompany} disabled={adding}>
-          <Plus className="w-4 h-4" /> Add Company
-        </Button>
+        <p className="text-sm opacity-70">Your registered company details. Contact our team if anything needs updating.</p>
       </div>
 
       {companies.length === 0 && (
         <EmptyState
           icon={Building2}
           title="No company details on file"
-          description="Click ‘+ Add Company’ above to create the first company entry, or order a new UK formation."
+          description="Your company details will appear here once added by our team. Order a UK formation to get started."
           action={<Button asChild variant="hero" className="rounded-full"><Link to="/uk-services/uk-ltd-formation">Form a UK Company</Link></Button>}
         />
       )}
@@ -706,9 +703,6 @@ const MyAddressesSection = ({ userId, editable = false }: { userId: string; edit
     <div className="space-y-5">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <p className="text-sm opacity-70">{editable ? "Manage registered office, business service, and director address records." : "Standalone address services you have purchased from DigiFormation Ltd."}</p>
-        {editable && <Button variant="hero" size="sm" className="rounded-full" onClick={addAddress} disabled={adding}>
-          {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Add Address
-        </Button>}
       </div>
       {rows.length === 0 && <EmptyState icon={MapPin} title="No addresses on file" description="Add an address record here when a standalone address service is active." />}
       <div className="grid sm:grid-cols-2 gap-5">

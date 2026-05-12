@@ -369,8 +369,8 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
 
   const tabs = [
     { id: "profile", label: "Profile" },
-    { id: "company", label: `Companies (${companies.length})` },
-    { id: "addresses", label: `Addresses (${addresses.length})` },
+    { id: "company", label: `Company (${companies.length})` },
+    { id: "addresses", label: `Address (${addresses.length})` },
     { id: "orders", label: `Orders (${orders.length})` },
     { id: "invoices", label: `Invoices (${invoices.length})` },
     { id: "subs", label: `Subs (${subs.length})` },
@@ -754,8 +754,8 @@ const CompanyFormSection = ({
         <div className="border border-dashed border-border rounded-xl p-8 text-center space-y-3">
           <p className="text-sm text-muted-foreground">No company on file for this client yet.</p>
           <Button onClick={addBlankCompany} disabled={creating} size="sm">
-            {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
-            Add Company
+            {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+            Create Company Details
           </Button>
         </div>
       )}
@@ -820,15 +820,12 @@ const AddressFormSection = ({
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
-        <Button onClick={addAddress} size="sm" variant="outline"><Plus className="w-4 h-4 mr-2" />Add Another Address</Button>
-      </div>
       {addresses.length === 0 && (
         <div className="border border-dashed border-border rounded-xl p-8 text-center space-y-3">
           <p className="text-sm text-muted-foreground">No addresses on file for this client yet.</p>
           <Button onClick={addBlankAddress} disabled={creating} size="sm">
-            {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
-            Add Address
+            {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+            Create Address
           </Button>
         </div>
       )}
