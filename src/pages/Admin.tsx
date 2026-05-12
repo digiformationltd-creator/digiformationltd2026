@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Loader2, Search, ArrowLeft, Save, Plus, ShieldCheck, Users, Trash2, FileText, Download } from "lucide-react";
+import { Loader2, Search, ArrowLeft, Save, ShieldCheck, Users, Trash2, FileText, Download } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { useSeo } from "@/lib/seo";
 import { SERVICE_CODES, generateInvoiceNumber, generateOrderNumber, downloadInvoicePdf } from "@/lib/invoice";
@@ -462,9 +462,7 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-sm text-muted-foreground">Create invoice for:</span>
               {Object.entries(SERVICE_CODES).map(([code, label]) => (
-                <Button key={code} onClick={() => addInvoice(code)} size="sm" variant="outline">
-                  <Plus className="w-3 h-3 mr-1" />{code} — {label}
-                </Button>
+                <Button key={code} onClick={() => addInvoice(code)} size="sm" variant="outline">{code} — {label}</Button>
               ))}
             </div>
             {invoices.length === 0 && <p className="text-sm text-muted-foreground">No invoices yet. Pick a service code above to generate one (auto-numbered as DF + code + date + sequence).</p>}
@@ -559,7 +557,7 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
 
         {tab === "subs" && (
           <div className="space-y-3">
-            <Button onClick={addSub} size="sm"><Plus className="w-4 h-4 mr-2" />Add Subscription</Button>
+            <Button onClick={addSub} size="sm">Add Subscription</Button>
             {subs.map(s => (
               <div key={s.id} className="border border-border/40 rounded-lg p-3 grid md:grid-cols-6 gap-2 items-center">
                 <Input defaultValue={s.plan_name} onBlur={(e) => updateSub(s.id, { plan_name: e.target.value })} placeholder="Plan" />
@@ -575,7 +573,7 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
 
         {tab === "wallet" && (
           <div className="space-y-3">
-            <Button onClick={addWallet} size="sm"><Plus className="w-4 h-4 mr-2" />Add Transaction</Button>
+            <Button onClick={addWallet} size="sm">Add Transaction</Button>
             {wallet.map(w => (
               <div key={w.id} className="border border-border/40 rounded-lg p-3 grid md:grid-cols-5 gap-2 items-center">
                 <Input defaultValue={w.txn_ref} onBlur={(e) => updateWallet(w.id, { txn_ref: e.target.value })} />
@@ -629,9 +627,7 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
                   e.target.value = "";
                 }}
               />
-              <Button size="sm" onClick={() => document.getElementById("admin-doc-upload")?.click()}>
-                <Plus className="w-4 h-4 mr-2" />Upload Document
-              </Button>
+              <Button size="sm" onClick={() => document.getElementById("admin-doc-upload")?.click()}>Upload Document</Button>
               <p className="text-xs text-muted-foreground">PDF, images, or any file. Stored privately — only this client can download.</p>
             </div>
             {docs.map(d => (
@@ -687,7 +683,7 @@ const NewOrderForm = ({ onCreate }: { onCreate: (code: string, desc: string, amo
 
   return (
     <div className="border border-border/40 rounded-xl p-4 space-y-3 bg-muted/20">
-      <div className="font-semibold text-sm flex items-center gap-2"><Plus className="w-4 h-4" />New Order {autoInvoice && <Badge variant="secondary" className="text-xs">+ auto invoice</Badge>}</div>
+      <div className="font-semibold text-sm flex items-center gap-2">New Order {autoInvoice && <Badge variant="secondary" className="text-xs">auto invoice</Badge>}</div>
       <div className="grid md:grid-cols-4 gap-3">
         <div>
           <Label>Service</Label>
@@ -718,7 +714,7 @@ const NewOrderForm = ({ onCreate }: { onCreate: (code: string, desc: string, amo
         </div>
         <div className="md:col-span-1 flex items-end">
           <Button onClick={submit} disabled={busy} size="sm" className="w-full">
-            {busy ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
+            {busy && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             Create
           </Button>
         </div>
@@ -822,7 +818,7 @@ const AddressFormSection = ({
     <div className="space-y-6">
       {addresses.length === 0 && (
         <div className="border border-dashed border-border rounded-xl p-8 text-center space-y-3">
-          <p className="text-sm text-muted-foreground">No addresses on file for this client yet.</p>
+          <p className="text-sm text-muted-foreground">No address on file for this client yet.</p>
           <Button onClick={addBlankAddress} disabled={creating} size="sm">
             {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
             Create Address
