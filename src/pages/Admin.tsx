@@ -820,15 +820,12 @@ const AddressFormSection = ({
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
-        <Button onClick={addAddress} size="sm" variant="outline"><Plus className="w-4 h-4 mr-2" />Add Another Address</Button>
-      </div>
       {addresses.length === 0 && (
         <div className="border border-dashed border-border rounded-xl p-8 text-center space-y-3">
           <p className="text-sm text-muted-foreground">No addresses on file for this client yet.</p>
           <Button onClick={addBlankAddress} disabled={creating} size="sm">
-            {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
-            Add Address
+            {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+            Create Address
           </Button>
         </div>
       )}
