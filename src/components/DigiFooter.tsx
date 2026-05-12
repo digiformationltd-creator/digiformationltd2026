@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Mail, Clock, MapPin, Facebook, Instagram, Youtube, Linkedin, Building2, Handshake, UserCircle2 } from "lucide-react";
 import logo from "@/assets/digiformation-logo.png";
 import NewsletterForm from "./NewsletterForm";
@@ -27,6 +27,8 @@ const socials = [
 
 const DigiFooter = () => {
   const year = new Date().getFullYear();
+  const { pathname } = useLocation();
+  const hideCtas = pathname.startsWith("/admin") || pathname.startsWith("/dashboard");
 
   const localBusinessSchema = {
     "@context": "https://schema.org",
@@ -70,6 +72,7 @@ const DigiFooter = () => {
       />
 
       {/* Top CTA strip */}
+      {!hideCtas && (<>
       <div className="border-b border-border/60">
         <div className="container mx-auto px-4 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
@@ -129,6 +132,7 @@ const DigiFooter = () => {
           </div>
         </div>
       </div>
+      </>)}
 
       {/* Main grid */}
       <div className="container mx-auto px-4 py-10 sm:py-14 grid gap-8 sm:gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
