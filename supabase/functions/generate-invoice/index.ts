@@ -3,6 +3,7 @@
 // invoices, and return a short-lived signed URL the email can link to.
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { jsPDF } from 'npm:jspdf@2.5.2'
+import { LOGO_JPG_BASE64 } from './logo.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -26,7 +27,13 @@ interface Body {
 
 const SITE_NAME = 'Digiformation Ltd'
 const SITE_ADDRESS = 'United Kingdom'
-const BRAND_COLOR: [number, number, number] = [16, 185, 129] // emerald-500
+const SITE_PHONE = '+44 7438 351454'
+const SITE_EMAIL = 'info@digiformation.uk'
+const SITE_WEB = 'www.digiformation.uk'
+const GREY_LIGHT: [number, number, number] = [232, 232, 232] // panels / row stripe
+const GREY_MID: [number, number, number] = [180, 180, 180]   // decorative triangles
+const INK: [number, number, number] = [20, 20, 20]            // headings / strong text
+const MUTED: [number, number, number] = [100, 100, 100]       // secondary text
 
 function genRefs() {
   const stamp = Date.now().toString(36).toUpperCase()
@@ -49,105 +56,204 @@ function buildPdf(opts: {
 }) {
   const doc = new jsPDF({ unit: 'pt', format: 'a4' })
   const W = doc.internal.pageSize.getWidth()
+  const H = doc.internal.pageSize.getHeight()
   const M = 48
-  let y = M
+  const sym = opts.currency === 'USD' ? '$' : '£'
+  const fmt = (n: number) => `${sym}${n.toFixed(2)}`
 
-  // Header bar
-  doc.setFillColor(...BRAND_COLOR)
-  doc.rect(0, 0, W, 6, 'F')
-  y += 12
+  // ------- Decorative corner triangles (subtle grey + thin black accent) -------
+  const drawCornerDecor = () => {
+    doc.setFillColor(...GREY_MID)
+    // Top-left chevron set
+    doc.triangle(0, 0, 150, 0, 0, 110, 'F')
+    doc.setFillColor(210, 210, 210)
+    doc.triangle(60, 0, 230, 0, 60, 90, 'F')
+    // Bottom-right chevron set
+    doc.setFillColor(...GREY_MID)
+    doc.triangle(W, H, W - 150, H, W, H - 110, 'F')
+    doc.setFillColor(210, 210, 210)
+    doc.triangle(W - 60, H, W - 230, H, W - 60, H - 90, 'F')
+    // Thin black accent strokes
+    doc.setDrawColor(20).setLineWidth(1.2)
+    doc.line(0, 116, 130, 0)
+    doc.line(W, H - 116, W - 130, H)
+    doc.setLineWidth(0.2)
+  }
+  drawCornerDecor()
 
-  doc.setFont('helvetica', 'bold').setFontSize(22).setTextColor(20)
-  doc.text(SITE_NAME, M, y + 16)
-  doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(110)
-  doc.text(SITE_ADDRESS, M, y + 32)
-  doc.text('info@digiformation.uk', M, y + 46)
+  // ------- Header: logo (left) + INVOICE (right) -------
+  let y = M + 60
+  try {
+    // Logo width 120pt, height auto (~120pt for square logo)
+    doc.addImage(
+      `data:image/jpeg;base64,${LOGO_JPG_BASE64}`,
+      'JPEG', M, M + 16, 120, 120, undefined, 'FAST',
+    )
+  } catch (_) {
+    doc.setFont('helvetica', 'bold').setFontSize(18).setTextColor(...INK)
+    doc.text(SITE_NAME, M, y)
+  }
 
-  doc.setFont('helvetica', 'bold').setFontSize(28).setTextColor(20)
-  doc.text('INVOICE', W - M, y + 16, { align: 'right' })
-  doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(110)
-  doc.text(`No. ${opts.invoiceNumber}`, W - M, y + 32, { align: 'right' })
-  doc.text(`Order ${opts.orderRef}`, W - M, y + 46, { align: 'right' })
-  doc.text(`Date ${opts.issueDate}`, W - M, y + 60, { align: 'right' })
+  doc.setFont('helvetica', 'bold').setFontSize(40).setTextColor(...INK)
+  doc.text('INVOICE', W - M, M + 70, { align: 'right' })
 
-  y += 90
-  doc.setDrawColor(230)
+  y = M + 160
+
+  // ------- Billed-to / Invoice meta panel (light grey) -------
+  const panelH = 110
+  doc.setFillColor(...GREY_LIGHT)
+  doc.rect(M, y, W - M * 2, panelH, 'F')
+
+  // BILLED TO (left)
+  let py = y + 24
+  doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...MUTED)
+  doc.text('BILLED TO:', M + 18, py); py += 18
+  doc.setFont('helvetica', 'bold').setFontSize(13).setTextColor(...INK)
+  doc.text((opts.customer.full_name || '—').toUpperCase(), M + 18, py); py += 18
+  doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(60)
+  if (opts.customer.email) { doc.text(opts.customer.email, M + 18, py); py += 14 }
+  if (opts.customer.address) { doc.text(opts.customer.address, M + 18, py); py += 14 }
+
+  // Invoice meta (right)
+  const metaX = W / 2 + 20
+  const metaVX = W - M - 18
+  let my = y + 24
+  doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(60)
+  const metaRow = (label: string, value: string) => {
+    doc.setFont('helvetica', 'normal').setTextColor(60)
+    doc.text(label, metaX, my)
+    doc.setFont('helvetica', 'bold').setTextColor(...INK)
+    doc.text(value, metaVX, my, { align: 'right' })
+    my += 18
+  }
+  metaRow('Invoice No:', opts.invoiceNumber)
+  metaRow('Order Ref:', opts.orderRef)
+  metaRow('Invoice Date:', formatLongDate(opts.issueDate))
+  metaRow('Due Date:', formatLongDate(opts.issueDate))
+
+  y += panelH + 26
+
+  // ------- Items table -------
+  // Top + bottom hairlines like reference
+  doc.setDrawColor(20).setLineWidth(1.2)
   doc.line(M, y, W - M, y)
-  y += 20
+  y += 4
 
-  // Bill to
-  doc.setFont('helvetica', 'bold').setFontSize(11).setTextColor(60)
-  doc.text('BILL TO', M, y)
-  y += 16
-  doc.setFont('helvetica', 'normal').setFontSize(11).setTextColor(20)
-  doc.text(opts.customer.full_name || '—', M, y); y += 14
-  doc.text(opts.customer.email || '', M, y); y += 14
-  if (opts.customer.address) { doc.text(opts.customer.address, M, y); y += 14 }
+  // Header row
+  const colDescX = M + 14
+  const colQtyX  = W * 0.50
+  const colPriceX = W * 0.70
+  const colTotalX = W - M - 14
+  doc.setFont('helvetica', 'bold').setFontSize(10).setTextColor(...INK)
+  const headY = y + 22
+  doc.text('DESCRIPTION', colDescX, headY)
+  doc.text('QTY', colQtyX, headY, { align: 'center' })
+  doc.text('PRICE', colPriceX, headY, { align: 'center' })
+  doc.text('TOTAL', colTotalX, headY, { align: 'right' })
+  y += 32
+  doc.setLineWidth(1.2).line(M, y, W - M, y)
+  doc.setLineWidth(0.2)
   y += 14
 
-  // Items table header
-  doc.setFillColor(245)
-  doc.rect(M, y, W - M * 2, 26, 'F')
-  doc.setFont('helvetica', 'bold').setFontSize(10).setTextColor(60)
-  doc.text('DESCRIPTION', M + 12, y + 17)
-  doc.text('AMOUNT', W - M - 12, y + 17, { align: 'right' })
-  y += 26
-
-  // Item row
-  doc.setFont('helvetica', 'normal').setFontSize(11).setTextColor(20)
+  // Item row(s) with alternating grey backgrounds
   const desc = opts.packageName
     ? `${opts.service} — ${opts.packageName}`
     : opts.service
-  const wrapped = doc.splitTextToSize(desc, W - M * 2 - 130)
-  doc.text(wrapped, M + 12, y + 18)
-  const sym = opts.currency === 'USD' ? '$' : '£'
-  doc.text(`${sym}${opts.amount.toFixed(2)}`, W - M - 12, y + 18, { align: 'right' })
-  y += Math.max(36, wrapped.length * 14 + 18)
+  const wrapped = doc.splitTextToSize(desc, (colQtyX - colDescX) - 20)
+  const rowH = Math.max(34, wrapped.length * 13 + 18)
+  doc.setFillColor(...GREY_LIGHT)
+  doc.rect(M, y, W - M * 2, rowH, 'F')
+  doc.setFont('helvetica', 'bold').setFontSize(11).setTextColor(...INK)
+  doc.text(wrapped, colDescX, y + 20)
+  doc.setFont('helvetica', 'normal').setTextColor(40)
+  doc.text('1', colQtyX, y + 20, { align: 'center' })
+  doc.setFont('helvetica', 'bold')
+  doc.text(fmt(opts.amount), colPriceX, y + 20, { align: 'center' })
+  doc.text(fmt(opts.amount), colTotalX, y + 20, { align: 'right' })
+  y += rowH + 6
 
-  doc.setDrawColor(230)
-  doc.line(M, y, W - M, y)
-  y += 20
+  doc.setDrawColor(20).setLineWidth(1.2).line(M, y, W - M, y)
+  doc.setLineWidth(0.2)
+  y += 24
+
+  // ------- Terms (left) + Totals (right) -------
+  const totalsX = W - M - 200
+  const totalsVX = W - M - 14
+  const termsW = totalsX - M - 24
+
+  // Terms
+  doc.setFont('helvetica', 'bold').setFontSize(10).setTextColor(...INK)
+  doc.text('TERMS & CONDITIONS:', M, y)
+  doc.setFont('helvetica', 'normal').setFontSize(9).setTextColor(80)
+  const terms = opts.notes && opts.notes.trim()
+    ? opts.notes
+    : 'Payment is due within 7 days of invoice date. All services are subject to the Digiformation Ltd standard terms of service. Late payments may delay order processing.'
+  const termsLines = doc.splitTextToSize(terms, termsW)
+  doc.text(termsLines, M, y + 18)
 
   // Totals
-  const labelX = W - M - 160
-  const valueX = W - M - 12
-  doc.setFont('helvetica', 'normal').setFontSize(11).setTextColor(80)
-  doc.text('Subtotal', labelX, y); doc.text(`${sym}${opts.amount.toFixed(2)}`, valueX, y, { align: 'right' }); y += 16
-  doc.text('VAT (0%)', labelX, y); doc.text(`${sym}0.00`, valueX, y, { align: 'right' }); y += 18
-  doc.setFont('helvetica', 'bold').setFontSize(13).setTextColor(20)
-  doc.text('Total Due', labelX, y); doc.text(`${sym}${opts.amount.toFixed(2)}`, valueX, y, { align: 'right' })
-  y += 28
+  let ty = y
+  doc.setFont('helvetica', 'bold').setFontSize(11).setTextColor(...INK)
+  doc.text('Subtotal', totalsX, ty)
+  doc.setFont('helvetica', 'normal')
+  doc.text(fmt(opts.amount), totalsVX, ty, { align: 'right' })
+  ty += 22
+  doc.setFont('helvetica', 'bold')
+  doc.text('Tax', totalsX, ty)
+  doc.setFont('helvetica', 'normal')
+  doc.text(fmt(0), totalsVX, ty, { align: 'right' })
+  ty += 18
+  // Total bar
+  doc.setFillColor(...GREY_LIGHT)
+  doc.rect(totalsX - 10, ty, (W - M) - (totalsX - 10), 28, 'F')
+  doc.setFont('helvetica', 'bold').setFontSize(12).setTextColor(...INK)
+  doc.text('Total', totalsX, ty + 18)
+  doc.text(fmt(opts.amount), totalsVX, ty + 18, { align: 'right' })
 
-  // Status pill
-  doc.setFillColor(254, 243, 199)
-  doc.setTextColor(146, 64, 14)
-  doc.roundedRect(M, y, 80, 22, 4, 4, 'F')
-  doc.setFont('helvetica', 'bold').setFontSize(10)
-  doc.text('UNPAID', M + 40, y + 15, { align: 'center' })
-  y += 50
+  y = Math.max(y + 18 + termsLines.length * 12, ty + 28) + 30
 
-  if (opts.notes) {
-    doc.setFont('helvetica', 'bold').setFontSize(10).setTextColor(60)
-    doc.text('NOTES', M, y); y += 14
-    doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(60)
-    const n = doc.splitTextToSize(opts.notes, W - M * 2)
-    doc.text(n, M, y)
-    y += n.length * 13 + 8
-  }
+  // ------- Signature -------
+  doc.setFont('times', 'italic').setFontSize(22).setTextColor(...INK)
+  doc.text('Digiformation', M, y)
+  y += 8
+  doc.setDrawColor(...INK).setLineWidth(0.6)
+  doc.line(M, y, M + 160, y)
+  y += 14
+  doc.setFont('helvetica', 'bold').setFontSize(10).setTextColor(...INK)
+  doc.text(SITE_NAME, M, y)
+  y += 22
 
-  // Footer
-  const footerY = doc.internal.pageSize.getHeight() - 40
-  doc.setDrawColor(230)
-  doc.line(M, footerY - 12, W - M, footerY - 12)
-  doc.setFont('helvetica', 'normal').setFontSize(9).setTextColor(140)
-  doc.text(
-    `${SITE_NAME} • Thank you for your business. Our team will reach out within 24 hours to confirm payment.`,
-    W / 2,
-    footerY,
-    { align: 'center' },
-  )
+  // ------- Bottom band: Payment Method | Contact & Address -------
+  const bandY = H - 130
+  doc.setFillColor(...GREY_LIGHT)
+  doc.rect(M, bandY, W - M * 2, 28, 'F')
+  doc.setFont('helvetica', 'bold').setFontSize(10).setTextColor(...INK)
+  doc.text('PAYMENT METHOD:', M + 14, bandY + 18)
+  doc.text('CONTACT & ADDRESS:', W - M - 14, bandY + 18, { align: 'right' })
+
+  const infoY = bandY + 46
+  doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(60)
+  doc.text('Bank transfer / Card on request.', M + 14, infoY)
+  doc.text('Contact us to receive secure payment details.', M + 14, infoY + 14)
+
+  doc.text(SITE_PHONE, W - M - 14, infoY, { align: 'right' })
+  doc.text(SITE_EMAIL, W - M - 14, infoY + 14, { align: 'right' })
+  doc.text(SITE_WEB,   W - M - 14, infoY + 28, { align: 'right' })
+  doc.text(SITE_ADDRESS, W - M - 14, infoY + 42, { align: 'right' })
+
+  // ------- Thank you footer -------
+  doc.setFont('helvetica', 'bold').setFontSize(11).setTextColor(...INK)
+  doc.text('THANK YOU FOR YOUR BUSINESS', M, H - 28)
 
   return doc.output('arraybuffer') as ArrayBuffer
+}
+
+function formatLongDate(iso: string): string {
+  // iso = YYYY-MM-DD
+  const [y, m, d] = iso.split('-').map((s) => parseInt(s, 10))
+  if (!y || !m || !d) return iso
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December']
+  return `${months[m - 1]} ${d}, ${y}`
 }
 
 Deno.serve(async (req) => {
