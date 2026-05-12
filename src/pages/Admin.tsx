@@ -725,25 +725,11 @@ const CompanyFormSection = ({
   deleteRow: (table: any, id: string) => void;
   reload: () => Promise<void>;
 }) => {
-  const [creating, setCreating] = useState(false);
-
-  const addBlankCompany = async () => {
-    setCreating(true);
-    const { error } = await supabase.from("client_company_details").insert({ user_id: userId, company_name: "" });
-    setCreating(false);
-    if (error) { toast.error(error.message); return; }
-    await reload();
-  };
-
   return (
     <div className="space-y-6">
       {companies.length === 0 && (
         <div className="border border-dashed border-border rounded-xl p-8 text-center space-y-3">
           <p className="text-sm text-muted-foreground">No company on file for this client yet.</p>
-          <Button onClick={addBlankCompany} disabled={creating} size="sm">
-            {creating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-            Create Company Details
-          </Button>
         </div>
       )}
       {companies.map((c, idx) => (
