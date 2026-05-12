@@ -86,8 +86,8 @@ function buildPdf(opts: {
   try {
     // Logo width 120pt, height auto (~120pt for square logo)
     doc.addImage(
-      `data:image/png;base64,${LOGO_PNG_BASE64}`,
-      'PNG', M, M + 16, 120, 120, undefined, 'FAST',
+      `data:image/jpeg;base64,${LOGO_JPG_BASE64}`,
+      'JPEG', M, M + 16, 120, 120, undefined, 'FAST',
     )
   } catch (_) {
     doc.setFont('helvetica', 'bold').setFontSize(18).setTextColor(...INK)
