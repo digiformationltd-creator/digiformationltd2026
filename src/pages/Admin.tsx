@@ -29,6 +29,7 @@ const Admin = () => {
   const [clients, setClients] = useState<ClientRow[]>([]);
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
+  const [initialTab, setInitialTab] = useState<"profile" | "company" | "addresses">("profile");
   const [loadingClients, setLoadingClients] = useState(false);
 
   useSeo({ title: "Admin Panel | Digiformation", description: "Internal admin panel", noindex: true });
@@ -79,7 +80,7 @@ const Admin = () => {
   if (loading) return <Layout><div className="container mx-auto py-20 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto" /></div></Layout>;
   if (!authorized) return null;
 
-  if (selected) return <Layout><ClientDetail userId={selected} onBack={() => setSelected(null)} /></Layout>;
+  if (selected) return <Layout><ClientDetail userId={selected} initialTab={initialTab} onBack={() => setSelected(null)} /></Layout>;
 
   return (
     <Layout>
@@ -126,7 +127,11 @@ const Admin = () => {
                     <td className="p-3 hidden md:table-cell">{c.company_name || "—"}</td>
                     <td className="p-3 hidden lg:table-cell text-muted-foreground">{new Date(c.created_at).toLocaleDateString()}</td>
                     <td className="p-3 text-right">
-                      <Button size="sm" onClick={() => setSelected(c.user_id)}>Manage</Button>
+                      <div className="flex gap-1.5 justify-end flex-wrap">
+                        <Button size="sm" variant="outline" onClick={() => { setInitialTab("company"); setSelected(c.user_id); }}>Company</Button>
+                        <Button size="sm" variant="outline" onClick={() => { setInitialTab("addresses"); setSelected(c.user_id); }}>Address</Button>
+                        <Button size="sm" onClick={() => { setInitialTab("profile"); setSelected(c.user_id); }}>Manage</Button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -142,8 +147,8 @@ const Admin = () => {
   );
 };
 
-const ClientDetail = ({ userId, onBack }: { userId: string; onBack: () => void }) => {
-  const [tab, setTab] = useState<"profile" | "company" | "addresses" | "orders" | "invoices" | "subs" | "wallet" | "docs">("profile");
+const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: string; initialTab?: "profile" | "company" | "addresses"; onBack: () => void }) => {
+  const [tab, setTab] = useState<"profile" | "company" | "addresses" | "orders" | "invoices" | "subs" | "wallet" | "docs">(initialTab);
   const [profile, setProfile] = useState<any>({});
   const [companies, setCompanies] = useState<any[]>([]);
   const [addresses, setAddresses] = useState<any[]>([]);
