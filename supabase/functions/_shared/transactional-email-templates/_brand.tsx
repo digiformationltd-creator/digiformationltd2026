@@ -7,11 +7,12 @@ export const SITE_NAME = 'Digiformation Ltd'
 export const SITE_URL = 'www.digiformation.uk'
 export const LOGO_URL = 'https://formflow-digital-hub.lovable.app/digiformation-logo.png'
 
-// Invoice palette (matches generated PDF invoices)
-export const INK = '#141414'
-export const MUTED = '#646464'
-export const GREY_LIGHT = '#e8e8e8'
-export const GREY_PANEL = '#f4f4f4'
+// Grey + white palette (softer than pure black)
+export const INK = '#4b5563'        // headings, accents — medium grey
+export const INK_DARK = '#374151'   // strong text
+export const MUTED = '#6b7280'      // secondary text
+export const GREY_LIGHT = '#e5e7eb' // borders / dividers
+export const GREY_PANEL = '#f3f4f6' // card / panel background
 
 interface ShellProps {
   preview: string
