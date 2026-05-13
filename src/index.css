@@ -179,76 +179,15 @@ body p, body span, body li, body label, body small, body div {
   .glass-coral  .card-icon, .glass[data-tint="coral"]   .card-icon { color: hsl(12  32% 78%); background: linear-gradient(135deg, hsl(12  22% 20% / 0.65), hsl(12  14% 14% / 0.50)); border-color: hsl(12  24% 52% / 0.38); }
   .glass-slate  .card-icon, .glass[data-tint="slate"]   .card-icon { color: hsl(220 24% 80%); background: linear-gradient(135deg, hsl(220 16% 20% / 0.65), hsl(220 10% 14% / 0.50)); border-color: hsl(220 18% 54% / 0.38); }
 
-  /* ── RGB color-cycling animation for tinted glass cards ──
-     7 colors × 4s each = 28s total. Each color holds for 3s, then
-     fades over 1s into the next. */
-  @keyframes glass-rgb-cycle {
-    0%,    10.71% { background-color: hsl(155 16% 16% / 0.58); border-color: hsl(155 22% 56% / 0.32); } /* sage */
-    14.28%, 25%    { background-color: hsl(175 16% 16% / 0.58); border-color: hsl(175 22% 56% / 0.32); } /* teal */
-    28.57%, 39.28% { background-color: hsl(200 16% 16% / 0.58); border-color: hsl(200 22% 58% / 0.32); } /* sky */
-    42.85%, 53.57% { background-color: hsl(255 16% 16% / 0.58); border-color: hsl(255 20% 58% / 0.32); } /* lavender */
-    57.14%, 67.85% { background-color: hsl(345 16% 16% / 0.58); border-color: hsl(345 22% 58% / 0.32); } /* rose */
-    71.42%, 82.14% { background-color: hsl(12  16% 16% / 0.58); border-color: hsl(12  22% 56% / 0.32); } /* coral */
-    85.71%, 96.42% { background-color: hsl(42  18% 16% / 0.58); border-color: hsl(42  24% 54% / 0.32); } /* amber */
-    100%           { background-color: hsl(155 16% 16% / 0.58); border-color: hsl(155 22% 56% / 0.32); } /* loop */
-  }
-  @keyframes glass-rgb-icon {
-    0%,    10.71% { color: hsl(155 32% 78%); }
-    14.28%, 25%    { color: hsl(175 32% 78%); }
-    28.57%, 39.28% { color: hsl(200 32% 80%); }
-    42.85%, 53.57% { color: hsl(255 30% 80%); }
-    57.14%, 67.85% { color: hsl(345 32% 80%); }
-    71.42%, 82.14% { color: hsl(12  32% 78%); }
-    85.71%, 96.42% { color: hsl(42  34% 76%); }
-    100%           { color: hsl(155 32% 78%); }
-  }
-
+  /* Keep tinted glass cards static: no RGB cycling or blinking. */
   .glass-sage, .glass-rose, .glass-amber, .glass-sky,
   .glass-lavender, .glass-teal, .glass-coral, .glass-slate,
-  .glass[data-tint] {
-    animation: glass-rgb-cycle 28s ease-in-out infinite;
-  }
-  .glass-sage     { animation-delay:  0s; }
-  .glass-teal     { animation-delay: -4s; }
-  .glass-sky      { animation-delay: -8s; }
-  .glass-lavender { animation-delay: -12s; }
-  .glass-rose     { animation-delay: -16s; }
-  .glass-coral    { animation-delay: -20s; }
-  .glass-amber    { animation-delay: -24s; }
-  .glass-slate    { animation-delay: -2s; }
-  .glass[data-tint="sage"]     { animation-delay:  0s; }
-  .glass[data-tint="teal"]     { animation-delay: -4s; }
-  .glass[data-tint="sky"]      { animation-delay: -8s; }
-  .glass[data-tint="lavender"] { animation-delay: -12s; }
-  .glass[data-tint="rose"]     { animation-delay: -16s; }
-  .glass[data-tint="coral"]    { animation-delay: -20s; }
-  .glass[data-tint="amber"]    { animation-delay: -24s; }
-  .glass[data-tint="slate"]    { animation-delay: -2s; }
-
+  .glass[data-tint],
+  .glass[data-tint] .card-icon,
   .glass-sage .card-icon, .glass-rose .card-icon, .glass-amber .card-icon,
   .glass-sky .card-icon, .glass-lavender .card-icon, .glass-teal .card-icon,
-  .glass-coral .card-icon, .glass-slate .card-icon,
-  .glass[data-tint] .card-icon {
-    animation: glass-rgb-icon 28s ease-in-out infinite;
-    animation-delay: inherit;
-  }
-
-  .glass-sage:hover, .glass-rose:hover, .glass-amber:hover, .glass-sky:hover,
-  .glass-lavender:hover, .glass-teal:hover, .glass-coral:hover, .glass-slate:hover,
-  .glass[data-tint]:hover {
-    animation-play-state: paused;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .glass-sage, .glass-rose, .glass-amber, .glass-sky,
-    .glass-lavender, .glass-teal, .glass-coral, .glass-slate,
-    .glass[data-tint],
-    .glass[data-tint] .card-icon,
-    .glass-sage .card-icon, .glass-rose .card-icon, .glass-amber .card-icon,
-    .glass-sky .card-icon, .glass-lavender .card-icon, .glass-teal .card-icon,
-    .glass-coral .card-icon, .glass-slate .card-icon {
-      animation: none;
-    }
+  .glass-coral .card-icon, .glass-slate .card-icon {
+    animation: none;
   }
 
   .grid-pattern {
