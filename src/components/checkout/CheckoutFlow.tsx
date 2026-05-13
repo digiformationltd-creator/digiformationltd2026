@@ -169,6 +169,7 @@ const CheckoutFlow = ({
     const detailsIdx = lockSelection ? 0 : 1;
     if (stepIdx === detailsIdx) {
       return (
+        (!showCompanyName || form.company_name.trim().length >= 2) &&
         form.full_name.trim().length >= 2 &&
         /\S+@\S+\.\S+/.test(form.email) &&
         form.whatsapp.trim().length >= 5 &&
