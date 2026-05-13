@@ -114,7 +114,17 @@ const CheckoutFlow = ({
   showBusinessType = false,
   showCompanyName = false,
   showServiceMode = false,
+  extras,
 }: CheckoutFlowProps) => {
+  // Merge extras into the master items list so selection / pricing logic
+  // continues to work uniformly.
+  const allItems = useMemo(() => {
+    const base = [...items];
+    if (extras) for (const g of extras) for (const it of g.items) {
+      if (!base.find((b) => b.id === it.id)) base.push(it);
+    }
+    return base;
+  }, [items, extras]);
   const initialSelected = useMemo(() => {
     if (defaultSelectedIds && defaultSelectedIds.length) return new Set(defaultSelectedIds);
     if (lockSelection || !multiSelect) return new Set(items.slice(0, 1).map((i) => i.id));
