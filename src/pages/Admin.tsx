@@ -875,7 +875,7 @@ const NewOrderForm = ({ onCreate }: { onCreate: (code: string, desc: string, amo
 };
 
 const CompanyFormSection = ({
-  userId, companies, saving, updateCompanyField, saveCompany, deleteRow, reload,
+  userId, companies, saving, updateCompanyField, saveCompany, deleteRow, reload, clientEmail, clientName,
 }: {
   userId: string;
   companies: any[];
@@ -884,7 +884,34 @@ const CompanyFormSection = ({
   saveCompany: (c: any) => void;
   deleteRow: (table: any, id: string) => void;
   reload: () => Promise<void>;
+  clientEmail?: string | null;
+  clientName?: string | null;
 }) => {
+  const sendCompanyReminder = async (
+    template: "confirmation-statement-reminder" | "annual-accounts-reminder",
+    c: any,
+    label: string,
+  ) => {
+    if (!clientEmail) return toast.error("Client has no email");
+    const dueDate = template === "confirmation-statement-reminder" ? c.confirmation_due : c.accounts_filing_due;
+    if (!dueDate) return toast.error(`Please set the ${label} due date first`);
+    const daysRemaining = Math.ceil((new Date(dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    const { error } = await supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: template,
+        recipientEmail: clientEmail,
+        idempotencyKey: `${template}-${c.id}-${Date.now()}`,
+        templateData: {
+          customerName: clientName,
+          companyName: c.company_name,
+          companyNumber: c.company_number,
+          dueDate,
+          daysRemaining,
+        },
+      },
+    });
+    if (error) toast.error(error.message); else toast.success(`${label} reminder sent`);
+  };
   return (
     <div className="space-y-6">
       <div className="flex justify-end">
@@ -932,7 +959,25 @@ const CompanyFormSection = ({
             <Label>Correspondence Address <span className="text-muted-foreground text-xs">(optional)</span></Label>
             <Textarea value={c.correspondence_address || ""} onChange={(e) => updateCompanyField(c.id, { correspondence_address: e.target.value })} placeholder="Leave blank if not purchased" />
           </div>
-          <Button onClick={() => saveCompany(c)} disabled={saving} size="sm"><Save className="w-4 h-4 mr-2" />Save Company</Button>
+          <div className="flex flex-wrap gap-2">
+            <Button onClick={() => saveCompany(c)} disabled={saving} size="sm"><Save className="w-4 h-4 mr-2" />Save Company</Button>
+            <Button
+              onClick={() => sendCompanyReminder("confirmation-statement-reminder", c, "Confirmation Statement")}
+              size="sm"
+              variant="outline"
+              title="Send Confirmation Statement reminder email to client"
+            >
+              <Mail className="w-4 h-4 mr-2" />Send CS Reminder
+            </Button>
+            <Button
+              onClick={() => sendCompanyReminder("annual-accounts-reminder", c, "Annual Accounts")}
+              size="sm"
+              variant="outline"
+              title="Send Annual Accounts filing reminder email to client"
+            >
+              <Mail className="w-4 h-4 mr-2" />Send Accounts Reminder
+            </Button>
+          </div>
         </div>
       ))}
     </div>
