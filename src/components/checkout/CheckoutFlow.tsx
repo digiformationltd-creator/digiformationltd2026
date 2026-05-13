@@ -78,6 +78,10 @@ export type CheckoutFlowProps = {
   showCompanyName?: boolean;
   /** Show the "what do you need?" service-mode picker at top of details (UK LTD) */
   showServiceMode?: boolean;
+  /** Optional extra add-on services grouped by category. Shown below the
+   *  main selection on step 1. Each group is rendered as its own card so
+   *  customers only see add-ons relevant to the service they're ordering. */
+  extras?: { categoryLabel: string; description?: string; items: CheckoutItem[] }[];
 };
 
 const STEP_ICONS = [ShoppingBag, UserRound, ClipboardCheck];
