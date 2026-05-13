@@ -70,6 +70,8 @@ export type CheckoutFlowProps = {
   liveSelfieLink?: string;
   /** Show a "Business type" field in the details step (used for LLC) */
   showBusinessType?: boolean;
+  /** Show a "Company name to register" field at the top of details (used for UK LTD) */
+  showCompanyName?: boolean;
 };
 
 const STEP_ICONS = [ShoppingBag, UserRound, ClipboardCheck];
