@@ -70,6 +70,8 @@ export type CheckoutFlowProps = {
   liveSelfieLink?: string;
   /** Show a "Business type" field in the details step (used for LLC) */
   showBusinessType?: boolean;
+  /** Show a "Company name to register" field at the top of details (used for UK LTD) */
+  showCompanyName?: boolean;
 };
 
 const STEP_ICONS = [ShoppingBag, UserRound, ClipboardCheck];
@@ -100,6 +102,7 @@ const CheckoutFlow = ({
   liveSelfieMode = "upload",
   liveSelfieLink,
   showBusinessType = false,
+  showCompanyName = false,
 }: CheckoutFlowProps) => {
   const initialSelected = useMemo(() => {
     if (defaultSelectedIds && defaultSelectedIds.length) return new Set(defaultSelectedIds);
@@ -112,6 +115,7 @@ const CheckoutFlow = ({
   const [submitting, setSubmitting] = useState(false);
   const [successInfo, setSuccessInfo] = useState<{ orderRef: string; invoiceUrl?: string } | null>(null);
   const [form, setForm] = useState({
+    company_name: "",
     full_name: "",
     email: "",
     whatsapp: "",
@@ -165,6 +169,7 @@ const CheckoutFlow = ({
     const detailsIdx = lockSelection ? 0 : 1;
     if (stepIdx === detailsIdx) {
       return (
+        (!showCompanyName || form.company_name.trim().length >= 2) &&
         form.full_name.trim().length >= 2 &&
         /\S+@\S+\.\S+/.test(form.email) &&
         form.whatsapp.trim().length >= 5 &&
@@ -222,6 +227,7 @@ const CheckoutFlow = ({
       `[${serviceTitle} Order]\n` +
       `Ref: ${orderRef}\n` +
       (contextLabel ? `${contextLabel}\n` : "") +
+      (showCompanyName && form.company_name ? `Proposed company name: ${form.company_name}\n` : "") +
       `Items:\n${lines}\n` +
       `Subtotal: ${formatMoney(subtotal, currency)}\n` +
       (vat ? `VAT (${(vatRate * 100).toFixed(0)}%): ${formatMoney(vat, currency)}\n` : "") +
@@ -473,6 +479,19 @@ const CheckoutFlow = ({
             {showDetails && (
               <div className="glass rounded-3xl p-6 md:p-8 space-y-5">
                 <h2 className="text-2xl font-bold">Your details</h2>
+                {showCompanyName && (
+                  <div className="rounded-2xl border border-primary/40 bg-primary/5 p-4 md:p-5">
+                    <Field
+                      label="Proposed company name (the company you want to register)"
+                      value={form.company_name}
+                      onChange={(v) => setForm({ ...form, company_name: v })}
+                      required
+                      minLength={2}
+                      placeholder="e.g. Acme Trading Ltd"
+                    />
+                    <p className="text-xs opacity-70 mt-2">Tip: add 2-3 alternative names in the Notes field below in case your first choice is taken.</p>
+                  </div>
+                )}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Field label="Full name" value={form.full_name} onChange={(v) => setForm({ ...form, full_name: v })} required minLength={2} />
                   <Field label="Email" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
@@ -785,6 +804,7 @@ const Field = ({
   type = "text",
   required,
   minLength,
+  placeholder,
 }: {
   label: string;
   value: string;
@@ -792,6 +812,7 @@ const Field = ({
   type?: string;
   required?: boolean;
   minLength?: number;
+  placeholder?: string;
 }) => (
   <div>
     <label className="block text-sm font-medium mb-1.5">{label}</label>
@@ -801,6 +822,7 @@ const Field = ({
       onChange={(e) => onChange(e.target.value)}
       required={required}
       minLength={minLength}
+      placeholder={placeholder}
       className="w-full px-4 py-2.5 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
     />
   </div>

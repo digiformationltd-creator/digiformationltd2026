@@ -14,6 +14,7 @@ import UKLtdFormation from "./pages/UKLtdFormation";
 import UkLtdChooseJurisdiction from "./pages/UkLtdChooseJurisdiction";
 import UkLtdCheckout from "./pages/UkLtdCheckout";
 import LtdIdVerification from "./pages/LtdIdVerification";
+import LtdIdVerificationCheckout from "./pages/LtdIdVerificationCheckout";
 import RegisteredOfficeAddress from "./pages/RegisteredOfficeAddress";
 import UtrCodes from "./pages/UtrCodes";
 import CompliancePage from "./pages/CompliancePage";
@@ -58,6 +59,7 @@ const App = () => (
           <Route path="/uk-services/uk-ltd-formation/choose-jurisdiction" element={<UkLtdChooseJurisdiction />} />
           <Route path="/uk-services/uk-ltd-formation/checkout" element={<UkLtdCheckout />} />
           <Route path="/uk-services/uk-ltd-formation" element={<UKLtdFormation />} />
+          <Route path="/uk-services/ltd-id-verification/checkout" element={<LtdIdVerificationCheckout />} />
           <Route path="/uk-services/ltd-id-verification" element={<LtdIdVerification />} />
           <Route path="/uk-services/registered-office-address" element={<RegisteredOfficeAddress />} />
           <Route path="/uk-services/utr-codes" element={<UtrCodes />} />
