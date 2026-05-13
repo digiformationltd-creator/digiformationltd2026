@@ -11,11 +11,19 @@ import {
   Mail,
   Clock,
   ShieldCheck,
+  Upload,
+  Eye,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { buildOrderRef } from "@/lib/orderRef";
+import exampleHoldingSelfie from "@/assets/example-holding-selfie.jpg";
+import exampleIdFront from "@/assets/example-id-front.jpg";
+import exampleIdBack from "@/assets/example-id-back.jpg";
+import examplePassport from "@/assets/example-passport.jpg";
 
 export type CheckoutItem = {
   id: string;
@@ -93,6 +101,11 @@ const CheckoutFlow = ({
   const [submitting, setSubmitting] = useState(false);
   const [successInfo, setSuccessInfo] = useState<{ orderRef: string; invoiceUrl?: string } | null>(null);
   const [form, setForm] = useState({ full_name: "", email: "", whatsapp: "", country: "", message: "", additional_note: "", promo_code: "" });
+  const [idType, setIdType] = useState<"id_card" | "passport">("id_card");
+  const [idFront, setIdFront] = useState<File | null>(null);
+  const [idBack, setIdBack] = useState<File | null>(null);
+  const [holdingSelfie, setHoldingSelfie] = useState<File | null>(null);
+  const [exampleOpen, setExampleOpen] = useState<null | { title: string; src: string }>(null);
 
   // Skip selection step entirely when locked
   const steps = lockSelection ? STEP_LABELS.slice(1) : STEP_LABELS;
