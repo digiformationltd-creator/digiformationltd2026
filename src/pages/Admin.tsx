@@ -985,7 +985,7 @@ const CompanyFormSection = ({
 };
 
 const AddressFormSection = ({
-  userId, addresses, docs, saving, updateAddressField, saveAddress, deleteRow, reload,
+  userId, addresses, docs, saving, updateAddressField, saveAddress, deleteRow, reload, clientEmail, clientName,
 }: {
   userId: string;
   addresses: any[];
@@ -995,7 +995,28 @@ const AddressFormSection = ({
   saveAddress: (a: any) => void;
   deleteRow: (table: any, id: string) => void;
   reload: () => Promise<void>;
+  clientEmail?: string | null;
+  clientName?: string | null;
 }) => {
+  const sendAddressReminder = async (a: any) => {
+    if (!clientEmail) return toast.error("Client has no email");
+    if (!a.expire_date) return toast.error("Please set the expiry date first");
+    const daysRemaining = Math.ceil((new Date(a.expire_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    const { error } = await supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: "address-renewal-reminder",
+        recipientEmail: clientEmail,
+        idempotencyKey: `address-renewal-${a.id}-${Date.now()}`,
+        templateData: {
+          customerName: clientName,
+          address: a.address_line1,
+          expireDate: a.expire_date,
+          daysRemaining,
+        },
+      },
+    });
+    if (error) toast.error(error.message); else toast.success("Address renewal reminder sent");
+  };
   return (
     <div className="space-y-6">
       <div className="flex justify-end">
