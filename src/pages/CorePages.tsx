@@ -244,25 +244,6 @@ export const Contact = () => {
 
   return (
     <Layout>
-      <section className="relative overflow-hidden bg-gradient-hero">
-        <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
-        <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
-        <div className="container mx-auto px-4 py-12 md:py-14 relative">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-3 mb-6">
-              <span className="text-xs uppercase tracking-[0.18em] font-semibold">Contact</span>
-            </div>
-            <h1 className="text-5xl md:text-7xl font-bold leading-[1.02] tracking-tight">
-              Get in touch with <em className="not-italic text-gradient">Digiformation</em>
-            </h1>
-            <p className="mt-8 text-lg md:text-xl leading-relaxed opacity-90">
-              We're here to help you start, manage and grow your business in the UK and USA.
-              Whether you need a new company, address services or compliance support — our team is ready.
-            </p>
-          </div>
-        </div>
-      </section>
-
       <section className="py-10">
         <div className="container mx-auto px-4 max-w-3xl">
           {/* Form */}
