@@ -539,6 +539,8 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
             saveCompany={saveCompany}
             deleteRow={deleteRow}
             reload={reload}
+            clientEmail={profile.email}
+            clientName={profile.full_name}
           />
         )}
 
@@ -552,6 +554,8 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
             saveAddress={saveAddress}
             deleteRow={deleteRow}
             reload={reload}
+            clientEmail={profile.email}
+            clientName={profile.full_name}
           />
         )}
 
@@ -561,7 +565,7 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
             {orders.map(o => {
               const linkedInvoice = invoices.find(i => i.order_id === o.id);
               return (
-              <div key={o.id} className="border border-border/40 rounded-lg p-3 grid md:grid-cols-6 gap-2 items-center">
+              <div key={o.id} className="border border-border/40 rounded-lg p-3 grid md:grid-cols-7 gap-2 items-center">
                 <Input defaultValue={o.order_ref} onBlur={(e) => updateOrder(o.id, { order_ref: e.target.value })} placeholder="Ref" />
                 <Input defaultValue={o.service} onBlur={(e) => updateOrder(o.id, { service: e.target.value })} placeholder="Service" />
                 <Input defaultValue={o.status} onBlur={(e) => updateOrder(o.id, { status: e.target.value })} placeholder="Status" />
@@ -578,6 +582,25 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
                     <Badge variant="outline" className="text-xs text-muted-foreground">Not created</Badge>
                   )}
                 </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={async () => {
+                    if (!profile.email) return toast.error("Client has no email");
+                    const { error } = await supabase.functions.invoke("send-transactional-email", {
+                      body: {
+                        templateName: "order-completed",
+                        recipientEmail: profile.email,
+                        idempotencyKey: `order-completed-manual-${o.id}-${Date.now()}`,
+                        templateData: { customerName: profile.full_name, orderRef: o.order_ref, service: o.service },
+                      },
+                    });
+                    if (error) toast.error(error.message); else toast.success("Order Completed email sent");
+                  }}
+                  title="Send Order Completed email to client"
+                >
+                  <Mail className="w-3.5 h-3.5 mr-1" />Order Complete
+                </Button>
                 <Button variant="ghost" size="sm" onClick={() => deleteRow("client_orders", o.id)}><Trash2 className="w-4 h-4" /></Button>
               </div>
               );
@@ -852,7 +875,7 @@ const NewOrderForm = ({ onCreate }: { onCreate: (code: string, desc: string, amo
 };
 
 const CompanyFormSection = ({
-  userId, companies, saving, updateCompanyField, saveCompany, deleteRow, reload,
+  userId, companies, saving, updateCompanyField, saveCompany, deleteRow, reload, clientEmail, clientName,
 }: {
   userId: string;
   companies: any[];
@@ -861,7 +884,34 @@ const CompanyFormSection = ({
   saveCompany: (c: any) => void;
   deleteRow: (table: any, id: string) => void;
   reload: () => Promise<void>;
+  clientEmail?: string | null;
+  clientName?: string | null;
 }) => {
+  const sendCompanyReminder = async (
+    template: "confirmation-statement-reminder" | "annual-accounts-reminder",
+    c: any,
+    label: string,
+  ) => {
+    if (!clientEmail) return toast.error("Client has no email");
+    const dueDate = template === "confirmation-statement-reminder" ? c.confirmation_due : c.accounts_filing_due;
+    if (!dueDate) return toast.error(`Please set the ${label} due date first`);
+    const daysRemaining = Math.ceil((new Date(dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    const { error } = await supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: template,
+        recipientEmail: clientEmail,
+        idempotencyKey: `${template}-${c.id}-${Date.now()}`,
+        templateData: {
+          customerName: clientName,
+          companyName: c.company_name,
+          companyNumber: c.company_number,
+          dueDate,
+          daysRemaining,
+        },
+      },
+    });
+    if (error) toast.error(error.message); else toast.success(`${label} reminder sent`);
+  };
   return (
     <div className="space-y-6">
       <div className="flex justify-end">
@@ -909,7 +959,25 @@ const CompanyFormSection = ({
             <Label>Correspondence Address <span className="text-muted-foreground text-xs">(optional)</span></Label>
             <Textarea value={c.correspondence_address || ""} onChange={(e) => updateCompanyField(c.id, { correspondence_address: e.target.value })} placeholder="Leave blank if not purchased" />
           </div>
-          <Button onClick={() => saveCompany(c)} disabled={saving} size="sm"><Save className="w-4 h-4 mr-2" />Save Company</Button>
+          <div className="flex flex-wrap gap-2">
+            <Button onClick={() => saveCompany(c)} disabled={saving} size="sm"><Save className="w-4 h-4 mr-2" />Save Company</Button>
+            <Button
+              onClick={() => sendCompanyReminder("confirmation-statement-reminder", c, "Confirmation Statement")}
+              size="sm"
+              variant="outline"
+              title="Send Confirmation Statement reminder email to client"
+            >
+              <Mail className="w-4 h-4 mr-2" />Send CS Reminder
+            </Button>
+            <Button
+              onClick={() => sendCompanyReminder("annual-accounts-reminder", c, "Annual Accounts")}
+              size="sm"
+              variant="outline"
+              title="Send Annual Accounts filing reminder email to client"
+            >
+              <Mail className="w-4 h-4 mr-2" />Send Accounts Reminder
+            </Button>
+          </div>
         </div>
       ))}
     </div>
@@ -917,7 +985,7 @@ const CompanyFormSection = ({
 };
 
 const AddressFormSection = ({
-  userId, addresses, docs, saving, updateAddressField, saveAddress, deleteRow, reload,
+  userId, addresses, docs, saving, updateAddressField, saveAddress, deleteRow, reload, clientEmail, clientName,
 }: {
   userId: string;
   addresses: any[];
@@ -927,7 +995,28 @@ const AddressFormSection = ({
   saveAddress: (a: any) => void;
   deleteRow: (table: any, id: string) => void;
   reload: () => Promise<void>;
+  clientEmail?: string | null;
+  clientName?: string | null;
 }) => {
+  const sendAddressReminder = async (a: any) => {
+    if (!clientEmail) return toast.error("Client has no email");
+    if (!a.expire_date) return toast.error("Please set the expiry date first");
+    const daysRemaining = Math.ceil((new Date(a.expire_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    const { error } = await supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: "address-renewal-reminder",
+        recipientEmail: clientEmail,
+        idempotencyKey: `address-renewal-${a.id}-${Date.now()}`,
+        templateData: {
+          customerName: clientName,
+          address: a.address_line1,
+          expireDate: a.expire_date,
+          daysRemaining,
+        },
+      },
+    });
+    if (error) toast.error(error.message); else toast.success("Address renewal reminder sent");
+  };
   return (
     <div className="space-y-6">
       <div className="flex justify-end">
@@ -993,6 +1082,14 @@ const AddressFormSection = ({
               >
                 Renew Address
               </a>
+            </Button>
+            <Button
+              onClick={() => sendAddressReminder(a)}
+              size="sm"
+              variant="outline"
+              title="Send address expiry reminder email to client"
+            >
+              <Mail className="w-4 h-4 mr-2" />Send Renewal Reminder
             </Button>
           </div>
 
