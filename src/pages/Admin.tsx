@@ -145,6 +145,156 @@ const Admin = () => {
   );
 };
 
+const generateRandomPassword = () => {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+  const sym = "!@#$%&*";
+  let pw = "";
+  for (let i = 0; i < 12; i++) pw += chars[Math.floor(Math.random() * chars.length)];
+  pw += sym[Math.floor(Math.random() * sym.length)];
+  return pw;
+};
+
+const CreateClientPanel = ({ onCreated }: { onCreated: () => void }) => {
+  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [password, setPassword] = useState(() => generateRandomPassword());
+  const [creating, setCreating] = useState(false);
+  const [sendingReset, setSendingReset] = useState(false);
+  const [created, setCreated] = useState<{ email: string; password: string } | null>(null);
+
+  const reset = () => {
+    setEmail(""); setFullName(""); setPhone(""); setCompanyName("");
+    setPassword(generateRandomPassword());
+    setCreated(null);
+  };
+
+  const copy = async (text: string, label: string) => {
+    try { await navigator.clipboard.writeText(text); toast.success(`${label} copied`); }
+    catch { toast.error("Copy failed"); }
+  };
+
+  const create = async () => {
+    if (!email.trim() || !password.trim()) { toast.error("Email and password required"); return; }
+    setCreating(true);
+    const { data, error } = await supabase.functions.invoke("admin-clients", {
+      method: "POST",
+      body: { email: email.trim(), password, full_name: fullName.trim(), phone: phone.trim(), company_name: companyName.trim() },
+    });
+    setCreating(false);
+    if (error) { toast.error(error.message || "Failed to create client"); return; }
+    if (data?.error) { toast.error(data.error); return; }
+    toast.success("Client portal created");
+    setCreated({ email: email.trim(), password });
+    onCreated();
+  };
+
+  const sendReset = async (clientEmail: string) => {
+    setSendingReset(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(clientEmail, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setSendingReset(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`Password reset email sent to ${clientEmail}`);
+  };
+
+  if (!open) {
+    return (
+      <div className="mb-4">
+        <Button variant="hero" className="rounded-full" onClick={() => setOpen(true)}>
+          <UserPlus className="w-4 h-4" /> Create New Client Portal
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="glass rounded-2xl p-5 mb-4 space-y-4">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <UserPlus className="w-5 h-5 text-primary" />
+          <h3 className="font-semibold">Create New Client Portal</h3>
+        </div>
+        <Button variant="ghost" size="sm" onClick={() => { setOpen(false); reset(); }}>Close</Button>
+      </div>
+
+      {!created ? (
+        <>
+          <p className="text-xs text-white/70">
+            Create the account here. The client receives the email & a temporary password — they should use <strong>Forgot Password</strong> on the login page to set their own password.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div>
+              <Label>Email *</Label>
+              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="client@example.com" className="mt-1.5" />
+            </div>
+            <div>
+              <Label>Full Name</Label>
+              <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="John Doe" className="mt-1.5" />
+            </div>
+            <div>
+              <Label>Phone</Label>
+              <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+44…" className="mt-1.5" />
+            </div>
+            <div>
+              <Label>Company Name</Label>
+              <Input value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="Acme Ltd" className="mt-1.5" />
+            </div>
+            <div className="sm:col-span-2">
+              <Label>Temporary Password *</Label>
+              <div className="flex gap-2 mt-1.5">
+                <Input value={password} onChange={(e) => setPassword(e.target.value)} className="font-mono" />
+                <Button type="button" variant="outline" onClick={() => setPassword(generateRandomPassword())}>
+                  <KeyRound className="w-4 h-4" /> Regenerate
+                </Button>
+                <Button type="button" variant="outline" onClick={() => copy(password, "Password")}>
+                  <Copy className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => { setOpen(false); reset(); }}>Cancel</Button>
+            <Button variant="hero" onClick={create} disabled={creating} className="rounded-full">
+              {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
+              Create Portal
+            </Button>
+          </div>
+        </>
+      ) : (
+        <div className="space-y-3">
+          <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 space-y-2">
+            <div className="text-sm font-semibold text-primary">✓ Portal created successfully</div>
+            <div className="grid grid-cols-[100px_1fr_auto] gap-2 items-center text-sm">
+              <span className="opacity-70">Email:</span>
+              <span className="font-mono break-all">{created.email}</span>
+              <Button size="sm" variant="ghost" onClick={() => copy(created.email, "Email")}><Copy className="w-3.5 h-3.5" /></Button>
+              <span className="opacity-70">Password:</span>
+              <span className="font-mono break-all">{created.password}</span>
+              <Button size="sm" variant="ghost" onClick={() => copy(created.password, "Password")}><Copy className="w-3.5 h-3.5" /></Button>
+            </div>
+            <p className="text-xs text-white/70 pt-2 border-t border-border/40">
+              Share these credentials with the client, OR send them a password-reset email so they can set their own password directly:
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button variant="outline" onClick={() => sendReset(created.email)} disabled={sendingReset} className="rounded-full">
+              {sendingReset ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
+              Send Password Reset Email
+            </Button>
+            <Button variant="hero" onClick={reset} className="rounded-full">
+              <UserPlus className="w-4 h-4" /> Create Another
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: string; initialTab?: "profile" | "company" | "addresses"; onBack: () => void }) => {
   const [tab, setTab] = useState<"profile" | "company" | "addresses" | "orders" | "invoices" | "subs" | "wallet" | "docs">(initialTab);
   const [profile, setProfile] = useState<any>({});
