@@ -433,9 +433,29 @@ const CheckoutFlow = ({
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
                     minLength={10}
                     required
-                    rows={5}
+                    rows={4}
                     className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
                     placeholder={notesPlaceholder || "Share any details that will help us prepare your order..."}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1.5">Additional note <span className="opacity-60 font-normal">(optional)</span></label>
+                  <textarea
+                    value={form.additional_note}
+                    onChange={(e) => setForm({ ...form, additional_note: e.target.value })}
+                    rows={3}
+                    className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+                    placeholder="Anything else you'd like our team to know?"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1.5">Promo code <span className="opacity-60 font-normal">(optional)</span></label>
+                  <input
+                    type="text"
+                    value={form.promo_code}
+                    onChange={(e) => setForm({ ...form, promo_code: e.target.value.toUpperCase() })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm uppercase tracking-wider"
+                    placeholder="e.g. WELCOME10"
                   />
                 </div>
               </div>
