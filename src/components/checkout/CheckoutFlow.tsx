@@ -302,9 +302,10 @@ const CheckoutFlow = ({
         : "Both: ID Verification + Company Formation";
 
     const activityText =
-      form.business_category === "Other"
+      (form.business_category === "Other"
         ? form.business_other.trim()
-        : `${form.business_category}${form.business_subcategory ? ` — ${form.business_subcategory}` : ""}`;
+        : `${form.business_category}${form.business_subcategory ? ` — ${form.business_subcategory}` : ""}`) +
+      (form.sic_codes.trim() ? `\nSIC codes: ${form.sic_codes.trim()}` : "");
 
     const summary =
       `[${serviceTitle} Order]\n` +
