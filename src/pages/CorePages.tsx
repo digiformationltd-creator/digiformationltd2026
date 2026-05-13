@@ -278,7 +278,7 @@ export const Contact = () => {
               <p className="text-xs opacity-60">Redirecting to WhatsApp…</p>
             </div>
           ) : (
-          <form onSubmit={handleSubmit} className="lg:col-span-3 glass rounded-2xl p-8 space-y-5">
+          <form onSubmit={handleSubmit} className="glass rounded-2xl p-8 space-y-5">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">Send us a message</h2>
               <p className="opacity-80 text-sm">Fill the form — we'll reply via WhatsApp or email within one business day.</p>
