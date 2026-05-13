@@ -43,16 +43,11 @@ export const generateInvoiceNumber = async (serviceCode: string): Promise<string
   return `${prefix}-${pad2(next)}`;
 };
 
-/** Same logic but for client_orders.order_ref */
+/** Same logic but for client_orders.order_ref — uses unified buildOrderRef format. */
 export const generateOrderNumber = async (serviceCode: string): Promise<string> => {
   const code = (serviceCode || "O").toUpperCase().slice(0, 1);
-  const prefix = `DF${code}${dateKey()}`;
-  const { data } = await supabase
-    .from("client_orders")
-    .select("order_ref")
-    .like("order_ref", `${prefix}-%`);
-  const next = (data?.length || 0) + 1;
-  return `${prefix}-${pad2(next)}`;
+  const mapped = ADMIN_CODE_TO_SERVICE_CODE[code] || "ORD";
+  return await buildOrderRef({ serviceCode: mapped });
 };
 
 export interface InvoiceData {
