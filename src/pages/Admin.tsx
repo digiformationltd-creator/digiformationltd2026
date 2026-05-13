@@ -539,6 +539,8 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
             saveCompany={saveCompany}
             deleteRow={deleteRow}
             reload={reload}
+            clientEmail={profile.email}
+            clientName={profile.full_name}
           />
         )}
 
@@ -552,6 +554,8 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
             saveAddress={saveAddress}
             deleteRow={deleteRow}
             reload={reload}
+            clientEmail={profile.email}
+            clientName={profile.full_name}
           />
         )}
 
