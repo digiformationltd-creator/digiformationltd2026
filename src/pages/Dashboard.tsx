@@ -336,6 +336,14 @@ const Dashboard = () => {
             <ClientSubscriptionsSection rows={subscriptions} onBrowse={() => setActive("newServices")} />
           )}
 
+          {active === "company" && (
+            <MyCompaniesSection userId={user.id} companies={companies} onChange={setCompanies} editable={false} />
+          )}
+
+          {active === "addresses" && (
+            <MyAddressesSection userId={user.id} editable={false} />
+          )}
+
           {active === "orders" && (
             <ClientOrdersSection rows={orders} onBrowse={() => setActive("newServices")} />
           )}
