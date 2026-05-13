@@ -77,6 +77,11 @@
   }
 }
 
+/* Hide floating buttons (WhatsApp, AI Assistant) while any nav drawer is open */
+body.nav-drawer-open .hide-on-nav-open {
+  display: none !important;
+}
+
 /* WHITE-TEXT AUDIT — pure white on every non-heading element */
 body :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6):not(.text-gradient):not(.text-on-light):not(svg):not(path) {
   color: #fff;

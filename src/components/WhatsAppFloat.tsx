@@ -28,7 +28,7 @@ const WhatsAppFloat = () => {
       rel="noopener noreferrer"
       onClick={() => trackWhatsAppClick("floating_button")}
       aria-label="Chat with us on WhatsApp"
-      className="fixed bottom-5 right-5 z-50 group flex items-center justify-center bg-[#25D366] text-white rounded-full shadow-2xl hover:scale-110 transition-transform w-14 h-14 sm:w-16 sm:h-16"
+      className="hide-on-nav-open fixed bottom-5 right-5 z-50 group flex items-center justify-center bg-[#25D366] text-white rounded-full shadow-2xl hover:scale-110 transition-transform w-14 h-14 sm:w-16 sm:h-16"
     >
       {/* Official WhatsApp glyph */}
       <svg

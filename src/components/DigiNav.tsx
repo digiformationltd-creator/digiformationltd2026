@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { navGroups } from "@/data/navigation";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { setNavDrawerOpen } from "@/lib/nav-drawer";
 import logo from "@/assets/digiformation-logo.png";
 
 const topLinks = [
@@ -41,9 +42,17 @@ const DigiNav = () => {
   };
 
   useEffect(() => {
-    if (open) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "";
-    return () => { document.body.style.overflow = ""; };
+    if (open) {
+      document.body.style.overflow = "hidden";
+      setNavDrawerOpen(true);
+    } else {
+      document.body.style.overflow = "";
+      setNavDrawerOpen(false);
+    }
+    return () => {
+      document.body.style.overflow = "";
+      setNavDrawerOpen(false);
+    };
   }, [open]);
 
   return (
