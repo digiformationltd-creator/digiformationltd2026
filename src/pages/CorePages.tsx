@@ -354,6 +354,7 @@ export const Contact = () => {
           </form>
           )}
         </div>
+      </section>
     </Layout>
   );
 };
