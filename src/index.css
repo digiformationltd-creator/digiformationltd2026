@@ -179,6 +179,76 @@ body p, body span, body li, body label, body small, body div {
   .glass-coral  .card-icon, .glass[data-tint="coral"]   .card-icon { color: hsl(12  32% 78%); background: linear-gradient(135deg, hsl(12  22% 20% / 0.65), hsl(12  14% 14% / 0.50)); border-color: hsl(12  24% 52% / 0.38); }
   .glass-slate  .card-icon, .glass[data-tint="slate"]   .card-icon { color: hsl(220 24% 80%); background: linear-gradient(135deg, hsl(220 16% 20% / 0.65), hsl(220 10% 14% / 0.50)); border-color: hsl(220 18% 54% / 0.38); }
 
+  /* ── RGB color-cycling animation for tinted glass cards ── */
+  @keyframes glass-rgb-cycle {
+    0%   { background-color: hsl(155 16% 16% / 0.58); border-color: hsl(155 22% 56% / 0.32); }
+    14%  { background-color: hsl(175 16% 16% / 0.58); border-color: hsl(175 22% 56% / 0.32); }
+    28%  { background-color: hsl(200 16% 16% / 0.58); border-color: hsl(200 22% 58% / 0.32); }
+    42%  { background-color: hsl(255 16% 16% / 0.58); border-color: hsl(255 20% 58% / 0.32); }
+    56%  { background-color: hsl(345 16% 16% / 0.58); border-color: hsl(345 22% 58% / 0.32); }
+    70%  { background-color: hsl(12  16% 16% / 0.58); border-color: hsl(12  22% 56% / 0.32); }
+    84%  { background-color: hsl(42  18% 16% / 0.58); border-color: hsl(42  24% 54% / 0.32); }
+    100% { background-color: hsl(155 16% 16% / 0.58); border-color: hsl(155 22% 56% / 0.32); }
+  }
+  @keyframes glass-rgb-icon {
+    0%   { color: hsl(155 32% 78%); }
+    14%  { color: hsl(175 32% 78%); }
+    28%  { color: hsl(200 32% 80%); }
+    42%  { color: hsl(255 30% 80%); }
+    56%  { color: hsl(345 32% 80%); }
+    70%  { color: hsl(12  32% 78%); }
+    84%  { color: hsl(42  34% 76%); }
+    100% { color: hsl(155 32% 78%); }
+  }
+
+  .glass-sage, .glass-rose, .glass-amber, .glass-sky,
+  .glass-lavender, .glass-teal, .glass-coral, .glass-slate,
+  .glass[data-tint] {
+    animation: glass-rgb-cycle 18s ease-in-out infinite;
+  }
+  .glass-sage     { animation-delay:  0s; }
+  .glass-teal     { animation-delay: -2.5s; }
+  .glass-sky      { animation-delay: -5s; }
+  .glass-lavender { animation-delay: -7.5s; }
+  .glass-rose     { animation-delay: -10s; }
+  .glass-coral    { animation-delay: -12.5s; }
+  .glass-amber    { animation-delay: -15s; }
+  .glass-slate    { animation-delay: -1.2s; }
+  .glass[data-tint="sage"]     { animation-delay:  0s; }
+  .glass[data-tint="teal"]     { animation-delay: -2.5s; }
+  .glass[data-tint="sky"]      { animation-delay: -5s; }
+  .glass[data-tint="lavender"] { animation-delay: -7.5s; }
+  .glass[data-tint="rose"]     { animation-delay: -10s; }
+  .glass[data-tint="coral"]    { animation-delay: -12.5s; }
+  .glass[data-tint="amber"]    { animation-delay: -15s; }
+  .glass[data-tint="slate"]    { animation-delay: -1.2s; }
+
+  .glass-sage .card-icon, .glass-rose .card-icon, .glass-amber .card-icon,
+  .glass-sky .card-icon, .glass-lavender .card-icon, .glass-teal .card-icon,
+  .glass-coral .card-icon, .glass-slate .card-icon,
+  .glass[data-tint] .card-icon {
+    animation: glass-rgb-icon 18s ease-in-out infinite;
+    animation-delay: inherit;
+  }
+
+  .glass-sage:hover, .glass-rose:hover, .glass-amber:hover, .glass-sky:hover,
+  .glass-lavender:hover, .glass-teal:hover, .glass-coral:hover, .glass-slate:hover,
+  .glass[data-tint]:hover {
+    animation-play-state: paused;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .glass-sage, .glass-rose, .glass-amber, .glass-sky,
+    .glass-lavender, .glass-teal, .glass-coral, .glass-slate,
+    .glass[data-tint],
+    .glass[data-tint] .card-icon,
+    .glass-sage .card-icon, .glass-rose .card-icon, .glass-amber .card-icon,
+    .glass-sky .card-icon, .glass-lavender .card-icon, .glass-teal .card-icon,
+    .glass-coral .card-icon, .glass-slate .card-icon {
+      animation: none;
+    }
+  }
+
   .grid-pattern {
     background-image:
       linear-gradient(hsl(220 8% 70% / 0.05) 1px, transparent 1px),
