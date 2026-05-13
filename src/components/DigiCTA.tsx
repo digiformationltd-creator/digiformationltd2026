@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 const DigiCTA = () => (
   <section id="contact" className="py-10">
     <div className="container mx-auto px-4">
-      <div className="relative overflow-hidden rounded-3xl glass glass-slate p-12 md:p-20 text-center">
+      <div className="relative overflow-hidden rounded-3xl glass p-12 md:p-20 text-center">
         <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-gradient-accent opacity-15 blur-3xl pointer-events-none" />
         <div className="relative">
           <h2 data-reveal="rise" className="text-4xl md:text-6xl font-bold mb-6 max-w-3xl mx-auto leading-tight text-foreground">

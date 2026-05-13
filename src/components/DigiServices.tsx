@@ -15,7 +15,6 @@ const items = [
     cta: "Learn more",
     href: "/uk-services/uk-ltd-formation",
     image: heroUkLtd,
-    color: "glass-sage",
   },
   {
     tag: "USA",
@@ -24,7 +23,6 @@ const items = [
     cta: "Learn more",
     href: "/usa-services/us-llc-formation",
     image: heroUsLlc,
-    color: "glass-sky",
   },
   {
     tag: "TAX",
@@ -33,7 +31,6 @@ const items = [
     cta: "Learn more",
     href: "/uk-services/utr-codes",
     image: heroTax,
-    color: "glass-amber",
   },
   {
     tag: "BANK",
@@ -42,7 +39,6 @@ const items = [
     cta: "Learn more",
     href: "/banks-payment-solutions/tide",
     image: heroBanking,
-    color: "glass-lavender",
   },
   {
     tag: "PAY",
@@ -51,7 +47,6 @@ const items = [
     cta: "Learn more",
     href: "/banks-payment-solutions/stripe",
     image: heroPayments,
-    color: "glass-teal",
   },
   {
     tag: "WEB",
@@ -60,7 +55,6 @@ const items = [
     cta: "Learn more",
     href: "/web-development",
     image: heroWeb,
-    color: "glass-coral",
   },
 ];
 
@@ -84,7 +78,7 @@ const DigiServices = () => (
             key={it.title}
             to={it.href}
             aria-label={`${it.title} — ${it.cta}`}
-            className={`group relative overflow-hidden rounded-2xl ${it.color} glass hover:-translate-y-1.5 hover:shadow-elegant hover:border-primary/40 transition-all duration-300 flex flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-primary`}
+            className="group relative overflow-hidden rounded-2xl glass hover:-translate-y-1.5 hover:shadow-elegant hover:border-primary/40 transition-all duration-300 flex flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             {/* Top hero image */}
             <div className="relative aspect-[4/3] overflow-hidden">
