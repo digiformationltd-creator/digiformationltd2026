@@ -128,6 +128,9 @@ const Auth = () => {
       redirectTo: `${window.location.origin}/reset-password`,
     });
     setLoading(false);
+    if (error) {
+      return toast.error("Reset link could not be sent. Please try again or contact support.");
+    }
     // Always show same generic message (avoid email enumeration)
     toast.success("If an account exists for that email, a reset link has been sent.");
     setShowForgot(false);
