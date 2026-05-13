@@ -1147,8 +1147,9 @@ const AddressFormSection = ({
 }) => {
   const sendAddressReminder = async (a: any) => {
     if (!clientEmail) return toast.error("Client has no email");
-    if (!a.expire_date) return toast.error("Please set the expiry date first");
-    const daysRemaining = Math.ceil((new Date(a.expire_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    const expireDate = computeAddressExpireDate(a);
+    if (!expireDate) return toast.error("Cannot determine expiry date — set Start Date or Expire Date first");
+    const daysRemaining = Math.max(0, Math.ceil((new Date(expireDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
     const { error } = await supabase.functions.invoke("send-transactional-email", {
       body: {
         templateName: "address-renewal-reminder",
@@ -1157,12 +1158,12 @@ const AddressFormSection = ({
         templateData: {
           customerName: clientName,
           address: a.address_line1,
-          expireDate: a.expire_date,
+          expireDate,
           daysRemaining,
         },
       },
     });
-    if (error) toast.error(error.message); else toast.success("Address renewal reminder sent");
+    if (error) toast.error(error.message); else toast.success(`Address renewal reminder sent (${daysRemaining} days remaining)`);
   };
   return (
     <div className="space-y-6">
