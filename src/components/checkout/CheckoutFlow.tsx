@@ -136,11 +136,15 @@ const CheckoutFlow = ({
     additional_note: "",
     promo_code: "",
   });
-  const [idType, setIdType] = useState<"id_card" | "passport">("id_card");
+  const [idType, setIdType] = useState<"id_card" | "passport" | "driving_licence">("id_card");
+  const [idTypeOpen, setIdTypeOpen] = useState(false);
   const [idFront, setIdFront] = useState<File | null>(null);
   const [idBack, setIdBack] = useState<File | null>(null);
   const [holdingSelfie, setHoldingSelfie] = useState<File | null>(null);
   const [exampleOpen, setExampleOpen] = useState<null | { title: string; src: string }>(null);
+  const [serviceMode, setServiceMode] = useState<"ltd-only" | "both">("both");
+  const [serviceModeOpen, setServiceModeOpen] = useState(true);
+  const idVerificationActive = !showServiceMode || serviceMode === "both";
 
   // Skip selection step entirely when locked
   const steps = lockSelection ? STEP_LABELS.slice(1) : STEP_LABELS;
