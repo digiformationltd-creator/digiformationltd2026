@@ -45,7 +45,7 @@ const DigiCaseStudies = () => (
         </h2>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-5">
+      <div data-reveal-stagger className="grid md:grid-cols-3 gap-5">
         {cases.map((c) => (
           <article key={c.tag} className="glass rounded-2xl p-7 hover:-translate-y-1 hover:shadow-elegant transition-all duration-300 flex flex-col">
             <span className="inline-block self-start text-[10px] font-semibold uppercase tracking-[0.16em] px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
