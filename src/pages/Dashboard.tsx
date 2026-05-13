@@ -540,8 +540,8 @@ const MyCompaniesSection = ({ userId, companies, onChange, editable = false }: {
     { key: "director_name", label: "Director Name" },
     { key: "sic_code", label: "SIC Code" },
     { key: "auth_code", label: "Auth Code" },
-    { key: "utr_number", label: "UTR Number" },
     { key: "activation_code", label: "Activation Code" },
+    { key: "utr_number", label: "UTR Number" },
     { key: "incorporation_date", label: "Incorporation Date", type: "date" },
     { key: "address_expire", label: "Address Expire", type: "date" },
     { key: "confirmation_due", label: "Confirmation Due", type: "date" },
@@ -809,9 +809,9 @@ const AddressCard = ({
                   <div><Label className="text-[11px] uppercase tracking-wider opacity-60">Expiry Date</Label><div className="mt-1">{a.expire_date || "—"}</div></div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div><Label className="text-[11px] uppercase tracking-wider opacity-60">UTR Number</Label><div className="mt-1 font-mono">{a.utr_number || "—"}</div></div>
                   <div><Label className="text-[11px] uppercase tracking-wider opacity-60">Auth Code</Label><div className="mt-1 font-mono">{a.auth_code || "—"}</div></div>
                   <div><Label className="text-[11px] uppercase tracking-wider opacity-60">Activation Code</Label><div className="mt-1 font-mono">{a.activation_code || "—"}</div></div>
+                  <div><Label className="text-[11px] uppercase tracking-wider opacity-60">UTR Number</Label><div className="mt-1 font-mono">{a.utr_number || "—"}</div></div>
                 </div>
               </div>
             )}
