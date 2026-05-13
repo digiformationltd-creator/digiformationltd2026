@@ -549,11 +549,12 @@ const MyCompaniesSection = ({ userId, companies, onChange, editable = false }: {
 };
 
 const CompanyCard = ({
-  company: c, index: idx, fields, saving, onChange, onSave, onDelete,
+  company: c, index: idx, fields, saving, editable = true, onChange, onSave, onDelete,
 }: {
   company: CompanyDetails; index: number;
   fields: { key: keyof CompanyDetails; label: string; type?: string; textarea?: boolean }[];
   saving: boolean;
+  editable?: boolean;
   onChange: (patch: Partial<CompanyDetails>) => void;
   onSave: () => void; onDelete: () => void;
 }) => {
