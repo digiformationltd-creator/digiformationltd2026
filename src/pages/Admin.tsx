@@ -723,9 +723,20 @@ const CompanyFormSection = ({
 }) => {
   return (
     <div className="space-y-6">
+      <div className="flex justify-end">
+        <Button
+          size="sm"
+          onClick={async () => {
+            const { error } = await supabase.from("client_company_details").insert({ user_id: userId });
+            if (error) toast.error(error.message); else { toast.success("Company added"); await reload(); }
+          }}
+        >
+          + Add Company
+        </Button>
+      </div>
       {companies.length === 0 && (
         <div className="border border-dashed border-border rounded-xl p-8 text-center space-y-3">
-          <p className="text-sm text-muted-foreground">No company on file for this client yet.</p>
+          <p className="text-sm text-muted-foreground">No company on file for this client yet. Click "Add Company" to create one.</p>
         </div>
       )}
       {companies.map((c, idx) => (
@@ -776,9 +787,25 @@ const AddressFormSection = ({
 }) => {
   return (
     <div className="space-y-6">
+      <div className="flex justify-end">
+        <Button
+          size="sm"
+          onClick={async () => {
+            const { error } = await supabase.from("client_addresses").insert({
+              user_id: userId,
+              label: "New Address",
+              service_type: "registered_office",
+              status: "active",
+            });
+            if (error) toast.error(error.message); else { toast.success("Address added"); await reload(); }
+          }}
+        >
+          + Add Address
+        </Button>
+      </div>
       {addresses.length === 0 && (
         <div className="border border-dashed border-border rounded-xl p-8 text-center space-y-3">
-          <p className="text-sm text-muted-foreground">No address on file for this client yet.</p>
+          <p className="text-sm text-muted-foreground">No address on file for this client yet. Click "Add Address" to create one.</p>
         </div>
       )}
       {addresses.map((a, idx) => (
