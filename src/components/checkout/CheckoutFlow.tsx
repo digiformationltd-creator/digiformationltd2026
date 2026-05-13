@@ -479,6 +479,19 @@ const CheckoutFlow = ({
             {showDetails && (
               <div className="glass rounded-3xl p-6 md:p-8 space-y-5">
                 <h2 className="text-2xl font-bold">Your details</h2>
+                {showCompanyName && (
+                  <div className="rounded-2xl border border-primary/40 bg-primary/5 p-4 md:p-5">
+                    <Field
+                      label="Proposed company name (the company you want to register)"
+                      value={form.company_name}
+                      onChange={(v) => setForm({ ...form, company_name: v })}
+                      required
+                      minLength={2}
+                      placeholder="e.g. Acme Trading Ltd"
+                    />
+                    <p className="text-xs opacity-70 mt-2">Tip: add 2-3 alternative names in the Notes field below in case your first choice is taken.</p>
+                  </div>
+                )}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Field label="Full name" value={form.full_name} onChange={(v) => setForm({ ...form, full_name: v })} required minLength={2} />
                   <Field label="Email" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
