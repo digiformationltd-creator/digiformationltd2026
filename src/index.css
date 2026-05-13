@@ -327,14 +327,20 @@ body p, body span, body li, body label, body small, body div {
 }
 .headline-accent-shimmer {
   color: hsl(0 0% 100%);
-  animation: headline-glow-pulse 3.5s ease-in-out infinite;
+  text-shadow:
+    0 0 8px hsl(220 6% 70% / 0.28),
+    0 0 22px hsl(220 8% 55% / 0.18);
+  animation: none !important;
 }
 @media (prefers-reduced-motion: reduce) {
   .headline-accent-shimmer { animation: none; }
 }
 
 .animate-float { animation: float 6s ease-in-out infinite; }
-.animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+.animate-pulse-glow,
+.animate-pulse {
+  animation: none !important;
+}
 .animate-fade-up { animation: fade-up 0.8s var(--transition-smooth) both; }
 .animate-partner-slide { animation: partner-slide 24s linear infinite; }
 .animate-headline-slide { animation: headline-slide 4s cubic-bezier(0.22, 1, 0.36, 1) both; }
@@ -502,7 +508,7 @@ body p, body span, body li, body label, body small, body div {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: heading-shine-sweep 2.2s ease-out 0.2s both;
+  animation: none !important;
 }
 
 /* Icon pop / float */
