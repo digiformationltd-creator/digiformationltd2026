@@ -748,12 +748,20 @@ const AddressCard = ({
 }) => {
   const [open, setOpen] = useState(false);
   const fullAddress = [a.address_line1, a.address_line2, a.city, a.county, a.postcode, a.country].filter(Boolean).join(", ");
+  const isExpired = (() => {
+    if (a.expire_date) {
+      const exp = new Date(a.expire_date);
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      if (!isNaN(exp.getTime()) && exp < today) return true;
+    }
+    return a.status !== "active";
+  })();
 
   return (
     <div className="glass rounded-2xl overflow-hidden">
       <div className="px-6 pt-5 pb-3 border-b border-border/40 flex items-center justify-between gap-2">
         <h3 className="font-bold text-lg uppercase tracking-wide truncate">{a.label?.trim() || "Address"}</h3>
-        <StatusBadge status={a.status === "active" ? "Active" : "Expired"} />
+        <StatusBadge status={isExpired ? "Expired" : "Active"} />
       </div>
       <div className="p-6 space-y-3 text-sm">
         <Row label="Service Type:" value={(a.service_type || "").replace(/_/g, " ")} />
