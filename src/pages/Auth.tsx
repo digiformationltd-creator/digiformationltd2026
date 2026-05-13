@@ -40,7 +40,8 @@ const Auth = () => {
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "PASSWORD_RECOVERY") return;
       if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {
-        navigate("/dashboard", { replace: true });
+        const dest = session.user.email?.toLowerCase() === "info@digiformation.uk" ? "/admin" : "/dashboard";
+        navigate(dest, { replace: true });
       }
     });
     return () => sub.subscription.unsubscribe();
