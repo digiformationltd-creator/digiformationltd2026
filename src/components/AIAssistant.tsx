@@ -118,7 +118,7 @@ const AIAssistant = () => {
       <button
         onClick={() => setOpen(true)}
         aria-label="Open Digi AI Assistant"
-        className="fixed bottom-24 right-5 z-50 group flex items-center justify-center bg-gradient-brand text-primary-foreground rounded-full shadow-glow hover:shadow-elegant hover:scale-110 transition-all w-14 h-14 sm:w-16 sm:h-16"
+        className="hide-on-nav-open fixed bottom-24 right-5 z-50 group flex items-center justify-center bg-gradient-brand text-primary-foreground rounded-full shadow-glow hover:shadow-elegant hover:scale-110 transition-all w-14 h-14 sm:w-16 sm:h-16"
       >
         <Bot className="w-7 h-7 sm:w-8 sm:h-8" />
         <span className="absolute -top-1 -right-1 flex h-3 w-3">
@@ -133,7 +133,7 @@ const AIAssistant = () => {
 
       {/* Chat window */}
       {open && (
-        <div className="fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-24 z-[60] sm:w-[400px] sm:h-[600px] bg-background sm:rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
+        <div className="hide-on-nav-open fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-24 z-[60] sm:w-[400px] sm:h-[600px] bg-background sm:rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
           {/* Header */}
           <div className="bg-gradient-brand text-primary-foreground p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">

@@ -5,6 +5,7 @@ import type { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { toast } from "sonner";
+import { setNavDrawerOpen } from "@/lib/nav-drawer";
 import {
   Menu, LayoutDashboard, ShieldCheck, ShoppingBag, FileText, Wallet,
   UserCog, ShoppingCart, Ticket, LifeBuoy, LogOut,
@@ -46,6 +47,10 @@ const UserDrawer = () => {
       setIsAdmin(!!data);
     })();
   }, [user]);
+
+  useEffect(() => {
+    setNavDrawerOpen(open);
+  }, [open]);
 
   if (!user) return null;
 
