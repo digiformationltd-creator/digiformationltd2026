@@ -338,7 +338,8 @@ body p, body span, body li, body label, body small, body div {
 
 .animate-float { animation: float 6s ease-in-out infinite; }
 .animate-pulse-glow,
-.animate-pulse {
+.animate-pulse,
+.animate-caret-blink {
   animation: none !important;
 }
 .animate-fade-up { animation: fade-up 0.8s var(--transition-smooth) both; }
