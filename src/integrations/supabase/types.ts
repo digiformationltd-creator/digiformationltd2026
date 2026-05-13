@@ -16,8 +16,10 @@ export type Database = {
     Tables: {
       client_addresses: {
         Row: {
+          activation_code: string | null
           address_line1: string | null
           address_line2: string | null
+          auth_code: string | null
           city: string | null
           country: string | null
           county: string | null
@@ -32,10 +34,13 @@ export type Database = {
           status: string
           updated_at: string
           user_id: string
+          utr_number: string | null
         }
         Insert: {
+          activation_code?: string | null
           address_line1?: string | null
           address_line2?: string | null
+          auth_code?: string | null
           city?: string | null
           country?: string | null
           county?: string | null
@@ -50,10 +55,13 @@ export type Database = {
           status?: string
           updated_at?: string
           user_id: string
+          utr_number?: string | null
         }
         Update: {
+          activation_code?: string | null
           address_line1?: string | null
           address_line2?: string | null
+          auth_code?: string | null
           city?: string | null
           country?: string | null
           county?: string | null
@@ -68,6 +76,7 @@ export type Database = {
           status?: string
           updated_at?: string
           user_id?: string
+          utr_number?: string | null
         }
         Relationships: []
       }
