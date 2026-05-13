@@ -131,33 +131,6 @@ body p, body span, body li, body label, body small, body div {
     box-shadow: 0 12px 40px hsl(220 10% 4% / 0.5), inset 0 1px 0 hsl(220 12% 88% / 0.08);
   }
 
-  /* Legacy color classes now resolve to one static neutral glass style. */
-  .glass-sage, .glass-rose, .glass-amber, .glass-sky,
-  .glass-lavender, .glass-teal, .glass-coral, .glass-slate,
-  .glass[data-tint] {
-    background: hsl(220 14% 13% / 0.55);
-    border-color: hsl(220 16% 60% / 0.22);
-    animation: none;
-  }
-
-  .glass-sage:hover, .glass-rose:hover, .glass-amber:hover, .glass-sky:hover,
-  .glass-lavender:hover, .glass-teal:hover, .glass-coral:hover, .glass-slate:hover,
-  .glass[data-tint]:hover {
-    background: hsl(220 16% 22% / 0.72);
-    border-color: hsl(220 18% 65% / 0.38);
-    box-shadow: 0 12px 40px hsl(220 10% 4% / 0.5), inset 0 1px 0 hsl(220 12% 88% / 0.08);
-  }
-
-  .glass-sage .card-icon, .glass-rose .card-icon, .glass-amber .card-icon,
-  .glass-sky .card-icon, .glass-lavender .card-icon, .glass-teal .card-icon,
-  .glass-coral .card-icon, .glass-slate .card-icon,
-  .glass[data-tint] .card-icon {
-    color: hsl(var(--primary));
-    background: linear-gradient(135deg, hsl(220 12% 22% / 0.65), hsl(220 10% 14% / 0.50));
-    border-color: hsl(220 16% 60% / 0.22);
-    animation: none;
-  }
-
   .grid-pattern {
     background-image:
       linear-gradient(hsl(220 8% 70% / 0.05) 1px, transparent 1px),
