@@ -69,7 +69,8 @@ const Auth = () => {
       return toast.error(msg);
     }
     toast.success("Welcome back!");
-    navigate("/dashboard", { replace: true });
+    const dest = ev.data.toLowerCase() === "info@digiformation.uk" ? "/admin" : "/dashboard";
+    navigate(dest, { replace: true });
   };
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
