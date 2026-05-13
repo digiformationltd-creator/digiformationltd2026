@@ -29,6 +29,45 @@ import exampleIdFront from "@/assets/example-id-front.jpg";
 import exampleIdBack from "@/assets/example-id-back.jpg";
 import examplePassport from "@/assets/example-passport.jpg";
 
+const BUSINESS_CATEGORIES: Record<string, string[]> = {
+  "E-commerce": [
+    "Clothing & Apparel",
+    "Electronics & Gadgets",
+    "Footwear",
+    "Beauty & Cosmetics",
+    "Home & Kitchen",
+    "Health & Wellness",
+    "Toys & Kids",
+    "Jewelry & Accessories",
+    "Food & Beverages",
+    "General Store / Multi-niche",
+  ],
+  "IT Services": [
+    "Cloud Services",
+    "Cyber Security",
+    "Software Development",
+    "Web Development",
+    "Mobile App Development",
+    "IT Support / Desktop Engineer",
+    "Data & Analytics",
+    "DevOps & Infrastructure",
+    "AI / Machine Learning",
+    "QA & Testing",
+  ],
+  "Digital Marketing Services": [
+    "SEO",
+    "Google Ads / PPC",
+    "Social Media Marketing",
+    "Content Marketing",
+    "Email Marketing",
+    "Influencer Marketing",
+    "Graphic Designing",
+    "Video / Animation",
+    "Branding",
+    "Web Development",
+  ],
+};
+
 export type CheckoutItem = {
   id: string;
   name: string;
@@ -147,7 +186,9 @@ const CheckoutFlow = ({
     postal_code: "",
     business_type: "",
     message: "",
-    additional_note: "",
+    business_category: "",
+    business_subcategory: "",
+    business_other: "",
     promo_code: "",
   });
   const [idType, setIdType] = useState<"id_card" | "passport" | "driving_licence">("id_card");
@@ -206,7 +247,10 @@ const CheckoutFlow = ({
         form.city.trim().length >= 2 &&
         form.postal_code.trim().length >= 3 &&
         (!showBusinessType || form.business_type.trim().length >= 2) &&
-        form.message.trim().length >= 10
+        form.business_category.trim().length > 0 &&
+        (form.business_category === "Other"
+          ? form.business_other.trim().length >= 10
+          : form.business_subcategory.trim().length > 0)
       );
     }
     return true;
@@ -256,6 +300,11 @@ const CheckoutFlow = ({
         ? "ID verification already done elsewhere — only register UK Ltd"
         : "Both: ID Verification + Company Formation";
 
+    const activityText =
+      form.business_category === "Other"
+        ? form.business_other.trim()
+        : `${form.business_category}${form.business_subcategory ? ` — ${form.business_subcategory}` : ""}`;
+
     const summary =
       `[${serviceTitle} Order]\n` +
       `Ref: ${orderRef}\n` +
@@ -268,8 +317,7 @@ const CheckoutFlow = ({
       `Total: ${formatMoney(total, currency)}\n` +
       (form.promo_code ? `Promo code: ${form.promo_code}\n` : "") +
       addressBlock +
-      `\nCustomer note:\n${form.message}` +
-      (form.additional_note ? `\n\nAdditional note:\n${form.additional_note}` : "");
+      `\nBusiness activity:\n${activityText}`;
 
     const { error } = await supabase.from("contact_submissions").insert({
       full_name: form.full_name,
@@ -299,7 +347,7 @@ const CheckoutFlow = ({
           amount_gbp: total,
           currency,
           customer: { full_name: form.full_name, email: form.email, address: form.country },
-          notes: `${contextLabel ? contextLabel + "\n" : ""}${lines}\n${form.message}`,
+          notes: `${contextLabel ? contextLabel + "\n" : ""}${lines}\nBusiness activity: ${activityText}`,
           orderRef,
         },
       });
@@ -328,7 +376,7 @@ const CheckoutFlow = ({
               orderRef: finalOrderRef,
               invoiceNumber,
               invoiceUrl,
-              notes: form.message,
+              notes: `Business activity: ${activityText}`,
               liveSelfieLink: liveSelfieMode === "link" && idVerificationActive ? liveSelfieLink : undefined,
             },
           },
@@ -351,7 +399,7 @@ const CheckoutFlow = ({
             orderRef: finalOrderRef,
             invoiceNumber,
             pagePath,
-            notes: form.message,
+            notes: `Business activity: ${activityText}`,
           },
         },
       })
@@ -659,27 +707,56 @@ const CheckoutFlow = ({
                     minLength={2}
                   />
                 )}
-                <div>
-                  <label className="block text-sm font-medium mb-1.5">Notes (proposed company name, business activity, etc.)</label>
-                  <textarea
-                    value={form.message}
-                    onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    minLength={10}
-                    required
-                    rows={4}
-                    className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
-                    placeholder={notesPlaceholder || "Share any details that will help us prepare your order..."}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1.5">Additional note <span className="opacity-60 font-normal">(optional)</span></label>
-                  <textarea
-                    value={form.additional_note}
-                    onChange={(e) => setForm({ ...form, additional_note: e.target.value })}
-                    rows={3}
-                    className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
-                    placeholder="Anything else you'd like our team to know?"
-                  />
+                <div className="rounded-2xl border border-border/40 p-4 md:p-5 space-y-4">
+                  <div>
+                    <h3 className="font-semibold">Business activity</h3>
+                    <p className="text-xs opacity-70 mt-1">Pick the category that best describes your business.</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1.5">Business category <span className="text-destructive">*</span></label>
+                    <select
+                      value={form.business_category}
+                      onChange={(e) => setForm({ ...form, business_category: e.target.value, business_subcategory: "", business_other: "" })}
+                      required
+                      className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+                    >
+                      <option value="">Select a category…</option>
+                      {Object.keys(BUSINESS_CATEGORIES).map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  {form.business_category && form.business_category !== "Other" && (
+                    <div>
+                      <label className="block text-sm font-medium mb-1.5">Sub-category <span className="text-destructive">*</span></label>
+                      <select
+                        value={form.business_subcategory}
+                        onChange={(e) => setForm({ ...form, business_subcategory: e.target.value })}
+                        required
+                        className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+                      >
+                        <option value="">Select a sub-category…</option>
+                        {BUSINESS_CATEGORIES[form.business_category].map((s) => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                  {form.business_category === "Other" && (
+                    <div>
+                      <label className="block text-sm font-medium mb-1.5">Describe your business <span className="text-destructive">*</span></label>
+                      <textarea
+                        value={form.business_other}
+                        onChange={(e) => setForm({ ...form, business_other: e.target.value })}
+                        minLength={10}
+                        required
+                        rows={3}
+                        className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+                        placeholder="Briefly describe what your business does…"
+                      />
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1.5">Promo code <span className="opacity-60 font-normal">(optional)</span></label>
@@ -841,10 +918,14 @@ const CheckoutFlow = ({
                       <p className="text-sm opacity-85">{form.business_type}</p>
                     </>
                   )}
-                  {form.message && (
+                  {form.business_category && (
                     <>
-                      <div className="text-sm font-semibold mt-4 mb-1">Notes</div>
-                      <p className="text-sm opacity-85 whitespace-pre-wrap">{form.message}</p>
+                      <div className="text-sm font-semibold mt-4 mb-1">Business activity</div>
+                      <p className="text-sm opacity-85 whitespace-pre-wrap">
+                        {form.business_category === "Other"
+                          ? form.business_other
+                          : `${form.business_category}${form.business_subcategory ? ` — ${form.business_subcategory}` : ""}`}
+                      </p>
                     </>
                   )}
                 </div>
