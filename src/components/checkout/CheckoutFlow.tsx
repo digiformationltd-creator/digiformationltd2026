@@ -167,14 +167,17 @@ const CheckoutFlow = ({
 
   const toggle = (id: string) => {
     if (lockSelection) return;
-    const item = items.find((i) => i.id === id);
+    const item = allItems.find((i) => i.id === id);
     if (item?.fixed) return;
     setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
         next.delete(id);
       } else {
-        if (!multiSelect) next.clear();
+        // Multi-select limit only applies to primary `items`; extras are
+        // always additive (you can tick add-ons even with a fixed package).
+        const isExtra = !items.find((i) => i.id === id);
+        if (!multiSelect && !isExtra) next.clear();
         next.add(id);
       }
       return next;
@@ -182,8 +185,8 @@ const CheckoutFlow = ({
   };
 
   const selectedItems = useMemo(
-    () => items.filter((i) => selected.has(i.id)),
-    [items, selected]
+    () => allItems.filter((i) => selected.has(i.id)),
+    [allItems, selected]
   );
   const subtotal = selectedItems.reduce((s, i) => s + i.price, 0);
   const vat = +(subtotal * vatRate).toFixed(2);
