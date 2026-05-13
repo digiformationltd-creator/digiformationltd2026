@@ -65,6 +65,7 @@ const UkLtdCheckout = () => {
         liveSelfieMode="link"
         liveSelfieLink="https://verify.didit.me/u/dzhdYtifRt-jeb3kZsSptg"
         showCompanyName
+        showServiceMode
       />
     </Layout>
   );

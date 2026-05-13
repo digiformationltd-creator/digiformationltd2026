@@ -14,6 +14,10 @@ import {
   Upload,
   Eye,
   X,
+  ChevronDown,
+  IdCard,
+  BookUser,
+  Car,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -72,6 +76,8 @@ export type CheckoutFlowProps = {
   showBusinessType?: boolean;
   /** Show a "Company name to register" field at the top of details (used for UK LTD) */
   showCompanyName?: boolean;
+  /** Show the "what do you need?" service-mode picker at top of details (UK LTD) */
+  showServiceMode?: boolean;
 };
 
 const STEP_ICONS = [ShoppingBag, UserRound, ClipboardCheck];
@@ -103,6 +109,7 @@ const CheckoutFlow = ({
   liveSelfieLink,
   showBusinessType = false,
   showCompanyName = false,
+  showServiceMode = false,
 }: CheckoutFlowProps) => {
   const initialSelected = useMemo(() => {
     if (defaultSelectedIds && defaultSelectedIds.length) return new Set(defaultSelectedIds);
@@ -129,11 +136,15 @@ const CheckoutFlow = ({
     additional_note: "",
     promo_code: "",
   });
-  const [idType, setIdType] = useState<"id_card" | "passport">("id_card");
+  const [idType, setIdType] = useState<"id_card" | "passport" | "driving_licence">("id_card");
+  const [idTypeOpen, setIdTypeOpen] = useState(false);
   const [idFront, setIdFront] = useState<File | null>(null);
   const [idBack, setIdBack] = useState<File | null>(null);
   const [holdingSelfie, setHoldingSelfie] = useState<File | null>(null);
   const [exampleOpen, setExampleOpen] = useState<null | { title: string; src: string }>(null);
+  const [serviceMode, setServiceMode] = useState<"ltd-only" | "both">("both");
+  const [serviceModeOpen, setServiceModeOpen] = useState(true);
+  const idVerificationActive = !showServiceMode || serviceMode === "both";
 
   // Skip selection step entirely when locked
   const steps = lockSelection ? STEP_LABELS.slice(1) : STEP_LABELS;
@@ -223,10 +234,16 @@ const CheckoutFlow = ({
       `${form.country}\n` +
       (showBusinessType && form.business_type ? `\nBusiness type: ${form.business_type}\n` : "");
 
+    const serviceModeLabel =
+      serviceMode === "ltd-only"
+        ? "ID verification already done elsewhere — only register UK Ltd"
+        : "Both: ID Verification + Company Formation";
+
     const summary =
       `[${serviceTitle} Order]\n` +
       `Ref: ${orderRef}\n` +
       (contextLabel ? `${contextLabel}\n` : "") +
+      (showServiceMode ? `Service mode: ${serviceModeLabel}\n` : "") +
       (showCompanyName && form.company_name ? `Proposed company name: ${form.company_name}\n` : "") +
       `Items:\n${lines}\n` +
       `Subtotal: ${formatMoney(subtotal, currency)}\n` +
@@ -295,7 +312,7 @@ const CheckoutFlow = ({
               invoiceNumber,
               invoiceUrl,
               notes: form.message,
-              liveSelfieLink: liveSelfieMode === "link" ? liveSelfieLink : undefined,
+              liveSelfieLink: liveSelfieMode === "link" && idVerificationActive ? liveSelfieLink : undefined,
             },
           },
         })
@@ -479,18 +496,65 @@ const CheckoutFlow = ({
             {showDetails && (
               <div className="glass rounded-3xl p-6 md:p-8 space-y-5">
                 <h2 className="text-2xl font-bold">Your details</h2>
-                {showCompanyName && (
-                  <div className="rounded-2xl border border-primary/40 bg-primary/5 p-4 md:p-5">
-                    <Field
-                      label="Proposed company name (the company you want to register)"
-                      value={form.company_name}
-                      onChange={(v) => setForm({ ...form, company_name: v })}
-                      required
-                      minLength={2}
-                      placeholder="e.g. Acme Trading Ltd"
-                    />
-                    <p className="text-xs opacity-70 mt-2">Tip: add 2-3 alternative names in the Notes field below in case your first choice is taken.</p>
+
+                {showServiceMode && (
+                  <div className="rounded-2xl border border-primary/40 bg-primary/5 overflow-hidden">
+                    <button
+                      type="button"
+                      onClick={() => setServiceModeOpen((o) => !o)}
+                      className="w-full flex items-center justify-between gap-3 p-4 md:p-5 text-left"
+                      aria-expanded={serviceModeOpen}
+                    >
+                      <span>
+                        <span className="block text-sm font-semibold text-primary">What do you need?</span>
+                        <span className="block text-xs opacity-80 mt-0.5">
+                          {serviceMode === "ltd-only"
+                            ? "Only register UK Ltd (ID verification already done elsewhere)"
+                            : "Both: ID Verification + Company Formation"}
+                        </span>
+                      </span>
+                      <ChevronDown className={`w-5 h-5 transition-transform ${serviceModeOpen ? "rotate-180" : ""}`} />
+                    </button>
+                    {serviceModeOpen && (
+                      <div className="px-4 pb-4 md:px-5 md:pb-5 space-y-2">
+                        {([
+                          { id: "ltd-only", title: "I just need to register my UK Ltd", desc: "I've already completed Companies House ID verification through another company." },
+                          { id: "both", title: "I want both services", desc: "ID Verification + Company Formation. We'll email you a secure live-selfie link." },
+                        ] as const).map((opt) => {
+                          const active = serviceMode === opt.id;
+                          return (
+                            <button
+                              type="button"
+                              key={opt.id}
+                              onClick={() => { setServiceMode(opt.id); setServiceModeOpen(false); }}
+                              className={`w-full text-left p-3 rounded-xl border transition-all flex items-start gap-3 ${
+                                active ? "border-primary bg-primary/10" : "border-border/40 hover:border-primary/40 bg-background/40"
+                              }`}
+                            >
+                              <span className={`mt-0.5 w-4 h-4 rounded-full border-2 grid place-items-center flex-shrink-0 ${active ? "border-primary" : "border-border/60"}`}>
+                                {active && <span className="w-2 h-2 rounded-full bg-primary" />}
+                              </span>
+                              <span className="flex-1 min-w-0">
+                                <span className="block text-sm font-semibold">{opt.title}</span>
+                                <span className="block text-xs opacity-75 mt-0.5">{opt.desc}</span>
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
+                )}
+
+                {showCompanyName && (
+                  <Field
+                    label="Proposed company name (the company you want to register)"
+                    value={form.company_name}
+                    onChange={(v) => setForm({ ...form, company_name: v })}
+                    required
+                    minLength={2}
+                    placeholder="e.g. Acme Trading Ltd — add alternatives in Notes below"
+                  />
                 )}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Field label="Full name" value={form.full_name} onChange={(v) => setForm({ ...form, full_name: v })} required minLength={2} />
@@ -566,49 +630,104 @@ const CheckoutFlow = ({
                 </div>
 
                 {/* ID Documents */}
+                {idVerificationActive && (
                 <div className="rounded-2xl border border-border/40 p-4 md:p-5 space-y-4">
                   <div>
                     <h3 className="font-semibold">ID documents <span className="opacity-60 font-normal text-sm">(optional — speeds up verification)</span></h3>
-                    <p className="text-xs opacity-70 mt-1">Upload a clear photo of your ID and a holding-selfie. Tap "View example" to see what we need.</p>
+                    <p className="text-xs opacity-70 mt-1">Pick the ID type, then upload a clear photo. Tap "View example" to see what we need.</p>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium mb-1.5">ID type</label>
-                    <div className="flex gap-2">
-                      {(["id_card", "passport"] as const).map((t) => (
+                  {/* ID type accordion */}
+                  {(() => {
+                    const ID_OPTIONS = [
+                      { id: "id_card", title: "National ID Card", desc: "Front + back required.", icon: IdCard },
+                      { id: "passport", title: "Passport", desc: "Photo page only.", icon: BookUser },
+                      { id: "driving_licence", title: "Driving Licence", desc: "Front + back required.", icon: Car },
+                    ] as const;
+                    const current = ID_OPTIONS.find((o) => o.id === idType)!;
+                    const CurrentIcon = current.icon;
+                    return (
+                      <div className="rounded-xl border border-border/40 overflow-hidden">
                         <button
                           type="button"
-                          key={t}
-                          onClick={() => { setIdType(t); if (t === "passport") setIdBack(null); }}
-                          className={`px-4 py-2 rounded-xl text-sm font-semibold border transition-all ${
-                            idType === t ? "border-primary bg-primary/15 text-primary" : "border-border/40 hover:border-primary/40"
-                          }`}
+                          onClick={() => setIdTypeOpen((o) => !o)}
+                          className="w-full flex items-center justify-between gap-3 p-3 md:p-4 text-left bg-muted/20"
+                          aria-expanded={idTypeOpen}
                         >
-                          {t === "id_card" ? "National ID Card" : "Passport"}
+                          <span className="flex items-center gap-3">
+                            <CurrentIcon className="w-5 h-5 text-primary" />
+                            <span>
+                              <span className="block text-sm font-semibold">ID type — {current.title}</span>
+                              <span className="block text-xs opacity-70 mt-0.5">{current.desc}</span>
+                            </span>
+                          </span>
+                          <ChevronDown className={`w-4 h-4 transition-transform ${idTypeOpen ? "rotate-180" : ""}`} />
                         </button>
-                      ))}
-                    </div>
-                  </div>
+                        {idTypeOpen && (
+                          <div className="p-2 space-y-1.5 bg-background/40">
+                            {ID_OPTIONS.map((opt) => {
+                              const active = idType === opt.id;
+                              const OptIcon = opt.icon;
+                              return (
+                                <button
+                                  type="button"
+                                  key={opt.id}
+                                  onClick={() => {
+                                    setIdType(opt.id);
+                                    setIdTypeOpen(false);
+                                    if (opt.id === "passport") setIdBack(null);
+                                  }}
+                                  className={`w-full flex items-start gap-3 text-left p-3 rounded-lg border transition-all ${
+                                    active ? "border-primary bg-primary/10" : "border-transparent hover:border-primary/30 hover:bg-primary/5"
+                                  }`}
+                                >
+                                  <OptIcon className={`w-5 h-5 mt-0.5 ${active ? "text-primary" : "opacity-70"}`} />
+                                  <span className="flex-1 min-w-0">
+                                    <span className="block text-sm font-semibold">{opt.title}</span>
+                                    <span className="block text-xs opacity-70 mt-0.5">{opt.desc}</span>
+                                  </span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
 
                   <UploadField
-                    label={idType === "passport" ? "Passport (photo page)" : "ID card — front"}
+                    label={
+                      idType === "passport"
+                        ? "Passport (photo page)"
+                        : idType === "driving_licence"
+                          ? "Driving licence — front"
+                          : "ID card — front"
+                    }
                     file={idFront}
                     onChange={setIdFront}
                     onViewExample={() =>
                       setExampleOpen(
                         idType === "passport"
                           ? { title: "Example: Passport photo page", src: examplePassport }
-                          : { title: "Example: ID card (front)", src: exampleIdFront }
+                          : idType === "driving_licence"
+                            ? { title: "Example: Driving licence (front)", src: exampleIdFront }
+                            : { title: "Example: ID card (front)", src: exampleIdFront }
                       )
                     }
                   />
 
-                  {idType === "id_card" && (
+                  {idType !== "passport" && (
                     <UploadField
-                      label="ID card — back"
+                      label={idType === "driving_licence" ? "Driving licence — back" : "ID card — back"}
                       file={idBack}
                       onChange={setIdBack}
-                      onViewExample={() => setExampleOpen({ title: "Example: ID card (back)", src: exampleIdBack })}
+                      onViewExample={() =>
+                        setExampleOpen(
+                          idType === "driving_licence"
+                            ? { title: "Example: Driving licence (back)", src: exampleIdBack }
+                            : { title: "Example: ID card (back)", src: exampleIdBack }
+                        )
+                      }
                     />
                   )}
 
@@ -631,6 +750,7 @@ const CheckoutFlow = ({
                     </div>
                   )}
                 </div>
+                )}
               </div>
             )}
 
