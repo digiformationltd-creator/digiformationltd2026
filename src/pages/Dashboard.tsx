@@ -589,6 +589,8 @@ const CompanyCard = ({
                     value={(c[f.key] as string) || ""}
                     onChange={(e) => onChange({ [f.key]: e.target.value } as any)}
                     className="mt-1.5"
+                    readOnly={!editable}
+                    disabled={!editable}
                   />
                 </div>
               ))}
@@ -601,17 +603,21 @@ const CompanyCard = ({
                   onChange={(e) => onChange({ [f.key]: e.target.value } as any)}
                   className="mt-1.5"
                   rows={2}
+                  readOnly={!editable}
+                  disabled={!editable}
                 />
               </div>
             ))}
-            <div className="flex justify-between items-center">
-              <Button variant="ghost" size="sm" onClick={onDelete} className="text-destructive">
-                <Trash2 className="w-4 h-4 mr-1" /> Delete
-              </Button>
-              <Button variant="hero" size="sm" className="rounded-full" onClick={onSave} disabled={saving}>
-                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Save className="w-4 h-4" /> Save</>}
-              </Button>
-            </div>
+            {editable && (
+              <div className="flex justify-between items-center">
+                <Button variant="ghost" size="sm" onClick={onDelete} className="text-destructive">
+                  <Trash2 className="w-4 h-4 mr-1" /> Delete
+                </Button>
+                <Button variant="hero" size="sm" className="rounded-full" onClick={onSave} disabled={saving}>
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Save className="w-4 h-4" /> Save</>}
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </div>
