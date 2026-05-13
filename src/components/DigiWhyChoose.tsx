@@ -32,7 +32,7 @@ const DigiWhyChoose = () => (
       <div data-reveal-stagger className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {reasons.map((r) => (
           <div key={r.title} className="glass rounded-2xl p-7 hover:-translate-y-1 hover:shadow-elegant transition-all duration-300">
-            <div className="reveal-icon w-11 h-11 rounded-xl bg-muted/40 border border-border/40 grid place-items-center mb-4 shadow-card text-muted-foreground animate-float">
+            <div className="w-11 h-11 rounded-xl bg-muted/40 border border-border/40 grid place-items-center mb-4 shadow-card text-muted-foreground animate-float">
               <r.icon className="w-5 h-5 text-muted-foreground" strokeWidth={1.75} />
             </div>
             <h3 className="font-display text-lg font-semibold mb-2">{r.title}</h3>
