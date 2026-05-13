@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Loader2, Search, ArrowLeft, Save, ShieldCheck, Users, Trash2, FileText, Download } from "lucide-react";
+import { Loader2, Search, ArrowLeft, Save, ShieldCheck, Users, Trash2, FileText, Download, UserPlus, Copy, Mail, KeyRound } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { useSeo } from "@/lib/seo";
 import { SERVICE_CODES, generateInvoiceNumber, generateOrderNumber, downloadInvoicePdf } from "@/lib/invoice";
