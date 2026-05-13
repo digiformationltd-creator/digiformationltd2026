@@ -9,8 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import {
-  CalendarDays, ShoppingBag, Wallet, Building2, FileText, UserCog,
-  MapPin, ShoppingCart, Ticket, LifeBuoy, LogOut, UserCircle2,
+  CalendarDays, ShoppingBag, Wallet, FileText, UserCog,
+  ShoppingCart, Ticket, LifeBuoy, LogOut, UserCircle2,
   ChevronRight, Loader2, Inbox, Download, ArrowUpRight,
   Handshake, Link2, TrendingUp, Copy, Megaphone, GraduationCap, LayoutDashboard,
   Menu, ShieldCheck, Save, Trash2, ChevronDown,
@@ -21,8 +21,8 @@ import UserDrawer from "@/components/UserDrawer";
 import { downloadInvoicePdf } from "@/lib/invoice";
 
 type SectionId =
-  | "overview" | "subscriptions" | "orders" | "invoices" | "wallet" | "company" | "documents"
-  | "editAccount" | "editAddress" | "newServices" | "tickets" | "openTicket"
+  | "overview" | "subscriptions" | "orders" | "invoices" | "wallet" | "documents"
+  | "editAccount" | "newServices" | "tickets" | "openTicket"
   | "affiliate";
 
 const menu: { id: SectionId; label: string; icon: any }[] = [
@@ -31,8 +31,6 @@ const menu: { id: SectionId; label: string; icon: any }[] = [
   { id: "orders", label: "My Orders", icon: ShoppingBag },
   { id: "invoices", label: "My Invoices", icon: FileText },
   { id: "wallet", label: "My Wallet", icon: Wallet },
-  { id: "company", label: "My Company", icon: Building2 },
-  { id: "editAddress", label: "My Address", icon: MapPin },
   { id: "documents", label: "Documents", icon: FileText },
   { id: "editAccount", label: "Edit Account", icon: UserCog },
   { id: "newServices", label: "Order New Services", icon: ShoppingCart },
