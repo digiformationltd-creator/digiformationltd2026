@@ -111,8 +111,9 @@ const Auth = () => {
         templateData: { customerName: nv.data, loginUrl: `${window.location.origin}/auth` },
       },
     }).catch((err) => console.error("welcome email failed", err));
-    toast.success("Account created! Please check your email to verify.");
-    setTab("signin");
+    toast.success("Account created! Logging you in...");
+    const dest = ev.data.toLowerCase() === "info@digiformation.uk" ? "/admin" : "/dashboard";
+    navigate(dest, { replace: true });
   };
 
   const handleForgot = async (e: React.FormEvent<HTMLFormElement>) => {
