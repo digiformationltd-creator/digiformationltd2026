@@ -170,14 +170,14 @@ body p, body span, body li, body label, body small, body div {
   .glass[data-tint="slate"]:hover   { background: hsl(220 14% 22% / 0.74); }
 
   /* Icon tint helpers */
-  .glass-sage   .card-icon, .glass[data-tint="sage"]    .card-icon { color: hsl(155 28% 74%); background: linear-gradient(135deg, hsl(155 20% 20% / 0.55), hsl(155 14% 14% / 0.42)); border-color: hsl(155 22% 46% / 0.32); }
-  .glass-rose   .card-icon, .glass[data-tint="rose"]    .card-icon { color: hsl(345 28% 76%); background: linear-gradient(135deg, hsl(345 20% 20% / 0.55), hsl(345 14% 14% / 0.42)); border-color: hsl(345 22% 48% / 0.32); }
-  .glass-amber  .card-icon, .glass[data-tint="amber"]   .card-icon { color: hsl(42  30% 72%); background: linear-gradient(135deg, hsl(42  22% 20% / 0.55), hsl(42  16% 14% / 0.42)); border-color: hsl(42  24% 44% / 0.32); }
-  .glass-sky    .card-icon, .glass[data-tint="sky"]     .card-icon { color: hsl(200 28% 76%); background: linear-gradient(135deg, hsl(200 20% 20% / 0.55), hsl(200 14% 14% / 0.42)); border-color: hsl(200 22% 48% / 0.32); }
-  .glass-lavender .card-icon, .glass[data-tint="lavender"] .card-icon { color: hsl(255 26% 76%); background: linear-gradient(135deg, hsl(255 18% 20% / 0.55), hsl(255 14% 14% / 0.42)); border-color: hsl(255 20% 48% / 0.32); }
-  .glass-teal   .card-icon, .glass[data-tint="teal"]    .card-icon { color: hsl(175 28% 74%); background: linear-gradient(135deg, hsl(175 20% 20% / 0.55), hsl(175 14% 14% / 0.42)); border-color: hsl(175 22% 46% / 0.32); }
-  .glass-coral  .card-icon, .glass[data-tint="coral"]   .card-icon { color: hsl(12  28% 74%); background: linear-gradient(135deg, hsl(12  20% 20% / 0.55), hsl(12  14% 14% / 0.42)); border-color: hsl(12  22% 46% / 0.32); }
-  .glass-slate  .card-icon, .glass[data-tint="slate"]   .card-icon { color: hsl(220 20% 76%); background: linear-gradient(135deg, hsl(220 14% 20% / 0.55), hsl(220 10% 14% / 0.42)); border-color: hsl(220 16% 48% / 0.32); }
+  .glass-sage   .card-icon, .glass[data-tint="sage"]    .card-icon { color: hsl(155 32% 78%); background: linear-gradient(135deg, hsl(155 22% 20% / 0.65), hsl(155 14% 14% / 0.50)); border-color: hsl(155 24% 52% / 0.38); }
+  .glass-rose   .card-icon, .glass[data-tint="rose"]    .card-icon { color: hsl(345 32% 80%); background: linear-gradient(135deg, hsl(345 22% 20% / 0.65), hsl(345 14% 14% / 0.50)); border-color: hsl(345 24% 54% / 0.38); }
+  .glass-amber  .card-icon, .glass[data-tint="amber"]   .card-icon { color: hsl(42  34% 76%); background: linear-gradient(135deg, hsl(42  24% 20% / 0.65), hsl(42  16% 14% / 0.50)); border-color: hsl(42  26% 50% / 0.38); }
+  .glass-sky    .card-icon, .glass[data-tint="sky"]     .card-icon { color: hsl(200 32% 80%); background: linear-gradient(135deg, hsl(200 22% 20% / 0.65), hsl(200 14% 14% / 0.50)); border-color: hsl(200 24% 54% / 0.38); }
+  .glass-lavender .card-icon, .glass[data-tint="lavender"] .card-icon { color: hsl(255 30% 80%); background: linear-gradient(135deg, hsl(255 20% 20% / 0.65), hsl(255 14% 14% / 0.50)); border-color: hsl(255 22% 54% / 0.38); }
+  .glass-teal   .card-icon, .glass[data-tint="teal"]    .card-icon { color: hsl(175 32% 78%); background: linear-gradient(135deg, hsl(175 22% 20% / 0.65), hsl(175 14% 14% / 0.50)); border-color: hsl(175 24% 52% / 0.38); }
+  .glass-coral  .card-icon, .glass[data-tint="coral"]   .card-icon { color: hsl(12  32% 78%); background: linear-gradient(135deg, hsl(12  22% 20% / 0.65), hsl(12  14% 14% / 0.50)); border-color: hsl(12  24% 52% / 0.38); }
+  .glass-slate  .card-icon, .glass[data-tint="slate"]   .card-icon { color: hsl(220 24% 80%); background: linear-gradient(135deg, hsl(220 16% 20% / 0.65), hsl(220 10% 14% / 0.50)); border-color: hsl(220 18% 54% / 0.38); }
 
   .grid-pattern {
     background-image:
