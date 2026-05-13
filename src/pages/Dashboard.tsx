@@ -61,6 +61,8 @@ interface CompanyDetails {
   confirmation_due: string | null;
   accounts_filing_due: string | null;
   auth_code: string | null;
+  utr_number: string | null;
+  activation_code: string | null;
   incorporation_date: string | null;
   sic_code: string | null;
 }
