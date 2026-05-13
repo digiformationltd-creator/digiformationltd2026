@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 import DigiNav from "@/components/DigiNav";
 import DigiHero from "@/components/DigiHero";
 import QuickStartWidget from "@/components/QuickStartWidget";
