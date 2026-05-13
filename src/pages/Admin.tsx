@@ -834,6 +834,11 @@ const AddressFormSection = ({
             <Field label="Subscription Start Date" type="date" value={a.start_date} onChange={(v) => updateAddressField(a.id, { start_date: v })} />
             <Field label="Expiry Date" type="date" value={a.expire_date} onChange={(v) => updateAddressField(a.id, { expire_date: v })} />
           </div>
+          <div className="grid md:grid-cols-3 gap-4">
+            <Field label="UTR Number" value={(a as any).utr_number} onChange={(v) => updateAddressField(a.id, { utr_number: v } as any)} />
+            <Field label="Auth Code" value={(a as any).auth_code} onChange={(v) => updateAddressField(a.id, { auth_code: v } as any)} />
+            <Field label="Activation Code" value={(a as any).activation_code} onChange={(v) => updateAddressField(a.id, { activation_code: v } as any)} />
+          </div>
           <div className="flex flex-wrap gap-2">
             <Button onClick={() => saveAddress(a)} disabled={saving} size="sm"><Save className="w-4 h-4 mr-2" />Save Address</Button>
             <Button
