@@ -35,7 +35,6 @@ const DigiWhyChoose = () => (
             <div className="w-11 h-11 rounded-xl bg-muted/40 border border-border/40 grid place-items-center mb-4 shadow-card text-muted-foreground animate-float card-icon">
               <r.icon className="w-5 h-5 text-muted-foreground" strokeWidth={1.75} />
             </div>
-            </div>
             <h3 className="font-display text-lg font-semibold mb-2">{r.title}</h3>
             <p className="text-sm leading-relaxed opacity-90">{r.desc}</p>
           </div>
