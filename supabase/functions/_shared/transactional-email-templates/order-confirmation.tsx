@@ -26,15 +26,6 @@ const OrderConfirmationEmail = ({
   notes,
   liveSelfieLink,
 }: Props) => {
-  customerName,
-  service,
-  packageName,
-  price,
-  orderRef,
-  invoiceNumber,
-  invoiceUrl,
-  notes,
-}: Props) => {
   const serviceLine = packageName && service
     ? `${service} — ${packageName}`
     : service || ''
