@@ -520,8 +520,7 @@ const MyCompaniesSection = ({ userId, companies, onChange, editable = false }: {
     { key: "address_expire", label: "Address Expire", type: "date" },
     { key: "confirmation_due", label: "Confirmation Due", type: "date" },
     { key: "accounts_filing_due", label: "Accounts Filing Due", type: "date" },
-    { key: "company_address", label: "Company Address", textarea: true },
-    { key: "registered_address", label: "Registered Address", textarea: true },
+    { key: "registered_address", label: "Registered Office Address", textarea: true },
     { key: "correspondence_address", label: "Correspondence Address", textarea: true },
   ];
 
