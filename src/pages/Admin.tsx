@@ -1040,9 +1040,9 @@ const CompanyFormSection = ({
     label: string,
   ) => {
     if (!clientEmail) return toast.error("Client has no email");
-    const dueDate = template === "confirmation-statement-reminder" ? c.confirmation_due : c.accounts_filing_due;
-    if (!dueDate) return toast.error(`Please set the ${label} due date first`);
-    const daysRemaining = Math.ceil((new Date(dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    const dueDate = computeCompanyDueDate(template, c);
+    if (!dueDate) return toast.error(`Please set the ${label} due date or Incorporation Date first`);
+    const daysRemaining = Math.max(0, Math.ceil((new Date(dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
     const { error } = await supabase.functions.invoke("send-transactional-email", {
       body: {
         templateName: template,
@@ -1057,7 +1057,7 @@ const CompanyFormSection = ({
         },
       },
     });
-    if (error) toast.error(error.message); else toast.success(`${label} reminder sent`);
+    if (error) toast.error(error.message); else toast.success(`${label} reminder sent (${daysRemaining} days remaining)`);
   };
   return (
     <div className="space-y-6">
