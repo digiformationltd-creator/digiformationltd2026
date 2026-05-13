@@ -561,7 +561,7 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
             {orders.map(o => {
               const linkedInvoice = invoices.find(i => i.order_id === o.id);
               return (
-              <div key={o.id} className="border border-border/40 rounded-lg p-3 grid md:grid-cols-6 gap-2 items-center">
+              <div key={o.id} className="border border-border/40 rounded-lg p-3 grid md:grid-cols-7 gap-2 items-center">
                 <Input defaultValue={o.order_ref} onBlur={(e) => updateOrder(o.id, { order_ref: e.target.value })} placeholder="Ref" />
                 <Input defaultValue={o.service} onBlur={(e) => updateOrder(o.id, { service: e.target.value })} placeholder="Service" />
                 <Input defaultValue={o.status} onBlur={(e) => updateOrder(o.id, { status: e.target.value })} placeholder="Status" />
@@ -578,6 +578,25 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
                     <Badge variant="outline" className="text-xs text-muted-foreground">Not created</Badge>
                   )}
                 </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={async () => {
+                    if (!profile.email) return toast.error("Client has no email");
+                    const { error } = await supabase.functions.invoke("send-transactional-email", {
+                      body: {
+                        templateName: "order-completed",
+                        recipientEmail: profile.email,
+                        idempotencyKey: `order-completed-manual-${o.id}-${Date.now()}`,
+                        templateData: { customerName: profile.full_name, orderRef: o.order_ref, service: o.service },
+                      },
+                    });
+                    if (error) toast.error(error.message); else toast.success("Order Completed email sent");
+                  }}
+                  title="Send Order Completed email to client"
+                >
+                  <Mail className="w-3.5 h-3.5 mr-1" />Order Complete
+                </Button>
                 <Button variant="ghost" size="sm" onClick={() => deleteRow("client_orders", o.id)}><Trash2 className="w-4 h-4" /></Button>
               </div>
               );
