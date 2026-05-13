@@ -30,9 +30,10 @@ const ConfirmationStatementReminderEmail = ({ customerName, companyName, company
       {daysRemaining !== undefined && <CardLine label="Days Remaining" value={String(daysRemaining)} />}
     </Card>
     <Text style={styles.text}>
-      Our team can prepare and submit your Confirmation Statement on your behalf. Simply log in to your
-      client portal and request the service, or reply to this email and we will take care of the entire process —
-      including the £34 Companies House fee, verification of officers and shareholders, and confirmation of your SIC codes.
+      Our team can prepare and submit your Confirmation Statement on your behalf for just <strong>£80</strong>{' '}
+      (Companies House £50 filing fee included). Simply log in to your client portal and request the service, or
+      reply to this email and we will take care of the entire process — including verification of officers and
+      shareholders, and confirmation of your SIC codes.
     </Text>
     <Text style={styles.muted}>
       Please act before the due date. Failure to file the Confirmation Statement is a criminal offence and
