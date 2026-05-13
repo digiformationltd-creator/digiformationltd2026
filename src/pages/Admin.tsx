@@ -816,24 +816,35 @@ const AddressFormSection = ({
               <Button variant="ghost" size="sm" onClick={() => deleteRow("client_addresses", a.id)}><Trash2 className="w-4 h-4" /></Button>
             )}
           </div>
-          <div className="grid md:grid-cols-2 gap-4">
-            <Field label="Label" value={a.label} onChange={(v) => updateAddressField(a.id, { label: v })} />
-            <Field label="Service Type" value={a.service_type} onChange={(v) => updateAddressField(a.id, { service_type: v })} />
-            <Field label="Address Line 1" value={a.address_line1} onChange={(v) => updateAddressField(a.id, { address_line1: v })} />
-            <Field label="Address Line 2" value={a.address_line2} onChange={(v) => updateAddressField(a.id, { address_line2: v })} />
-            <Field label="City" value={a.city} onChange={(v) => updateAddressField(a.id, { city: v })} />
-            <Field label="County" value={a.county} onChange={(v) => updateAddressField(a.id, { county: v })} />
-            <Field label="Postcode" value={a.postcode} onChange={(v) => updateAddressField(a.id, { postcode: v })} />
-            <Field label="Country" value={a.country} onChange={(v) => updateAddressField(a.id, { country: v })} />
-            <Field label="Start Date" type="date" value={a.start_date} onChange={(v) => updateAddressField(a.id, { start_date: v })} />
-            <Field label="Expire Date" type="date" value={a.expire_date} onChange={(v) => updateAddressField(a.id, { expire_date: v })} />
-            <Field label="Status" value={a.status} onChange={(v) => updateAddressField(a.id, { status: v })} />
-          </div>
           <div>
-            <Label>Notes</Label>
-            <Textarea value={a.notes || ""} onChange={(e) => updateAddressField(a.id, { notes: e.target.value })} />
+            <Label>Full UK Address</Label>
+            <Textarea
+              rows={3}
+              placeholder="e.g. 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ, United Kingdom"
+              value={a.address_line1 || ""}
+              onChange={(e) => updateAddressField(a.id, { address_line1: e.target.value })}
+            />
           </div>
-          <Button onClick={() => saveAddress(a)} disabled={saving} size="sm"><Save className="w-4 h-4 mr-2" />Save Address</Button>
+          <div className="grid md:grid-cols-2 gap-4">
+            <Field label="Subscription Start Date" type="date" value={a.start_date} onChange={(v) => updateAddressField(a.id, { start_date: v })} />
+            <Field label="Expiry Date" type="date" value={a.expire_date} onChange={(v) => updateAddressField(a.id, { expire_date: v })} />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button onClick={() => saveAddress(a)} disabled={saving} size="sm"><Save className="w-4 h-4 mr-2" />Save Address</Button>
+            <Button
+              variant="outline"
+              size="sm"
+              asChild
+            >
+              <a
+                href={`https://wa.me/447418629900?text=${encodeURIComponent(`Hello Digiformation, I want to renew my registered office address${a.address_line1 ? ` (${a.address_line1})` : ""}. Please assist.`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Renew Address
+              </a>
+            </Button>
+          </div>
         </div>
       ))}
     </div>
