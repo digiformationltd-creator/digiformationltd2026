@@ -244,25 +244,6 @@ export const Contact = () => {
 
   return (
     <Layout>
-      <section className="relative overflow-hidden bg-gradient-hero">
-        <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
-        <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
-        <div className="container mx-auto px-4 py-12 md:py-14 relative">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-3 mb-6">
-              <span className="text-xs uppercase tracking-[0.18em] font-semibold">Contact</span>
-            </div>
-            <h1 className="text-5xl md:text-7xl font-bold leading-[1.02] tracking-tight">
-              Get in touch with <em className="not-italic text-gradient">Digiformation</em>
-            </h1>
-            <p className="mt-8 text-lg md:text-xl leading-relaxed opacity-90">
-              We're here to help you start, manage and grow your business in the UK and USA.
-              Whether you need a new company, address services or compliance support — our team is ready.
-            </p>
-          </div>
-        </div>
-      </section>
-
       <section className="py-10">
         <div className="container mx-auto px-4 max-w-3xl">
           {/* Form */}
@@ -372,109 +353,6 @@ export const Contact = () => {
             </p>
           </form>
           )}
-        </div>
-      </section>
-
-      {/* Embedded UK Office Map */}
-      <section className="py-12 bg-secondary/10">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="text-center mb-6">
-            <div className="text-[10px] uppercase tracking-[0.18em] mb-2 opacity-80">Visit Us</div>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Our UK Registered Office</h2>
-            <p className="opacity-80 mt-2 text-sm md:text-base">
-              Office 1006, 85 Dunstall Hill, Wolverhampton, WV6 0SR, United Kingdom
-            </p>
-          </div>
-          <div className="rounded-2xl overflow-hidden border border-border shadow-lg">
-            <iframe
-              title="Digiformation Ltd — UK Office, Wolverhampton"
-              src="https://www.google.com/maps?q=85+Dunstall+Hill,+Wolverhampton,+WV6+0SR,+United+Kingdom&output=embed"
-              width="100%"
-              height="380"
-              style={{ border: 0 }}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              allowFullScreen
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Trust badges */}
-      <section className="py-10 border-y border-border/40">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="text-center mb-6">
-            <div className="text-[10px] uppercase tracking-[0.18em] mb-2 opacity-80">Why Trust Digiformation</div>
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-              Verified, secure, compliant — every step of the way
-            </h2>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { Icon: ShieldCheck, label: "Companies House", note: "Verified · Co. No. 16994903" },
-              { Icon: Lock, label: "SSL Encrypted", note: "256-bit secure forms" },
-              { Icon: Building2, label: "UK Registered Ltd", note: "Wolverhampton, UK" },
-              { Icon: Globe, label: "GDPR Compliant", note: "EU & UK data protection" },
-            ].map(({ Icon, label, note }) => (
-              <div key={label} className="glass rounded-xl p-5 text-center">
-                <Icon className="w-6 h-6 text-primary mx-auto mb-2" />
-                <div className="font-semibold text-sm">{label}</div>
-                <div className="text-[11px] opacity-70 mt-1">{note}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Social proof / testimonials on Contact */}
-      <section className="py-12">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="grid md:grid-cols-3 gap-5">
-            <div className="glass rounded-2xl p-7 text-center">
-              <div className="text-4xl md:text-5xl font-bold text-gradient">300+</div>
-              <div className="text-sm font-semibold mt-1">Clients Served</div>
-              <div className="text-[11px] opacity-70 mt-1">Across 60+ countries worldwide</div>
-            </div>
-            <div className="glass rounded-2xl p-7 text-center">
-              <div className="text-4xl md:text-5xl font-bold text-gradient">71+</div>
-              <div className="text-sm font-semibold mt-1">UK Companies Formed</div>
-              <div className="text-[11px] opacity-70 mt-1">Verified on Companies House</div>
-            </div>
-            <div className="glass rounded-2xl p-7 text-center">
-              <div className="text-4xl md:text-5xl font-bold text-gradient">8+</div>
-              <div className="text-sm font-semibold mt-1">Years of Expertise</div>
-              <div className="text-[11px] opacity-70 mt-1">UK & US formations · banking</div>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-5 mt-6">
-            {[
-              {
-                quote:
-                  "Muhammad and the Digiformation team made my UK Ltd registration effortless — from incorporation to opening a Tide account, every step was handled professionally.",
-                name: "Ali R.",
-                role: "Amazon FBA Seller, Pakistan",
-              },
-              {
-                quote:
-                  "I needed a US LLC plus EIN urgently for Stripe. Digiformation delivered both inside two weeks with full compliance support. Highly recommended.",
-                name: "Sarah K.",
-                role: "E-commerce Founder, UAE",
-              },
-            ].map((t) => (
-              <div key={t.name} className="glass rounded-2xl p-7">
-                <Quote className="w-7 h-7 text-primary opacity-60 mb-3" />
-                <p className="text-sm md:text-base leading-relaxed opacity-90">"{t.quote}"</p>
-                <div className="flex items-center gap-1 mt-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-primary text-primary" />
-                  ))}
-                </div>
-                <div className="mt-2 text-sm font-semibold">{t.name}</div>
-                <div className="text-[11px] opacity-70">{t.role}</div>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
     </Layout>
