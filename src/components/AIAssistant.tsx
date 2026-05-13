@@ -30,13 +30,13 @@ const AIAssistant = () => {
   const { pathname } = useLocation();
   const isMobile = useIsMobile();
 
-  // Hide entirely on client portal / admin pages on mobile
-  const hideOnThisRoute = isMobile && (pathname.startsWith("/dashboard") || pathname.startsWith("/admin"));
-  if (hideOnThisRoute) return null;
-
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
+
+  // Hide entirely on client portal / admin pages on mobile (must be after all hooks)
+  const hideOnThisRoute = isMobile && (pathname.startsWith("/dashboard") || pathname.startsWith("/admin"));
+  if (hideOnThisRoute) return null;
 
   const send = async (text: string) => {
     const userMsg: Msg = { role: "user", content: text };
