@@ -244,7 +244,7 @@ export const Contact = () => {
               </div>
               <h2 className="text-2xl md:text-3xl font-bold">Thank you, {form.fullName.split(" ")[0] || "there"}!</h2>
               <p className="opacity-80 max-w-md">
-                Your message has been received. Our team will get back to you via email within one business day.
+                Your message has been received. Our team will get back to you via email as soon as possible.
               </p>
             </div>
           ) : (
