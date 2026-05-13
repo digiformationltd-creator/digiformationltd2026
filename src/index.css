@@ -151,23 +151,23 @@ body p, body span, body li, body label, body small, body div {
   .glass-slate:hover  { background: hsl(220 14% 22% / 0.62); border-color: hsl(220 16% 62% / 0.40); box-shadow: 0 12px 40px hsl(220 10% 4% / 0.45), inset 0 1px 0 hsl(220 12% 85% / 0.08); }
 
   /* Background-only tints for 3D slider (keep existing borders/shadows) */
-  .glass[data-tint="sage"]    { background: hsl(155 12% 14% / 0.32); }
-  .glass[data-tint="rose"]    { background: hsl(345 12% 14% / 0.32); }
-  .glass[data-tint="amber"]   { background: hsl(42  14% 14% / 0.32); }
-  .glass[data-tint="sky"]     { background: hsl(200 12% 14% / 0.32); }
-  .glass[data-tint="lavender"]{ background: hsl(255 12% 14% / 0.32); }
-  .glass[data-tint="teal"]    { background: hsl(175 12% 14% / 0.32); }
-  .glass[data-tint="coral"]   { background: hsl(12  12% 14% / 0.32); }
-  .glass[data-tint="slate"]   { background: hsl(220 10% 14% / 0.32); }
+  .glass[data-tint="sage"]    { background: hsl(155 14% 14% / 0.48); }
+  .glass[data-tint="rose"]    { background: hsl(345 14% 14% / 0.48); }
+  .glass[data-tint="amber"]   { background: hsl(42  16% 14% / 0.48); }
+  .glass[data-tint="sky"]     { background: hsl(200 14% 14% / 0.48); }
+  .glass[data-tint="lavender"]{ background: hsl(255 14% 14% / 0.48); }
+  .glass[data-tint="teal"]    { background: hsl(175 14% 14% / 0.48); }
+  .glass[data-tint="coral"]   { background: hsl(12  14% 14% / 0.48); }
+  .glass[data-tint="slate"]   { background: hsl(220 12% 14% / 0.48); }
 
-  .glass[data-tint="sage"]:hover    { background: hsl(155 16% 22% / 0.48); }
-  .glass[data-tint="rose"]:hover    { background: hsl(345 16% 22% / 0.48); }
-  .glass[data-tint="amber"]:hover   { background: hsl(42  18% 22% / 0.48); }
-  .glass[data-tint="sky"]:hover     { background: hsl(200 16% 22% / 0.48); }
-  .glass[data-tint="lavender"]:hover{ background: hsl(255 16% 22% / 0.48); }
-  .glass[data-tint="teal"]:hover    { background: hsl(175 16% 22% / 0.48); }
-  .glass[data-tint="coral"]:hover   { background: hsl(12  16% 22% / 0.48); }
-  .glass[data-tint="slate"]:hover   { background: hsl(220 12% 22% / 0.48); }
+  .glass[data-tint="sage"]:hover    { background: hsl(155 18% 22% / 0.65); }
+  .glass[data-tint="rose"]:hover    { background: hsl(345 18% 22% / 0.65); }
+  .glass[data-tint="amber"]:hover   { background: hsl(42  20% 22% / 0.65); }
+  .glass[data-tint="sky"]:hover     { background: hsl(200 18% 22% / 0.65); }
+  .glass[data-tint="lavender"]:hover{ background: hsl(255 18% 22% / 0.65); }
+  .glass[data-tint="teal"]:hover    { background: hsl(175 18% 22% / 0.65); }
+  .glass[data-tint="coral"]:hover   { background: hsl(12  18% 22% / 0.65); }
+  .glass[data-tint="slate"]:hover   { background: hsl(220 14% 22% / 0.65); }
 
   /* Icon tint helpers */
   .glass-sage   .card-icon, .glass[data-tint="sage"]    .card-icon { color: hsl(155 24% 70%); background: linear-gradient(135deg, hsl(155 16% 20% / 0.40), hsl(155 12% 14% / 0.30)); border-color: hsl(155 18% 40% / 0.22); }
