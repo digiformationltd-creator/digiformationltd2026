@@ -626,6 +626,19 @@ const CheckoutFlow = ({
                     <ReviewLine label="WhatsApp" value={form.whatsapp} />
                     <ReviewLine label="Country" value={form.country} />
                   </dl>
+                  <div className="text-sm font-semibold mt-4 mb-1">Address</div>
+                  <p className="text-sm opacity-85 whitespace-pre-wrap">
+                    {form.address_line1}
+                    {form.address_line2 ? `\n${form.address_line2}` : ""}
+                    {`\n${form.city}, ${form.postal_code}`}
+                    {`\n${form.country}`}
+                  </p>
+                  {showBusinessType && form.business_type && (
+                    <>
+                      <div className="text-sm font-semibold mt-3 mb-1">Business type</div>
+                      <p className="text-sm opacity-85">{form.business_type}</p>
+                    </>
+                  )}
                   {form.message && (
                     <>
                       <div className="text-sm font-semibold mt-4 mb-1">Notes</div>
