@@ -78,6 +78,10 @@ export type CheckoutFlowProps = {
   showCompanyName?: boolean;
   /** Show the "what do you need?" service-mode picker at top of details (UK LTD) */
   showServiceMode?: boolean;
+  /** Optional extra add-on services grouped by category. Shown below the
+   *  main selection on step 1. Each group is rendered as its own card so
+   *  customers only see add-ons relevant to the service they're ordering. */
+  extras?: { categoryLabel: string; description?: string; items: CheckoutItem[] }[];
 };
 
 const STEP_ICONS = [ShoppingBag, UserRound, ClipboardCheck];
@@ -110,7 +114,17 @@ const CheckoutFlow = ({
   showBusinessType = false,
   showCompanyName = false,
   showServiceMode = false,
+  extras,
 }: CheckoutFlowProps) => {
+  // Merge extras into the master items list so selection / pricing logic
+  // continues to work uniformly.
+  const allItems = useMemo(() => {
+    const base = [...items];
+    if (extras) for (const g of extras) for (const it of g.items) {
+      if (!base.find((b) => b.id === it.id)) base.push(it);
+    }
+    return base;
+  }, [items, extras]);
   const initialSelected = useMemo(() => {
     if (defaultSelectedIds && defaultSelectedIds.length) return new Set(defaultSelectedIds);
     if (lockSelection || !multiSelect) return new Set(items.slice(0, 1).map((i) => i.id));
@@ -153,14 +167,17 @@ const CheckoutFlow = ({
 
   const toggle = (id: string) => {
     if (lockSelection) return;
-    const item = items.find((i) => i.id === id);
+    const item = allItems.find((i) => i.id === id);
     if (item?.fixed) return;
     setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
         next.delete(id);
       } else {
-        if (!multiSelect) next.clear();
+        // Multi-select limit only applies to primary `items`; extras are
+        // always additive (you can tick add-ons even with a fixed package).
+        const isExtra = !items.find((i) => i.id === id);
+        if (!multiSelect && !isExtra) next.clear();
         next.add(id);
       }
       return next;
@@ -168,8 +185,8 @@ const CheckoutFlow = ({
   };
 
   const selectedItems = useMemo(
-    () => items.filter((i) => selected.has(i.id)),
-    [items, selected]
+    () => allItems.filter((i) => selected.has(i.id)),
+    [allItems, selected]
   );
   const subtotal = selectedItems.reduce((s, i) => s + i.price, 0);
   const vat = +(subtotal * vatRate).toFixed(2);
@@ -492,6 +509,52 @@ const CheckoutFlow = ({
                 </div>
               </div>
             )}
+
+            {showSelection && extras && extras.length > 0 && extras.map((group) => (
+              <div key={group.categoryLabel} className="glass rounded-3xl p-6 md:p-8">
+                <div className="flex items-baseline justify-between gap-3 mb-1">
+                  <h2 className="text-xl md:text-2xl font-bold">{group.categoryLabel}</h2>
+                  <span className="text-[11px] uppercase tracking-[0.16em] opacity-60">Add-ons</span>
+                </div>
+                <p className="text-sm opacity-75 mb-5">
+                  {group.description || "Optional add-ons in this category. Tick any you'd like to include."}
+                </p>
+                <div className="space-y-3">
+                  {group.items.map((it) => {
+                    const active = selected.has(it.id);
+                    return (
+                      <button
+                        type="button"
+                        key={it.id}
+                        onClick={() => toggle(it.id)}
+                        className={`w-full text-left p-4 rounded-2xl border transition-all flex items-start gap-4 ${
+                          active
+                            ? "border-primary bg-primary/10 shadow-glow"
+                            : "border-border/40 hover:border-primary/40"
+                        }`}
+                      >
+                        <span
+                          className={`mt-0.5 w-5 h-5 rounded-md border-2 grid place-items-center flex-shrink-0 ${
+                            active ? "bg-primary border-primary text-primary-foreground" : "border-border/60"
+                          }`}
+                        >
+                          {active && <CheckCircle2 className="w-3.5 h-3.5" />}
+                        </span>
+                        <span className="flex-1 min-w-0">
+                          <span className="flex items-baseline justify-between gap-3">
+                            <span className="font-semibold">{it.name}</span>
+                            <span className={active ? "text-gradient font-bold" : "font-semibold opacity-90"}>
+                              {formatMoney(it.price, currency)}
+                            </span>
+                          </span>
+                          {it.description && <span className="block text-sm opacity-75 mt-1">{it.description}</span>}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
 
             {showDetails && (
               <div className="glass rounded-3xl p-6 md:p-8 space-y-5">
