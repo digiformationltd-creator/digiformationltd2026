@@ -715,22 +715,6 @@ const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: stri
           </div>
         )}
 
-        {tab === "subs" && (
-          <div className="space-y-3">
-            <Button onClick={addSub} size="sm">Add Subscription</Button>
-            {subs.map(s => (
-              <div key={s.id} className="border border-border/40 rounded-lg p-3 grid md:grid-cols-6 gap-2 items-center">
-                <Input defaultValue={s.plan_name} onBlur={(e) => updateSub(s.id, { plan_name: e.target.value })} placeholder="Plan" />
-                <Input type="number" defaultValue={s.price_gbp} onBlur={(e) => updateSub(s.id, { price_gbp: parseFloat(e.target.value) || 0 })} placeholder="£" />
-                <Input defaultValue={s.period} onBlur={(e) => updateSub(s.id, { period: e.target.value })} placeholder="year" />
-                <Input defaultValue={s.status} onBlur={(e) => updateSub(s.id, { status: e.target.value })} placeholder="Status" />
-                <Input type="date" defaultValue={s.renewal_date || ""} onBlur={(e) => updateSub(s.id, { renewal_date: e.target.value || null })} />
-                <Button variant="ghost" size="sm" onClick={() => deleteRow("client_subscriptions", s.id)}><Trash2 className="w-4 h-4" /></Button>
-              </div>
-            ))}
-          </div>
-        )}
-
         {tab === "wallet" && (
           <div className="space-y-3">
             <Button onClick={addWallet} size="sm">Add Transaction</Button>
