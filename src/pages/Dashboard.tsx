@@ -13,7 +13,7 @@ import {
   MapPin, ShoppingCart, Ticket, LifeBuoy, LogOut, UserCircle2,
   ChevronRight, Loader2, Inbox, Download, ArrowUpRight,
   Handshake, Link2, TrendingUp, Copy, Megaphone, GraduationCap, LayoutDashboard,
-  Menu, ShieldCheck, Save, Trash2, ChevronDown,
+  Menu, ShieldCheck, Save, Trash2, ChevronDown, ArrowLeft, Home,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import logo from "@/assets/digiformation-logo.png";
