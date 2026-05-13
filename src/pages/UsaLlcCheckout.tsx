@@ -70,7 +70,7 @@ const UsaLlcCheckout = () => {
     e.preventDefault();
     if (!pricing) return;
     setSubmitting(true);
-    const orderRef = await buildOrderRef({ packageName, currency: "USD" });
+    const orderRef = await buildOrderRef({ service: "USA LLC Formation", packageName, currency: "USD", serviceCode: "LLC" });
     const summary =
       `[U.S. LLC Order]\n` +
       `Ref: ${orderRef}\n` +
