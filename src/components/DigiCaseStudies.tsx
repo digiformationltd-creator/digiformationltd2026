@@ -11,6 +11,7 @@ const cases = [
       "Banks",
     ],
     href: "/pricing",
+    color: "glass-sage",
   },
   {
     tag: "We launch your US business end-to-end",
@@ -21,6 +22,7 @@ const cases = [
       "Banks",
     ],
     href: "/pricing",
+    color: "glass-sky",
   },
   {
     tag: "UK Compliance",
@@ -31,6 +33,7 @@ const cases = [
       "Director and PSC records kept fully compliant",
     ],
     href: "/contact",
+    color: "glass-amber",
   },
 ];
 
@@ -47,7 +50,7 @@ const DigiCaseStudies = () => (
 
       <div data-reveal-stagger className="grid md:grid-cols-3 gap-5">
         {cases.map((c) => (
-          <article key={c.tag} className="glass rounded-2xl p-7 hover:-translate-y-1 hover:shadow-elegant transition-all duration-300 flex flex-col">
+          <article key={c.tag} className={`${c.color} glass rounded-2xl p-7 hover:-translate-y-1 hover:shadow-elegant transition-all duration-300 flex flex-col`}>
             <span className="inline-block self-start text-[10px] font-semibold uppercase tracking-[0.16em] px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
               {c.tag}
             </span>
