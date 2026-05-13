@@ -122,7 +122,7 @@ const contactSchema = z.object({
   email: z.string().trim().email("Invalid email").max(255),
   whatsapp: z.string().trim().min(5, "WhatsApp number required").max(30),
   country: z.string().trim().min(2, "Country is required").max(80),
-  service: z.string().trim().min(2, "Please choose a service"),
+  service: z.string().trim().max(120).optional().default(""),
   message: z.string().trim().min(10, "Message must be at least 10 characters").max(1500),
 });
 
