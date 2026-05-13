@@ -1107,19 +1107,6 @@ export const Pricing = () => {
           </section>
         ))}
 
-      <section className="py-10 border-t border-border/60">
-        <div className="container mx-auto px-4 max-w-3xl text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Need help choosing?</h2>
-          <p className="opacity-80 mb-8">
-            Book a free 30-minute consultation and we'll recommend the right package for you.
-          </p>
-          <Button asChild variant="hero" size="lg" className="rounded-full">
-            <Link to="/contact">
-              Talk to a Specialist <ArrowRight className="w-4 h-4" />
-            </Link>
-          </Button>
-        </div>
-      </section>
     </Layout>
   );
 };
