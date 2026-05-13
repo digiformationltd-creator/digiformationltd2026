@@ -568,7 +568,6 @@ const CompanyCard = ({
   onSave: () => void; onDelete: () => void;
 }) => {
   const [open, setOpen] = useState(false);
-  const summaryAddress = (c.company_address || c.registered_address || c.correspondence_address || "").trim();
 
   return (
     <div className="glass rounded-2xl overflow-hidden">
@@ -578,7 +577,8 @@ const CompanyCard = ({
       <div className="p-6 space-y-3 text-sm">
         <Row label="Company No:" value={c.company_number} />
         <Row label="Director's Name:" value={c.director_name} />
-        <Row label="Company Address" value={summaryAddress} multiline />
+        <Row label="Registered Office Address" value={c.registered_address} multiline />
+        <Row label="Correspondence Address" value={c.correspondence_address} multiline />
         <button
           type="button"
           onClick={() => setOpen(o => !o)}
@@ -592,12 +592,12 @@ const CompanyCard = ({
             <div className="grid sm:grid-cols-2 gap-3">
               {fields.filter(f => !f.textarea).map(f => (
                 <div key={f.key as string}>
-                  <Label className="text-[11px] uppercase tracking-wider opacity-60">{f.label}</Label>
+                  <Label className="text-[11px] uppercase tracking-wider text-white/60">{f.label}</Label>
                   <Input
                     type={f.type || "text"}
                     value={(c[f.key] as string) || ""}
                     onChange={(e) => onChange({ [f.key]: e.target.value } as any)}
-                    className="mt-1.5"
+                    className="mt-1.5 text-white"
                     readOnly={!editable}
                     disabled={!editable}
                   />
@@ -606,11 +606,11 @@ const CompanyCard = ({
             </div>
             {fields.filter(f => f.textarea).map(f => (
               <div key={f.key as string}>
-                <Label className="text-[11px] uppercase tracking-wider opacity-60">{f.label}</Label>
+                <Label className="text-[11px] uppercase tracking-wider text-white/60">{f.label}</Label>
                 <Textarea
                   value={(c[f.key] as string) || ""}
                   onChange={(e) => onChange({ [f.key]: e.target.value } as any)}
-                  className="mt-1.5"
+                  className="mt-1.5 text-white"
                   rows={2}
                   readOnly={!editable}
                   disabled={!editable}
@@ -636,8 +636,8 @@ const CompanyCard = ({
 
 const Row = ({ label, value, multiline = false }: { label: string; value?: string | null; multiline?: boolean }) => (
   <div className={multiline ? "grid grid-cols-[140px_1fr] gap-3 items-start" : "grid grid-cols-[140px_1fr] gap-3 items-center"}>
-    <span className="font-semibold opacity-90">{label}</span>
-    <span className={multiline ? "opacity-90 whitespace-pre-line" : "opacity-90"}>{value?.trim() || "—"}</span>
+    <span className="font-semibold text-white">{label}</span>
+    <span className={multiline ? "text-white whitespace-pre-line" : "text-white"}>{value?.trim() || "—"}</span>
   </div>
 );
 
