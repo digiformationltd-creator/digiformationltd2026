@@ -1083,6 +1083,14 @@ const AddressFormSection = ({
                 Renew Address
               </a>
             </Button>
+            <Button
+              onClick={() => sendAddressReminder(a)}
+              size="sm"
+              variant="outline"
+              title="Send address expiry reminder email to client"
+            >
+              <Mail className="w-4 h-4 mr-2" />Send Renewal Reminder
+            </Button>
           </div>
 
           <div className="border-t border-border/40 pt-4 space-y-3">
