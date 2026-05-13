@@ -129,7 +129,7 @@ const Admin = () => {
                     <td className="p-3 hidden md:table-cell">{c.company_name || "—"}</td>
                     <td className="p-3 hidden lg:table-cell text-muted-foreground">{new Date(c.created_at).toLocaleDateString()}</td>
                     <td className="p-3 text-right">
-                      <Button size="sm" onClick={() => { setInitialTab("profile"); setSelected(c.user_id); }}>Manage</Button>
+                      <Button size="sm" onClick={() => { setInitialTab("company"); setSelected(c.user_id); }}>Manage</Button>
                     </td>
                   </tr>
                 ))}
