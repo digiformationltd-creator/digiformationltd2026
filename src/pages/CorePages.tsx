@@ -264,126 +264,10 @@ export const Contact = () => {
       </section>
 
       <section className="py-10">
-        <div className="container mx-auto px-4 max-w-6xl grid lg:grid-cols-5 gap-10">
-          {/* Quick info */}
-          <aside className="lg:col-span-2 space-y-5">
-            <a href="mailto:Info@digiformation.uk" className="glass rounded-2xl p-7 flex gap-4 hover:-translate-y-1 transition-transform">
-              <Mail className="w-6 h-6 text-primary mt-1" />
-              <div>
-                <div className="text-[10px] uppercase tracking-[0.18em] mb-1 opacity-80">Business Email</div>
-                <div className="font-display text-xl font-semibold break-all">Info@digiformation.uk</div>
-                <div className="mt-1.5 text-[11px] opacity-70">Replies within 1 business day · We speak English & Urdu</div>
-              </div>
-            </a>
-            <div className="glass rounded-2xl p-7 flex gap-4">
-              <MessageCircle className="w-6 h-6 text-primary mt-1" />
-              <div className="flex-1">
-                <div className="text-[10px] uppercase tracking-[0.18em] mb-1 opacity-80">WhatsApp / Phone (Fast Support)</div>
-                <div className="font-display text-xl font-semibold">+92 316 446 7464</div>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <a
-                    href="https://wa.me/923164467464"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[11px] uppercase tracking-widest px-3 py-1.5 rounded-full bg-primary/15 text-primary hover:bg-primary/25 transition"
-                  >
-                    💬 WhatsApp
-                  </a>
-                  <a
-                    href="tel:+923164467464"
-                    className="text-[11px] uppercase tracking-widest px-3 py-1.5 rounded-full bg-primary/15 text-primary hover:bg-primary/25 transition"
-                  >
-                    📞 Call
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div className="glass rounded-2xl p-7 flex gap-4">
-              <Clock className="w-6 h-6 text-primary mt-1" />
-              <div>
-                <div className="text-[10px] uppercase tracking-[0.18em] mb-1 opacity-80">Business Hours</div>
-                <div className="font-display text-base font-semibold leading-relaxed">
-                  Mon – Sat: 10:00 AM – 11:00 PM<br />
-                  Sunday: Closed
-                </div>
-              </div>
-            </div>
-
-            <a
-              href="https://www.google.com/maps/place/31%C2%B028'58.9%22N+74%C2%B025'22.1%22E/@31.4830225,74.4202212,17z"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="glass rounded-2xl p-7 flex gap-4 hover:-translate-y-1 transition-transform"
-            >
-              <MapPin className="w-6 h-6 text-primary mt-1" />
-              <div>
-                <div className="text-[10px] uppercase tracking-[0.18em] mb-1 opacity-80">UK Registered Office</div>
-                <div className="font-display text-base font-semibold leading-relaxed">
-                  Office 1006, 85 Dunstall Hill,<br />
-                  Wolverhampton, WV6 0SR,<br />
-                  United Kingdom
-                </div>
-                <div className="mt-2 text-[11px] uppercase tracking-widest text-primary">📍 Open live meetup pin →</div>
-              </div>
-            </a>
-
-            <div className="glass rounded-2xl p-7 flex gap-4">
-              <Globe className="w-6 h-6 text-primary mt-1" />
-              <div>
-                <div className="text-[10px] uppercase tracking-[0.18em] mb-1 opacity-80">Pakistan Operations Office</div>
-                <div className="font-display text-base font-semibold leading-relaxed">
-                  Lahore, Punjab,<br />Pakistan
-                </div>
-                <div className="text-xs opacity-80 mt-1">Reach us via WhatsApp or email — same team, same fast support.</div>
-              </div>
-            </div>
-
-            <a
-              href="https://find-and-update.company-information.service.gov.uk/company/16994903"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="glass rounded-2xl p-7 flex gap-4 hover:-translate-y-1 transition-transform"
-            >
-              <Building2 className="w-6 h-6 text-primary mt-1" />
-              <div>
-                <div className="text-[10px] uppercase tracking-[0.18em] mb-1 opacity-80">Companies House</div>
-                <div className="font-display text-base font-semibold">Digiformation Ltd</div>
-                <div className="text-xs opacity-80 mt-0.5">Company No. 16994903 · Verify on GOV.UK →</div>
-              </div>
-            </a>
-
-            <div className="glass rounded-2xl p-7">
-              <div className="text-[10px] uppercase tracking-[0.18em] mb-3 opacity-80">Follow Us</div>
-              <div className="grid grid-cols-4 gap-2">
-                {[
-                  { name: "Facebook", href: "https://www.facebook.com/share/1D676UBQw5/", Icon: Facebook },
-                  { name: "Instagram", href: "https://www.instagram.com/digiformationltd?igsh=ejBoMmFsOXFpMmdw", Icon: Instagram },
-                  { name: "YouTube", href: "https://www.youtube.com/@digiformationltd", Icon: Youtube },
-                  { name: "LinkedIn", href: "https://www.linkedin.com/in/muhammad-haroon-9a9945366", Icon: Linkedin },
-                ].map(({ name, href, Icon }) => (
-                  <a
-                    key={name}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={name}
-                    title={name}
-                    className="w-10 h-10 rounded-lg bg-background/30 grid place-items-center hover:bg-primary/20 hover:-translate-y-0.5 transition-all"
-                  >
-                    <Icon className="w-4 h-4" />
-                  </a>
-                ))}
-              </div>
-              <p className="text-xs opacity-70 mt-3 leading-relaxed">
-                Connect with us on social media for updates, tips and client success stories.
-              </p>
-            </div>
-
-          </aside>
-
+        <div className="container mx-auto px-4 max-w-3xl">
           {/* Form */}
           {submitted ? (
-            <div className="lg:col-span-3 glass rounded-2xl p-10 flex flex-col items-center justify-center text-center space-y-4 min-h-[420px]">
+            <div className="glass rounded-2xl p-10 flex flex-col items-center justify-center text-center space-y-4 min-h-[420px]">
               <div className="w-16 h-16 rounded-full bg-primary/15 flex items-center justify-center">
                 <CheckCircle2 className="w-9 h-9 text-primary" />
               </div>
@@ -394,7 +278,7 @@ export const Contact = () => {
               <p className="text-xs opacity-60">Redirecting to WhatsApp…</p>
             </div>
           ) : (
-          <form onSubmit={handleSubmit} className="lg:col-span-3 glass rounded-2xl p-8 space-y-5">
+          <form onSubmit={handleSubmit} className="glass rounded-2xl p-8 space-y-5">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">Send us a message</h2>
               <p className="opacity-80 text-sm">Fill the form — we'll reply via WhatsApp or email within one business day.</p>
