@@ -406,6 +406,7 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
           <AddressFormSection
             userId={userId}
             addresses={addresses}
+            docs={docs}
             saving={saving}
             updateAddressField={updateAddressField}
             saveAddress={saveAddress}
