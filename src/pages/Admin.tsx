@@ -496,7 +496,6 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
   };
 
   const tabs = [
-    { id: "profile", label: "Profile" },
     { id: "company", label: `Company (${companies.length})` },
     { id: "addresses", label: `Address (${addresses.length})` },
     { id: "orders", label: `Orders (${orders.length})` },
@@ -522,14 +521,6 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
       </div>
 
       <div className="glass rounded-2xl p-6">
-        {tab === "profile" && (
-          <div className="space-y-4">
-            <Field label="Full Name" value={profile.full_name} onChange={(v) => setProfile({ ...profile, full_name: v })} />
-            <Field label="Phone" value={profile.phone} onChange={(v) => setProfile({ ...profile, phone: v })} />
-            <Field label="Company Name" value={profile.company_name} onChange={(v) => setProfile({ ...profile, company_name: v })} />
-            <Button onClick={saveProfile} disabled={saving}><Save className="w-4 h-4 mr-2" />Save Profile</Button>
-          </div>
-        )}
 
         {tab === "company" && (
           <CompanyFormSection
