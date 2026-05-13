@@ -146,12 +146,6 @@ const DigiNav = () => {
                 <span>Join Us</span>
               </Link>
             </Button>
-            <Button asChild variant="hero" className="rounded-full hidden sm:inline-flex h-9 sm:h-10 px-3 text-xs sm:text-sm">
-              <Link to={user ? "/dashboard" : "/auth"} aria-label="Open client dashboard">
-                <UserCircle2 className="w-4 h-4" />
-                <span>Client Dashboard</span>
-              </Link>
-            </Button>
             <button
               aria-label="Toggle menu"
               onClick={() => setOpen(!open)}
