@@ -234,10 +234,16 @@ const CheckoutFlow = ({
       `${form.country}\n` +
       (showBusinessType && form.business_type ? `\nBusiness type: ${form.business_type}\n` : "");
 
+    const serviceModeLabel =
+      serviceMode === "ltd-only"
+        ? "ID verification already done elsewhere — only register UK Ltd"
+        : "Both: ID Verification + Company Formation";
+
     const summary =
       `[${serviceTitle} Order]\n` +
       `Ref: ${orderRef}\n` +
       (contextLabel ? `${contextLabel}\n` : "") +
+      (showServiceMode ? `Service mode: ${serviceModeLabel}\n` : "") +
       (showCompanyName && form.company_name ? `Proposed company name: ${form.company_name}\n` : "") +
       `Items:\n${lines}\n` +
       `Subtotal: ${formatMoney(subtotal, currency)}\n` +
