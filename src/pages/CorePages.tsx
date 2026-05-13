@@ -273,45 +273,6 @@ export const Contact = () => {
               </div>
             </div>
 
-            <div>
-              <Label htmlFor="service">Service Interested In</Label>
-              <Select value={form.service} onValueChange={(v) => setForm({ ...form, service: v })}>
-                <SelectTrigger id="service"><SelectValue placeholder="Choose a service" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="UK LTD Formation">UK LTD Formation</SelectItem>
-                  <SelectItem value="USA LLC Formation">USA LLC Formation</SelectItem>
-                  <SelectItem value="Address Services">Address Services</SelectItem>
-                  <SelectItem value="ID Verification">ID Verification</SelectItem>
-                  <SelectItem value="Annual Filing">Annual Filing</SelectItem>
-                  <SelectItem value="Company Changes">Company Changes</SelectItem>
-                  <SelectItem value="UTR / EIN / ITIN">UTR / EIN / ITIN</SelectItem>
-                  <SelectItem value="PayPal">PayPal Account</SelectItem>
-                  <SelectItem value="Payoneer">Payoneer Account</SelectItem>
-                  <SelectItem value="Stripe">Stripe Account</SelectItem>
-                  <SelectItem value="Wise">Wise Account</SelectItem>
-                  <SelectItem value="WorldFirst">WorldFirst Account</SelectItem>
-                  <SelectItem value="Tide">Tide Business Account</SelectItem>
-                  <SelectItem value="Airwallex">Airwallex Account</SelectItem>
-                  <SelectItem value="PingPong">PingPong Account</SelectItem>
-                  <SelectItem value="Mollie">Mollie Account</SelectItem>
-                  <SelectItem value="Wallester">Wallester Cards</SelectItem>
-                  <SelectItem value="Sunrate">Sunrate Account</SelectItem>
-                  <SelectItem value="ZionPe">ZionPe Account</SelectItem>
-                  <SelectItem value="Banking & Payments">Other Banking & Payments</SelectItem>
-                  <SelectItem value="Web Development">Web Development</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
-                  {form.service &&
-                    ![
-                      "UK LTD Formation","USA LLC Formation","Address Services","ID Verification","Annual Filing",
-                      "Company Changes","UTR / EIN / ITIN","PayPal","Payoneer","Stripe","Wise","WorldFirst","Tide",
-                      "Airwallex","PingPong","Mollie","Wallester","Sunrate","ZionPe","Banking & Payments",
-                      "Web Development","Other",
-                    ].includes(form.service) && (
-                      <SelectItem value={form.service}>{form.service}</SelectItem>
-                    )}
-                </SelectContent>
-              </Select>
-            </div>
 
             <div>
               <Label htmlFor="message">Your Message</Label>
