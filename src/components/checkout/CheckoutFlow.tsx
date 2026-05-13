@@ -111,7 +111,20 @@ const CheckoutFlow = ({
   const [stepIdx, setStepIdx] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [successInfo, setSuccessInfo] = useState<{ orderRef: string; invoiceUrl?: string } | null>(null);
-  const [form, setForm] = useState({ full_name: "", email: "", whatsapp: "", country: "", message: "", additional_note: "", promo_code: "" });
+  const [form, setForm] = useState({
+    full_name: "",
+    email: "",
+    whatsapp: "",
+    country: "",
+    address_line1: "",
+    address_line2: "",
+    city: "",
+    postal_code: "",
+    business_type: "",
+    message: "",
+    additional_note: "",
+    promo_code: "",
+  });
   const [idType, setIdType] = useState<"id_card" | "passport">("id_card");
   const [idFront, setIdFront] = useState<File | null>(null);
   const [idBack, setIdBack] = useState<File | null>(null);
@@ -156,6 +169,10 @@ const CheckoutFlow = ({
         /\S+@\S+\.\S+/.test(form.email) &&
         form.whatsapp.trim().length >= 5 &&
         form.country.trim().length >= 2 &&
+        form.address_line1.trim().length >= 3 &&
+        form.city.trim().length >= 2 &&
+        form.postal_code.trim().length >= 3 &&
+        (!showBusinessType || form.business_type.trim().length >= 2) &&
         form.message.trim().length >= 10
       );
     }
@@ -193,6 +210,14 @@ const CheckoutFlow = ({
     const lines = selectedItems
       .map((i) => `• ${i.name} — ${formatMoney(i.price, currency)}`)
       .join("\n");
+    const addressBlock =
+      `\nResidential address:\n` +
+      `${form.address_line1}\n` +
+      (form.address_line2 ? `${form.address_line2}\n` : "") +
+      `${form.city}, ${form.postal_code}\n` +
+      `${form.country}\n` +
+      (showBusinessType && form.business_type ? `\nBusiness type: ${form.business_type}\n` : "");
+
     const summary =
       `[${serviceTitle} Order]\n` +
       `Ref: ${orderRef}\n` +
@@ -202,6 +227,7 @@ const CheckoutFlow = ({
       (vat ? `VAT (${(vatRate * 100).toFixed(0)}%): ${formatMoney(vat, currency)}\n` : "") +
       `Total: ${formatMoney(total, currency)}\n` +
       (form.promo_code ? `Promo code: ${form.promo_code}\n` : "") +
+      addressBlock +
       `\nCustomer note:\n${form.message}` +
       (form.additional_note ? `\n\nAdditional note:\n${form.additional_note}` : "");
 
