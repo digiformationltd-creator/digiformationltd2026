@@ -131,6 +131,26 @@ body p, body span, body li, body label, body small, body div {
     box-shadow: 0 12px 40px hsl(220 10% 4% / 0.5), inset 0 1px 0 hsl(220 12% 88% / 0.08);
   }
 
+  /* Static, light pastel glass tints (no animation, no blinking).
+     Use sparingly to differentiate cards across the site.
+     Skip on pricing/packages cards. */
+  .glass-tint-mustard { background: linear-gradient(135deg, hsl(45 70% 55% / 0.18), hsl(45 70% 55% / 0.08)); border-color: hsl(45 70% 60% / 0.32); }
+  .glass-tint-mustard:hover { background: linear-gradient(135deg, hsl(45 70% 55% / 0.28), hsl(45 70% 55% / 0.14)); border-color: hsl(45 70% 65% / 0.5); }
+  .glass-tint-green   { background: linear-gradient(135deg, hsl(145 50% 50% / 0.18), hsl(145 50% 50% / 0.08)); border-color: hsl(145 50% 55% / 0.32); }
+  .glass-tint-green:hover   { background: linear-gradient(135deg, hsl(145 50% 50% / 0.28), hsl(145 50% 50% / 0.14)); border-color: hsl(145 50% 60% / 0.5); }
+  .glass-tint-sky     { background: linear-gradient(135deg, hsl(205 70% 60% / 0.18), hsl(205 70% 60% / 0.08)); border-color: hsl(205 70% 65% / 0.32); }
+  .glass-tint-sky:hover     { background: linear-gradient(135deg, hsl(205 70% 60% / 0.28), hsl(205 70% 60% / 0.14)); border-color: hsl(205 70% 70% / 0.5); }
+  .glass-tint-purple  { background: linear-gradient(135deg, hsl(270 55% 65% / 0.18), hsl(270 55% 65% / 0.08)); border-color: hsl(270 55% 70% / 0.32); }
+  .glass-tint-purple:hover  { background: linear-gradient(135deg, hsl(270 55% 65% / 0.28), hsl(270 55% 65% / 0.14)); border-color: hsl(270 55% 75% / 0.5); }
+  .glass-tint-pink    { background: linear-gradient(135deg, hsl(335 70% 65% / 0.18), hsl(335 70% 65% / 0.08)); border-color: hsl(335 70% 70% / 0.32); }
+  .glass-tint-pink:hover    { background: linear-gradient(135deg, hsl(335 70% 65% / 0.28), hsl(335 70% 65% / 0.14)); border-color: hsl(335 70% 75% / 0.5); }
+  .glass-tint-orange  { background: linear-gradient(135deg, hsl(25 85% 60% / 0.18), hsl(25 85% 60% / 0.08)); border-color: hsl(25 85% 65% / 0.32); }
+  .glass-tint-orange:hover  { background: linear-gradient(135deg, hsl(25 85% 60% / 0.28), hsl(25 85% 60% / 0.14)); border-color: hsl(25 85% 70% / 0.5); }
+  .glass-tint-brown   { background: linear-gradient(135deg, hsl(20 35% 45% / 0.20), hsl(20 35% 45% / 0.10)); border-color: hsl(20 35% 55% / 0.34); }
+  .glass-tint-brown:hover   { background: linear-gradient(135deg, hsl(20 35% 45% / 0.30), hsl(20 35% 45% / 0.16)); border-color: hsl(20 35% 60% / 0.5); }
+  .glass-tint-teal    { background: linear-gradient(135deg, hsl(180 55% 50% / 0.18), hsl(180 55% 50% / 0.08)); border-color: hsl(180 55% 55% / 0.32); }
+  .glass-tint-teal:hover    { background: linear-gradient(135deg, hsl(180 55% 50% / 0.28), hsl(180 55% 50% / 0.14)); border-color: hsl(180 55% 60% / 0.5); }
+
   .grid-pattern {
     background-image:
       linear-gradient(hsl(220 8% 70% / 0.05) 1px, transparent 1px),
