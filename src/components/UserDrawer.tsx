@@ -108,21 +108,25 @@ const UserDrawer = () => {
             </Button>
           )}
 
-          <div className="text-[10px] uppercase tracking-widest opacity-60 px-3 mb-2">My Dashboard</div>
-          {dashSections.map((s) => {
-            const Icon = s.icon;
-            return (
-              <Link
-                key={s.id}
-                to={`/dashboard?section=${s.id}`}
-                onClick={() => setOpen(false)}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition hover:bg-primary/10 opacity-90"
-              >
-                <Icon className="w-4 h-4 shrink-0" />
-                <span className="flex-1 text-left">{s.label}</span>
-              </Link>
-            );
-          })}
+          {user.email?.toLowerCase() !== "info@digiformation.uk" && (
+            <>
+              <div className="text-[10px] uppercase tracking-widest opacity-60 px-3 mb-2">My Dashboard</div>
+              {dashSections.map((s) => {
+                const Icon = s.icon;
+                return (
+                  <Link
+                    key={s.id}
+                    to={`/dashboard?section=${s.id}`}
+                    onClick={() => setOpen(false)}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition hover:bg-primary/10 opacity-90"
+                  >
+                    <Icon className="w-4 h-4 shrink-0" />
+                    <span className="flex-1 text-left">{s.label}</span>
+                  </Link>
+                );
+              })}
+            </>
+          )}
         </nav>
 
         <div className="p-3 border-t border-border/40">
