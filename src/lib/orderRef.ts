@@ -17,6 +17,8 @@ const SERVICE_CODE_RULES: Array<[RegExp, string]> = [
   [/annual\s*accounts|\baa\b/i, "AA"],
   [/ad01|change\s*of\s*registered\s*office|registered\s*office\s*change/i, "AD01"],
   [/registered\s*office\s*address|\broa\b/i, "ROA"],
+  // Address services (virtual / business / mailing / director's service / trading address)
+  [/address\s*services?|virtual\s*address|business\s*address|mailing\s*address|service\s*address|trading\s*address|director'?s?\s*service\s*address/i, "ADZ"],
   [/\bitin\b/i, "ITIN"],
   [/\butr\b/i, "UTR"],
   [/\bvat\b/i, "VAT"],
@@ -42,7 +44,7 @@ function serviceCodeFor(input?: string): string {
 function regionFrom(currency?: string, serviceCode?: string): Region {
   // Service codes that imply region
   if (serviceCode === "LLC" || serviceCode === "ITIN") return "US";
-  if (["LTD", "CS", "AA", "AD01", "ROA", "UTR", "VAT", "PAYE"].includes(serviceCode || "")) return "GB";
+  if (["LTD", "CS", "AA", "AD01", "ROA", "ADZ", "UTR", "VAT", "PAYE", "DORM", "SO", "IDV"].includes(serviceCode || "")) return "GB";
   if (!currency) return "INT";
   const c = currency.toUpperCase();
   if (c === "GBP") return "GB";
