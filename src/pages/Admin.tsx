@@ -143,6 +143,33 @@ const Admin = () => {
   );
 };
 
+const addDays = (dateStr: string, days: number): string => {
+  const d = new Date(dateStr);
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
+};
+
+const computeAddressExpireDate = (a: any): string | null => {
+  if (a?.expire_date) return a.expire_date;
+  if (a?.start_date) return addDays(a.start_date, 365);
+  if (a?.created_at) return addDays(String(a.created_at).slice(0, 10), 365);
+  return null;
+};
+
+const computeCompanyDueDate = (
+  template: "confirmation-statement-reminder" | "annual-accounts-reminder",
+  c: any,
+): string | null => {
+  if (template === "confirmation-statement-reminder") {
+    if (c?.confirmation_due) return c.confirmation_due;
+    if (c?.incorporation_date) return addDays(c.incorporation_date, 365 + 14);
+  } else {
+    if (c?.accounts_filing_due) return c.accounts_filing_due;
+    if (c?.incorporation_date) return addDays(c.incorporation_date, Math.round(30.44 * 21));
+  }
+  return null;
+};
+
 const generateRandomPassword = () => {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
   const sym = "!@#$%&*";
@@ -831,9 +858,9 @@ const EmailsSection = ({
 
   const sendCompanyReminder = async (template: "confirmation-statement-reminder" | "annual-accounts-reminder", c: any, label: string) => {
     if (!requireEmail()) return;
-    const dueDate = template === "confirmation-statement-reminder" ? c.confirmation_due : c.accounts_filing_due;
-    if (!dueDate) return toast.error(`Please set the ${label} due date in Company tab first`);
-    const daysRemaining = Math.ceil((new Date(dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    const dueDate = computeCompanyDueDate(template, c);
+    if (!dueDate) return toast.error(`Please set the ${label} due date or Incorporation Date in Company tab first`);
+    const daysRemaining = Math.max(0, Math.ceil((new Date(dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
     const { error } = await supabase.functions.invoke("send-transactional-email", {
       body: {
         templateName: template,
@@ -842,22 +869,23 @@ const EmailsSection = ({
         templateData: { customerName: clientName, companyName: c.company_name, companyNumber: c.company_number, dueDate, daysRemaining },
       },
     });
-    if (error) toast.error(error.message); else toast.success(`${label} reminder sent`);
+    if (error) toast.error(error.message); else toast.success(`${label} reminder sent (${daysRemaining} days remaining)`);
   };
 
   const sendAddressReminder = async (a: any) => {
     if (!requireEmail()) return;
-    if (!a.expire_date) return toast.error("Please set the expiry date in Address tab first");
-    const daysRemaining = Math.ceil((new Date(a.expire_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    const expireDate = computeAddressExpireDate(a);
+    if (!expireDate) return toast.error("Cannot determine expiry date — set Start Date or Expire Date first");
+    const daysRemaining = Math.max(0, Math.ceil((new Date(expireDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
     const { error } = await supabase.functions.invoke("send-transactional-email", {
       body: {
         templateName: "address-renewal-reminder",
         recipientEmail: clientEmail,
         idempotencyKey: `address-renewal-${a.id}-${Date.now()}`,
-        templateData: { customerName: clientName, address: a.address_line1, expireDate: a.expire_date, daysRemaining },
+        templateData: { customerName: clientName, address: a.address_line1, expireDate, daysRemaining },
       },
     });
-    if (error) toast.error(error.message); else toast.success("Address renewal reminder sent");
+    if (error) toast.error(error.message); else toast.success(`Address renewal reminder sent (${daysRemaining} days remaining)`);
   };
 
   const pendingOrders = orders.filter(o => !/complete/i.test(o.status || ""));
@@ -1039,9 +1067,9 @@ const CompanyFormSection = ({
     label: string,
   ) => {
     if (!clientEmail) return toast.error("Client has no email");
-    const dueDate = template === "confirmation-statement-reminder" ? c.confirmation_due : c.accounts_filing_due;
-    if (!dueDate) return toast.error(`Please set the ${label} due date first`);
-    const daysRemaining = Math.ceil((new Date(dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    const dueDate = computeCompanyDueDate(template, c);
+    if (!dueDate) return toast.error(`Please set the ${label} due date or Incorporation Date first`);
+    const daysRemaining = Math.max(0, Math.ceil((new Date(dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
     const { error } = await supabase.functions.invoke("send-transactional-email", {
       body: {
         templateName: template,
@@ -1056,7 +1084,7 @@ const CompanyFormSection = ({
         },
       },
     });
-    if (error) toast.error(error.message); else toast.success(`${label} reminder sent`);
+    if (error) toast.error(error.message); else toast.success(`${label} reminder sent (${daysRemaining} days remaining)`);
   };
   return (
     <div className="space-y-6">
@@ -1146,8 +1174,9 @@ const AddressFormSection = ({
 }) => {
   const sendAddressReminder = async (a: any) => {
     if (!clientEmail) return toast.error("Client has no email");
-    if (!a.expire_date) return toast.error("Please set the expiry date first");
-    const daysRemaining = Math.ceil((new Date(a.expire_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    const expireDate = computeAddressExpireDate(a);
+    if (!expireDate) return toast.error("Cannot determine expiry date — set Start Date or Expire Date first");
+    const daysRemaining = Math.max(0, Math.ceil((new Date(expireDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
     const { error } = await supabase.functions.invoke("send-transactional-email", {
       body: {
         templateName: "address-renewal-reminder",
@@ -1156,12 +1185,12 @@ const AddressFormSection = ({
         templateData: {
           customerName: clientName,
           address: a.address_line1,
-          expireDate: a.expire_date,
+          expireDate,
           daysRemaining,
         },
       },
     });
-    if (error) toast.error(error.message); else toast.success("Address renewal reminder sent");
+    if (error) toast.error(error.message); else toast.success(`Address renewal reminder sent (${daysRemaining} days remaining)`);
   };
   return (
     <div className="space-y-6">
