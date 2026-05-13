@@ -289,6 +289,7 @@ const CheckoutFlow = ({
               invoiceNumber,
               invoiceUrl,
               notes: form.message,
+              liveSelfieLink: liveSelfieMode === "link" ? liveSelfieLink : undefined,
             },
           },
         })
