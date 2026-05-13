@@ -140,6 +140,10 @@ const Dashboard = () => {
           navigate("/auth", { replace: true });
           return;
         }
+        if (session.user.email?.toLowerCase() === "info@digiformation.uk") {
+          navigate("/admin", { replace: true });
+          return;
+        }
         setUser((prev) => (prev?.id === session.user.id ? prev : session.user));
       }
     });
