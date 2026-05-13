@@ -92,7 +92,7 @@ const CheckoutFlow = ({
   const [stepIdx, setStepIdx] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [successInfo, setSuccessInfo] = useState<{ orderRef: string; invoiceUrl?: string } | null>(null);
-  const [form, setForm] = useState({ full_name: "", email: "", whatsapp: "", country: "", message: "" });
+  const [form, setForm] = useState({ full_name: "", email: "", whatsapp: "", country: "", message: "", additional_note: "", promo_code: "" });
 
   // Skip selection step entirely when locked
   const steps = lockSelection ? STEP_LABELS.slice(1) : STEP_LABELS;
