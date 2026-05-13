@@ -7,9 +7,9 @@ const COMPANIES_HOUSE_URL =
   "https://find-and-update.company-information.service.gov.uk/officers/iIzC9R8zKXH6lyWTWCDaT3_gK4E/appointments";
 
 const stats = [
-  { icon: Building2, value: "71+", label: "UK Companies Registered Under His Name" },
-  { icon: Award, value: "8+", label: "Years of Industry Experience" },
-  { icon: ShieldCheck, value: "300+", label: "Clients Served Worldwide" },
+  { icon: Building2, value: "71+", label: "UK Companies Registered Under His Name", color: "glass-sage" },
+  { icon: Award, value: "8+", label: "Years of Industry Experience", color: "glass-sky" },
+  { icon: ShieldCheck, value: "300+", label: "Clients Served Worldwide", color: "glass-amber" },
 ];
 
 const DigiAbout = () => (
@@ -57,7 +57,7 @@ const DigiAbout = () => (
           {/* Stats below the picture — desktop view */}
           <div className="hidden lg:grid grid-cols-1 gap-3 w-full mt-10">
             {stats.map((s) => (
-              <div key={s.label} className="glass rounded-xl p-4 flex items-center gap-3">
+              <div key={s.label} className={`${s.color} glass rounded-xl p-4 flex items-center gap-3`}>
                 <s.icon className="w-5 h-5 opacity-80 flex-shrink-0" />
                 <div>
                   <div className="text-xl font-bold text-gradient leading-none">{s.value}</div>
