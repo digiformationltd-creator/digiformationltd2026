@@ -115,6 +115,7 @@ const CheckoutFlow = ({
   const [submitting, setSubmitting] = useState(false);
   const [successInfo, setSuccessInfo] = useState<{ orderRef: string; invoiceUrl?: string } | null>(null);
   const [form, setForm] = useState({
+    company_name: "",
     full_name: "",
     email: "",
     whatsapp: "",
