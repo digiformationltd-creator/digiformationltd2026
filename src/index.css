@@ -209,27 +209,27 @@ body p, body span, body li, body label, body small, body div {
     animation: glass-rgb-cycle 28s ease-in-out infinite;
   }
   .glass-sage     { animation-delay:  0s; }
-  .glass-teal     { animation-delay: -2.5s; }
-  .glass-sky      { animation-delay: -5s; }
-  .glass-lavender { animation-delay: -7.5s; }
-  .glass-rose     { animation-delay: -10s; }
-  .glass-coral    { animation-delay: -12.5s; }
-  .glass-amber    { animation-delay: -15s; }
-  .glass-slate    { animation-delay: -1.2s; }
+  .glass-teal     { animation-delay: -4s; }
+  .glass-sky      { animation-delay: -8s; }
+  .glass-lavender { animation-delay: -12s; }
+  .glass-rose     { animation-delay: -16s; }
+  .glass-coral    { animation-delay: -20s; }
+  .glass-amber    { animation-delay: -24s; }
+  .glass-slate    { animation-delay: -2s; }
   .glass[data-tint="sage"]     { animation-delay:  0s; }
-  .glass[data-tint="teal"]     { animation-delay: -2.5s; }
-  .glass[data-tint="sky"]      { animation-delay: -5s; }
-  .glass[data-tint="lavender"] { animation-delay: -7.5s; }
-  .glass[data-tint="rose"]     { animation-delay: -10s; }
-  .glass[data-tint="coral"]    { animation-delay: -12.5s; }
-  .glass[data-tint="amber"]    { animation-delay: -15s; }
-  .glass[data-tint="slate"]    { animation-delay: -1.2s; }
+  .glass[data-tint="teal"]     { animation-delay: -4s; }
+  .glass[data-tint="sky"]      { animation-delay: -8s; }
+  .glass[data-tint="lavender"] { animation-delay: -12s; }
+  .glass[data-tint="rose"]     { animation-delay: -16s; }
+  .glass[data-tint="coral"]    { animation-delay: -20s; }
+  .glass[data-tint="amber"]    { animation-delay: -24s; }
+  .glass[data-tint="slate"]    { animation-delay: -2s; }
 
   .glass-sage .card-icon, .glass-rose .card-icon, .glass-amber .card-icon,
   .glass-sky .card-icon, .glass-lavender .card-icon, .glass-teal .card-icon,
   .glass-coral .card-icon, .glass-slate .card-icon,
   .glass[data-tint] .card-icon {
-    animation: glass-rgb-icon 18s ease-in-out infinite;
+    animation: glass-rgb-icon 28s ease-in-out infinite;
     animation-delay: inherit;
   }
 
