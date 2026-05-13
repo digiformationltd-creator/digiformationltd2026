@@ -22,6 +22,7 @@ type Service = {
   title: string;
   desc: string;
   href: string;
+  tint: string;
 };
 
 const services: Service[] = [
