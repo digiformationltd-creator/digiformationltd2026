@@ -3,6 +3,7 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 import DigiNav from "@/components/DigiNav";
 import DigiHero from "@/components/DigiHero";
 import QuickStartWidget from "@/components/QuickStartWidget";
+import SnowParticles from "@/components/SnowParticles";
 
 import DigiServicesSlider from "@/components/DigiServicesSlider";
 import DigiStats from "@/components/DigiStats";
@@ -104,7 +105,8 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <div className="min-h-screen bg-background overflow-x-hidden relative">
+      <SnowParticles />
       <DigiNav />
       <main>
         <h1 className="sr-only">
