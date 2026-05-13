@@ -227,6 +227,7 @@ const CheckoutFlow = ({
       `[${serviceTitle} Order]\n` +
       `Ref: ${orderRef}\n` +
       (contextLabel ? `${contextLabel}\n` : "") +
+      (showCompanyName && form.company_name ? `Proposed company name: ${form.company_name}\n` : "") +
       `Items:\n${lines}\n` +
       `Subtotal: ${formatMoney(subtotal, currency)}\n` +
       (vat ? `VAT (${(vatRate * 100).toFixed(0)}%): ${formatMoney(vat, currency)}\n` : "") +
