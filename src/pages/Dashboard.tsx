@@ -265,17 +265,48 @@ const Dashboard = () => {
 
       {/* Main */}
       <main className="min-w-0">
-        {/* Top bar */}
-        <header className="sticky top-0 z-20 glass border-b border-border/40 px-4 sm:px-6 py-3 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full w-12 h-12 sm:w-14 sm:h-14"
-            onClick={() => setMenuOpen(true)}
-            aria-label="Open menu"
+        {/* Portal context bar — clearly separates portal from public website */}
+        <div className="sticky top-0 z-30 bg-primary/15 border-b border-border/40 backdrop-blur-md px-4 sm:px-6 py-2 flex items-center justify-between text-xs sm:text-sm">
+          <div className="flex items-center gap-2 min-w-0">
+            <ShieldCheck className="w-4 h-4 text-primary shrink-0" />
+            <span className="font-semibold tracking-wide uppercase truncate">Client Portal</span>
+            <span className="hidden sm:inline opacity-60">— Secure area</span>
+          </div>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 hover:bg-primary/10 transition shrink-0"
           >
-            <Menu className="!w-7 !h-7 sm:!w-8 sm:!h-8" />
-          </Button>
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <Home className="w-3.5 h-3.5" />
+            <span className="hidden xs:inline">Back to Website</span>
+            <span className="xs:hidden">Home</span>
+          </Link>
+        </div>
+
+        {/* Top bar */}
+        <header className="sticky top-[36px] sm:top-[40px] z-20 glass border-b border-border/40 px-4 sm:px-6 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2 min-w-0">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full w-12 h-12 sm:w-14 sm:h-14"
+              onClick={() => setMenuOpen(true)}
+              aria-label="Open menu"
+            >
+              <Menu className="!w-7 !h-7 sm:!w-8 sm:!h-8" />
+            </Button>
+            {active !== "overview" && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setActive("overview")}
+                className="rounded-full hidden sm:inline-flex"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Dashboard
+              </Button>
+            )}
+          </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <div
               className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-brand grid place-items-center font-semibold text-sm shadow-glow"
