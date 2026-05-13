@@ -800,6 +800,16 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
             ))}
           </div>
         )}
+
+        {tab === "emails" && (
+          <EmailsSection
+            orders={orders}
+            companies={companies}
+            addresses={addresses}
+            clientEmail={profile.email}
+            clientName={profile.full_name}
+          />
+        )}
       </div>
     </div>
   );
