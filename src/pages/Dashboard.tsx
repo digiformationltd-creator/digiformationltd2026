@@ -332,7 +332,7 @@ const Dashboard = () => {
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {[
-                  { label: "Subscriptions", value: String(subscriptions.length), icon: CalendarDays, id: "subscriptions" as SectionId },
+                  { label: "Address", value: String(subscriptions.length || 0), icon: CalendarDays, id: "addresses" as SectionId },
                   { label: "Orders", value: String(orders.length), icon: ShoppingBag, id: "orders" as SectionId },
                   { label: "Wallet", value: formatGBP(walletBalance), icon: Wallet, id: "wallet" as SectionId },
                   { label: "Tickets", value: String(tickets.length), icon: Ticket, id: "tickets" as SectionId },
