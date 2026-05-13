@@ -33,6 +33,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Affiliate from "./pages/Affiliate";
 import Admin from "./pages/Admin";
 import Unsubscribe from "./pages/Unsubscribe";
+import Checkout from "./pages/Checkout";
 
 const queryClient = new QueryClient();
 
@@ -118,6 +119,7 @@ const App = () => (
           <Route path="/affiliate" element={<Affiliate />} />
           <Route path="/admin" element={<Admin />} />
 
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="/unsubscribe" element={<Unsubscribe />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
