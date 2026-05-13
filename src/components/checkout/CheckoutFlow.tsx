@@ -479,6 +479,40 @@ const CheckoutFlow = ({
                   <Field label="WhatsApp" value={form.whatsapp} onChange={(v) => setForm({ ...form, whatsapp: v })} required minLength={5} />
                   <Field label="Country of residence" value={form.country} onChange={(v) => setForm({ ...form, country: v })} required minLength={2} />
                 </div>
+
+                {/* Residential address */}
+                <div className="rounded-2xl border border-border/40 p-4 md:p-5 space-y-4">
+                  <div>
+                    <h3 className="font-semibold">Residential home address</h3>
+                    <p className="text-xs opacity-70 mt-1">Used for verification and on official documents.</p>
+                  </div>
+                  <Field
+                    label="Address line 1 (house no., street)"
+                    value={form.address_line1}
+                    onChange={(v) => setForm({ ...form, address_line1: v })}
+                    required
+                    minLength={3}
+                  />
+                  <Field
+                    label="Address line 2 (area, road) — optional"
+                    value={form.address_line2}
+                    onChange={(v) => setForm({ ...form, address_line2: v })}
+                  />
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <Field label="City" value={form.city} onChange={(v) => setForm({ ...form, city: v })} required minLength={2} />
+                    <Field label="Postal code" value={form.postal_code} onChange={(v) => setForm({ ...form, postal_code: v })} required minLength={3} />
+                  </div>
+                </div>
+
+                {showBusinessType && (
+                  <Field
+                    label="Business type / industry"
+                    value={form.business_type}
+                    onChange={(v) => setForm({ ...form, business_type: v })}
+                    required
+                    minLength={2}
+                  />
+                )}
                 <div>
                   <label className="block text-sm font-medium mb-1.5">Notes (proposed company name, business activity, etc.)</label>
                   <textarea
@@ -559,12 +593,24 @@ const CheckoutFlow = ({
                     />
                   )}
 
-                  <UploadField
-                    label="Holding selfie (you holding your ID)"
-                    file={holdingSelfie}
-                    onChange={setHoldingSelfie}
-                    onViewExample={() => setExampleOpen({ title: "Example: Holding selfie", src: exampleHoldingSelfie })}
-                  />
+                  {liveSelfieMode === "upload" && (
+                    <UploadField
+                      label="Holding selfie (you holding your ID)"
+                      file={holdingSelfie}
+                      onChange={setHoldingSelfie}
+                      onViewExample={() => setExampleOpen({ title: "Example: Holding selfie", src: exampleHoldingSelfie })}
+                    />
+                  )}
+
+                  {liveSelfieMode === "link" && (
+                    <div className="rounded-xl bg-primary/10 border border-primary/30 p-4 text-sm">
+                      <p className="font-semibold text-primary mb-1">Live selfie verification</p>
+                      <p className="opacity-85">
+                        After you place your order, we will email you a secure live-selfie verification link.
+                        Please complete it from your phone — it takes about 1 minute.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
