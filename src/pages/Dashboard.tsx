@@ -21,15 +21,14 @@ import UserDrawer from "@/components/UserDrawer";
 import { downloadInvoicePdf } from "@/lib/invoice";
 
 type SectionId =
-  | "overview" | "company" | "addresses" | "subscriptions" | "orders" | "invoices" | "wallet" | "documents"
+  | "overview" | "company" | "addresses" | "orders" | "invoices" | "wallet" | "documents"
   | "editAccount" | "newServices" | "tickets" | "openTicket"
   | "affiliate";
 
 const menu: { id: SectionId; label: string; icon: any }[] = [
   { id: "overview", label: "Dashboard", icon: LayoutDashboard },
   { id: "company", label: "My Company", icon: Building2 },
-  { id: "addresses", label: "My Address", icon: MapPin },
-  { id: "subscriptions", label: "Subscriptions", icon: CalendarDays },
+  { id: "addresses", label: "Address & Subscription", icon: MapPin },
   { id: "orders", label: "My Orders", icon: ShoppingBag },
   { id: "invoices", label: "My Invoices", icon: FileText },
   { id: "wallet", label: "My Wallet", icon: Wallet },
@@ -333,7 +332,7 @@ const Dashboard = () => {
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {[
-                  { label: "Subscriptions", value: String(subscriptions.length), icon: CalendarDays, id: "subscriptions" as SectionId },
+                  { label: "Address", value: String(subscriptions.length || 0), icon: CalendarDays, id: "addresses" as SectionId },
                   { label: "Orders", value: String(orders.length), icon: ShoppingBag, id: "orders" as SectionId },
                   { label: "Wallet", value: formatGBP(walletBalance), icon: Wallet, id: "wallet" as SectionId },
                   { label: "Tickets", value: String(tickets.length), icon: Ticket, id: "tickets" as SectionId },
@@ -368,9 +367,6 @@ const Dashboard = () => {
             </div>
           )}
 
-          {active === "subscriptions" && (
-            <ClientSubscriptionsSection rows={subscriptions} onBrowse={() => setActive("newServices")} />
-          )}
 
           {active === "company" && (
             <MyCompaniesSection userId={user.id} companies={companies} onChange={setCompanies} editable={false} />

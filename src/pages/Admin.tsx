@@ -284,7 +284,7 @@ const CreateClientPanel = ({ onCreated }: { onCreated: () => void }) => {
 };
 
 const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: string; initialTab?: "company" | "addresses"; onBack: () => void }) => {
-  const [tab, setTab] = useState<"company" | "addresses" | "orders" | "invoices" | "subs" | "wallet" | "docs" | "emails">(initialTab);
+  const [tab, setTab] = useState<"company" | "addresses" | "orders" | "invoices" | "wallet" | "docs" | "emails">(initialTab);
   const [profile, setProfile] = useState<any>({});
   const [companies, setCompanies] = useState<any[]>([]);
   const [addresses, setAddresses] = useState<any[]>([]);
@@ -497,10 +497,9 @@ const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: stri
 
   const tabs = [
     { id: "company", label: `Company (${companies.length})` },
-    { id: "addresses", label: `Address (${addresses.length})` },
+    { id: "addresses", label: `Address & Subscription (${addresses.length})` },
     { id: "orders", label: `Orders (${orders.length})` },
     { id: "invoices", label: `Invoices (${invoices.length})` },
-    { id: "subs", label: `Subs (${subs.length})` },
     { id: "wallet", label: `Wallet (${wallet.length})` },
     { id: "docs", label: `Docs (${docs.length})` },
     { id: "emails", label: "Emails" },
@@ -711,22 +710,6 @@ const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: stri
                     <Textarea defaultValue={i.notes || ""} onBlur={(e) => updateInvoice(i.id, { notes: e.target.value })} />
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {tab === "subs" && (
-          <div className="space-y-3">
-            <Button onClick={addSub} size="sm">Add Subscription</Button>
-            {subs.map(s => (
-              <div key={s.id} className="border border-border/40 rounded-lg p-3 grid md:grid-cols-6 gap-2 items-center">
-                <Input defaultValue={s.plan_name} onBlur={(e) => updateSub(s.id, { plan_name: e.target.value })} placeholder="Plan" />
-                <Input type="number" defaultValue={s.price_gbp} onBlur={(e) => updateSub(s.id, { price_gbp: parseFloat(e.target.value) || 0 })} placeholder="£" />
-                <Input defaultValue={s.period} onBlur={(e) => updateSub(s.id, { period: e.target.value })} placeholder="year" />
-                <Input defaultValue={s.status} onBlur={(e) => updateSub(s.id, { status: e.target.value })} placeholder="Status" />
-                <Input type="date" defaultValue={s.renewal_date || ""} onBlur={(e) => updateSub(s.id, { renewal_date: e.target.value || null })} />
-                <Button variant="ghost" size="sm" onClick={() => deleteRow("client_subscriptions", s.id)}><Trash2 className="w-4 h-4" /></Button>
               </div>
             ))}
           </div>
