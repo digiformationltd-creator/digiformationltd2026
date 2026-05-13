@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Bot, Send, X, Sparkles } from "lucide-react";
 import ReactMarkdown from "react-markdown";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -26,6 +27,12 @@ const AIAssistant = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { pathname } = useLocation();
+  const isMobile = useIsMobile();
+
+  // Hide entirely on client portal / admin pages on mobile
+  const hideOnThisRoute = isMobile && (pathname.startsWith("/dashboard") || pathname.startsWith("/admin"));
+  if (hideOnThisRoute) return null;
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });

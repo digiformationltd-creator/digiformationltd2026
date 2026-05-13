@@ -162,7 +162,7 @@ const CreateClientPanel = ({ onCreated }: { onCreated: () => void }) => {
   const [companyName, setCompanyName] = useState("");
   const [password, setPassword] = useState(() => generateRandomPassword());
   const [creating, setCreating] = useState(false);
-  const [sendingReset, setSendingReset] = useState(false);
+  const [creating, setCreating] = useState(false);
   const [created, setCreated] = useState<{ email: string; password: string } | null>(null);
 
   const reset = () => {
@@ -191,15 +191,8 @@ const CreateClientPanel = ({ onCreated }: { onCreated: () => void }) => {
     onCreated();
   };
 
-  const sendReset = async (clientEmail: string) => {
-    setSendingReset(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(clientEmail, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-    setSendingReset(false);
-    if (error) { toast.error(error.message); return; }
-    toast.success(`Password reset email sent to ${clientEmail}`);
-  };
+
+
 
   if (!open) {
     return (
@@ -224,7 +217,7 @@ const CreateClientPanel = ({ onCreated }: { onCreated: () => void }) => {
       {!created ? (
         <>
           <p className="text-xs text-white/70">
-            Create the account here. The client receives the email & a temporary password — they should use <strong>Forgot Password</strong> on the login page to set their own password.
+            Create the account here. Share the email & temporary password with the client — they can change it later from their dashboard or via <strong>Forgot Password</strong> on the login page.
           </p>
           <div className="grid sm:grid-cols-2 gap-3">
             <div>
@@ -277,14 +270,10 @@ const CreateClientPanel = ({ onCreated }: { onCreated: () => void }) => {
               <Button size="sm" variant="ghost" onClick={() => copy(created.password, "Password")}><Copy className="w-3.5 h-3.5" /></Button>
             </div>
             <p className="text-xs text-white/70 pt-2 border-t border-border/40">
-              Share these credentials with the client, OR send them a password-reset email so they can set their own password directly:
+              Share these credentials with the client. They can sign in immediately and change their password later from the dashboard or via <strong>Forgot Password</strong>.
             </p>
           </div>
           <div className="flex flex-wrap justify-end gap-2">
-            <Button variant="outline" onClick={() => sendReset(created.email)} disabled={sendingReset} className="rounded-full">
-              {sendingReset ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
-              Send Password Reset Email
-            </Button>
             <Button variant="hero" onClick={reset} className="rounded-full">
               <UserPlus className="w-4 h-4" /> Create Another
             </Button>
