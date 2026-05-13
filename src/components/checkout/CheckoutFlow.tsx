@@ -560,7 +560,6 @@ const CheckoutFlow = ({
                   <Field label="Full name" value={form.full_name} onChange={(v) => setForm({ ...form, full_name: v })} required minLength={2} />
                   <Field label="Email" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
                   <Field label="WhatsApp" value={form.whatsapp} onChange={(v) => setForm({ ...form, whatsapp: v })} required minLength={5} />
-                  <Field label="Country of residence" value={form.country} onChange={(v) => setForm({ ...form, country: v })} required minLength={2} />
                 </div>
 
                 {/* Residential address */}
@@ -585,6 +584,7 @@ const CheckoutFlow = ({
                     <Field label="City" value={form.city} onChange={(v) => setForm({ ...form, city: v })} required minLength={2} />
                     <Field label="Postal code" value={form.postal_code} onChange={(v) => setForm({ ...form, postal_code: v })} required minLength={3} />
                   </div>
+                  <Field label="Country of residence" value={form.country} onChange={(v) => setForm({ ...form, country: v })} required minLength={2} />
                 </div>
 
                 {showBusinessType && (
