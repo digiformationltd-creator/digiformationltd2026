@@ -1,37 +1,48 @@
 // Site-wide order reference generator.
-// Format: {YY}{DDMM}-{REGION}-{PKG}-{NNNN}
-//   YY     : 2-digit year
-//   DDMM   : day + month
-//   REGION : GB | US | INT (currency-driven; INT = neither)
-//   PKG    : 3-letter package code (SIL/STA/GOL/etc.) — omitted if no package
-//   NNNN   : zero-padded sequential order number from the DB
-// Example: 261205-GB-SIL-0001
+// Format: {REGION}{SERVICE}{YYMMDD}{NNNN}
+//   REGION : GB | US | INT (currency / service derived)
+//   SERVICE: short uppercase code (LTD, LLC, CS, AA, AD01, ITIN, ROA, VAT, PAYE, UTR, ORD)
+//   YYMMDD : 2-digit year + month + day
+//   NNNN   : zero-padded global sequence from DB (next_order_number)
+// Example: GBLTD2605130001
 
 import { supabase } from "@/integrations/supabase/client";
 
 export type Region = "GB" | "US" | "INT";
 
-const PACKAGE_MAP: Record<string, string> = {
-  starter: "STA",
-  silver: "SIL",
-  gold: "GOL",
-  platinum: "PLA",
-  premium: "PRE",
-  basic: "BAS",
-  standard: "STD",
-  pro: "PRO",
-  enterprise: "ENT",
-};
+// Map common service / package text → short code.
+// Order matters: more specific keys first.
+const SERVICE_CODE_RULES: Array<[RegExp, string]> = [
+  [/confirmation\s*statement|\bcs01\b|\bcs\b/i, "CS"],
+  [/annual\s*accounts|\baa\b/i, "AA"],
+  [/ad01|change\s*of\s*registered\s*office|registered\s*office\s*change/i, "AD01"],
+  [/registered\s*office\s*address|\broa\b/i, "ROA"],
+  [/\bitin\b/i, "ITIN"],
+  [/\butr\b/i, "UTR"],
+  [/\bvat\b/i, "VAT"],
+  [/\bpaye\b/i, "PAYE"],
+  [/\bllc\b/i, "LLC"],
+  [/uk\s*ltd|\bltd\b|limited\s*formation|company\s*formation/i, "LTD"],
+  [/id\s*verification/i, "IDV"],
+  [/dormant/i, "DORM"],
+  [/strike\s*off/i, "SO"],
+];
 
-function pkgCode(pkg?: string): string | null {
-  if (!pkg) return null;
-  const key = pkg.trim().toLowerCase();
-  if (PACKAGE_MAP[key]) return PACKAGE_MAP[key];
-  const letters = pkg.toUpperCase().replace(/[^A-Z]/g, "");
-  return letters.slice(0, 3) || null;
+function serviceCodeFor(input?: string): string {
+  if (!input) return "ORD";
+  for (const [re, code] of SERVICE_CODE_RULES) {
+    if (re.test(input)) return code;
+  }
+  // Fallback: first letters of first 2 words, uppercase, max 4 chars
+  const letters = input.toUpperCase().replace(/[^A-Z ]/g, "").trim().split(/\s+/);
+  const code = letters.slice(0, 2).map(w => w.slice(0, 2)).join("");
+  return code || "ORD";
 }
 
-function regionFrom(currency?: string): Region {
+function regionFrom(currency?: string, serviceCode?: string): Region {
+  // Service codes that imply region
+  if (serviceCode === "LLC" || serviceCode === "ITIN") return "US";
+  if (["LTD", "CS", "AA", "AD01", "ROA", "UTR", "VAT", "PAYE"].includes(serviceCode || "")) return "GB";
   if (!currency) return "INT";
   const c = currency.toUpperCase();
   if (c === "GBP") return "GB";
@@ -40,19 +51,21 @@ function regionFrom(currency?: string): Region {
 }
 
 export interface BuildOrderRefInput {
-  service?: string;       // kept for API compat; no longer used in the ref
-  packageName?: string;
+  service?: string;       // free-text service / page name
+  packageName?: string;   // optional package name (kept for back-compat)
   currency?: string;      // GBP | USD
-  region?: Region;        // overrides currency-derived region
+  region?: Region;        // explicit override
+  serviceCode?: string;   // explicit override (e.g. "AD01")
 }
 
-export async function buildOrderRef({ packageName, currency, region }: BuildOrderRefInput): Promise<string> {
+export async function buildOrderRef({ service, packageName, currency, region, serviceCode }: BuildOrderRefInput): Promise<string> {
   const d = new Date();
   const yy = String(d.getFullYear()).slice(-2);
   const dd = String(d.getDate()).padStart(2, "0");
   const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const reg = region ?? regionFrom(currency);
-  const pkg = pkgCode(packageName);
+
+  const code = (serviceCode || serviceCodeFor(service || packageName)).toUpperCase();
+  const reg = region ?? regionFrom(currency, code);
 
   let seq = 0;
   try {
@@ -62,8 +75,5 @@ export async function buildOrderRef({ packageName, currency, region }: BuildOrde
   if (!seq) seq = Math.floor(Date.now() / 1000) % 10000; // fallback only
 
   const num = String(seq).padStart(4, "0");
-  const parts = [`${yy}${dd}${mm}`, reg];
-  if (pkg) parts.push(pkg);
-  parts.push(num);
-  return parts.join("-");
+  return `${reg}${code}${yy}${mm}${dd}${num}`;
 }
