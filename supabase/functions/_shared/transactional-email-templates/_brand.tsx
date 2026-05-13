@@ -5,7 +5,7 @@ import {
 
 export const SITE_NAME = 'Digiformation Ltd'
 export const SITE_URL = 'www.digiformation.uk'
-export const LOGO_URL = 'https://formflow-digital-hub.lovable.app/digiformation-logo.png'
+export const LOGO_URL = 'https://www.digiformation.uk/digiformation-logo.png'
 
 // Grey + white palette (softer than pure black)
 export const INK = '#4b5563'        // headings, accents — medium grey
