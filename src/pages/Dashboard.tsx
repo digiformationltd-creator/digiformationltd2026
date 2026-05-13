@@ -196,8 +196,7 @@ const Dashboard = () => {
   }
 
   const initials = profile?.avatar_initials || (profile?.full_name?.slice(0, 2) || user.email?.slice(0, 2) || "U").toUpperCase();
-  const primaryCompanyName = companies[0]?.company_name?.trim();
-  const displayName = primaryCompanyName || profile?.company_name || profile?.full_name || user.email?.split("@")[0] || "Client";
+  const displayName = profile?.full_name?.trim() || user.email?.split("@")[0] || "Client";
   const walletBalance = walletRows.reduce((sum, row) => sum + (row.txn_type === "Debit" ? -Number(row.amount_gbp || 0) : Number(row.amount_gbp || 0)), 0);
   const formatGBP = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n || 0);
 

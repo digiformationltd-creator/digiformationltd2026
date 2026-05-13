@@ -48,6 +48,30 @@ const DigiNav = () => {
 
   return (
     <header className="fixed top-0 inset-x-0 z-50">
+      {/* Top utility bar — separates main site from client portal entry */}
+      <div className="bg-primary/15 border-b border-border/40 backdrop-blur-md px-3 sm:px-4 py-1.5 flex items-center justify-between text-xs sm:text-sm">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="opacity-70 hidden xs:inline">Need to manage your services?</span>
+          <span className="opacity-70 xs:hidden">Welcome</span>
+        </div>
+        {user ? (
+          <Link
+            to="/dashboard"
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 bg-primary/30 hover:bg-primary/40 transition font-semibold shrink-0"
+          >
+            <LayoutDashboard className="w-3.5 h-3.5" />
+            <span>Client Dashboard</span>
+          </Link>
+        ) : (
+          <Link
+            to="/auth"
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 bg-primary/30 hover:bg-primary/40 transition font-semibold shrink-0"
+          >
+            <UserCircle2 className="w-3.5 h-3.5" />
+            <span>Client Login</span>
+          </Link>
+        )}
+      </div>
       <div className="container mx-auto mt-1 sm:mt-2 xl:mt-4 px-3 sm:px-4">
         <nav className="flex items-center justify-between gap-2 pl-1 sm:pl-2 pr-2 sm:pr-3 py-1.5 sm:py-2 xl:py-2.5">
           {/* Logo */}
@@ -114,16 +138,15 @@ const DigiNav = () => {
               </Link>
             </Button>
             {user ? (
-              <Button onClick={handleLogout} variant="hero" className="rounded-full h-9 sm:h-10 px-3 text-xs sm:text-sm" aria-label="Log out">
+              <Button onClick={handleLogout} variant="hero" className="rounded-full hidden sm:inline-flex h-9 sm:h-10 px-3 text-xs sm:text-sm" aria-label="Log out">
                 <LogOut className="w-4 h-4" />
                 <span>Logout</span>
               </Button>
             ) : (
-              <Button asChild variant="hero" className="rounded-full h-9 sm:h-10 px-3 text-xs sm:text-sm">
+              <Button asChild variant="hero" className="rounded-full hidden sm:inline-flex h-9 sm:h-10 px-3 text-xs sm:text-sm">
                 <Link to="/auth" aria-label="Sign in to client dashboard">
                   <UserCircle2 className="w-4 h-4" />
-                  <span className="hidden sm:inline">Client Dashboard</span>
-                  <span className="sm:hidden">Login</span>
+                  <span>Client Dashboard</span>
                 </Link>
               </Button>
             )}
