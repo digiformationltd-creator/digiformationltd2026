@@ -28,7 +28,7 @@ type SectionId =
 const menu: { id: SectionId; label: string; icon: any }[] = [
   { id: "overview", label: "Dashboard", icon: LayoutDashboard },
   { id: "company", label: "My Company", icon: Building2 },
-  { id: "addresses", label: "Address & Subscription", icon: MapPin },
+  { id: "addresses", label: "Address Subscription", icon: MapPin },
   { id: "orders", label: "My Orders", icon: ShoppingBag },
   { id: "invoices", label: "My Invoices", icon: FileText },
   { id: "wallet", label: "My Wallet", icon: Wallet },
