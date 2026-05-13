@@ -56,7 +56,7 @@ const DigiNav = () => {
   }, [open]);
 
   return (
-    <header className="fixed top-0 inset-x-0 z-50 bg-background/85 backdrop-blur-xl border-b border-border/40 shadow-sm">
+    <header className="fixed top-0 inset-x-0 z-50">
       {/* Top utility bar — separates main site from client portal entry */}
       <div className="bg-primary/15 border-b border-border/40 px-3 sm:px-4 py-1.5 flex items-center justify-between text-xs sm:text-sm">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
