@@ -759,8 +759,19 @@ const CheckoutFlow = ({
                       />
                     </div>
                   )}
+                  <div>
+                    <label className="block text-sm font-medium mb-1.5">SIC codes <span className="opacity-60 font-normal">(optional)</span></label>
+                    <textarea
+                      value={form.sic_codes}
+                      onChange={(e) => setForm({ ...form, sic_codes: e.target.value })}
+                      rows={2}
+                      maxLength={500}
+                      className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+                      placeholder="Type your SIC codes (e.g. 62012, 62020, 70229, 73110)"
+                    />
+                    <p className="text-xs opacity-60 mt-1">Add up to 4 or more SIC codes that match your business activity.</p>
+                  </div>
                 </div>
-                <div>
                   <label className="block text-sm font-medium mb-1.5">Promo code <span className="opacity-60 font-normal">(optional)</span></label>
                   <input
                     type="text"
