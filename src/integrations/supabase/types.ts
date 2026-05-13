@@ -365,6 +365,42 @@ export type Database = {
         }
         Relationships: []
       }
+      email_reminder_log: {
+        Row: {
+          due_date: string
+          id: string
+          recipient_email: string
+          reminder_type: string
+          sent_at: string
+          stage: number
+          target_id: string
+          target_type: string
+          user_id: string
+        }
+        Insert: {
+          due_date: string
+          id?: string
+          recipient_email: string
+          reminder_type: string
+          sent_at?: string
+          stage: number
+          target_id: string
+          target_type: string
+          user_id: string
+        }
+        Update: {
+          due_date?: string
+          id?: string
+          recipient_email?: string
+          reminder_type?: string
+          sent_at?: string
+          stage?: number
+          target_id?: string
+          target_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
