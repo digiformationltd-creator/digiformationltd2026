@@ -14,6 +14,10 @@ import {
   Upload,
   Eye,
   X,
+  ChevronDown,
+  IdCard,
+  BookUser,
+  Car,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
