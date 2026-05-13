@@ -92,7 +92,7 @@ const CheckoutFlow = ({
   const [stepIdx, setStepIdx] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [successInfo, setSuccessInfo] = useState<{ orderRef: string; invoiceUrl?: string } | null>(null);
-  const [form, setForm] = useState({ full_name: "", email: "", whatsapp: "", country: "", message: "" });
+  const [form, setForm] = useState({ full_name: "", email: "", whatsapp: "", country: "", message: "", additional_note: "", promo_code: "" });
 
   // Skip selection step entirely when locked
   const steps = lockSelection ? STEP_LABELS.slice(1) : STEP_LABELS;
@@ -176,8 +176,10 @@ const CheckoutFlow = ({
       `Items:\n${lines}\n` +
       `Subtotal: ${formatMoney(subtotal, currency)}\n` +
       (vat ? `VAT (${(vatRate * 100).toFixed(0)}%): ${formatMoney(vat, currency)}\n` : "") +
-      `Total: ${formatMoney(total, currency)}\n\n` +
-      `Customer note:\n${form.message}`;
+      `Total: ${formatMoney(total, currency)}\n` +
+      (form.promo_code ? `Promo code: ${form.promo_code}\n` : "") +
+      `\nCustomer note:\n${form.message}` +
+      (form.additional_note ? `\n\nAdditional note:\n${form.additional_note}` : "");
 
     const { error } = await supabase.from("contact_submissions").insert({
       full_name: form.full_name,
@@ -433,9 +435,29 @@ const CheckoutFlow = ({
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
                     minLength={10}
                     required
-                    rows={5}
+                    rows={4}
                     className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
                     placeholder={notesPlaceholder || "Share any details that will help us prepare your order..."}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1.5">Additional note <span className="opacity-60 font-normal">(optional)</span></label>
+                  <textarea
+                    value={form.additional_note}
+                    onChange={(e) => setForm({ ...form, additional_note: e.target.value })}
+                    rows={3}
+                    className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+                    placeholder="Anything else you'd like our team to know?"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1.5">Promo code <span className="opacity-60 font-normal">(optional)</span></label>
+                  <input
+                    type="text"
+                    value={form.promo_code}
+                    onChange={(e) => setForm({ ...form, promo_code: e.target.value.toUpperCase() })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm uppercase tracking-wider"
+                    placeholder="e.g. WELCOME10"
                   />
                 </div>
               </div>
@@ -460,8 +482,9 @@ const CheckoutFlow = ({
                   )}
                 </div>
                 <div className="rounded-2xl border border-border/40 p-4">
-                  <h3 className="font-semibold mb-2">Order items</h3>
-                  <ul className="space-y-1.5 text-sm">
+                  <h3 className="font-semibold mb-3">Order Summary</h3>
+                  <div className="text-sm font-semibold text-primary mb-2">{serviceTitle}</div>
+                  <ul className="space-y-1.5 text-sm mb-3">
                     {selectedItems.map((i) => (
                       <li key={i.id} className="flex justify-between gap-3">
                         <span className="opacity-90">{i.name}</span>
@@ -469,9 +492,31 @@ const CheckoutFlow = ({
                       </li>
                     ))}
                   </ul>
+                  <div className="border-t border-border/40 pt-3 space-y-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="opacity-80">Subtotal</span>
+                      <span className="font-semibold">{formatMoney(subtotal, currency)}</span>
+                    </div>
+                    {vatRate > 0 && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="opacity-80">VAT ({(vatRate * 100).toFixed(0)}%)</span>
+                        <span className="font-semibold">{formatMoney(vat, currency)}</span>
+                      </div>
+                    )}
+                    {form.promo_code && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="opacity-80">Promo code</span>
+                        <span className="font-semibold uppercase">{form.promo_code}</span>
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between text-lg font-bold pt-2">
+                      <span>Total</span>
+                      <span className="text-gradient">{formatMoney(total, currency)}</span>
+                    </div>
+                  </div>
                 </div>
                 <p className="text-xs opacity-70">
-                  By confirming you agree to our terms. Our team will contact you as soon as possible with secure
+                  By placing the order you agree to our terms. Our team will contact you as soon as possible with secure
                   payment instructions.
                 </p>
               </div>
@@ -493,7 +538,7 @@ const CheckoutFlow = ({
                     </>
                   ) : (
                     <>
-                      Confirm &amp; submit order <ArrowRight className="w-4 h-4" />
+                      Place Order — {formatMoney(total, currency)} <ArrowRight className="w-4 h-4" />
                     </>
                   )}
                 </Button>
