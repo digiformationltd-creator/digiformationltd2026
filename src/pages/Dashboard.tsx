@@ -471,7 +471,7 @@ interface AddressRow {
   notes: string | null;
 }
 
-const MyCompaniesSection = ({ userId, companies, onChange }: { userId: string; companies: CompanyDetails[]; onChange: (c: CompanyDetails[]) => void }) => {
+const MyCompaniesSection = ({ userId, companies, onChange, editable = false }: { userId: string; companies: CompanyDetails[]; onChange: (c: CompanyDetails[]) => void; editable?: boolean }) => {
   const [savingId, setSavingId] = useState<string | null>(null);
 
   const updateField = (id: string, patch: Partial<CompanyDetails>) => {
