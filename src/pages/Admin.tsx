@@ -143,6 +143,33 @@ const Admin = () => {
   );
 };
 
+const addDays = (dateStr: string, days: number): string => {
+  const d = new Date(dateStr);
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
+};
+
+const computeAddressExpireDate = (a: any): string | null => {
+  if (a?.expire_date) return a.expire_date;
+  if (a?.start_date) return addDays(a.start_date, 365);
+  if (a?.created_at) return addDays(String(a.created_at).slice(0, 10), 365);
+  return null;
+};
+
+const computeCompanyDueDate = (
+  template: "confirmation-statement-reminder" | "annual-accounts-reminder",
+  c: any,
+): string | null => {
+  if (template === "confirmation-statement-reminder") {
+    if (c?.confirmation_due) return c.confirmation_due;
+    if (c?.incorporation_date) return addDays(c.incorporation_date, 365 + 14);
+  } else {
+    if (c?.accounts_filing_due) return c.accounts_filing_due;
+    if (c?.incorporation_date) return addDays(c.incorporation_date, Math.round(30.44 * 21));
+  }
+  return null;
+};
+
 const generateRandomPassword = () => {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
   const sym = "!@#$%&*";
