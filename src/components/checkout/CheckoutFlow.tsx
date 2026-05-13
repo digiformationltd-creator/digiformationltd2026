@@ -482,8 +482,9 @@ const CheckoutFlow = ({
                   )}
                 </div>
                 <div className="rounded-2xl border border-border/40 p-4">
-                  <h3 className="font-semibold mb-2">Order items</h3>
-                  <ul className="space-y-1.5 text-sm">
+                  <h3 className="font-semibold mb-3">Order Summary</h3>
+                  <div className="text-sm font-semibold text-primary mb-2">{serviceTitle}</div>
+                  <ul className="space-y-1.5 text-sm mb-3">
                     {selectedItems.map((i) => (
                       <li key={i.id} className="flex justify-between gap-3">
                         <span className="opacity-90">{i.name}</span>
@@ -491,9 +492,31 @@ const CheckoutFlow = ({
                       </li>
                     ))}
                   </ul>
+                  <div className="border-t border-border/40 pt-3 space-y-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="opacity-80">Subtotal</span>
+                      <span className="font-semibold">{formatMoney(subtotal, currency)}</span>
+                    </div>
+                    {vatRate > 0 && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="opacity-80">VAT ({(vatRate * 100).toFixed(0)}%)</span>
+                        <span className="font-semibold">{formatMoney(vat, currency)}</span>
+                      </div>
+                    )}
+                    {form.promo_code && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="opacity-80">Promo code</span>
+                        <span className="font-semibold uppercase">{form.promo_code}</span>
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between text-lg font-bold pt-2">
+                      <span>Total</span>
+                      <span className="text-gradient">{formatMoney(total, currency)}</span>
+                    </div>
+                  </div>
                 </div>
                 <p className="text-xs opacity-70">
-                  By confirming you agree to our terms. Our team will contact you as soon as possible with secure
+                  By placing the order you agree to our terms. Our team will contact you as soon as possible with secure
                   payment instructions.
                 </p>
               </div>
@@ -515,7 +538,7 @@ const CheckoutFlow = ({
                     </>
                   ) : (
                     <>
-                      Confirm &amp; submit order <ArrowRight className="w-4 h-4" />
+                      Place Order — {formatMoney(total, currency)} <ArrowRight className="w-4 h-4" />
                     </>
                   )}
                 </Button>
