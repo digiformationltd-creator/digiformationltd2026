@@ -162,7 +162,6 @@ const CreateClientPanel = ({ onCreated }: { onCreated: () => void }) => {
   const [companyName, setCompanyName] = useState("");
   const [password, setPassword] = useState(() => generateRandomPassword());
   const [creating, setCreating] = useState(false);
-  const [creating, setCreating] = useState(false);
   const [created, setCreated] = useState<{ email: string; password: string } | null>(null);
 
   const reset = () => {
