@@ -4,7 +4,7 @@ import { buildOrderRef } from "@/lib/orderRef";
 
 // Map admin single-letter service codes → buildOrderRef service codes
 const ADMIN_CODE_TO_SERVICE_CODE: Record<string, string> = {
-  C: "LTD", A: "ROA", B: "BANK", T: "UTR", V: "VAT",
+  C: "LTD", A: "ADZ", B: "BANK", T: "UTR", V: "VAT",
   W: "WEB", D: "DOC", S: "SUB", O: "ORD",
 };
 
