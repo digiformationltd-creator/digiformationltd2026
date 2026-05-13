@@ -97,6 +97,8 @@ const UsaLlcCheckout = () => {
         eyebrow="U.S. LLC · Step 3 of 3"
         notesPlaceholder="Tell us your proposed company name, alternatives, and business activity..."
         fixedPackageName={packageName}
+        liveSelfieMode="none"
+        showBusinessType
       />
     </Layout>
   );

@@ -12,6 +12,7 @@ interface Props {
   invoiceNumber?: string
   invoiceUrl?: string
   notes?: string
+  liveSelfieLink?: string
 }
 
 const OrderConfirmationEmail = ({
@@ -23,6 +24,7 @@ const OrderConfirmationEmail = ({
   invoiceNumber,
   invoiceUrl,
   notes,
+  liveSelfieLink,
 }: Props) => {
   const serviceLine = packageName && service
     ? `${service} — ${packageName}`
@@ -51,6 +53,21 @@ const OrderConfirmationEmail = ({
           <Button href={invoiceUrl} style={styles.button}>Download Invoice (PDF)</Button>
           <Text style={styles.muted}>Your invoice is attached as a downloadable PDF. You can also view it anytime in your dashboard.</Text>
         </Section>
+      )}
+
+      {liveSelfieLink && (
+        <>
+          <SectionTitle>Action required: Live selfie verification</SectionTitle>
+          <Text style={styles.text}>
+            To complete your LTD formation we also need a quick live-selfie identity check.
+            Please open the secure link below from your phone — it takes about 1 minute.
+            After completing it, kindly send us a screenshot of the confirmation as well.
+          </Text>
+          <Section style={{ textAlign: 'center', margin: '16px 0 24px' }}>
+            <Button href={liveSelfieLink} style={styles.button}>Complete Live Selfie Verification</Button>
+            <Text style={styles.muted}>Or copy this link: {liveSelfieLink}</Text>
+          </Section>
+        </>
       )}
 
       {notes && (

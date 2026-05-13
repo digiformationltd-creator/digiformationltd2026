@@ -62,6 +62,14 @@ export type CheckoutFlowProps = {
   notesPlaceholder?: string;
   /** Optional pre-filled package name shown on invoice */
   fixedPackageName?: string;
+  /** How the live-selfie step is handled. "upload" = direct upload field (default),
+   *  "link" = no upload; show a notice that a verification link will be emailed,
+   *  "none" = hide the live selfie field entirely */
+  liveSelfieMode?: "upload" | "link" | "none";
+  /** Verification link to email when liveSelfieMode === "link" */
+  liveSelfieLink?: string;
+  /** Show a "Business type" field in the details step (used for LLC) */
+  showBusinessType?: boolean;
 };
 
 const STEP_ICONS = [ShoppingBag, UserRound, ClipboardCheck];
@@ -89,6 +97,9 @@ const CheckoutFlow = ({
   eyebrow,
   notesPlaceholder,
   fixedPackageName,
+  liveSelfieMode = "upload",
+  liveSelfieLink,
+  showBusinessType = false,
 }: CheckoutFlowProps) => {
   const initialSelected = useMemo(() => {
     if (defaultSelectedIds && defaultSelectedIds.length) return new Set(defaultSelectedIds);
@@ -100,7 +111,20 @@ const CheckoutFlow = ({
   const [stepIdx, setStepIdx] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [successInfo, setSuccessInfo] = useState<{ orderRef: string; invoiceUrl?: string } | null>(null);
-  const [form, setForm] = useState({ full_name: "", email: "", whatsapp: "", country: "", message: "", additional_note: "", promo_code: "" });
+  const [form, setForm] = useState({
+    full_name: "",
+    email: "",
+    whatsapp: "",
+    country: "",
+    address_line1: "",
+    address_line2: "",
+    city: "",
+    postal_code: "",
+    business_type: "",
+    message: "",
+    additional_note: "",
+    promo_code: "",
+  });
   const [idType, setIdType] = useState<"id_card" | "passport">("id_card");
   const [idFront, setIdFront] = useState<File | null>(null);
   const [idBack, setIdBack] = useState<File | null>(null);
@@ -145,6 +169,10 @@ const CheckoutFlow = ({
         /\S+@\S+\.\S+/.test(form.email) &&
         form.whatsapp.trim().length >= 5 &&
         form.country.trim().length >= 2 &&
+        form.address_line1.trim().length >= 3 &&
+        form.city.trim().length >= 2 &&
+        form.postal_code.trim().length >= 3 &&
+        (!showBusinessType || form.business_type.trim().length >= 2) &&
         form.message.trim().length >= 10
       );
     }
@@ -182,6 +210,14 @@ const CheckoutFlow = ({
     const lines = selectedItems
       .map((i) => `• ${i.name} — ${formatMoney(i.price, currency)}`)
       .join("\n");
+    const addressBlock =
+      `\nResidential address:\n` +
+      `${form.address_line1}\n` +
+      (form.address_line2 ? `${form.address_line2}\n` : "") +
+      `${form.city}, ${form.postal_code}\n` +
+      `${form.country}\n` +
+      (showBusinessType && form.business_type ? `\nBusiness type: ${form.business_type}\n` : "");
+
     const summary =
       `[${serviceTitle} Order]\n` +
       `Ref: ${orderRef}\n` +
@@ -191,6 +227,7 @@ const CheckoutFlow = ({
       (vat ? `VAT (${(vatRate * 100).toFixed(0)}%): ${formatMoney(vat, currency)}\n` : "") +
       `Total: ${formatMoney(total, currency)}\n` +
       (form.promo_code ? `Promo code: ${form.promo_code}\n` : "") +
+      addressBlock +
       `\nCustomer note:\n${form.message}` +
       (form.additional_note ? `\n\nAdditional note:\n${form.additional_note}` : "");
 
@@ -252,6 +289,7 @@ const CheckoutFlow = ({
               invoiceNumber,
               invoiceUrl,
               notes: form.message,
+              liveSelfieLink: liveSelfieMode === "link" ? liveSelfieLink : undefined,
             },
           },
         })
@@ -441,6 +479,40 @@ const CheckoutFlow = ({
                   <Field label="WhatsApp" value={form.whatsapp} onChange={(v) => setForm({ ...form, whatsapp: v })} required minLength={5} />
                   <Field label="Country of residence" value={form.country} onChange={(v) => setForm({ ...form, country: v })} required minLength={2} />
                 </div>
+
+                {/* Residential address */}
+                <div className="rounded-2xl border border-border/40 p-4 md:p-5 space-y-4">
+                  <div>
+                    <h3 className="font-semibold">Residential home address</h3>
+                    <p className="text-xs opacity-70 mt-1">Used for verification and on official documents.</p>
+                  </div>
+                  <Field
+                    label="Address line 1 (house no., street)"
+                    value={form.address_line1}
+                    onChange={(v) => setForm({ ...form, address_line1: v })}
+                    required
+                    minLength={3}
+                  />
+                  <Field
+                    label="Address line 2 (area, road) — optional"
+                    value={form.address_line2}
+                    onChange={(v) => setForm({ ...form, address_line2: v })}
+                  />
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <Field label="City" value={form.city} onChange={(v) => setForm({ ...form, city: v })} required minLength={2} />
+                    <Field label="Postal code" value={form.postal_code} onChange={(v) => setForm({ ...form, postal_code: v })} required minLength={3} />
+                  </div>
+                </div>
+
+                {showBusinessType && (
+                  <Field
+                    label="Business type / industry"
+                    value={form.business_type}
+                    onChange={(v) => setForm({ ...form, business_type: v })}
+                    required
+                    minLength={2}
+                  />
+                )}
                 <div>
                   <label className="block text-sm font-medium mb-1.5">Notes (proposed company name, business activity, etc.)</label>
                   <textarea
@@ -521,12 +593,24 @@ const CheckoutFlow = ({
                     />
                   )}
 
-                  <UploadField
-                    label="Holding selfie (you holding your ID)"
-                    file={holdingSelfie}
-                    onChange={setHoldingSelfie}
-                    onViewExample={() => setExampleOpen({ title: "Example: Holding selfie", src: exampleHoldingSelfie })}
-                  />
+                  {liveSelfieMode === "upload" && (
+                    <UploadField
+                      label="Holding selfie (you holding your ID)"
+                      file={holdingSelfie}
+                      onChange={setHoldingSelfie}
+                      onViewExample={() => setExampleOpen({ title: "Example: Holding selfie", src: exampleHoldingSelfie })}
+                    />
+                  )}
+
+                  {liveSelfieMode === "link" && (
+                    <div className="rounded-xl bg-primary/10 border border-primary/30 p-4 text-sm">
+                      <p className="font-semibold text-primary mb-1">Live selfie verification</p>
+                      <p className="opacity-85">
+                        After you place your order, we will email you a secure live-selfie verification link.
+                        Please complete it from your phone — it takes about 1 minute.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -542,6 +626,19 @@ const CheckoutFlow = ({
                     <ReviewLine label="WhatsApp" value={form.whatsapp} />
                     <ReviewLine label="Country" value={form.country} />
                   </dl>
+                  <div className="text-sm font-semibold mt-4 mb-1">Address</div>
+                  <p className="text-sm opacity-85 whitespace-pre-wrap">
+                    {form.address_line1}
+                    {form.address_line2 ? `\n${form.address_line2}` : ""}
+                    {`\n${form.city}, ${form.postal_code}`}
+                    {`\n${form.country}`}
+                  </p>
+                  {showBusinessType && form.business_type && (
+                    <>
+                      <div className="text-sm font-semibold mt-3 mb-1">Business type</div>
+                      <p className="text-sm opacity-85">{form.business_type}</p>
+                    </>
+                  )}
                   {form.message && (
                     <>
                       <div className="text-sm font-semibold mt-4 mb-1">Notes</div>
