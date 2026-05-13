@@ -76,6 +76,8 @@ export type CheckoutFlowProps = {
   showBusinessType?: boolean;
   /** Show a "Company name to register" field at the top of details (used for UK LTD) */
   showCompanyName?: boolean;
+  /** Show the "what do you need?" service-mode picker at top of details (UK LTD) */
+  showServiceMode?: boolean;
 };
 
 const STEP_ICONS = [ShoppingBag, UserRound, ClipboardCheck];
