@@ -72,6 +72,12 @@ const packages: Pkg[] = [
   },
 ];
 
+const CHECKOUT_ITEM_FOR: Record<string, string> = {
+  "registered-office": "roa",
+  "business-service": "bsa",
+  "director-service": "dsa",
+};
+
 const whoNeeds = [
   { role: "Directors", desc: "Receive official government mail" },
   { role: "Company Secretaries (PCS)", desc: "Maintain compliance with Companies House" },
@@ -230,7 +236,7 @@ const RegisteredOfficeAddress = () => {
                     ))}
                   </ul>
                   <Button asChild variant={p.highlighted ? "hero" : "ghostGlow"} className="rounded-full w-full">
-                    <Link to="/contact">Get Started</Link>
+                    <Link to={`/checkout?items=${CHECKOUT_ITEM_FOR[p.id]}&title=${encodeURIComponent(p.name)}&service=${encodeURIComponent("UK Address Services")}`}>Get Started</Link>
                   </Button>
                 </div>
               );
