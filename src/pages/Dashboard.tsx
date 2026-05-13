@@ -367,9 +367,6 @@ const Dashboard = () => {
             </div>
           )}
 
-          {active === "subscriptions" && (
-            <ClientSubscriptionsSection rows={subscriptions} onBrowse={() => setActive("newServices")} />
-          )}
 
           {active === "company" && (
             <MyCompaniesSection userId={user.id} companies={companies} onChange={setCompanies} editable={false} />
