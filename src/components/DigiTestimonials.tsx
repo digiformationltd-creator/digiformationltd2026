@@ -66,7 +66,7 @@ const DigiTestimonials = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <div className="mb-5 text-sm md:text-base uppercase tracking-[0.18em] font-semibold text-primary">Testimonials</div>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
+          <h2 data-reveal="rise" className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
             What our <em className="not-italic text-gradient">clients say</em>
           </h2>
         </div>

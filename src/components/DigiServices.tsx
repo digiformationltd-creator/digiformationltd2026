@@ -64,7 +64,7 @@ const DigiServices = () => (
     <div className="container mx-auto px-4 relative z-10">
       <div className="text-center max-w-3xl mx-auto mb-16">
         <div className="mb-5 text-sm md:text-base uppercase tracking-[0.18em] font-semibold text-primary">Services Overview</div>
-        <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
+        <h2 data-reveal="rise" className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
           Everything to launch &amp; run your <em className="not-italic text-gradient">global business</em>
         </h2>
         <p className="text-lg mt-5 opacity-90">

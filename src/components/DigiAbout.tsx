@@ -70,7 +70,7 @@ const DigiAbout = () => (
 
         {/* Content */}
         <div className="text-center lg:text-left">
-          <h2 className="text-4xl md:text-5xl font-bold leading-[1.08] mb-3">
+          <h2 data-reveal="rise" className="text-4xl md:text-5xl font-bold leading-[1.08] mb-3">
             Meet <em className="not-italic text-gradient">Muhammad Haroon</em>
           </h2>
           <p className="text-lg md:text-xl font-display opacity-90 mb-6">
