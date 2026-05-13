@@ -21,12 +21,14 @@ import UserDrawer from "@/components/UserDrawer";
 import { downloadInvoicePdf } from "@/lib/invoice";
 
 type SectionId =
-  | "overview" | "subscriptions" | "orders" | "invoices" | "wallet" | "documents"
+  | "overview" | "company" | "addresses" | "subscriptions" | "orders" | "invoices" | "wallet" | "documents"
   | "editAccount" | "newServices" | "tickets" | "openTicket"
   | "affiliate";
 
 const menu: { id: SectionId; label: string; icon: any }[] = [
   { id: "overview", label: "Dashboard", icon: LayoutDashboard },
+  { id: "company", label: "My Company", icon: Building2 },
+  { id: "addresses", label: "My Address", icon: MapPin },
   { id: "subscriptions", label: "Subscriptions", icon: CalendarDays },
   { id: "orders", label: "My Orders", icon: ShoppingBag },
   { id: "invoices", label: "My Invoices", icon: FileText },
@@ -334,6 +336,14 @@ const Dashboard = () => {
             <ClientSubscriptionsSection rows={subscriptions} onBrowse={() => setActive("newServices")} />
           )}
 
+          {active === "company" && (
+            <MyCompaniesSection userId={user.id} companies={companies} onChange={setCompanies} editable={false} />
+          )}
+
+          {active === "addresses" && (
+            <MyAddressesSection userId={user.id} editable={false} />
+          )}
+
           {active === "orders" && (
             <ClientOrdersSection rows={orders} onBrowse={() => setActive("newServices")} />
           )}
@@ -461,7 +471,7 @@ interface AddressRow {
   notes: string | null;
 }
 
-const MyCompaniesSection = ({ userId, companies, onChange }: { userId: string; companies: CompanyDetails[]; onChange: (c: CompanyDetails[]) => void }) => {
+const MyCompaniesSection = ({ userId, companies, onChange, editable = false }: { userId: string; companies: CompanyDetails[]; onChange: (c: CompanyDetails[]) => void; editable?: boolean }) => {
   const [savingId, setSavingId] = useState<string | null>(null);
 
   const updateField = (id: string, patch: Partial<CompanyDetails>) => {
@@ -526,6 +536,7 @@ const MyCompaniesSection = ({ userId, companies, onChange }: { userId: string; c
             company={c}
             index={idx}
             fields={fields}
+            editable={editable}
             saving={savingId === c.id}
             onChange={(patch) => updateField(c.id, patch)}
             onSave={() => saveCompany(c)}
@@ -538,11 +549,12 @@ const MyCompaniesSection = ({ userId, companies, onChange }: { userId: string; c
 };
 
 const CompanyCard = ({
-  company: c, index: idx, fields, saving, onChange, onSave, onDelete,
+  company: c, index: idx, fields, saving, editable = true, onChange, onSave, onDelete,
 }: {
   company: CompanyDetails; index: number;
   fields: { key: keyof CompanyDetails; label: string; type?: string; textarea?: boolean }[];
   saving: boolean;
+  editable?: boolean;
   onChange: (patch: Partial<CompanyDetails>) => void;
   onSave: () => void; onDelete: () => void;
 }) => {
@@ -577,6 +589,8 @@ const CompanyCard = ({
                     value={(c[f.key] as string) || ""}
                     onChange={(e) => onChange({ [f.key]: e.target.value } as any)}
                     className="mt-1.5"
+                    readOnly={!editable}
+                    disabled={!editable}
                   />
                 </div>
               ))}
@@ -589,17 +603,21 @@ const CompanyCard = ({
                   onChange={(e) => onChange({ [f.key]: e.target.value } as any)}
                   className="mt-1.5"
                   rows={2}
+                  readOnly={!editable}
+                  disabled={!editable}
                 />
               </div>
             ))}
-            <div className="flex justify-between items-center">
-              <Button variant="ghost" size="sm" onClick={onDelete} className="text-destructive">
-                <Trash2 className="w-4 h-4 mr-1" /> Delete
-              </Button>
-              <Button variant="hero" size="sm" className="rounded-full" onClick={onSave} disabled={saving}>
-                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Save className="w-4 h-4" /> Save</>}
-              </Button>
-            </div>
+            {editable && (
+              <div className="flex justify-between items-center">
+                <Button variant="ghost" size="sm" onClick={onDelete} className="text-destructive">
+                  <Trash2 className="w-4 h-4 mr-1" /> Delete
+                </Button>
+                <Button variant="hero" size="sm" className="rounded-full" onClick={onSave} disabled={saving}>
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Save className="w-4 h-4" /> Save</>}
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </div>
