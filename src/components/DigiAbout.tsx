@@ -56,15 +56,18 @@ const DigiAbout = () => (
 
           {/* Stats below the picture — desktop view */}
           <div className="hidden lg:grid grid-cols-1 gap-3 w-full mt-10">
-            {stats.map((s) => (
-              <div key={s.label} className="glass rounded-xl p-4 flex items-center gap-3">
+            {stats.map((s, i) => {
+              const tints = ["glass-tint-sky","glass-tint-green","glass-tint-purple"];
+              return (
+              <div key={s.label} className={`glass ${tints[i]} rounded-xl p-4 flex items-center gap-3`}>
                 <s.icon className="w-5 h-5 opacity-80 flex-shrink-0" />
                 <div>
                   <div className="text-xl font-bold text-gradient leading-none">{s.value}</div>
                   <div className="text-[11px] uppercase tracking-wider opacity-70 mt-1 leading-snug">{s.label}</div>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

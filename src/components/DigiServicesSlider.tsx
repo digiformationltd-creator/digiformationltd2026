@@ -172,6 +172,8 @@ const DigiServicesSlider = () => {
               const rel = Math.abs(relIndex(idx));
               const opacity = isActive ? 1 : rel === 1 ? 0.7 : rel === 2 ? 0.35 : 0.1;
               const scale = isActive ? 1 : 0.9;
+              const tints = ["glass-tint-mustard","glass-tint-green","glass-tint-sky","glass-tint-purple","glass-tint-pink","glass-tint-orange","glass-tint-teal","glass-tint-brown"];
+              const tint = tints[idx % tints.length];
               return (
                 <article
                   key={s.num}
@@ -179,7 +181,7 @@ const DigiServicesSlider = () => {
                     if (dragRef.current?.moved) { e.preventDefault(); return; }
                     setActive(idx);
                   }}
-                  className={`absolute top-1/2 left-1/2 rounded-2xl p-5 md:p-6 glass flex flex-col border ${
+                  className={`absolute top-1/2 left-1/2 rounded-2xl p-5 md:p-6 glass ${tint} flex flex-col border ${
                     isActive
                       ? "border-border/30"
                       : "border-primary/40 shadow-[0_0_24px_hsl(var(--primary)/0.45),inset_0_0_12px_hsl(var(--primary)/0.18)]"
