@@ -251,7 +251,7 @@ export const Contact = () => {
           <form onSubmit={handleSubmit} className="glass rounded-2xl p-8 space-y-5">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">Send us a message</h2>
-              <p className="opacity-80 text-sm">Fill the form — we'll reply via WhatsApp or email within one business day.</p>
+              <p className="opacity-80 text-sm">Fill the form — we'll reply via WhatsApp or email as soon as possible.</p>
             </div>
 
             <div className="grid sm:grid-cols-2 gap-4">
