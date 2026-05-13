@@ -707,27 +707,56 @@ const CheckoutFlow = ({
                     minLength={2}
                   />
                 )}
-                <div>
-                  <label className="block text-sm font-medium mb-1.5">Notes (proposed company name, business activity, etc.)</label>
-                  <textarea
-                    value={form.message}
-                    onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    minLength={10}
-                    required
-                    rows={4}
-                    className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
-                    placeholder={notesPlaceholder || "Share any details that will help us prepare your order..."}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1.5">Additional note <span className="opacity-60 font-normal">(optional)</span></label>
-                  <textarea
-                    value={form.additional_note}
-                    onChange={(e) => setForm({ ...form, additional_note: e.target.value })}
-                    rows={3}
-                    className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
-                    placeholder="Anything else you'd like our team to know?"
-                  />
+                <div className="rounded-2xl border border-border/40 p-4 md:p-5 space-y-4">
+                  <div>
+                    <h3 className="font-semibold">Business activity</h3>
+                    <p className="text-xs opacity-70 mt-1">Pick the category that best describes your business.</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1.5">Business category <span className="text-destructive">*</span></label>
+                    <select
+                      value={form.business_category}
+                      onChange={(e) => setForm({ ...form, business_category: e.target.value, business_subcategory: "", business_other: "" })}
+                      required
+                      className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+                    >
+                      <option value="">Select a category…</option>
+                      {Object.keys(BUSINESS_CATEGORIES).map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  {form.business_category && form.business_category !== "Other" && (
+                    <div>
+                      <label className="block text-sm font-medium mb-1.5">Sub-category <span className="text-destructive">*</span></label>
+                      <select
+                        value={form.business_subcategory}
+                        onChange={(e) => setForm({ ...form, business_subcategory: e.target.value })}
+                        required
+                        className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+                      >
+                        <option value="">Select a sub-category…</option>
+                        {BUSINESS_CATEGORIES[form.business_category].map((s) => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                  {form.business_category === "Other" && (
+                    <div>
+                      <label className="block text-sm font-medium mb-1.5">Describe your business <span className="text-destructive">*</span></label>
+                      <textarea
+                        value={form.business_other}
+                        onChange={(e) => setForm({ ...form, business_other: e.target.value })}
+                        minLength={10}
+                        required
+                        rows={3}
+                        className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+                        placeholder="Briefly describe what your business does…"
+                      />
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1.5">Promo code <span className="opacity-60 font-normal">(optional)</span></label>
