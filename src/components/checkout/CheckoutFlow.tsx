@@ -62,6 +62,14 @@ export type CheckoutFlowProps = {
   notesPlaceholder?: string;
   /** Optional pre-filled package name shown on invoice */
   fixedPackageName?: string;
+  /** How the live-selfie step is handled. "upload" = direct upload field (default),
+   *  "link" = no upload; show a notice that a verification link will be emailed,
+   *  "none" = hide the live selfie field entirely */
+  liveSelfieMode?: "upload" | "link" | "none";
+  /** Verification link to email when liveSelfieMode === "link" */
+  liveSelfieLink?: string;
+  /** Show a "Business type" field in the details step (used for LLC) */
+  showBusinessType?: boolean;
 };
 
 const STEP_ICONS = [ShoppingBag, UserRound, ClipboardCheck];
@@ -89,6 +97,9 @@ const CheckoutFlow = ({
   eyebrow,
   notesPlaceholder,
   fixedPackageName,
+  liveSelfieMode = "upload",
+  liveSelfieLink,
+  showBusinessType = false,
 }: CheckoutFlowProps) => {
   const initialSelected = useMemo(() => {
     if (defaultSelectedIds && defaultSelectedIds.length) return new Set(defaultSelectedIds);
