@@ -475,6 +475,9 @@ interface AddressRow {
   expire_date: string | null;
   status: string;
   notes: string | null;
+  utr_number: string | null;
+  auth_code: string | null;
+  activation_code: string | null;
 }
 
 const MyCompaniesSection = ({ userId, companies, onChange, editable = false }: { userId: string; companies: CompanyDetails[]; onChange: (c: CompanyDetails[]) => void; editable?: boolean }) => {
