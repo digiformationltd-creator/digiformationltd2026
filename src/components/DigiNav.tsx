@@ -1,6 +1,6 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Menu, X, ChevronDown, UserCircle2, Handshake, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, ChevronDown, UserCircle2, Handshake, LogOut, LayoutDashboard, Facebook, Instagram, Youtube, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { navGroups } from "@/data/navigation";
 import { supabase } from "@/integrations/supabase/client";
@@ -59,9 +59,25 @@ const DigiNav = () => {
     <header className="fixed top-0 inset-x-0 z-50">
       {/* Top utility bar — separates main site from client portal entry */}
       <div className="bg-primary/15 border-b border-border/40 backdrop-blur-md px-3 sm:px-4 py-1.5 flex items-center justify-between text-xs sm:text-sm">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="opacity-70 hidden xs:inline">Need to manage your services?</span>
-          <span className="opacity-70 xs:hidden">Welcome</span>
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <span className="opacity-70 hidden sm:inline">Follow us:</span>
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <a href="https://www.facebook.com/share/1D676UBQw5/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="opacity-80 hover:opacity-100 transition">
+              <Facebook className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </a>
+            <a href="https://www.instagram.com/digiformationltd?igsh=ejBoMmFsOXFpMmdw" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="opacity-80 hover:opacity-100 transition">
+              <Instagram className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </a>
+            <a href="https://www.youtube.com/@digiformationltd" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="opacity-80 hover:opacity-100 transition">
+              <Youtube className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </a>
+            <a href="https://www.linkedin.com/in/muhammad-haroon-9a9945366" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="opacity-80 hover:opacity-100 transition">
+              <Linkedin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            </a>
+            <a href="https://x.com/Digiformation00" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" className="opacity-80 hover:opacity-100 transition">
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3 sm:w-3.5 sm:h-3.5" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+          </div>
         </div>
         {user ? (
           <Link
