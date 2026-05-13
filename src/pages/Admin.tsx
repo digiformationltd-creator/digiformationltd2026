@@ -29,7 +29,7 @@ const Admin = () => {
   const [clients, setClients] = useState<ClientRow[]>([]);
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
-  const [initialTab, setInitialTab] = useState<"profile" | "company" | "addresses">("profile");
+  const [initialTab, setInitialTab] = useState<"company" | "addresses">("company");
   const [loadingClients, setLoadingClients] = useState(false);
 
   useSeo({ title: "Admin Panel | Digiformation", description: "Internal admin panel", noindex: true });
@@ -129,7 +129,7 @@ const Admin = () => {
                     <td className="p-3 hidden md:table-cell">{c.company_name || "—"}</td>
                     <td className="p-3 hidden lg:table-cell text-muted-foreground">{new Date(c.created_at).toLocaleDateString()}</td>
                     <td className="p-3 text-right">
-                      <Button size="sm" onClick={() => { setInitialTab("profile"); setSelected(c.user_id); }}>Manage</Button>
+                      <Button size="sm" onClick={() => { setInitialTab("company"); setSelected(c.user_id); }}>Manage</Button>
                     </td>
                   </tr>
                 ))}
@@ -283,8 +283,8 @@ const CreateClientPanel = ({ onCreated }: { onCreated: () => void }) => {
   );
 };
 
-const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: string; initialTab?: "profile" | "company" | "addresses"; onBack: () => void }) => {
-  const [tab, setTab] = useState<"profile" | "company" | "addresses" | "orders" | "invoices" | "subs" | "wallet" | "docs" | "emails">(initialTab);
+const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: string; initialTab?: "company" | "addresses"; onBack: () => void }) => {
+  const [tab, setTab] = useState<"company" | "addresses" | "orders" | "invoices" | "subs" | "wallet" | "docs" | "emails">(initialTab);
   const [profile, setProfile] = useState<any>({});
   const [companies, setCompanies] = useState<any[]>([]);
   const [addresses, setAddresses] = useState<any[]>([]);
@@ -496,7 +496,6 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
   };
 
   const tabs = [
-    { id: "profile", label: "Profile" },
     { id: "company", label: `Company (${companies.length})` },
     { id: "addresses", label: `Address (${addresses.length})` },
     { id: "orders", label: `Orders (${orders.length})` },
@@ -522,14 +521,6 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
       </div>
 
       <div className="glass rounded-2xl p-6">
-        {tab === "profile" && (
-          <div className="space-y-4">
-            <Field label="Full Name" value={profile.full_name} onChange={(v) => setProfile({ ...profile, full_name: v })} />
-            <Field label="Phone" value={profile.phone} onChange={(v) => setProfile({ ...profile, phone: v })} />
-            <Field label="Company Name" value={profile.company_name} onChange={(v) => setProfile({ ...profile, company_name: v })} />
-            <Button onClick={saveProfile} disabled={saving}><Save className="w-4 h-4 mr-2" />Save Profile</Button>
-          </div>
-        )}
 
         {tab === "company" && (
           <CompanyFormSection
