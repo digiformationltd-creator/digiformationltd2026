@@ -21,15 +21,14 @@ import UserDrawer from "@/components/UserDrawer";
 import { downloadInvoicePdf } from "@/lib/invoice";
 
 type SectionId =
-  | "overview" | "company" | "addresses" | "subscriptions" | "orders" | "invoices" | "wallet" | "documents"
+  | "overview" | "company" | "addresses" | "orders" | "invoices" | "wallet" | "documents"
   | "editAccount" | "newServices" | "tickets" | "openTicket"
   | "affiliate";
 
 const menu: { id: SectionId; label: string; icon: any }[] = [
   { id: "overview", label: "Dashboard", icon: LayoutDashboard },
   { id: "company", label: "My Company", icon: Building2 },
-  { id: "addresses", label: "My Address", icon: MapPin },
-  { id: "subscriptions", label: "Subscriptions", icon: CalendarDays },
+  { id: "addresses", label: "Address & Subscription", icon: MapPin },
   { id: "orders", label: "My Orders", icon: ShoppingBag },
   { id: "invoices", label: "My Invoices", icon: FileText },
   { id: "wallet", label: "My Wallet", icon: Wallet },
