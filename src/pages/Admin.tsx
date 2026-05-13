@@ -776,9 +776,9 @@ const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: stri
                 <Input defaultValue={d.file_size || ""} onBlur={(e) => updateDoc(d.id, { file_size: e.target.value })} placeholder="Size" />
                 <Button variant="outline" size="sm" onClick={async () => {
                   if (!d.file_url) return toast.error("No file attached");
-                  const { data, error } = await supabase.storage.from("client-docs").createSignedUrl(d.file_url, 60);
-                  if (error) toast.error(error.message); else window.open(data.signedUrl, "_blank");
-                }}>View</Button>
+                  const { data, error } = await supabase.storage.from("client-docs").createSignedUrl(d.file_url, 60, { download: d.name || true });
+                  if (error) toast.error(error.message); else window.location.href = data.signedUrl;
+                }}><Download className="w-4 h-4 mr-1" />Download</Button>
                 <Button variant="ghost" size="sm" onClick={async () => {
                   if (d.file_url) await supabase.storage.from("client-docs").remove([d.file_url]);
                   await deleteRow("client_documents", d.id);
@@ -1281,9 +1281,9 @@ const AddressFormSection = ({
                     </div>
                     <Button variant="outline" size="sm" onClick={async () => {
                       if (!d.file_url) return toast.error("No file attached");
-                      const { data, error } = await supabase.storage.from("client-docs").createSignedUrl(d.file_url, 60);
-                      if (error) toast.error(error.message); else window.open(data.signedUrl, "_blank");
-                    }}>View</Button>
+                      const { data, error } = await supabase.storage.from("client-docs").createSignedUrl(d.file_url, 60, { download: d.name || true });
+                      if (error) toast.error(error.message); else window.location.href = data.signedUrl;
+                    }}><Download className="w-4 h-4 mr-1" />Download</Button>
                     <Button variant="ghost" size="sm" onClick={async () => {
                       if (d.file_url) await supabase.storage.from("client-docs").remove([d.file_url]);
                       await deleteRow("client_documents", d.id);

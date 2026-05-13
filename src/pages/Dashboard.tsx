@@ -930,9 +930,9 @@ const ClientDocumentsSection = ({ userId }: { userId: string }) => {
   }, [userId]);
 
   const download = async (path: string, name: string) => {
-    const { data, error } = await supabase.storage.from("client-docs").createSignedUrl(path, 60, { download: name });
+    const { data, error } = await supabase.storage.from("client-docs").createSignedUrl(path, 60, { download: name || true });
     if (error) { toast.error(error.message); return; }
-    window.open(data.signedUrl, "_blank");
+    window.location.href = data.signedUrl;
   };
 
   if (rows === null) return <div className="glass rounded-2xl p-10 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto opacity-60" /></div>;
