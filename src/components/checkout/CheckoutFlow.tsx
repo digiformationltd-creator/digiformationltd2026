@@ -29,6 +29,45 @@ import exampleIdFront from "@/assets/example-id-front.jpg";
 import exampleIdBack from "@/assets/example-id-back.jpg";
 import examplePassport from "@/assets/example-passport.jpg";
 
+const BUSINESS_CATEGORIES: Record<string, string[]> = {
+  "E-commerce": [
+    "Clothing & Apparel",
+    "Electronics & Gadgets",
+    "Footwear",
+    "Beauty & Cosmetics",
+    "Home & Kitchen",
+    "Health & Wellness",
+    "Toys & Kids",
+    "Jewelry & Accessories",
+    "Food & Beverages",
+    "General Store / Multi-niche",
+  ],
+  "IT Services": [
+    "Cloud Services",
+    "Cyber Security",
+    "Software Development",
+    "Web Development",
+    "Mobile App Development",
+    "IT Support / Desktop Engineer",
+    "Data & Analytics",
+    "DevOps & Infrastructure",
+    "AI / Machine Learning",
+    "QA & Testing",
+  ],
+  "Digital Marketing Services": [
+    "SEO",
+    "Google Ads / PPC",
+    "Social Media Marketing",
+    "Content Marketing",
+    "Email Marketing",
+    "Influencer Marketing",
+    "Graphic Designing",
+    "Video / Animation",
+    "Branding",
+    "Web Development",
+  ],
+};
+
 export type CheckoutItem = {
   id: string;
   name: string;
