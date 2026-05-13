@@ -12,9 +12,20 @@ interface Props {
   invoiceNumber?: string
   invoiceUrl?: string
   notes?: string
+  liveSelfieLink?: string
 }
 
 const OrderConfirmationEmail = ({
+  customerName,
+  service,
+  packageName,
+  price,
+  orderRef,
+  invoiceNumber,
+  invoiceUrl,
+  notes,
+  liveSelfieLink,
+}: Props) => {
   customerName,
   service,
   packageName,
