@@ -42,29 +42,16 @@ const OrderConfirmationEmail = ({
         <CardLine label="Order Status" value="Pending payment" />
       </Card>
 
+      <Text style={styles.text}>
+        Thank you for placing your order with {SITE_NAME}. Your order has been received and transferred to the relevant team — we will start working on it as soon as possible and keep you updated at every step.
+      </Text>
+
       {invoiceUrl && (
-        <Section style={{ textAlign: 'center', margin: '8px 0 24px' }}>
+        <Section style={{ textAlign: 'center', margin: '16px 0 24px' }}>
           <Button href={invoiceUrl} style={styles.button}>Download Invoice (PDF)</Button>
-          <Text style={styles.muted}>Link valid for 7 days. You can also view it anytime in your dashboard.</Text>
+          <Text style={styles.muted}>Your invoice is attached as a downloadable PDF. You can also view it anytime in your dashboard.</Text>
         </Section>
       )}
-
-      {(() => {
-        const waMsg = encodeURIComponent(
-          `Hello ${SITE_NAME}, I have just placed an order${orderRef ? ` (Ref: ${orderRef})` : ''}${serviceLine ? ` for ${serviceLine}` : ''}. Please confirm and guide me on the next steps.`
-        )
-        const waHref = `https://wa.me/923164467464?text=${waMsg}`
-        return (
-          <Section style={{ textAlign: 'center', margin: '8px 0 24px' }}>
-            <Button href={waHref} style={{ ...styles.button, backgroundColor: '#25D366' }}>
-              Chat with us on WhatsApp
-            </Button>
-            <Text style={styles.muted}>
-              Click the button to message our team on WhatsApp — your order reference will be pre-filled. Our team will respond as soon as possible.
-            </Text>
-          </Section>
-        )
-      })()}
 
       {notes && (
         <>
