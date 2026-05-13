@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import {
   Menu, LayoutDashboard, ShieldCheck, ShoppingBag, FileText, Wallet,
-  Building2, MapPin, UserCog, ShoppingCart, Ticket, LifeBuoy, LogOut,
+  UserCog, ShoppingCart, Ticket, LifeBuoy, LogOut,
   Handshake, CalendarDays,
 } from "lucide-react";
 
@@ -64,8 +64,6 @@ const UserDrawer = () => {
     { id: "orders", label: "My Orders", icon: ShoppingBag },
     { id: "invoices", label: "My Invoices", icon: FileText },
     { id: "wallet", label: "My Wallet", icon: Wallet },
-    { id: "company", label: "My Company", icon: Building2 },
-    { id: "editAddress", label: "My Address", icon: MapPin },
     { id: "documents", label: "Documents", icon: FileText },
     { id: "editAccount", label: "Edit Account", icon: UserCog },
     { id: "newServices", label: "Order Services", icon: ShoppingCart },
