@@ -347,7 +347,7 @@ const CheckoutFlow = ({
           amount_gbp: total,
           currency,
           customer: { full_name: form.full_name, email: form.email, address: form.country },
-          notes: `${contextLabel ? contextLabel + "\n" : ""}${lines}\n${form.message}`,
+          notes: `${contextLabel ? contextLabel + "\n" : ""}${lines}\nBusiness activity: ${activityText}`,
           orderRef,
         },
       });
@@ -376,7 +376,7 @@ const CheckoutFlow = ({
               orderRef: finalOrderRef,
               invoiceNumber,
               invoiceUrl,
-              notes: form.message,
+              notes: `Business activity: ${activityText}`,
               liveSelfieLink: liveSelfieMode === "link" && idVerificationActive ? liveSelfieLink : undefined,
             },
           },
@@ -399,7 +399,7 @@ const CheckoutFlow = ({
             orderRef: finalOrderRef,
             invoiceNumber,
             pagePath,
-            notes: form.message,
+            notes: `Business activity: ${activityText}`,
           },
         },
       })
