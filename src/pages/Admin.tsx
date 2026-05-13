@@ -504,6 +504,7 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
     { id: "subs", label: `Subs (${subs.length})` },
     { id: "wallet", label: `Wallet (${wallet.length})` },
     { id: "docs", label: `Docs (${docs.length})` },
+    { id: "emails", label: "Emails" },
   ] as const;
 
   return (
