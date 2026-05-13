@@ -406,6 +406,7 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
           <AddressFormSection
             userId={userId}
             addresses={addresses}
+            docs={docs}
             saving={saving}
             updateAddressField={updateAddressField}
             saveAddress={saveAddress}
@@ -776,10 +777,11 @@ const CompanyFormSection = ({
 };
 
 const AddressFormSection = ({
-  userId, addresses, saving, updateAddressField, saveAddress, deleteRow, reload,
+  userId, addresses, docs, saving, updateAddressField, saveAddress, deleteRow, reload,
 }: {
   userId: string;
   addresses: any[];
+  docs: any[];
   saving: boolean;
   updateAddressField: (id: string, patch: any) => void;
   saveAddress: (a: any) => void;
@@ -809,7 +811,9 @@ const AddressFormSection = ({
           <p className="text-sm text-muted-foreground">No address on file for this client yet. Click "Add Address" to create one.</p>
         </div>
       )}
-      {addresses.map((a, idx) => (
+      {addresses.map((a, idx) => {
+        const addressDocs = (docs || []).filter((d: any) => d.address_id === a.id);
+        return (
         <div key={a.id} className="border border-border/40 rounded-xl p-4 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold">Address #{idx + 1}{a.label ? ` — ${a.label}` : ""}</h3>
@@ -846,8 +850,64 @@ const AddressFormSection = ({
               </a>
             </Button>
           </div>
+
+          <div className="border-t border-border/40 pt-4 space-y-3">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div>
+                <h4 className="font-semibold text-sm">Address Documents</h4>
+                <p className="text-xs text-muted-foreground">Upload proof / contracts / scans for this address.</p>
+              </div>
+              <input
+                type="file"
+                id={`addr-doc-upload-${a.id}`}
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  const path = `${userId}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+                  const { error: upErr } = await supabase.storage.from("client-docs").upload(path, file, { upsert: false, contentType: file.type });
+                  if (upErr) { toast.error(upErr.message); e.target.value = ""; return; }
+                  const sizeKb = file.size < 1024 * 1024 ? `${(file.size / 1024).toFixed(1)} KB` : `${(file.size / 1024 / 1024).toFixed(2)} MB`;
+                  const ext = file.name.split(".").pop()?.toUpperCase() || "FILE";
+                  const { error: insErr } = await supabase.from("client_documents").insert({
+                    user_id: userId, name: file.name, file_url: path, file_type: ext, file_size: sizeKb, address_id: a.id,
+                  } as any);
+                  if (insErr) toast.error(insErr.message);
+                  else { toast.success("Document uploaded"); await reload(); }
+                  e.target.value = "";
+                }}
+              />
+              <Button size="sm" variant="outline" onClick={() => document.getElementById(`addr-doc-upload-${a.id}`)?.click()}>
+                Upload Document
+              </Button>
+            </div>
+            {addressDocs.length === 0 ? (
+              <p className="text-xs text-muted-foreground italic">No documents attached to this address yet.</p>
+            ) : (
+              <div className="space-y-2">
+                {addressDocs.map((d: any) => (
+                  <div key={d.id} className="flex items-center justify-between gap-2 border border-border/40 rounded-lg p-2 text-sm">
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-medium">{d.name}</p>
+                      <p className="text-xs text-muted-foreground">{d.file_type} · {d.file_size}</p>
+                    </div>
+                    <Button variant="outline" size="sm" onClick={async () => {
+                      if (!d.file_url) return toast.error("No file attached");
+                      const { data, error } = await supabase.storage.from("client-docs").createSignedUrl(d.file_url, 60);
+                      if (error) toast.error(error.message); else window.open(data.signedUrl, "_blank");
+                    }}>View</Button>
+                    <Button variant="ghost" size="sm" onClick={async () => {
+                      if (d.file_url) await supabase.storage.from("client-docs").remove([d.file_url]);
+                      await deleteRow("client_documents", d.id);
+                    }}><Trash2 className="w-4 h-4" /></Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 };

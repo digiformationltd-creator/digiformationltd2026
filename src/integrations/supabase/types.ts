@@ -136,6 +136,7 @@ export type Database = {
       }
       client_documents: {
         Row: {
+          address_id: string | null
           created_at: string
           doc_date: string
           file_size: string | null
@@ -146,6 +147,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          address_id?: string | null
           created_at?: string
           doc_date?: string
           file_size?: string | null
@@ -156,6 +158,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          address_id?: string | null
           created_at?: string
           doc_date?: string
           file_size?: string | null
