@@ -186,7 +186,9 @@ const CheckoutFlow = ({
     postal_code: "",
     business_type: "",
     message: "",
-    additional_note: "",
+    business_category: "",
+    business_subcategory: "",
+    business_other: "",
     promo_code: "",
   });
   const [idType, setIdType] = useState<"id_card" | "passport" | "driving_licence">("id_card");
