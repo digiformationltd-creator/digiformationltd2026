@@ -46,8 +46,10 @@ const DigiCaseStudies = () => (
       </div>
 
       <div data-reveal-stagger className="grid md:grid-cols-3 gap-5">
-        {cases.map((c) => (
-          <article key={c.tag} className="glass rounded-2xl p-7 hover:-translate-y-1 hover:shadow-elegant transition-all duration-300 flex flex-col">
+        {cases.map((c, i) => {
+          const tints = ["glass-tint-teal","glass-tint-purple","glass-tint-mustard"];
+          return (
+          <article key={c.tag} className={`glass ${tints[i % tints.length]} rounded-2xl p-7 hover:-translate-y-1 hover:shadow-elegant transition-all duration-300 flex flex-col`}>
             <span className="inline-block self-start text-[10px] font-semibold uppercase tracking-[0.16em] px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
               {c.tag}
             </span>
@@ -67,7 +69,8 @@ const DigiCaseStudies = () => (
               {c.href === "/pricing" ? "View Packages" : "Learn More"} <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </article>
-        ))}
+          );
+        })}
       </div>
     </div>
   </section>

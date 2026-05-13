@@ -73,12 +73,14 @@ const DigiServices = () => (
       </div>
 
       <div data-reveal-stagger className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {items.map((it) => (
+        {items.map((it, i) => {
+          const tints = ["glass-tint-mustard","glass-tint-green","glass-tint-sky","glass-tint-purple","glass-tint-pink","glass-tint-orange"];
+          return (
           <Link
             key={it.title}
             to={it.href}
             aria-label={`${it.title} — ${it.cta}`}
-            className="group relative overflow-hidden rounded-2xl glass hover:-translate-y-1.5 hover:shadow-elegant hover:border-primary/40 transition-all duration-300 flex flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className={`group relative overflow-hidden rounded-2xl glass ${tints[i % tints.length]} hover:-translate-y-1.5 hover:shadow-elegant hover:border-primary/40 transition-all duration-300 flex flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-primary`}
           >
             {/* Top hero image */}
             <div className="relative aspect-[4/3] overflow-hidden">
@@ -104,7 +106,8 @@ const DigiServices = () => (
               </span>
             </div>
           </Link>
-        ))}
+          );
+        })}
       </div>
     </div>
   </section>
