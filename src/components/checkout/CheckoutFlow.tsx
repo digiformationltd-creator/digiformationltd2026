@@ -11,11 +11,19 @@ import {
   Mail,
   Clock,
   ShieldCheck,
+  Upload,
+  Eye,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { buildOrderRef } from "@/lib/orderRef";
+import exampleHoldingSelfie from "@/assets/example-holding-selfie.jpg";
+import exampleIdFront from "@/assets/example-id-front.jpg";
+import exampleIdBack from "@/assets/example-id-back.jpg";
+import examplePassport from "@/assets/example-passport.jpg";
 
 export type CheckoutItem = {
   id: string;
@@ -93,6 +101,11 @@ const CheckoutFlow = ({
   const [submitting, setSubmitting] = useState(false);
   const [successInfo, setSuccessInfo] = useState<{ orderRef: string; invoiceUrl?: string } | null>(null);
   const [form, setForm] = useState({ full_name: "", email: "", whatsapp: "", country: "", message: "", additional_note: "", promo_code: "" });
+  const [idType, setIdType] = useState<"id_card" | "passport">("id_card");
+  const [idFront, setIdFront] = useState<File | null>(null);
+  const [idBack, setIdBack] = useState<File | null>(null);
+  const [holdingSelfie, setHoldingSelfie] = useState<File | null>(null);
+  const [exampleOpen, setExampleOpen] = useState<null | { title: string; src: string }>(null);
 
   // Skip selection step entirely when locked
   const steps = lockSelection ? STEP_LABELS.slice(1) : STEP_LABELS;
@@ -460,6 +473,61 @@ const CheckoutFlow = ({
                     placeholder="e.g. WELCOME10"
                   />
                 </div>
+
+                {/* ID Documents */}
+                <div className="rounded-2xl border border-border/40 p-4 md:p-5 space-y-4">
+                  <div>
+                    <h3 className="font-semibold">ID documents <span className="opacity-60 font-normal text-sm">(optional — speeds up verification)</span></h3>
+                    <p className="text-xs opacity-70 mt-1">Upload a clear photo of your ID and a holding-selfie. Tap "View example" to see what we need.</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1.5">ID type</label>
+                    <div className="flex gap-2">
+                      {(["id_card", "passport"] as const).map((t) => (
+                        <button
+                          type="button"
+                          key={t}
+                          onClick={() => { setIdType(t); if (t === "passport") setIdBack(null); }}
+                          className={`px-4 py-2 rounded-xl text-sm font-semibold border transition-all ${
+                            idType === t ? "border-primary bg-primary/15 text-primary" : "border-border/40 hover:border-primary/40"
+                          }`}
+                        >
+                          {t === "id_card" ? "National ID Card" : "Passport"}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <UploadField
+                    label={idType === "passport" ? "Passport (photo page)" : "ID card — front"}
+                    file={idFront}
+                    onChange={setIdFront}
+                    onViewExample={() =>
+                      setExampleOpen(
+                        idType === "passport"
+                          ? { title: "Example: Passport photo page", src: examplePassport }
+                          : { title: "Example: ID card (front)", src: exampleIdFront }
+                      )
+                    }
+                  />
+
+                  {idType === "id_card" && (
+                    <UploadField
+                      label="ID card — back"
+                      file={idBack}
+                      onChange={setIdBack}
+                      onViewExample={() => setExampleOpen({ title: "Example: ID card (back)", src: exampleIdBack })}
+                    />
+                  )}
+
+                  <UploadField
+                    label="Holding selfie (you holding your ID)"
+                    file={holdingSelfie}
+                    onChange={setHoldingSelfie}
+                    onViewExample={() => setExampleOpen({ title: "Example: Holding selfie", src: exampleHoldingSelfie })}
+                  />
+                </div>
               </div>
             )}
 
@@ -592,6 +660,23 @@ const CheckoutFlow = ({
           </aside>
         </div>
       </section>
+
+      <Dialog open={!!exampleOpen} onOpenChange={(o) => !o && setExampleOpen(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{exampleOpen?.title}</DialogTitle>
+          </DialogHeader>
+          {exampleOpen && (
+            <img
+              src={exampleOpen.src}
+              alt={exampleOpen.title}
+              loading="lazy"
+              className="w-full h-auto rounded-xl border border-border/40"
+            />
+          )}
+          <p className="text-xs opacity-70">This is just a reference example. Your photo should be sharp, well-lit and show all corners / details clearly.</p>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
@@ -638,5 +723,59 @@ const Info = ({ icon: Icon, title, body }: { icon: any; title: string; body: str
     <div className="text-xs opacity-75 leading-relaxed">{body}</div>
   </div>
 );
+
+const UploadField = ({
+  label,
+  file,
+  onChange,
+  onViewExample,
+}: {
+  label: string;
+  file: File | null;
+  onChange: (f: File | null) => void;
+  onViewExample: () => void;
+}) => {
+  const inputId = `upload-${label.replace(/\s+/g, "-").toLowerCase()}`;
+  return (
+    <div>
+      <div className="flex items-center justify-between gap-3 mb-1.5">
+        <label htmlFor={inputId} className="block text-sm font-medium">{label}</label>
+        <button
+          type="button"
+          onClick={onViewExample}
+          className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+        >
+          <Eye className="w-3.5 h-3.5" /> View example
+        </button>
+      </div>
+      <div className="flex items-center gap-2">
+        <label
+          htmlFor={inputId}
+          className="flex-1 cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-muted/30 border border-dashed border-border/60 hover:border-primary/60 text-sm transition-all"
+        >
+          <Upload className="w-4 h-4 opacity-70" />
+          <span className="truncate">{file ? file.name : "Choose file (JPG / PNG / PDF)"}</span>
+        </label>
+        {file && (
+          <button
+            type="button"
+            onClick={() => onChange(null)}
+            className="p-2 rounded-xl border border-border/40 hover:border-destructive/60 text-destructive"
+            aria-label="Remove file"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+      <input
+        id={inputId}
+        type="file"
+        accept="image/*,application/pdf"
+        className="hidden"
+        onChange={(e) => onChange(e.target.files?.[0] || null)}
+      />
+    </div>
+  );
+};
 
 export default CheckoutFlow;
