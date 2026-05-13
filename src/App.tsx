@@ -14,6 +14,7 @@ import UKLtdFormation from "./pages/UKLtdFormation";
 import UkLtdChooseJurisdiction from "./pages/UkLtdChooseJurisdiction";
 import UkLtdCheckout from "./pages/UkLtdCheckout";
 import LtdIdVerification from "./pages/LtdIdVerification";
+import LtdIdVerificationCheckout from "./pages/LtdIdVerificationCheckout";
 import RegisteredOfficeAddress from "./pages/RegisteredOfficeAddress";
 import UtrCodes from "./pages/UtrCodes";
 import CompliancePage from "./pages/CompliancePage";
