@@ -1,5 +1,12 @@
 import jsPDF from "jspdf";
 import { supabase } from "@/integrations/supabase/client";
+import { buildOrderRef } from "@/lib/orderRef";
+
+// Map admin single-letter service codes → buildOrderRef service codes
+const ADMIN_CODE_TO_SERVICE_CODE: Record<string, string> = {
+  C: "LTD", A: "ROA", B: "BANK", T: "UTR", V: "VAT",
+  W: "WEB", D: "DOC", S: "SUB", O: "ORD",
+};
 
 // Service code map — used in order/invoice numbers like DFC20260503-01
 export const SERVICE_CODES: Record<string, string> = {
