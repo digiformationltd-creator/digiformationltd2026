@@ -115,6 +115,7 @@ const DigiNav = () => {
               </div>
             ))}
             <NavLink to="/web-development" className="text-sm hover:opacity-80 transition">Web Dev</NavLink>
+            <NavLink to="/blog" className="text-sm hover:opacity-80 transition">Blog</NavLink>
 
             {/* More dropdown for the rest */}
             <div className="relative group">
@@ -126,7 +127,6 @@ const DigiNav = () => {
                 <div className="min-w-[200px] glass rounded-xl p-2">
                   {[
                     { name: "About", path: "/#about" },
-                    { name: "Blog", path: "/blog" },
                     { name: "FAQ", path: "/faq" },
                   ].map((l) => (
                     <Link key={l.path} to={l.path} className="block px-4 py-2 text-sm rounded-md hover:bg-primary/10 transition">
