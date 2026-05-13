@@ -74,6 +74,7 @@ export type Database = {
       client_company_details: {
         Row: {
           accounts_filing_due: string | null
+          activation_code: string | null
           address_expire: string | null
           auth_code: string | null
           company_address: string | null
@@ -93,6 +94,7 @@ export type Database = {
         }
         Insert: {
           accounts_filing_due?: string | null
+          activation_code?: string | null
           address_expire?: string | null
           auth_code?: string | null
           company_address?: string | null
@@ -112,6 +114,7 @@ export type Database = {
         }
         Update: {
           accounts_filing_due?: string | null
+          activation_code?: string | null
           address_expire?: string | null
           auth_code?: string | null
           company_address?: string | null

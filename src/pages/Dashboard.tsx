@@ -61,6 +61,8 @@ interface CompanyDetails {
   confirmation_due: string | null;
   accounts_filing_due: string | null;
   auth_code: string | null;
+  utr_number: string | null;
+  activation_code: string | null;
   incorporation_date: string | null;
   sic_code: string | null;
 }
@@ -509,7 +511,8 @@ const MyCompaniesSection = ({ userId, companies, onChange, editable = false }: {
     { key: "director_name", label: "Director Name" },
     { key: "sic_code", label: "SIC Code" },
     { key: "auth_code", label: "Auth Code" },
-    { key: "utr_number" as any, label: "UTR Number" },
+    { key: "utr_number", label: "UTR Number" },
+    { key: "activation_code", label: "Activation Code" },
     { key: "incorporation_date", label: "Incorporation Date", type: "date" },
     { key: "address_expire", label: "Address Expire", type: "date" },
     { key: "confirmation_due", label: "Confirmation Due", type: "date" },
