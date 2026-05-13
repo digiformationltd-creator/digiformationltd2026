@@ -918,10 +918,14 @@ const CheckoutFlow = ({
                       <p className="text-sm opacity-85">{form.business_type}</p>
                     </>
                   )}
-                  {form.message && (
+                  {form.business_category && (
                     <>
-                      <div className="text-sm font-semibold mt-4 mb-1">Notes</div>
-                      <p className="text-sm opacity-85 whitespace-pre-wrap">{form.message}</p>
+                      <div className="text-sm font-semibold mt-4 mb-1">Business activity</div>
+                      <p className="text-sm opacity-85 whitespace-pre-wrap">
+                        {form.business_category === "Other"
+                          ? form.business_other
+                          : `${form.business_category}${form.business_subcategory ? ` — ${form.business_subcategory}` : ""}`}
+                      </p>
                     </>
                   )}
                 </div>
