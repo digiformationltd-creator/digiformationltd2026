@@ -284,7 +284,7 @@ const CreateClientPanel = ({ onCreated }: { onCreated: () => void }) => {
 };
 
 const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: string; initialTab?: "profile" | "company" | "addresses"; onBack: () => void }) => {
-  const [tab, setTab] = useState<"profile" | "company" | "addresses" | "orders" | "invoices" | "subs" | "wallet" | "docs">(initialTab);
+  const [tab, setTab] = useState<"profile" | "company" | "addresses" | "orders" | "invoices" | "subs" | "wallet" | "docs" | "emails">(initialTab);
   const [profile, setProfile] = useState<any>({});
   const [companies, setCompanies] = useState<any[]>([]);
   const [addresses, setAddresses] = useState<any[]>([]);
@@ -504,6 +504,7 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
     { id: "subs", label: `Subs (${subs.length})` },
     { id: "wallet", label: `Wallet (${wallet.length})` },
     { id: "docs", label: `Docs (${docs.length})` },
+    { id: "emails", label: "Emails" },
   ] as const;
 
   return (
@@ -795,6 +796,164 @@ const ClientDetail = ({ userId, initialTab = "profile", onBack }: { userId: stri
                   if (d.file_url) await supabase.storage.from("client-docs").remove([d.file_url]);
                   await deleteRow("client_documents", d.id);
                 }}><Trash2 className="w-4 h-4" /></Button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {tab === "emails" && (
+          <EmailsSection
+            orders={orders}
+            companies={companies}
+            addresses={addresses}
+            clientEmail={profile.email}
+            clientName={profile.full_name}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+const EmailsSection = ({
+  orders, companies, addresses, clientEmail, clientName,
+}: {
+  orders: any[];
+  companies: any[];
+  addresses: any[];
+  clientEmail?: string | null;
+  clientName?: string | null;
+}) => {
+  const requireEmail = () => {
+    if (!clientEmail) { toast.error("Client has no email on file"); return false; }
+    return true;
+  };
+
+  const sendOrderComplete = async (o: any) => {
+    if (!requireEmail()) return;
+    const { error } = await supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: "order-completed",
+        recipientEmail: clientEmail,
+        idempotencyKey: `order-completed-manual-${o.id}-${Date.now()}`,
+        templateData: { customerName: clientName, orderRef: o.order_ref, service: o.service },
+      },
+    });
+    if (error) toast.error(error.message); else toast.success(`Order Completed email sent for ${o.order_ref}`);
+  };
+
+  const sendCompanyReminder = async (template: "confirmation-statement-reminder" | "annual-accounts-reminder", c: any, label: string) => {
+    if (!requireEmail()) return;
+    const dueDate = template === "confirmation-statement-reminder" ? c.confirmation_due : c.accounts_filing_due;
+    if (!dueDate) return toast.error(`Please set the ${label} due date in Company tab first`);
+    const daysRemaining = Math.ceil((new Date(dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    const { error } = await supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: template,
+        recipientEmail: clientEmail,
+        idempotencyKey: `${template}-${c.id}-${Date.now()}`,
+        templateData: { customerName: clientName, companyName: c.company_name, companyNumber: c.company_number, dueDate, daysRemaining },
+      },
+    });
+    if (error) toast.error(error.message); else toast.success(`${label} reminder sent`);
+  };
+
+  const sendAddressReminder = async (a: any) => {
+    if (!requireEmail()) return;
+    if (!a.expire_date) return toast.error("Please set the expiry date in Address tab first");
+    const daysRemaining = Math.ceil((new Date(a.expire_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    const { error } = await supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: "address-renewal-reminder",
+        recipientEmail: clientEmail,
+        idempotencyKey: `address-renewal-${a.id}-${Date.now()}`,
+        templateData: { customerName: clientName, address: a.address_line1, expireDate: a.expire_date, daysRemaining },
+      },
+    });
+    if (error) toast.error(error.message); else toast.success("Address renewal reminder sent");
+  };
+
+  const pendingOrders = orders.filter(o => !/complete/i.test(o.status || ""));
+
+  return (
+    <div className="space-y-6">
+      <div className="border border-border/40 rounded-xl p-4 bg-muted/10">
+        <p className="text-sm text-muted-foreground">
+          One place to send all client emails. Each button uses the data from its related Order / Company / Address — including order number, company number and due dates.
+          {!clientEmail && <span className="block text-destructive mt-2">⚠ This client has no email address on file.</span>}
+        </p>
+      </div>
+
+      {/* Order Completion */}
+      <div>
+        <h3 className="font-semibold mb-2 flex items-center gap-2"><Mail className="w-4 h-4" />Order Completion</h3>
+        {orders.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No orders for this client yet.</p>
+        ) : (
+          <div className="space-y-2">
+            {orders.map(o => {
+              const done = /complete/i.test(o.status || "");
+              return (
+                <div key={o.id} className="border border-border/40 rounded-lg p-3 flex flex-wrap items-center justify-between gap-2">
+                  <div className="text-sm">
+                    <div className="font-medium">{o.order_ref} — {o.service}</div>
+                    <div className="text-xs text-muted-foreground">£{o.amount_gbp} · Status: {o.status}</div>
+                  </div>
+                  <Button size="sm" variant={done ? "outline" : "default"} onClick={() => sendOrderComplete(o)}>
+                    <Mail className="w-3.5 h-3.5 mr-1" />Send Order Complete
+                  </Button>
+                </div>
+              );
+            })}
+            {pendingOrders.length === 0 && (
+              <p className="text-xs text-muted-foreground">All orders marked completed — you can still resend the email above.</p>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Company Reminders */}
+      <div>
+        <h3 className="font-semibold mb-2 flex items-center gap-2"><Mail className="w-4 h-4" />Company Reminders</h3>
+        {companies.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No company on file.</p>
+        ) : (
+          <div className="space-y-2">
+            {companies.map(c => (
+              <div key={c.id} className="border border-border/40 rounded-lg p-3 space-y-2">
+                <div className="text-sm font-medium">{c.company_name || "Unnamed company"} {c.company_number && <span className="text-xs text-muted-foreground">({c.company_number})</span>}</div>
+                <div className="text-xs text-muted-foreground">CS due: {c.confirmation_due || "—"} · Accounts due: {c.accounts_filing_due || "—"}</div>
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" variant="outline" onClick={() => sendCompanyReminder("confirmation-statement-reminder", c, "Confirmation Statement")}>
+                    <Mail className="w-3.5 h-3.5 mr-1" />Send CS Reminder
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => sendCompanyReminder("annual-accounts-reminder", c, "Annual Accounts")}>
+                    <Mail className="w-3.5 h-3.5 mr-1" />Send Accounts Reminder
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Address Reminders */}
+      <div>
+        <h3 className="font-semibold mb-2 flex items-center gap-2"><Mail className="w-4 h-4" />Address Renewal Reminders</h3>
+        {addresses.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No address on file.</p>
+        ) : (
+          <div className="space-y-2">
+            {addresses.map(a => (
+              <div key={a.id} className="border border-border/40 rounded-lg p-3 flex flex-wrap items-center justify-between gap-2">
+                <div className="text-sm">
+                  <div className="font-medium">{a.label || "Address"}</div>
+                  <div className="text-xs text-muted-foreground">{a.address_line1 || "—"}</div>
+                  <div className="text-xs text-muted-foreground">Expires: {a.expire_date || "—"}</div>
+                </div>
+                <Button size="sm" variant="outline" onClick={() => sendAddressReminder(a)}>
+                  <Mail className="w-3.5 h-3.5 mr-1" />Send Renewal Reminder
+                </Button>
               </div>
             ))}
           </div>
