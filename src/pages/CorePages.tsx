@@ -227,19 +227,9 @@ export const Contact = () => {
       },
     }).catch((err) => console.error("order-notification failed", err));
 
-    const text =
-      `Hello Digiformation,%0A%0A` +
-      `Name: ${encodeURIComponent(form.fullName)}%0A` +
-      `Email: ${encodeURIComponent(form.email)}%0A` +
-      `Country: ${encodeURIComponent(form.country)}%0A` +
-      `Service: ${encodeURIComponent(form.service)}%0A%0A` +
-      `${encodeURIComponent(form.message)}`;
     setSubmitted(true);
-    toast.success("Message received — opening WhatsApp…");
-    setTimeout(() => {
-      window.open(`https://wa.me/923164467464?text=${text}`, "_blank", "noopener,noreferrer");
-      setSubmitting(false);
-    }, 2200);
+    setSubmitting(false);
+    toast.success("Message received — we'll get back to you soon.");
   };
 
   return (
@@ -254,9 +244,8 @@ export const Contact = () => {
               </div>
               <h2 className="text-2xl md:text-3xl font-bold">Thank you, {form.fullName.split(" ")[0] || "there"}!</h2>
               <p className="opacity-80 max-w-md">
-                Your message has been received. We're opening WhatsApp now so we can confirm your details and reply within one business day.
+                Your message has been received. Our team will get back to you via email within one business day.
               </p>
-              <p className="text-xs opacity-60">Redirecting to WhatsApp…</p>
             </div>
           ) : (
           <form onSubmit={handleSubmit} className="glass rounded-2xl p-8 space-y-5">
