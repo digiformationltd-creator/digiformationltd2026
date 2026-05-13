@@ -85,31 +85,29 @@ const UkLtdCheckout = () => {
     const priceStr = formatGBP(price);
     const pagePath = window.location.pathname + window.location.search;
 
-    // If logged-in: generate invoice PDF + create order/invoice rows
+    // Generate invoice PDF for ALL orders (guests get a download link in the
+    // email; logged-in users also get the order + invoice in their portal).
     let invoiceNumber: string | undefined;
     let invoiceUrl: string | undefined;
     let finalOrderRef = orderRef;
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session?.user) {
-      try {
-        const { data: inv, error: invErr } = await supabase.functions.invoke("generate-invoice", {
-          body: {
-            service,
-            packageName,
-            amount_gbp: price,
-            currency: "GBP",
-            customer: { full_name: form.full_name, email: form.email, address: form.country },
-            notes: form.message,
-            orderRef,
-          },
-        });
-        if (invErr) throw invErr;
-        invoiceNumber = (inv as any)?.invoiceNumber;
-        invoiceUrl = (inv as any)?.invoiceUrl;
-        if ((inv as any)?.orderRef) finalOrderRef = (inv as any).orderRef;
-      } catch (err) {
-        console.error("invoice generation failed", err);
-      }
+    try {
+      const { data: inv, error: invErr } = await supabase.functions.invoke("generate-invoice", {
+        body: {
+          service,
+          packageName,
+          amount_gbp: price,
+          currency: "GBP",
+          customer: { full_name: form.full_name, email: form.email, address: form.country },
+          notes: form.message,
+          orderRef,
+        },
+      });
+      if (invErr) throw invErr;
+      invoiceNumber = (inv as any)?.invoiceNumber;
+      invoiceUrl = (inv as any)?.invoiceUrl;
+      if ((inv as any)?.orderRef) finalOrderRef = (inv as any).orderRef;
+    } catch (err) {
+      console.error("invoice generation failed", err);
     }
 
     if (form.email) {
