@@ -21,8 +21,8 @@ import UserDrawer from "@/components/UserDrawer";
 import { downloadInvoicePdf } from "@/lib/invoice";
 
 type SectionId =
-  | "overview" | "subscriptions" | "orders" | "invoices" | "wallet" | "company" | "documents"
-  | "editAccount" | "editAddress" | "newServices" | "tickets" | "openTicket"
+  | "overview" | "subscriptions" | "orders" | "invoices" | "wallet" | "documents"
+  | "editAccount" | "newServices" | "tickets" | "openTicket"
   | "affiliate";
 
 const menu: { id: SectionId; label: string; icon: any }[] = [
@@ -31,8 +31,6 @@ const menu: { id: SectionId; label: string; icon: any }[] = [
   { id: "orders", label: "My Orders", icon: ShoppingBag },
   { id: "invoices", label: "My Invoices", icon: FileText },
   { id: "wallet", label: "My Wallet", icon: Wallet },
-  { id: "company", label: "My Company", icon: Building2 },
-  { id: "editAddress", label: "My Address", icon: MapPin },
   { id: "documents", label: "Documents", icon: FileText },
   { id: "editAccount", label: "Edit Account", icon: UserCog },
   { id: "newServices", label: "Order New Services", icon: ShoppingCart },
@@ -348,14 +346,6 @@ const Dashboard = () => {
             <ClientWalletSection rows={walletRows} balance={walletBalance} />
           )}
 
-          {active === "company" && (
-            <MyCompaniesSection
-              userId={user.id}
-              companies={companies}
-              onChange={setCompanies}
-            />
-          )}
-
           {active === "documents" && (
             <ClientDocumentsSection userId={user.id} />
           )}
@@ -363,8 +353,6 @@ const Dashboard = () => {
           {active === "editAccount" && (
             <EditAccountForm profile={profile} email={user.email || ""} onSaved={(p) => setProfile(p)} />
           )}
-
-          {active === "editAddress" && <MyAddressesSection userId={user.id} editable={isAdmin} />}
 
           {active === "newServices" && (
             <div>
