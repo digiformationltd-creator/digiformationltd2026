@@ -8,7 +8,7 @@ const DigiCTA = () => (
       <div className="relative overflow-hidden rounded-3xl glass p-12 md:p-20 text-center">
         <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-gradient-accent opacity-15 blur-3xl pointer-events-none" />
         <div className="relative">
-          <h2 className="text-4xl md:text-6xl font-bold mb-6 max-w-3xl mx-auto leading-tight text-foreground">
+          <h2 data-reveal="rise" className="text-4xl md:text-6xl font-bold mb-6 max-w-3xl mx-auto leading-tight text-foreground">
             Ready to <em className="not-italic text-gradient">launch your business?</em>
           </h2>
           <p className="text-lg max-w-xl mx-auto mb-10 text-foreground/90">

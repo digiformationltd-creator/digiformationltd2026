@@ -109,7 +109,7 @@ const DigiServicesSlider = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-12 md:mb-16">
           <div className="mb-5 text-sm md:text-base uppercase tracking-[0.18em] font-semibold text-primary">Our Services</div>
-          <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.95]">
+          <h2 data-reveal="rise" className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.95]">
             Everything Your<br />
             <em className="not-italic text-gradient">Business Needs</em>
           </h2>

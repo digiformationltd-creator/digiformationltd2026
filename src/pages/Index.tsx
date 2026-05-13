@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 import DigiNav from "@/components/DigiNav";
 import DigiHero from "@/components/DigiHero";
 import QuickStartWidget from "@/components/QuickStartWidget";
@@ -15,6 +16,8 @@ import DigiCTA from "@/components/DigiCTA";
 import DigiFooter from "@/components/DigiFooter";
 
 const Index = () => {
+  useScrollReveal();
+
   useEffect(() => {
     document.title =
       "Digiformation Ltd | UK LTD & US LLC Formation • PayPal, Stripe, Payoneer, Wise, WorldFirst, Tide";

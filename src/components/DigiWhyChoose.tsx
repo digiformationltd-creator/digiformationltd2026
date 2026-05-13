@@ -24,15 +24,15 @@ const DigiWhyChoose = () => (
     <div className="container mx-auto px-4 relative z-10">
       <div className="text-center max-w-3xl mx-auto mb-16">
         <div className="mb-5 text-sm md:text-base uppercase tracking-[0.18em] font-semibold text-primary">Why Choose Us</div>
-        <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
+        <h2 data-reveal="rise" className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
           Why founders choose <em className="not-italic text-gradient">Digiformation</em>
         </h2>
       </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div data-reveal-stagger className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {reasons.map((r) => (
           <div key={r.title} className="glass rounded-2xl p-7 hover:-translate-y-1 hover:shadow-elegant transition-all duration-300">
-            <div className="w-11 h-11 rounded-xl bg-gradient-brand grid place-items-center mb-4 shadow-card">
+            <div className="reveal-icon w-11 h-11 rounded-xl bg-gradient-brand grid place-items-center mb-4 shadow-card">
               <r.icon className="w-5 h-5" />
             </div>
             <h3 className="font-display text-lg font-semibold mb-2">{r.title}</h3>
