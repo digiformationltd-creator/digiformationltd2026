@@ -44,7 +44,7 @@ function serviceCodeFor(input?: string): string {
 function regionFrom(currency?: string, serviceCode?: string): Region {
   // Service codes that imply region
   if (serviceCode === "LLC" || serviceCode === "ITIN") return "US";
-  if (["LTD", "CS", "AA", "AD01", "ROA", "UTR", "VAT", "PAYE"].includes(serviceCode || "")) return "GB";
+  if (["LTD", "CS", "AA", "AD01", "ROA", "ADZ", "UTR", "VAT", "PAYE", "DORM", "SO", "IDV"].includes(serviceCode || "")) return "GB";
   if (!currency) return "INT";
   const c = currency.toUpperCase();
   if (c === "GBP") return "GB";
