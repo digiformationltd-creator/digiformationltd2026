@@ -16,6 +16,8 @@ import DigiCTA from "@/components/DigiCTA";
 import DigiFooter from "@/components/DigiFooter";
 
 const Index = () => {
+  useScrollReveal();
+
   useEffect(() => {
     document.title =
       "Digiformation Ltd | UK LTD & US LLC Formation • PayPal, Stripe, Payoneer, Wise, WorldFirst, Tide";
