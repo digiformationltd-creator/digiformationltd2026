@@ -9,8 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import {
-  CalendarDays, ShoppingBag, Wallet, FileText, UserCog,
-  ShoppingCart, Ticket, LifeBuoy, LogOut, UserCircle2,
+  CalendarDays, ShoppingBag, Wallet, Building2, FileText, UserCog,
+  MapPin, ShoppingCart, Ticket, LifeBuoy, LogOut, UserCircle2,
   ChevronRight, Loader2, Inbox, Download, ArrowUpRight,
   Handshake, Link2, TrendingUp, Copy, Megaphone, GraduationCap, LayoutDashboard,
   Menu, ShieldCheck, Save, Trash2, ChevronDown,
@@ -346,14 +346,6 @@ const Dashboard = () => {
             <ClientWalletSection rows={walletRows} balance={walletBalance} />
           )}
 
-          {active === "company" && (
-            <MyCompaniesSection
-              userId={user.id}
-              companies={companies}
-              onChange={setCompanies}
-            />
-          )}
-
           {active === "documents" && (
             <ClientDocumentsSection userId={user.id} />
           )}
@@ -361,8 +353,6 @@ const Dashboard = () => {
           {active === "editAccount" && (
             <EditAccountForm profile={profile} email={user.email || ""} onSaved={(p) => setProfile(p)} />
           )}
-
-          {active === "editAddress" && <MyAddressesSection userId={user.id} editable={isAdmin} />}
 
           {active === "newServices" && (
             <div>
