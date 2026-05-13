@@ -213,8 +213,8 @@ const DigiServicesSlider = () => {
                     <span className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent rounded-t-2xl" />
                   )}
 
-                  <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-brand grid place-items-center mb-4 shadow-card">
-                    <s.icon className="w-6 h-6 md:w-7 md:h-7" aria-hidden="true" />
+                  <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-brand grid place-items-center mb-4 shadow-card text-primary-foreground">
+                    <s.icon className="w-6 h-6 md:w-7 md:h-7 text-primary-foreground" aria-hidden="true" />
                   </div>
                   <div className="text-[10px] font-semibold uppercase tracking-[0.14em] mb-2 opacity-80">
                     {s.category}
