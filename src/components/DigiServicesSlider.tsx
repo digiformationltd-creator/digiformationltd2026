@@ -105,7 +105,7 @@ const DigiServicesSlider = () => {
   return (
     <section id="services" className="relative py-12 md:py-16 overflow-hidden">
       <div className="absolute inset-0 grid-pattern opacity-30 pointer-events-none" />
-      <div className="absolute -right-32 top-1/4 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
+      <div className="absolute -right-32 top-1/4 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl" />
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-12 md:mb-16">
@@ -128,28 +128,14 @@ const DigiServicesSlider = () => {
         >
           {/* Ambient light aura around the ring */}
           <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-            {/* Soft pulsing halo behind the ring */}
+            {/* Soft static halo behind the ring */}
             <div
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl animate-pulse-glow"
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
               style={{
                 width: radius * 2.2,
                 height: radius * 2.2,
                 background:
                   "radial-gradient(circle, hsl(var(--primary) / 0.35) 0%, hsl(var(--primary) / 0.12) 35%, transparent 70%)",
-              }}
-            />
-            {/* Rotating conic light beams that follow the ring */}
-            <div
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-60 mix-blend-screen blur-2xl"
-              style={{
-                width: radius * 2.4,
-                height: radius * 2.4,
-                background:
-                  "conic-gradient(from 0deg, transparent 0deg, hsl(var(--primary) / 0.55) 25deg, transparent 60deg, transparent 180deg, hsl(var(--primary) / 0.4) 205deg, transparent 240deg, transparent 360deg)",
-                transform: `rotate(${-rotation}deg)`,
-                transition: "transform 1.2s cubic-bezier(0.23, 1, 0.32, 1)",
-                maskImage: "radial-gradient(circle, black 35%, transparent 72%)",
-                WebkitMaskImage: "radial-gradient(circle, black 35%, transparent 72%)",
               }}
             />
             {/* Inner glowing core */}
