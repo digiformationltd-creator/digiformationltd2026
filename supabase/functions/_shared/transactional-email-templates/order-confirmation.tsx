@@ -49,6 +49,23 @@ const OrderConfirmationEmail = ({
         </Section>
       )}
 
+      {(() => {
+        const waMsg = encodeURIComponent(
+          `Hello ${SITE_NAME}, I have just placed an order${orderRef ? ` (Ref: ${orderRef})` : ''}${serviceLine ? ` for ${serviceLine}` : ''}. Please confirm and guide me on the next steps.`
+        )
+        const waHref = `https://wa.me/923164467464?text=${waMsg}`
+        return (
+          <Section style={{ textAlign: 'center', margin: '8px 0 24px' }}>
+            <Button href={waHref} style={{ ...styles.button, backgroundColor: '#25D366' }}>
+              Chat with us on WhatsApp
+            </Button>
+            <Text style={styles.muted}>
+              Click the button to message our team on WhatsApp — your order reference will be pre-filled. Our team will respond as soon as possible.
+            </Text>
+          </Section>
+        )
+      })()}
+
       {notes && (
         <>
           <Text style={styles.label}>Your notes</Text>
