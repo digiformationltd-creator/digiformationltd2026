@@ -176,8 +176,10 @@ const CheckoutFlow = ({
       `Items:\n${lines}\n` +
       `Subtotal: ${formatMoney(subtotal, currency)}\n` +
       (vat ? `VAT (${(vatRate * 100).toFixed(0)}%): ${formatMoney(vat, currency)}\n` : "") +
-      `Total: ${formatMoney(total, currency)}\n\n` +
-      `Customer note:\n${form.message}`;
+      `Total: ${formatMoney(total, currency)}\n` +
+      (form.promo_code ? `Promo code: ${form.promo_code}\n` : "") +
+      `\nCustomer note:\n${form.message}` +
+      (form.additional_note ? `\n\nAdditional note:\n${form.additional_note}` : "");
 
     const { error } = await supabase.from("contact_submissions").insert({
       full_name: form.full_name,
