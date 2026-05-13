@@ -510,6 +510,52 @@ const CheckoutFlow = ({
               </div>
             )}
 
+            {showSelection && extras && extras.length > 0 && extras.map((group) => (
+              <div key={group.categoryLabel} className="glass rounded-3xl p-6 md:p-8">
+                <div className="flex items-baseline justify-between gap-3 mb-1">
+                  <h2 className="text-xl md:text-2xl font-bold">{group.categoryLabel}</h2>
+                  <span className="text-[11px] uppercase tracking-[0.16em] opacity-60">Add-ons</span>
+                </div>
+                <p className="text-sm opacity-75 mb-5">
+                  {group.description || "Optional add-ons in this category. Tick any you'd like to include."}
+                </p>
+                <div className="space-y-3">
+                  {group.items.map((it) => {
+                    const active = selected.has(it.id);
+                    return (
+                      <button
+                        type="button"
+                        key={it.id}
+                        onClick={() => toggle(it.id)}
+                        className={`w-full text-left p-4 rounded-2xl border transition-all flex items-start gap-4 ${
+                          active
+                            ? "border-primary bg-primary/10 shadow-glow"
+                            : "border-border/40 hover:border-primary/40"
+                        }`}
+                      >
+                        <span
+                          className={`mt-0.5 w-5 h-5 rounded-md border-2 grid place-items-center flex-shrink-0 ${
+                            active ? "bg-primary border-primary text-primary-foreground" : "border-border/60"
+                          }`}
+                        >
+                          {active && <CheckCircle2 className="w-3.5 h-3.5" />}
+                        </span>
+                        <span className="flex-1 min-w-0">
+                          <span className="flex items-baseline justify-between gap-3">
+                            <span className="font-semibold">{it.name}</span>
+                            <span className={active ? "text-gradient font-bold" : "font-semibold opacity-90"}>
+                              {formatMoney(it.price, currency)}
+                            </span>
+                          </span>
+                          {it.description && <span className="block text-sm opacity-75 mt-1">{it.description}</span>}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+
             {showDetails && (
               <div className="glass rounded-3xl p-6 md:p-8 space-y-5">
                 <h2 className="text-2xl font-bold">Your details</h2>
