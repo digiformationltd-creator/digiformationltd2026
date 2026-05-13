@@ -475,6 +475,9 @@ interface AddressRow {
   expire_date: string | null;
   status: string;
   notes: string | null;
+  utr_number: string | null;
+  auth_code: string | null;
+  activation_code: string | null;
 }
 
 const MyCompaniesSection = ({ userId, companies, onChange, editable = false }: { userId: string; companies: CompanyDetails[]; onChange: (c: CompanyDetails[]) => void; editable?: boolean }) => {
@@ -767,9 +770,16 @@ const AddressCard = ({
                 </div>
               </>
             ) : (
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div><Label className="text-[11px] uppercase tracking-wider opacity-60">Start Date</Label><div className="mt-1">{a.start_date || "—"}</div></div>
-                <div><Label className="text-[11px] uppercase tracking-wider opacity-60">Expiry Date</Label><div className="mt-1">{a.expire_date || "—"}</div></div>
+              <div className="space-y-3 text-sm">
+                <div className="grid grid-cols-2 gap-3">
+                  <div><Label className="text-[11px] uppercase tracking-wider opacity-60">Start Date</Label><div className="mt-1">{a.start_date || "—"}</div></div>
+                  <div><Label className="text-[11px] uppercase tracking-wider opacity-60">Expiry Date</Label><div className="mt-1">{a.expire_date || "—"}</div></div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div><Label className="text-[11px] uppercase tracking-wider opacity-60">UTR Number</Label><div className="mt-1 font-mono">{a.utr_number || "—"}</div></div>
+                  <div><Label className="text-[11px] uppercase tracking-wider opacity-60">Auth Code</Label><div className="mt-1 font-mono">{a.auth_code || "—"}</div></div>
+                  <div><Label className="text-[11px] uppercase tracking-wider opacity-60">Activation Code</Label><div className="mt-1 font-mono">{a.activation_code || "—"}</div></div>
+                </div>
               </div>
             )}
           </div>
