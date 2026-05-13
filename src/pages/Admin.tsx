@@ -618,13 +618,11 @@ const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: stri
 
         {tab === "invoices" && (
           <div className="space-y-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm text-muted-foreground">Create invoice for:</span>
-              {Object.entries(SERVICE_CODES).map(([code, label]) => (
-                <Button key={code} onClick={() => addInvoice(code)} size="sm" variant="outline">{code} — {label}</Button>
-              ))}
+            <div className="text-sm text-muted-foreground px-1">
+              Total invoices: <span className="font-semibold text-foreground">{invoices.length}</span>
+              <span className="ml-2 italic">Invoices are generated automatically when a client places an order — the PDF is also emailed to them.</span>
             </div>
-            {invoices.length === 0 && <p className="text-sm text-muted-foreground">No invoices yet. Pick a service code above to generate one (auto-numbered as DF + code + date + sequence).</p>}
+            {invoices.length === 0 && <p className="text-sm text-muted-foreground italic">No invoices yet for this client.</p>}
             {invoices.map(i => (
               <div key={i.id} className="border border-border/40 rounded-xl p-4 space-y-3">
                 <div className="flex items-center justify-between flex-wrap gap-2">
