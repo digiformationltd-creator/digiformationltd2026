@@ -102,6 +102,7 @@ const CheckoutFlow = ({
   liveSelfieMode = "upload",
   liveSelfieLink,
   showBusinessType = false,
+  showCompanyName = false,
 }: CheckoutFlowProps) => {
   const initialSelected = useMemo(() => {
     if (defaultSelectedIds && defaultSelectedIds.length) return new Set(defaultSelectedIds);
