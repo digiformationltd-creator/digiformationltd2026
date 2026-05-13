@@ -32,8 +32,8 @@ const AnnualAccountsReminderEmail = ({ customerName, companyName, companyNumber,
     </Card>
     <Text style={styles.text}>
       Our experienced accountants can prepare and file your Annual Accounts (and your Corporation Tax return with HMRC)
-      on your behalf — quickly, accurately, and fully compliant. Simply log in to your client portal to request the
-      service, or reply to this email and our team will guide you through the next steps.
+      on your behalf — quickly, accurately, and fully compliant — starting from just <strong>£120</strong>. Simply log in
+      to your client portal to request the service, or reply to this email and our team will guide you through the next steps.
     </Text>
     <Text style={styles.muted}>
       Please do not leave it until the last minute. Acting early gives us time to gather records, prepare statutory
