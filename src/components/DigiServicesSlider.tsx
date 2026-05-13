@@ -187,6 +187,10 @@ const DigiServicesSlider = () => {
               const rel = Math.abs(relIndex(idx));
               const opacity = isActive ? 1 : rel === 1 ? 0.7 : rel === 2 ? 0.35 : 0.1;
               const scale = isActive ? 1 : 0.9;
+              const tintHue: Record<string, number> = {
+                sage: 155, rose: 345, amber: 42, sky: 200, lavender: 255, teal: 175, coral: 12, slate: 220,
+              };
+              const hue = tintHue[s.tint] ?? 220;
               return (
                 <article
                   key={s.num}
@@ -194,6 +198,7 @@ const DigiServicesSlider = () => {
                     if (dragRef.current?.moved) { e.preventDefault(); return; }
                     setActive(idx);
                   }}
+                  data-tint={s.tint}
                   className={`absolute top-1/2 left-1/2 rounded-2xl p-5 md:p-6 glass flex flex-col border ${
                     isActive
                       ? "border-border/30"
@@ -211,11 +216,17 @@ const DigiServicesSlider = () => {
                   }}
                 >
                   {isActive && (
-                    <span className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent rounded-t-2xl" />
+                    <span
+                      className="absolute top-0 left-0 right-0 h-[2px] rounded-t-2xl"
+                      style={{ background: `linear-gradient(90deg, transparent, hsl(${hue} 20% 60%), transparent)` }}
+                    />
                   )}
 
-                  <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-brand grid place-items-center mb-4 shadow-card text-primary-foreground">
-                    <s.icon className="w-6 h-6 md:w-7 md:h-7 text-primary-foreground" aria-hidden="true" />
+                  <div
+                    className="w-12 h-12 md:w-14 md:h-14 rounded-xl grid place-items-center mb-4 shadow-card card-icon"
+                    style={{ background: `linear-gradient(135deg, hsl(${hue} 16% 22% / 0.45), hsl(${hue} 12% 14% / 0.35))` }}
+                  >
+                    <s.icon className="w-6 h-6 md:w-7 md:h-7" style={{ color: `hsl(${hue} 20% 70%)` }} aria-hidden="true" />
                   </div>
                   <div className="text-[10px] font-semibold uppercase tracking-[0.14em] mb-2 opacity-80">
                     {s.category}
