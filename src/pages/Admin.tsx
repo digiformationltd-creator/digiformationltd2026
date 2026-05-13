@@ -554,25 +554,44 @@ const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: stri
         {tab === "orders" && (
           <div className="space-y-3">
             <NewOrderForm onCreate={addOrder} />
-            {orders.map(o => {
+            <div className="text-sm text-muted-foreground px-1">
+              Total orders: <span className="font-semibold text-foreground">{orders.length}</span>
+            </div>
+            {orders.length === 0 && (
+              <p className="text-sm text-muted-foreground italic">No orders yet for this client.</p>
+            )}
+            {orders.map((o, idx) => {
               const linkedInvoice = invoices.find(i => i.order_id === o.id);
+              const seqLabel = `#${String(orders.length - idx).padStart(2, "0")}`;
               return (
-              <div key={o.id} className="border border-border/40 rounded-lg p-3 grid md:grid-cols-7 gap-2 items-center">
-                <Input defaultValue={o.order_ref} onBlur={(e) => updateOrder(o.id, { order_ref: e.target.value })} placeholder="Ref" />
-                <Input defaultValue={o.service} onBlur={(e) => updateOrder(o.id, { service: e.target.value })} placeholder="Service" />
-                <Input defaultValue={o.status} onBlur={(e) => updateOrder(o.id, { status: e.target.value })} placeholder="Status" />
-                <Input type="number" defaultValue={o.amount_gbp} onBlur={(e) => updateOrder(o.id, { amount_gbp: parseFloat(e.target.value) || 0 })} placeholder="£" />
-                <div className="flex items-center gap-2">
-                  {linkedInvoice ? (
-                    <>
-                      <Badge variant="secondary" className="text-xs">Invoice created</Badge>
-                      <Button size="sm" variant="outline" onClick={() => downloadInvoicePdf(linkedInvoice)} title={linkedInvoice.invoice_number}>
-                        <Download className="w-3.5 h-3.5" />
-                      </Button>
-                    </>
-                  ) : (
-                    <Badge variant="outline" className="text-xs text-muted-foreground">Not created</Badge>
-                  )}
+              <div key={o.id} className="border border-border/40 rounded-lg p-3 space-y-2">
+                <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-border/30">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-bold text-muted-foreground bg-muted/40 rounded-full px-2 py-0.5">{seqLabel}</span>
+                    <span className="font-mono font-semibold text-primary text-sm">{o.order_ref || "(no ref)"}</span>
+                    {o.created_at && (
+                      <span className="text-xs text-muted-foreground">{new Date(o.created_at).toLocaleDateString()}</span>
+                    )}
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={() => deleteRow("client_orders", o.id)}><Trash2 className="w-4 h-4" /></Button>
+                </div>
+                <div className="grid md:grid-cols-6 gap-2 items-center">
+                  <Input defaultValue={o.order_ref} onBlur={(e) => updateOrder(o.id, { order_ref: e.target.value })} placeholder="Ref" />
+                  <Input defaultValue={o.service} onBlur={(e) => updateOrder(o.id, { service: e.target.value })} placeholder="Service" className="md:col-span-2" />
+                  <Input defaultValue={o.status} onBlur={(e) => updateOrder(o.id, { status: e.target.value })} placeholder="Status" />
+                  <Input type="number" defaultValue={o.amount_gbp} onBlur={(e) => updateOrder(o.id, { amount_gbp: parseFloat(e.target.value) || 0 })} placeholder="£" />
+                  <div className="flex items-center gap-2">
+                    {linkedInvoice ? (
+                      <>
+                        <Badge variant="secondary" className="text-xs">Invoice</Badge>
+                        <Button size="sm" variant="outline" onClick={() => downloadInvoicePdf(linkedInvoice)} title={linkedInvoice.invoice_number}>
+                          <Download className="w-3.5 h-3.5" />
+                        </Button>
+                      </>
+                    ) : (
+                      <Badge variant="outline" className="text-xs text-muted-foreground">No invoice</Badge>
+                    )}
+                  </div>
                 </div>
                 <Button
                   size="sm"
@@ -591,9 +610,8 @@ const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: stri
                   }}
                   title="Send Order Completed email to client"
                 >
-                  <Mail className="w-3.5 h-3.5 mr-1" />Order Complete
+                  <Mail className="w-3.5 h-3.5 mr-1" />Send Order Complete
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => deleteRow("client_orders", o.id)}><Trash2 className="w-4 h-4" /></Button>
               </div>
               );
             })}

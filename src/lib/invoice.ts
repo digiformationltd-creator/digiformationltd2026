@@ -1,5 +1,12 @@
 import jsPDF from "jspdf";
 import { supabase } from "@/integrations/supabase/client";
+import { buildOrderRef } from "@/lib/orderRef";
+
+// Map admin single-letter service codes → buildOrderRef service codes
+const ADMIN_CODE_TO_SERVICE_CODE: Record<string, string> = {
+  C: "LTD", A: "ROA", B: "BANK", T: "UTR", V: "VAT",
+  W: "WEB", D: "DOC", S: "SUB", O: "ORD",
+};
 
 // Service code map — used in order/invoice numbers like DFC20260503-01
 export const SERVICE_CODES: Record<string, string> = {
@@ -36,16 +43,11 @@ export const generateInvoiceNumber = async (serviceCode: string): Promise<string
   return `${prefix}-${pad2(next)}`;
 };
 
-/** Same logic but for client_orders.order_ref */
+/** Same logic but for client_orders.order_ref — uses unified buildOrderRef format. */
 export const generateOrderNumber = async (serviceCode: string): Promise<string> => {
   const code = (serviceCode || "O").toUpperCase().slice(0, 1);
-  const prefix = `DF${code}${dateKey()}`;
-  const { data } = await supabase
-    .from("client_orders")
-    .select("order_ref")
-    .like("order_ref", `${prefix}-%`);
-  const next = (data?.length || 0) + 1;
-  return `${prefix}-${pad2(next)}`;
+  const mapped = ADMIN_CODE_TO_SERVICE_CODE[code] || "ORD";
+  return await buildOrderRef({ serviceCode: mapped });
 };
 
 export interface InvoiceData {
