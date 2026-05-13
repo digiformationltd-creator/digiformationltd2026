@@ -496,18 +496,65 @@ const CheckoutFlow = ({
             {showDetails && (
               <div className="glass rounded-3xl p-6 md:p-8 space-y-5">
                 <h2 className="text-2xl font-bold">Your details</h2>
-                {showCompanyName && (
-                  <div className="rounded-2xl border border-primary/40 bg-primary/5 p-4 md:p-5">
-                    <Field
-                      label="Proposed company name (the company you want to register)"
-                      value={form.company_name}
-                      onChange={(v) => setForm({ ...form, company_name: v })}
-                      required
-                      minLength={2}
-                      placeholder="e.g. Acme Trading Ltd"
-                    />
-                    <p className="text-xs opacity-70 mt-2">Tip: add 2-3 alternative names in the Notes field below in case your first choice is taken.</p>
+
+                {showServiceMode && (
+                  <div className="rounded-2xl border border-primary/40 bg-primary/5 overflow-hidden">
+                    <button
+                      type="button"
+                      onClick={() => setServiceModeOpen((o) => !o)}
+                      className="w-full flex items-center justify-between gap-3 p-4 md:p-5 text-left"
+                      aria-expanded={serviceModeOpen}
+                    >
+                      <span>
+                        <span className="block text-sm font-semibold text-primary">What do you need?</span>
+                        <span className="block text-xs opacity-80 mt-0.5">
+                          {serviceMode === "ltd-only"
+                            ? "Only register UK Ltd (ID verification already done elsewhere)"
+                            : "Both: ID Verification + Company Formation"}
+                        </span>
+                      </span>
+                      <ChevronDown className={`w-5 h-5 transition-transform ${serviceModeOpen ? "rotate-180" : ""}`} />
+                    </button>
+                    {serviceModeOpen && (
+                      <div className="px-4 pb-4 md:px-5 md:pb-5 space-y-2">
+                        {([
+                          { id: "ltd-only", title: "I just need to register my UK Ltd", desc: "I've already completed Companies House ID verification through another company." },
+                          { id: "both", title: "I want both services", desc: "ID Verification + Company Formation. We'll email you a secure live-selfie link." },
+                        ] as const).map((opt) => {
+                          const active = serviceMode === opt.id;
+                          return (
+                            <button
+                              type="button"
+                              key={opt.id}
+                              onClick={() => { setServiceMode(opt.id); setServiceModeOpen(false); }}
+                              className={`w-full text-left p-3 rounded-xl border transition-all flex items-start gap-3 ${
+                                active ? "border-primary bg-primary/10" : "border-border/40 hover:border-primary/40 bg-background/40"
+                              }`}
+                            >
+                              <span className={`mt-0.5 w-4 h-4 rounded-full border-2 grid place-items-center flex-shrink-0 ${active ? "border-primary" : "border-border/60"}`}>
+                                {active && <span className="w-2 h-2 rounded-full bg-primary" />}
+                              </span>
+                              <span className="flex-1 min-w-0">
+                                <span className="block text-sm font-semibold">{opt.title}</span>
+                                <span className="block text-xs opacity-75 mt-0.5">{opt.desc}</span>
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
+                )}
+
+                {showCompanyName && (
+                  <Field
+                    label="Proposed company name (the company you want to register)"
+                    value={form.company_name}
+                    onChange={(v) => setForm({ ...form, company_name: v })}
+                    required
+                    minLength={2}
+                    placeholder="e.g. Acme Trading Ltd — add alternatives in Notes below"
+                  />
                 )}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Field label="Full name" value={form.full_name} onChange={(v) => setForm({ ...form, full_name: v })} required minLength={2} />
