@@ -473,6 +473,61 @@ const CheckoutFlow = ({
                     placeholder="e.g. WELCOME10"
                   />
                 </div>
+
+                {/* ID Documents */}
+                <div className="rounded-2xl border border-border/40 p-4 md:p-5 space-y-4">
+                  <div>
+                    <h3 className="font-semibold">ID documents <span className="opacity-60 font-normal text-sm">(optional — speeds up verification)</span></h3>
+                    <p className="text-xs opacity-70 mt-1">Upload a clear photo of your ID and a holding-selfie. Tap "View example" to see what we need.</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1.5">ID type</label>
+                    <div className="flex gap-2">
+                      {(["id_card", "passport"] as const).map((t) => (
+                        <button
+                          type="button"
+                          key={t}
+                          onClick={() => { setIdType(t); if (t === "passport") setIdBack(null); }}
+                          className={`px-4 py-2 rounded-xl text-sm font-semibold border transition-all ${
+                            idType === t ? "border-primary bg-primary/15 text-primary" : "border-border/40 hover:border-primary/40"
+                          }`}
+                        >
+                          {t === "id_card" ? "National ID Card" : "Passport"}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <UploadField
+                    label={idType === "passport" ? "Passport (photo page)" : "ID card — front"}
+                    file={idFront}
+                    onChange={setIdFront}
+                    onViewExample={() =>
+                      setExampleOpen(
+                        idType === "passport"
+                          ? { title: "Example: Passport photo page", src: examplePassport }
+                          : { title: "Example: ID card (front)", src: exampleIdFront }
+                      )
+                    }
+                  />
+
+                  {idType === "id_card" && (
+                    <UploadField
+                      label="ID card — back"
+                      file={idBack}
+                      onChange={setIdBack}
+                      onViewExample={() => setExampleOpen({ title: "Example: ID card (back)", src: exampleIdBack })}
+                    />
+                  )}
+
+                  <UploadField
+                    label="Holding selfie (you holding your ID)"
+                    file={holdingSelfie}
+                    onChange={setHoldingSelfie}
+                    onViewExample={() => setExampleOpen({ title: "Example: Holding selfie", src: exampleHoldingSelfie })}
+                  />
+                </div>
               </div>
             )}
 
