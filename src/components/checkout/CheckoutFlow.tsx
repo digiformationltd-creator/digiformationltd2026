@@ -630,49 +630,104 @@ const CheckoutFlow = ({
                 </div>
 
                 {/* ID Documents */}
+                {idVerificationActive && (
                 <div className="rounded-2xl border border-border/40 p-4 md:p-5 space-y-4">
                   <div>
                     <h3 className="font-semibold">ID documents <span className="opacity-60 font-normal text-sm">(optional — speeds up verification)</span></h3>
-                    <p className="text-xs opacity-70 mt-1">Upload a clear photo of your ID and a holding-selfie. Tap "View example" to see what we need.</p>
+                    <p className="text-xs opacity-70 mt-1">Pick the ID type, then upload a clear photo. Tap "View example" to see what we need.</p>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium mb-1.5">ID type</label>
-                    <div className="flex gap-2">
-                      {(["id_card", "passport"] as const).map((t) => (
+                  {/* ID type accordion */}
+                  {(() => {
+                    const ID_OPTIONS = [
+                      { id: "id_card", title: "National ID Card", desc: "Front + back required.", icon: IdCard },
+                      { id: "passport", title: "Passport", desc: "Photo page only.", icon: BookUser },
+                      { id: "driving_licence", title: "Driving Licence", desc: "Front + back required.", icon: Car },
+                    ] as const;
+                    const current = ID_OPTIONS.find((o) => o.id === idType)!;
+                    const CurrentIcon = current.icon;
+                    return (
+                      <div className="rounded-xl border border-border/40 overflow-hidden">
                         <button
                           type="button"
-                          key={t}
-                          onClick={() => { setIdType(t); if (t === "passport") setIdBack(null); }}
-                          className={`px-4 py-2 rounded-xl text-sm font-semibold border transition-all ${
-                            idType === t ? "border-primary bg-primary/15 text-primary" : "border-border/40 hover:border-primary/40"
-                          }`}
+                          onClick={() => setIdTypeOpen((o) => !o)}
+                          className="w-full flex items-center justify-between gap-3 p-3 md:p-4 text-left bg-muted/20"
+                          aria-expanded={idTypeOpen}
                         >
-                          {t === "id_card" ? "National ID Card" : "Passport"}
+                          <span className="flex items-center gap-3">
+                            <CurrentIcon className="w-5 h-5 text-primary" />
+                            <span>
+                              <span className="block text-sm font-semibold">ID type — {current.title}</span>
+                              <span className="block text-xs opacity-70 mt-0.5">{current.desc}</span>
+                            </span>
+                          </span>
+                          <ChevronDown className={`w-4 h-4 transition-transform ${idTypeOpen ? "rotate-180" : ""}`} />
                         </button>
-                      ))}
-                    </div>
-                  </div>
+                        {idTypeOpen && (
+                          <div className="p-2 space-y-1.5 bg-background/40">
+                            {ID_OPTIONS.map((opt) => {
+                              const active = idType === opt.id;
+                              const OptIcon = opt.icon;
+                              return (
+                                <button
+                                  type="button"
+                                  key={opt.id}
+                                  onClick={() => {
+                                    setIdType(opt.id);
+                                    setIdTypeOpen(false);
+                                    if (opt.id === "passport") setIdBack(null);
+                                  }}
+                                  className={`w-full flex items-start gap-3 text-left p-3 rounded-lg border transition-all ${
+                                    active ? "border-primary bg-primary/10" : "border-transparent hover:border-primary/30 hover:bg-primary/5"
+                                  }`}
+                                >
+                                  <OptIcon className={`w-5 h-5 mt-0.5 ${active ? "text-primary" : "opacity-70"}`} />
+                                  <span className="flex-1 min-w-0">
+                                    <span className="block text-sm font-semibold">{opt.title}</span>
+                                    <span className="block text-xs opacity-70 mt-0.5">{opt.desc}</span>
+                                  </span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
 
                   <UploadField
-                    label={idType === "passport" ? "Passport (photo page)" : "ID card — front"}
+                    label={
+                      idType === "passport"
+                        ? "Passport (photo page)"
+                        : idType === "driving_licence"
+                          ? "Driving licence — front"
+                          : "ID card — front"
+                    }
                     file={idFront}
                     onChange={setIdFront}
                     onViewExample={() =>
                       setExampleOpen(
                         idType === "passport"
                           ? { title: "Example: Passport photo page", src: examplePassport }
-                          : { title: "Example: ID card (front)", src: exampleIdFront }
+                          : idType === "driving_licence"
+                            ? { title: "Example: Driving licence (front)", src: exampleIdFront }
+                            : { title: "Example: ID card (front)", src: exampleIdFront }
                       )
                     }
                   />
 
-                  {idType === "id_card" && (
+                  {idType !== "passport" && (
                     <UploadField
-                      label="ID card — back"
+                      label={idType === "driving_licence" ? "Driving licence — back" : "ID card — back"}
                       file={idBack}
                       onChange={setIdBack}
-                      onViewExample={() => setExampleOpen({ title: "Example: ID card (back)", src: exampleIdBack })}
+                      onViewExample={() =>
+                        setExampleOpen(
+                          idType === "driving_licence"
+                            ? { title: "Example: Driving licence (back)", src: exampleIdBack }
+                            : { title: "Example: ID card (back)", src: exampleIdBack }
+                        )
+                      }
                     />
                   )}
 
@@ -695,6 +750,7 @@ const CheckoutFlow = ({
                     </div>
                   )}
                 </div>
+                )}
               </div>
             )}
 
