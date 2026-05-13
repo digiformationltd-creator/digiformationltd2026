@@ -131,62 +131,30 @@ body p, body span, body li, body label, body small, body div {
     box-shadow: 0 12px 40px hsl(220 10% 4% / 0.5), inset 0 1px 0 hsl(220 12% 88% / 0.08);
   }
 
-  /* ── Muted glass color variants (dull / low-saturation tints) ── */
-  .glass-sage   { background: hsl(155 14% 14% / 0.55); border-color: hsl(155 18% 52% / 0.30); }
-  .glass-rose   { background: hsl(345 14% 14% / 0.55); border-color: hsl(345 18% 55% / 0.30); }
-  .glass-amber  { background: hsl(42  16% 14% / 0.55); border-color: hsl(42  20% 50% / 0.30); }
-  .glass-sky    { background: hsl(200 14% 14% / 0.55); border-color: hsl(200 18% 55% / 0.30); }
-  .glass-lavender{ background: hsl(255 14% 14% / 0.55); border-color: hsl(255 16% 55% / 0.30); }
-  .glass-teal   { background: hsl(175 14% 14% / 0.55); border-color: hsl(175 18% 52% / 0.30); }
-  .glass-coral  { background: hsl(12  14% 14% / 0.55); border-color: hsl(12  18% 52% / 0.30); }
-  .glass-slate  { background: hsl(220 12% 14% / 0.55); border-color: hsl(220 14% 55% / 0.30); }
-
-  .glass-sage:hover   { background: hsl(155 18% 22% / 0.72); border-color: hsl(155 22% 60% / 0.46); box-shadow: 0 12px 40px hsl(155 14% 4% / 0.45), inset 0 1px 0 hsl(155 18% 85% / 0.08); }
-  .glass-rose:hover   { background: hsl(345 18% 22% / 0.72); border-color: hsl(345 22% 62% / 0.46); box-shadow: 0 12px 40px hsl(345 14% 4% / 0.45), inset 0 1px 0 hsl(345 18% 85% / 0.08); }
-  .glass-amber:hover  { background: hsl(42  20% 22% / 0.72); border-color: hsl(42  24% 58% / 0.46); box-shadow: 0 12px 40px hsl(42  16% 4% / 0.45), inset 0 1px 0 hsl(42  20% 85% / 0.08); }
-  .glass-sky:hover    { background: hsl(200 18% 22% / 0.72); border-color: hsl(200 22% 62% / 0.46); box-shadow: 0 12px 40px hsl(200 14% 4% / 0.45), inset 0 1px 0 hsl(200 18% 85% / 0.08); }
-  .glass-lavender:hover{ background: hsl(255 18% 22% / 0.72); border-color: hsl(255 20% 62% / 0.46); box-shadow: 0 12px 40px hsl(255 14% 4% / 0.45), inset 0 1px 0 hsl(255 18% 85% / 0.08); }
-  .glass-teal:hover   { background: hsl(175 18% 22% / 0.72); border-color: hsl(175 22% 60% / 0.46); box-shadow: 0 12px 40px hsl(175 14% 4% / 0.45), inset 0 1px 0 hsl(175 18% 85% / 0.08); }
-  .glass-coral:hover  { background: hsl(12  18% 22% / 0.72); border-color: hsl(12  22% 60% / 0.46); box-shadow: 0 12px 40px hsl(12  14% 4% / 0.45), inset 0 1px 0 hsl(12  18% 85% / 0.08); }
-  .glass-slate:hover  { background: hsl(220 14% 22% / 0.72); border-color: hsl(220 16% 62% / 0.46); box-shadow: 0 12px 40px hsl(220 10% 4% / 0.45), inset 0 1px 0 hsl(220 12% 85% / 0.08); }
-
-  /* Background-only tints for 3D slider (keep existing borders/shadows) */
-  .glass[data-tint="sage"]    { background: hsl(155 14% 14% / 0.56); }
-  .glass[data-tint="rose"]    { background: hsl(345 14% 14% / 0.56); }
-  .glass[data-tint="amber"]   { background: hsl(42  16% 14% / 0.56); }
-  .glass[data-tint="sky"]     { background: hsl(200 14% 14% / 0.56); }
-  .glass[data-tint="lavender"]{ background: hsl(255 14% 14% / 0.56); }
-  .glass[data-tint="teal"]    { background: hsl(175 14% 14% / 0.56); }
-  .glass[data-tint="coral"]   { background: hsl(12  14% 14% / 0.56); }
-  .glass[data-tint="slate"]   { background: hsl(220 12% 14% / 0.56); }
-
-  .glass[data-tint="sage"]:hover    { background: hsl(155 18% 22% / 0.74); }
-  .glass[data-tint="rose"]:hover    { background: hsl(345 18% 22% / 0.74); }
-  .glass[data-tint="amber"]:hover   { background: hsl(42  20% 22% / 0.74); }
-  .glass[data-tint="sky"]:hover     { background: hsl(200 18% 22% / 0.74); }
-  .glass[data-tint="lavender"]:hover{ background: hsl(255 18% 22% / 0.74); }
-  .glass[data-tint="teal"]:hover    { background: hsl(175 18% 22% / 0.74); }
-  .glass[data-tint="coral"]:hover   { background: hsl(12  18% 22% / 0.74); }
-  .glass[data-tint="slate"]:hover   { background: hsl(220 14% 22% / 0.74); }
-
-  /* Icon tint helpers */
-  .glass-sage   .card-icon, .glass[data-tint="sage"]    .card-icon { color: hsl(155 32% 78%); background: linear-gradient(135deg, hsl(155 22% 20% / 0.65), hsl(155 14% 14% / 0.50)); border-color: hsl(155 24% 52% / 0.38); }
-  .glass-rose   .card-icon, .glass[data-tint="rose"]    .card-icon { color: hsl(345 32% 80%); background: linear-gradient(135deg, hsl(345 22% 20% / 0.65), hsl(345 14% 14% / 0.50)); border-color: hsl(345 24% 54% / 0.38); }
-  .glass-amber  .card-icon, .glass[data-tint="amber"]   .card-icon { color: hsl(42  34% 76%); background: linear-gradient(135deg, hsl(42  24% 20% / 0.65), hsl(42  16% 14% / 0.50)); border-color: hsl(42  26% 50% / 0.38); }
-  .glass-sky    .card-icon, .glass[data-tint="sky"]     .card-icon { color: hsl(200 32% 80%); background: linear-gradient(135deg, hsl(200 22% 20% / 0.65), hsl(200 14% 14% / 0.50)); border-color: hsl(200 24% 54% / 0.38); }
-  .glass-lavender .card-icon, .glass[data-tint="lavender"] .card-icon { color: hsl(255 30% 80%); background: linear-gradient(135deg, hsl(255 20% 20% / 0.65), hsl(255 14% 14% / 0.50)); border-color: hsl(255 22% 54% / 0.38); }
-  .glass-teal   .card-icon, .glass[data-tint="teal"]    .card-icon { color: hsl(175 32% 78%); background: linear-gradient(135deg, hsl(175 22% 20% / 0.65), hsl(175 14% 14% / 0.50)); border-color: hsl(175 24% 52% / 0.38); }
-  .glass-coral  .card-icon, .glass[data-tint="coral"]   .card-icon { color: hsl(12  32% 78%); background: linear-gradient(135deg, hsl(12  22% 20% / 0.65), hsl(12  14% 14% / 0.50)); border-color: hsl(12  24% 52% / 0.38); }
-  .glass-slate  .card-icon, .glass[data-tint="slate"]   .card-icon { color: hsl(220 24% 80%); background: linear-gradient(135deg, hsl(220 16% 20% / 0.65), hsl(220 10% 14% / 0.50)); border-color: hsl(220 18% 54% / 0.38); }
-
-  /* Keep tinted glass cards static: no RGB cycling or blinking. */
+  /* Legacy color classes now resolve to one static neutral glass style. */
   .glass-sage, .glass-rose, .glass-amber, .glass-sky,
   .glass-lavender, .glass-teal, .glass-coral, .glass-slate,
-  .glass[data-tint],
-  .glass[data-tint] .card-icon,
+  .glass[data-tint] {
+    background: hsl(220 14% 13% / 0.55);
+    border-color: hsl(220 16% 60% / 0.22);
+    animation: none;
+  }
+
+  .glass-sage:hover, .glass-rose:hover, .glass-amber:hover, .glass-sky:hover,
+  .glass-lavender:hover, .glass-teal:hover, .glass-coral:hover, .glass-slate:hover,
+  .glass[data-tint]:hover {
+    background: hsl(220 16% 22% / 0.72);
+    border-color: hsl(220 18% 65% / 0.38);
+    box-shadow: 0 12px 40px hsl(220 10% 4% / 0.5), inset 0 1px 0 hsl(220 12% 88% / 0.08);
+  }
+
   .glass-sage .card-icon, .glass-rose .card-icon, .glass-amber .card-icon,
   .glass-sky .card-icon, .glass-lavender .card-icon, .glass-teal .card-icon,
-  .glass-coral .card-icon, .glass-slate .card-icon {
+  .glass-coral .card-icon, .glass-slate .card-icon,
+  .glass[data-tint] .card-icon {
+    color: hsl(var(--primary));
+    background: linear-gradient(135deg, hsl(220 12% 22% / 0.65), hsl(220 10% 14% / 0.50));
+    border-color: hsl(220 16% 60% / 0.22);
     animation: none;
   }
 
