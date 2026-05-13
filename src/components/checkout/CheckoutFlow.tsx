@@ -772,6 +772,7 @@ const CheckoutFlow = ({
                     <p className="text-xs opacity-60 mt-1">Add up to 4 or more SIC codes that match your business activity.</p>
                   </div>
                 </div>
+                <div>
                   <label className="block text-sm font-medium mb-1.5">Promo code <span className="opacity-60 font-normal">(optional)</span></label>
                   <input
                     type="text"
