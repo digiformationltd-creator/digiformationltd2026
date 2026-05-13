@@ -300,6 +300,11 @@ const CheckoutFlow = ({
         ? "ID verification already done elsewhere — only register UK Ltd"
         : "Both: ID Verification + Company Formation";
 
+    const activityText =
+      form.business_category === "Other"
+        ? form.business_other.trim()
+        : `${form.business_category}${form.business_subcategory ? ` — ${form.business_subcategory}` : ""}`;
+
     const summary =
       `[${serviceTitle} Order]\n` +
       `Ref: ${orderRef}\n` +
@@ -312,8 +317,7 @@ const CheckoutFlow = ({
       `Total: ${formatMoney(total, currency)}\n` +
       (form.promo_code ? `Promo code: ${form.promo_code}\n` : "") +
       addressBlock +
-      `\nCustomer note:\n${form.message}` +
-      (form.additional_note ? `\n\nAdditional note:\n${form.additional_note}` : "");
+      `\nBusiness activity:\n${activityText}`;
 
     const { error } = await supabase.from("contact_submissions").insert({
       full_name: form.full_name,
