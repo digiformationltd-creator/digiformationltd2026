@@ -495,7 +495,7 @@ const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: stri
 
   const tabs = [
     { id: "company", label: `Company (${companies.length})` },
-    { id: "addresses", label: `Address & Subscription (${addresses.length})` },
+    { id: "addresses", label: `Address Subscription (${addresses.length})` },
     { id: "orders", label: `Orders (${orders.length})` },
     { id: "invoices", label: `Invoices (${invoices.length})` },
     { id: "wallet", label: `Wallet (${wallet.length})` },
