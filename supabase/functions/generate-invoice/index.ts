@@ -310,8 +310,9 @@ Deno.serve(async (req) => {
       notes: body.notes,
     })
 
-    // 2. Upload to storage
-    const path = `${user.id}/${invoiceNumber}.pdf`
+    // 2. Upload to storage (under user folder if authed, else `guest/`)
+    const folder = user ? user.id : 'guest'
+    const path = `${folder}/${invoiceNumber}.pdf`
     const { error: upErr } = await admin.storage.from('invoices').upload(
       path,
       new Uint8Array(pdfBytes),
@@ -319,41 +320,43 @@ Deno.serve(async (req) => {
     )
     if (upErr) throw upErr
 
-    // 3. Insert order
-    const { data: order, error: orderErr } = await admin
-      .from('client_orders')
-      .insert({
+    // 3 & 4. For authenticated users, persist order + invoice rows so they
+    // appear in the client's portal Invoices section. Guests get just the PDF.
+    if (user) {
+      const { data: order, error: orderErr } = await admin
+        .from('client_orders')
+        .insert({
+          user_id: user.id,
+          order_ref: orderRef,
+          service: body.packageName ? `${body.service} — ${body.packageName}` : body.service,
+          amount_gbp: body.amount_gbp,
+          status: 'Pending',
+        })
+        .select('id')
+        .single()
+      if (orderErr) throw orderErr
+
+      const { error: invErr } = await admin.from('invoices').insert({
         user_id: user.id,
-        order_ref: orderRef,
-        service: body.packageName ? `${body.service} — ${body.packageName}` : body.service,
+        order_id: order.id,
+        invoice_number: invoiceNumber,
+        service_description: body.packageName ? `${body.service} — ${body.packageName}` : body.service,
+        service_code: 'O',
         amount_gbp: body.amount_gbp,
-        status: 'Pending',
+        vat_rate: 0,
+        vat_gbp: 0,
+        total_gbp: body.amount_gbp,
+        currency,
+        status: 'Unpaid',
+        bill_to_name: body.customer.full_name,
+        bill_to_email: body.customer.email,
+        bill_to_address: body.customer.address ?? null,
+        pdf_url: path,
       })
-      .select('id')
-      .single()
-    if (orderErr) throw orderErr
+      if (invErr) throw invErr
+    }
 
-    // 4. Insert invoice
-    const { error: invErr } = await admin.from('invoices').insert({
-      user_id: user.id,
-      order_id: order.id,
-      invoice_number: invoiceNumber,
-      service_description: body.packageName ? `${body.service} — ${body.packageName}` : body.service,
-      service_code: 'O',
-      amount_gbp: body.amount_gbp,
-      vat_rate: 0,
-      vat_gbp: 0,
-      total_gbp: body.amount_gbp,
-      currency,
-      status: 'Unpaid',
-      bill_to_name: body.customer.full_name,
-      bill_to_email: body.customer.email,
-      bill_to_address: body.customer.address ?? null,
-      pdf_url: path,
-    })
-    if (invErr) throw invErr
-
-    // 5. Signed download URL (7 days)
+    // 5. Signed download URL (7 days) — works for guests and authed users
     const { data: signed, error: sErr } = await admin.storage
       .from('invoices')
       .createSignedUrl(path, 60 * 60 * 24 * 7)
