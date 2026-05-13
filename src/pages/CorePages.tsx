@@ -654,8 +654,8 @@ const bankingPackages: DetailPkg[] = bankingProviders.map((b, i) => ({
 // Web Development Packages
 const webDevPackages: DetailPkg[] = [
   {
-    name: "Shopify Store",
-    price: "£50",
+    name: "E-commerce Store",
+    price: "£30",
     badge: "Best Value",
     note: "E-commerce Setup",
     tone: "from-rose-500/25 to-rose-500/5",
@@ -675,7 +675,7 @@ const webDevPackages: DetailPkg[] = [
   },
   {
     name: "React Basic",
-    price: "£30",
+    price: "£40",
     note: "Website Package",
     tone: "from-emerald-500/20 to-emerald-500/5",
     ring: "ring-emerald-500/40",
