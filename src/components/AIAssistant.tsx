@@ -150,15 +150,22 @@ const AIAssistant = () => {
 
       {/* Chat window */}
       {open && (
-        <div className="hide-on-nav-open fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-24 z-[60] sm:w-[400px] sm:h-[600px] bg-background sm:rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
+        <>
+          {/* Backdrop — tap outside to close */}
+          <div
+            onClick={() => setOpen(false)}
+            className="hide-on-nav-open fixed inset-0 z-[55] bg-black/40 sm:bg-black/20 animate-in fade-in duration-200"
+            aria-hidden="true"
+          />
+          <div className="hide-on-nav-open fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-24 z-[60] sm:w-[400px] sm:h-[600px] bg-background sm:rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
           {/* Header */}
           <div className="bg-gradient-brand text-primary-foreground p-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="bg-white/20 backdrop-blur p-2 rounded-full">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="bg-white/20 backdrop-blur p-2 rounded-full flex-shrink-0">
                 <Sparkles className="w-5 h-5" />
               </div>
-              <div>
-                <h3 className="font-bold text-base leading-tight">Digi Assistant</h3>
+              <div className="min-w-0">
+                <h3 className="font-bold text-base leading-tight truncate">Digi Assistant</h3>
                 <p className="text-xs opacity-90 flex items-center gap-1">
                   <span className="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
                   Online • Replies instantly
@@ -166,11 +173,12 @@ const AIAssistant = () => {
               </div>
             </div>
             <button
+              type="button"
               onClick={() => setOpen(false)}
-              aria-label="Close"
-              className="p-1.5 hover:bg-white/20 rounded-full transition-colors"
+              aria-label="Close chat"
+              className="relative z-10 flex items-center justify-center w-10 h-10 rounded-full bg-white/15 hover:bg-white/30 active:bg-white/40 transition-colors flex-shrink-0 ring-1 ring-white/20"
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5" strokeWidth={2.5} />
             </button>
           </div>
 
