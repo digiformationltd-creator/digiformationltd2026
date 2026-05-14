@@ -66,7 +66,13 @@ const DigiCaseStudies = () => (
               to={c.href}
               className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] hover:gap-3 transition-all"
             >
-              {c.href.startsWith("/uk-compliance") ? "View Compliance Services" : "View Packages"} <ArrowRight className="w-3.5 h-3.5" />
+              {c.href.startsWith("/uk-compliance")
+                ? "View Compliance Services"
+                : c.href.includes("/usa-services/us-llc-formation/choose-state")
+                ? "Select State"
+                : c.href.includes("/uk-services/uk-ltd-formation/choose-jurisdiction")
+                ? "Select Jurisdiction"
+                : "View Packages"} <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </article>
           );
