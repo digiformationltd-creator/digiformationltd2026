@@ -18,6 +18,8 @@ import {
   IdCard,
   BookUser,
   Car,
+  Send,
+  ScanFace,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -200,6 +202,7 @@ const CheckoutFlow = ({
   const [idBack, setIdBack] = useState<File | null>(null);
   const [holdingSelfie, setHoldingSelfie] = useState<File | null>(null);
   const [showSicCodes, setShowSicCodes] = useState(false);
+  const [verificationLinkRequested, setVerificationLinkRequested] = useState(false);
   const [exampleOpen, setExampleOpen] = useState<null | { title: string; src: string }>(null);
   const [serviceMode, setServiceMode] = useState<"ltd-only" | "both">("both");
   const [serviceModeOpen, setServiceModeOpen] = useState(true);
@@ -256,7 +259,8 @@ const CheckoutFlow = ({
         form.business_category.trim().length > 0 &&
         (form.business_category === "Other"
           ? form.business_other.trim().length >= 10
-          : form.business_subcategory.trim().length > 0)
+          : form.business_subcategory.trim().length > 0) &&
+        (!(idVerificationActive && liveSelfieLink) || verificationLinkRequested)
       );
     }
     return true;
@@ -918,21 +922,71 @@ const CheckoutFlow = ({
                         onViewExample={() => setExampleOpen({ title: "Example: Holding selfie", src: exampleHoldingSelfie })}
                       />
                       <p className="text-xs opacity-75 leading-relaxed rounded-lg bg-muted/40 border border-border/60 p-3">
-                        <span className="font-semibold">What is a holding selfie?</span> Hold your ID document
-                        (passport, ID card or driving licence) next to your face in your hand and take a clear
-                        photo. Your face and the details on the document must both be fully visible and readable
-                        in the same picture. Tap "View example" above to see exactly what we need.
+                        <span className="font-semibold">Tip:</span> Hold your ID next to your face — both must be fully visible and readable in one photo.
                       </p>
                     </div>
                   )}
 
-                  {liveSelfieMode === "link" && (
-                    <div className="rounded-xl bg-primary/10 border border-primary/30 p-4 text-sm">
-                      <p className="font-semibold text-primary mb-1">Live selfie verification</p>
-                      <p className="opacity-85">
-                        After you place your order, we will email you a secure live-selfie verification link.
-                        Please complete it from your phone — it takes about 1 minute.
-                      </p>
+                  {liveSelfieLink && (
+                    <div className="rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-background border-2 border-primary/40 p-5 space-y-4">
+                      <div className="flex items-start gap-3">
+                        <div className="w-11 h-11 rounded-xl bg-primary text-primary-foreground grid place-items-center flex-shrink-0">
+                          <ScanFace className="w-6 h-6" />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-bold text-base">Live ID Verification Link <span className="text-destructive">*</span></h4>
+                          <p className="text-xs opacity-75 mt-0.5">Required by Companies House — takes about 2 minutes.</p>
+                        </div>
+                      </div>
+
+                      <div className="rounded-xl bg-background/60 border border-border/40 p-4 space-y-2.5">
+                        <p className="text-xs font-semibold uppercase tracking-wider opacity-70">What you'll do on the link:</p>
+                        <ol className="space-y-1.5 text-sm">
+                          <li className="flex gap-2.5"><span className="font-bold text-primary">1.</span><span><strong>Live face scan</strong> — quick selfie scan from your phone camera</span></li>
+                          <li className="flex gap-2.5"><span className="font-bold text-primary">2.</span><span><strong>Live passport / ID scan</strong> — scan your document with your camera</span></li>
+                          <li className="flex gap-2.5"><span className="font-bold text-primary">3.</span><span><strong>Email verification</strong> — confirm your email address</span></li>
+                        </ol>
+                      </div>
+
+                      {!verificationLinkRequested ? (
+                        <>
+                          <button
+                            type="button"
+                            disabled={!/\S+@\S+\.\S+/.test(form.email)}
+                            onClick={() => {
+                              if (!/\S+@\S+\.\S+/.test(form.email)) {
+                                toast({ title: "Enter your email first", description: "We need your email to send the verification link.", variant: "destructive" });
+                                return;
+                              }
+                              window.open(liveSelfieLink, "_blank", "noopener,noreferrer");
+                              setVerificationLinkRequested(true);
+                              toast({ title: "Verification link opened", description: `Also saved to your order — we'll email a copy to ${form.email}.` });
+                            }}
+                            className="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-primary text-primary-foreground font-bold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                          >
+                            <Send className="w-4 h-4" /> Get Verification Link
+                          </button>
+                          <p className="text-xs text-center opacity-70">👆 Click here, then continue to the next step</p>
+                        </>
+                      ) : (
+                        <div className="rounded-xl bg-primary/15 border border-primary/40 p-4 space-y-2">
+                          <div className="flex items-center gap-2 text-primary font-semibold text-sm">
+                            <CheckCircle2 className="w-5 h-5" /> Link sent to your email
+                          </div>
+                          <p className="text-xs opacity-85 leading-relaxed">
+                            Open the link from <span className="font-semibold">{form.email}</span>, complete all 3 steps,
+                            then send us a screenshot of the success page on <span className="font-semibold">WhatsApp</span> or reply to our email.
+                            You can now continue to review your order.
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => window.open(liveSelfieLink, "_blank", "noopener,noreferrer")}
+                            className="text-xs font-semibold text-primary hover:underline"
+                          >
+                            Open verification link again →
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
