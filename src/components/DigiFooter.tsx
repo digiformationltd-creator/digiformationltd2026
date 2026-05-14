@@ -138,8 +138,8 @@ const DigiFooter = () => {
       <div className="container mx-auto px-4 py-10 sm:py-14 grid gap-8 sm:gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 items-start">
         {/* Brand */}
         <div className="flex flex-col items-center text-center sm:items-start sm:text-left sm:col-span-2 lg:col-span-1">
-          <img src={logo} alt="Digiformation Ltd logo — trusted UK Limited Company & US LLC formation worldwide" className="h-20 w-auto object-contain mb-4" />
-          <p className="text-xs opacity-75 mb-4 leading-relaxed">
+          <img src={logo} alt="Digiformation Ltd logo — trusted UK Limited Company & US LLC formation worldwide" className="h-14 w-auto object-contain mb-3" />
+          <p className="text-xs opacity-75 mb-3 leading-relaxed">
             Founded by Muhammad Haroon — UK & US company formation, banking & compliance.
           </p>
           <div className="text-xs uppercase tracking-[0.18em] font-semibold mb-3 opacity-90">Connect With Us</div>
