@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 import { ArrowRight, CheckCircle2, Wallet } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,10 @@ import { usaServicePages } from "@/data/usaServices";
 import { useSeo } from "@/lib/seo";
 
 const UsaServicePage = () => {
-  const { slug } = useParams();
+  const params = useParams();
+  const location = useLocation();
+  // Routes are registered as literal paths (no :slug param), so derive slug from the URL.
+  const slug = params.slug || location.pathname.split("/").filter(Boolean).pop() || "";
   const page = usaServicePages.find((p) => p.slug === slug);
 
   useSeo(
