@@ -394,6 +394,7 @@ export const Contact = () => {
                 </Select>
               );
             })()}
+            </div>
 
             <div>
               <Label htmlFor="message">Your Message</Label>
