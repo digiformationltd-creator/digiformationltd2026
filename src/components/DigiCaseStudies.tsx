@@ -10,7 +10,7 @@ const cases = [
       "Company Formation",
       "Banks",
     ],
-    href: "/pricing",
+    href: "/uk-services/uk-ltd-formation/choose-jurisdiction",
   },
   {
     tag: "We launch your US business end-to-end",
@@ -20,7 +20,7 @@ const cases = [
       "EIN",
       "Banks",
     ],
-    href: "/pricing",
+    href: "/usa-services/us-llc-formation/choose-state",
   },
   {
     tag: "UK Compliance",
@@ -30,7 +30,7 @@ const cases = [
       "Annual accounts prepared and submitted",
       "Director and PSC records kept fully compliant",
     ],
-    href: "/contact",
+    href: "/uk-compliance",
   },
 ];
 
