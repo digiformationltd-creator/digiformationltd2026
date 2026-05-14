@@ -946,7 +946,7 @@ const CheckoutFlow = ({
                 <div className="rounded-2xl border border-border/40 p-4">
                   <h3 className="font-semibold mb-2">Customer</h3>
                   <dl className="grid sm:grid-cols-2 gap-2 text-sm">
-                    <ReviewLine label="Name" value={form.full_name} />
+                    <ReviewLine label="Name" value={`${form.first_name} ${form.last_name}`.trim()} />
                     <ReviewLine label="Email" value={form.email} />
                     <ReviewLine label="WhatsApp" value={form.whatsapp} />
                     <ReviewLine label="Country" value={form.country} />
