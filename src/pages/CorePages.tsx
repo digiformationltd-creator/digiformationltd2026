@@ -322,9 +322,21 @@ export const Contact = () => {
               />
             </div>
 
-            <Button type="submit" variant="hero" size="lg" className="rounded-full w-full sm:w-auto" disabled={submitting}>
-              {submitting ? "Sending…" : "Get Free Consultation"} <ArrowRight className="w-4 h-4" />
-            </Button>
+            {(() => {
+              const applicationServices = [
+                "PayPal","Payoneer","Stripe","Wise","WorldFirst","Tide","Airwallex","PingPong","Mollie","Wallester","Sunrate","ZionPe","Banking & Payments",
+                "EIN Number Service","ITIN Number Service","Annual Tax Filing Service","BOI Report Service",
+                "UK LTD Formation","USA LLC Formation","ID Verification","UTR / EIN / ITIN","Annual Filing","Company Changes","Address Services",
+              ];
+              const isApplication = applicationServices.includes(form.service);
+              const idleLabel = isApplication ? "Submit Application" : "Send Message";
+              const busyLabel = isApplication ? "Submitting…" : "Sending…";
+              return (
+                <Button type="submit" variant="hero" size="lg" className="rounded-full w-full sm:w-auto" disabled={submitting}>
+                  {submitting ? busyLabel : idleLabel} <ArrowRight className="w-4 h-4" />
+                </Button>
+              );
+            })()}
 
             <p className="text-[11px] opacity-70 leading-relaxed pt-1">
               By submitting this form, you agree to our{" "}
