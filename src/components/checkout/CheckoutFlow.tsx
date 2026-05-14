@@ -190,13 +190,13 @@ const CheckoutFlow = ({
     business_subcategory: "",
     business_other: "",
     sic_codes: "",
-    promo_code: "",
   });
   const [idType, setIdType] = useState<"id_card" | "passport" | "driving_licence">("id_card");
   const [idTypeOpen, setIdTypeOpen] = useState(false);
   const [idFront, setIdFront] = useState<File | null>(null);
   const [idBack, setIdBack] = useState<File | null>(null);
   const [holdingSelfie, setHoldingSelfie] = useState<File | null>(null);
+  const [showSicCodes, setShowSicCodes] = useState(false);
   const [exampleOpen, setExampleOpen] = useState<null | { title: string; src: string }>(null);
   const [serviceMode, setServiceMode] = useState<"ltd-only" | "both">("both");
   const [serviceModeOpen, setServiceModeOpen] = useState(true);
@@ -317,7 +317,7 @@ const CheckoutFlow = ({
       `Subtotal: ${formatMoney(subtotal, currency)}\n` +
       (vat ? `VAT (${(vatRate * 100).toFixed(0)}%): ${formatMoney(vat, currency)}\n` : "") +
       `Total: ${formatMoney(total, currency)}\n` +
-      (form.promo_code ? `Promo code: ${form.promo_code}\n` : "") +
+      
       addressBlock +
       `\nBusiness activity:\n${activityText}`;
 
@@ -759,28 +759,43 @@ const CheckoutFlow = ({
                       />
                     </div>
                   )}
-                  <div>
-                    <label className="block text-sm font-medium mb-1.5">SIC codes <span className="opacity-60 font-normal">(optional)</span></label>
-                    <textarea
-                      value={form.sic_codes}
-                      onChange={(e) => setForm({ ...form, sic_codes: e.target.value })}
-                      rows={2}
-                      maxLength={500}
-                      className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
-                      placeholder="Type your SIC codes (e.g. 62012, 62020, 70229, 73110)"
-                    />
-                    <p className="text-xs opacity-60 mt-1">Add up to 4 or more SIC codes that match your business activity.</p>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1.5">Promo code <span className="opacity-60 font-normal">(optional)</span></label>
-                  <input
-                    type="text"
-                    value={form.promo_code}
-                    onChange={(e) => setForm({ ...form, promo_code: e.target.value.toUpperCase() })}
-                    className="w-full px-4 py-2.5 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm uppercase tracking-wider"
-                    placeholder="e.g. WELCOME10"
-                  />
+                  {form.business_category && (
+                    <div className="pt-1">
+                      {!showSicCodes ? (
+                        <button
+                          type="button"
+                          onClick={() => setShowSicCodes(true)}
+                          className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1.5"
+                        >
+                          + Add SIC codes <span className="opacity-60 font-normal">(optional)</span>
+                        </button>
+                      ) : (
+                        <div>
+                          <div className="flex items-center justify-between mb-1.5">
+                            <label className="block text-sm font-medium">SIC codes <span className="opacity-60 font-normal">(optional)</span></label>
+                            <button
+                              type="button"
+                              onClick={() => { setShowSicCodes(false); setForm({ ...form, sic_codes: "" }); }}
+                              className="text-xs opacity-60 hover:opacity-100 hover:underline"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                          <textarea
+                            value={form.sic_codes}
+                            onChange={(e) => setForm({ ...form, sic_codes: e.target.value })}
+                            rows={2}
+                            maxLength={500}
+                            className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+                            placeholder="e.g. 62012, 62020, 70229, 73110"
+                          />
+                          <p className="text-xs opacity-70 mt-1">
+                            <span className="font-semibold">Note:</span> You can add a maximum of 4 SIC codes only. Choose the ones that best match your business activity.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* ID Documents */}
@@ -971,12 +986,6 @@ const CheckoutFlow = ({
                       <div className="flex items-center justify-between text-sm">
                         <span className="opacity-80">VAT ({(vatRate * 100).toFixed(0)}%)</span>
                         <span className="font-semibold">{formatMoney(vat, currency)}</span>
-                      </div>
-                    )}
-                    {form.promo_code && (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="opacity-80">Promo code</span>
-                        <span className="font-semibold uppercase">{form.promo_code}</span>
                       </div>
                     )}
                     <div className="flex items-center justify-between text-lg font-bold pt-2">
