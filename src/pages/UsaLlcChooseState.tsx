@@ -32,6 +32,7 @@ const PACKAGE_FEATURES = {
     "Employer Identification Number (EIN)",
     "Digital Company Documents (PDF)",
     "Certificate of Formation (Digital)",
+    "Client Portal Access (document uploads & status updates)",
     "24/7 Support",
   ],
   Silver: [
@@ -41,6 +42,7 @@ const PACKAGE_FEATURES = {
     "Employer Identification Number (EIN)",
     "Digital Company Documents (PDF)",
     "Certificate of Formation (Digital)",
+    "Client Portal Access (document uploads & status updates)",
     "24/7 Support",
   ],
   Gold: [
@@ -51,6 +53,7 @@ const PACKAGE_FEATURES = {
     "Individual Taxpayer Identification Number (ITIN) included",
     "Digital Company Documents (PDF)",
     "Certificate of Formation (Digital)",
+    "Client Portal Access (document uploads & status updates)",
     "Priority 24/7 Support",
   ],
 };
