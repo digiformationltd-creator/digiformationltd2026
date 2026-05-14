@@ -215,7 +215,7 @@ const DigiFooter = () => {
                 rel="noopener noreferrer"
                 className="hover:text-primary transition"
               >
-                +92 316 446 7464 (WhatsApp)
+                +92 316 446 7464
               </a>
             </li>
             <li className="flex items-start gap-3">
