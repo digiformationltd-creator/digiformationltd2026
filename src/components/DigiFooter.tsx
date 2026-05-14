@@ -227,21 +227,10 @@ const DigiFooter = () => {
             </li>
             <li className="flex items-start gap-3">
               <MapPin className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-              <a
-                href="https://www.google.com/maps/place/31%C2%B028'58.9%22N+74%C2%B025'22.1%22E/@31.4830225,74.4202212,17z/data=!3m1!4b1!4m4!3m3!8m2!3d31.4830225!4d74.4227961"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-primary transition-colors group"
-                aria-label="Open live meetup location pin in Google Maps"
-              >
-                <span>
-                  Lahore,<br />
-                  Punjab, Pakistan
-                </span>
-                <span className="block mt-1.5 text-[11px] uppercase tracking-widest text-primary opacity-90 group-hover:opacity-100">
-                  📍 Open live location for meetup →
-                </span>
-              </a>
+              <span>
+                Bedian Road, Bhatta Chowk,<br />
+                Lahore, Punjab, Pakistan
+              </span>
             </li>
           </ul>
         </div>
