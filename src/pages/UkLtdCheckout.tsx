@@ -62,8 +62,7 @@ const UkLtdCheckout = () => {
         eyebrow="UK LTD · Step 3 of 3"
         notesPlaceholder="Tell us your proposed company name, alternatives, and business activity..."
         fixedPackageName={packageName}
-        liveSelfieMode="link"
-        liveSelfieLink="https://verify.didit.me/u/dzhdYtifRt-jeb3kZsSptg"
+        liveSelfieMode="upload"
         showCompanyName
         showServiceMode
       />

@@ -32,8 +32,7 @@ const LtdIdVerificationCheckout = () => {
         eyebrow="UK · Compliance"
         notesPlaceholder="Tell us your role (Director / PSC / Secretary / Shareholder), the company name, and any details we should know..."
         fixedPackageName="LTD ID Verification"
-        liveSelfieMode="link"
-        liveSelfieLink="https://verify.didit.me/u/dzhdYtifRt-jeb3kZsSptg"
+        liveSelfieMode="upload"
       />
     </Layout>
   );
