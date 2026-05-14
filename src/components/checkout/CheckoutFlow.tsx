@@ -886,12 +886,20 @@ const CheckoutFlow = ({
                   )}
 
                   {liveSelfieMode === "upload" && (
-                    <UploadField
-                      label="Holding selfie (you holding your ID)"
-                      file={holdingSelfie}
-                      onChange={setHoldingSelfie}
-                      onViewExample={() => setExampleOpen({ title: "Example: Holding selfie", src: exampleHoldingSelfie })}
-                    />
+                    <div className="space-y-2">
+                      <UploadField
+                        label="Holding selfie (you holding your ID)"
+                        file={holdingSelfie}
+                        onChange={setHoldingSelfie}
+                        onViewExample={() => setExampleOpen({ title: "Example: Holding selfie", src: exampleHoldingSelfie })}
+                      />
+                      <p className="text-xs opacity-75 leading-relaxed rounded-lg bg-muted/40 border border-border/60 p-3">
+                        <span className="font-semibold">What is a holding selfie?</span> Hold your ID document
+                        (passport, ID card or driving licence) next to your face in your hand and take a clear
+                        photo. Your face and the details on the document must both be fully visible and readable
+                        in the same picture. Tap "View example" above to see exactly what we need.
+                      </p>
+                    </div>
                   )}
 
                   {liveSelfieMode === "link" && (
