@@ -275,33 +275,125 @@ export const Contact = () => {
 
             <div>
               <Label htmlFor="service">Service Interested In</Label>
-              <Select value={form.service} onValueChange={(v) => setForm({ ...form, service: v })}>
-                <SelectTrigger id="service"><SelectValue placeholder="Choose a service" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="UK LTD Formation">UK LTD Formation</SelectItem>
-                  <SelectItem value="USA LLC Formation">USA LLC Formation</SelectItem>
-                  <SelectItem value="Address Services">Address Services</SelectItem>
-                  <SelectItem value="ID Verification">ID Verification</SelectItem>
-                  <SelectItem value="Annual Filing">Annual Filing</SelectItem>
-                  <SelectItem value="Company Changes">Company Changes</SelectItem>
-                  <SelectItem value="UTR / EIN / ITIN">UTR / EIN / ITIN</SelectItem>
-                  <SelectItem value="PayPal">PayPal Account</SelectItem>
-                  <SelectItem value="Payoneer">Payoneer Account</SelectItem>
-                  <SelectItem value="Stripe">Stripe Account</SelectItem>
-                  <SelectItem value="Wise">Wise Account</SelectItem>
-                  <SelectItem value="WorldFirst">WorldFirst Account</SelectItem>
-                  <SelectItem value="Tide">Tide Business Account</SelectItem>
-                  <SelectItem value="Airwallex">Airwallex Account</SelectItem>
-                  <SelectItem value="PingPong">PingPong Account</SelectItem>
-                  <SelectItem value="Mollie">Mollie Account</SelectItem>
-                  <SelectItem value="Wallester">Wallester Cards</SelectItem>
-                  <SelectItem value="Sunrate">Sunrate Account</SelectItem>
-                  <SelectItem value="ZionPe">ZionPe Account</SelectItem>
-                  <SelectItem value="Banking & Payments">Other Banking & Payments</SelectItem>
-                  <SelectItem value="Web Development">Web Development</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
-                </SelectContent>
-              </Select>
+            {(() => {
+              // Categorized service catalog. When the visitor arrives from a
+              // specific service page (?service=...), we restrict the dropdown
+              // to that category only — so a banking applicant doesn't see
+              // unrelated UK LTD / web-dev options. On /contact (no service
+              // param) we show every category grouped.
+              const CATEGORIES: { key: string; label: string; services: string[] }[] = [
+                {
+                  key: "uk-address",
+                  label: "UK Address Services",
+                  services: [
+                    "Registered Office Address",
+                    "Business Service Address",
+                    "Director Service Address",
+                    "Address Services",
+                  ],
+                },
+                {
+                  key: "uk-services",
+                  label: "UK Services",
+                  services: [
+                    "UK LTD Formation",
+                    "Register UK Limited Company",
+                    "Companies House ID Verification",
+                    "ID Verification",
+                    "LTD ID Verification",
+                    "Confirmation Statement Filing",
+                    "Get UTR Number (HMRC)",
+                    "UTR Number Registration",
+                    "Companies House Authentication Code",
+                    "Activation Code Service",
+                    "UK VAT Registration & Submission",
+                    "VAT Registration",
+                  ],
+                },
+                {
+                  key: "uk-compliance",
+                  label: "UK Compliance & Filings",
+                  services: [
+                    "Company Name Change Service",
+                    "Company Address Change Service",
+                    "Annual Accounts Filing Service",
+                    "Confirmation Statement Service",
+                    "Company Director Appoint & Remove Service",
+                    "Company Shareholder Appoint & Remove Service",
+                    "Company PSC & Secretary Appoint & Remove Service",
+                    "Company Residence Change Service",
+                    "AD01 Form Post Service",
+                    "Annual Filing",
+                    "Company Changes",
+                    "Dormant Company Filing",
+                  ],
+                },
+                {
+                  key: "usa",
+                  label: "USA Services",
+                  services: [
+                    "USA LLC Formation",
+                    "Form US LLC for Non-Residents",
+                    "EIN Number",
+                    "EIN Number Service",
+                    "ITIN Number",
+                    "ITIN Number Service",
+                    "US LLC Annual Tax Return",
+                    "Annual Tax Filing Service",
+                    "BOI Report (Beneficial Ownership)",
+                    "BOI Report Service",
+                    "UTR / EIN / ITIN",
+                  ],
+                },
+                {
+                  key: "banking",
+                  label: "Banking & Payment Solutions",
+                  services: [
+                    "PayPal","Payoneer","WorldFirst","Stripe","Tide","Sunrate","Wise","Zyla",
+                    "Airwallex","Mollie","ZionPe","Wallester","PingPong","Grey","TapTap Send",
+                    "Nsave Business","Banking & Payments",
+                  ],
+                },
+                {
+                  key: "other",
+                  label: "Other",
+                  services: ["Web Development", "Other"],
+                },
+              ];
+
+              const norm = (s: string) => s.trim().toLowerCase();
+              const incoming = norm(form.service);
+              const activeCategory = incoming
+                ? CATEGORIES.find((c) =>
+                    c.services.some((s) => norm(s) === incoming || incoming.includes(norm(s)) || norm(s).includes(incoming))
+                  )
+                : null;
+              const groupsToShow = activeCategory ? [activeCategory] : CATEGORIES;
+
+              return (
+                <Select value={form.service} onValueChange={(v) => setForm({ ...form, service: v })}>
+                  <SelectTrigger id="service"><SelectValue placeholder="Choose a service" /></SelectTrigger>
+                  <SelectContent>
+                    {/* Ensure incoming value is always a valid option even if it
+                        doesn't appear in our static catalog (e.g. specific
+                        provider names from new pages). */}
+                    {form.service && !groupsToShow.some((g) => g.services.includes(form.service)) && (
+                      <SelectItem value={form.service}>{form.service}</SelectItem>
+                    )}
+                    {groupsToShow.map((g) => (
+                      <div key={g.key} className="py-1">
+                        {!activeCategory && (
+                          <div className="px-2 py-1 text-[10px] uppercase tracking-[0.16em] opacity-60">{g.label}</div>
+                        )}
+                        {g.services.map((s) => (
+                          <SelectItem key={s} value={s}>{s}</SelectItem>
+                        ))}
+                      </div>
+                    ))}
+                  </SelectContent>
+                </Select>
+              );
+            })()}
             </div>
 
             <div>
