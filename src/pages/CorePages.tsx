@@ -421,8 +421,8 @@ export const Contact = () => {
                 "UK LTD Formation","USA LLC Formation","ID Verification","UTR / EIN / ITIN","Annual Filing","Company Changes","Address Services",
               ];
               const isApplication = applicationServices.includes(form.service);
-              const idleLabel = isApplication ? "Submit Application" : "Send Message";
-              const busyLabel = isApplication ? "Submitting…" : "Sending…";
+              const idleLabel = isApplication ? "Apply Now" : "Send Message";
+              const busyLabel = isApplication ? "Applying…" : "Sending…";
               return (
                 <Button type="submit" variant="hero" size="lg" className="rounded-full w-full sm:w-auto" disabled={submitting}>
                   {submitting ? busyLabel : idleLabel} <ArrowRight className="w-4 h-4" />
