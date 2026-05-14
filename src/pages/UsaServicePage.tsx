@@ -31,6 +31,21 @@ const UsaServicePage = () => {
             serviceType: page.title,
           },
         }
+          jsonLd: {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            name: page.title,
+            description: page.metaDescription,
+            provider: { "@type": "Organization", name: "Digiformation Ltd" },
+            areaServed: "United States",
+            serviceType: page.title,
+            offers: {
+              "@type": "Offer",
+              price: page.price,
+              priceCurrency: page.currency,
+            },
+          },
+        }
       : { title: "Service Not Found | Digiformation", description: "Service not found.", noindex: true },
     [slug]
   );
