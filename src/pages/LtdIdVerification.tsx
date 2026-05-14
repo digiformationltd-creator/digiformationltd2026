@@ -57,7 +57,7 @@ const LtdIdVerification = () => {
           provider: { "@type": "Organization", name: "Digiformation Ltd" },
           areaServed: "Worldwide",
           description: "Companies House identity verification for directors, PSCs, secretaries and shareholders.",
-          offers: { "@type": "Offer", price: "25", priceCurrency: "GBP" },
+          offers: { "@type": "Offer", price: "20", priceCurrency: "GBP" },
         },
         {
           "@type": "BreadcrumbList",
@@ -93,7 +93,7 @@ const LtdIdVerification = () => {
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 items-start sm:items-center">
               <Button asChild variant="hero" size="lg" className="rounded-full">
-                <Link to="/uk-services/ltd-id-verification/checkout">Get Started — £25 <ArrowRight className="w-4 h-4" /></Link>
+                <Link to="/uk-services/ltd-id-verification/checkout">Get Started — £20 <ArrowRight className="w-4 h-4" /></Link>
               </Button>
               <span className="text-sm opacity-80">One-time fee · Worldwide officers accepted</span>
             </div>
@@ -189,7 +189,7 @@ const LtdIdVerification = () => {
             </h3>
             <p className="mt-4 opacity-90">Stay compliant with UK regulations — secure, fast, and accepted by Companies House.</p>
             <Button asChild variant="hero" size="lg" className="rounded-full mt-8">
-              <Link to="/uk-services/ltd-id-verification/checkout">Start Verification — £25 <ArrowRight className="w-4 h-4" /></Link>
+              <Link to="/uk-services/ltd-id-verification/checkout">Start Verification — £20 <ArrowRight className="w-4 h-4" /></Link>
             </Button>
           </div>
         </div>

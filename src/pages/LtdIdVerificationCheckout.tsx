@@ -12,7 +12,7 @@ const LtdIdVerificationCheckout = () => {
       id: "ltd-id-verification",
       name: "LTD ID Verification",
       description: "Companies House identity verification for directors, PSCs, secretaries and shareholders.",
-      price: 25,
+      price: 20,
       fixed: true,
     },
   ];
