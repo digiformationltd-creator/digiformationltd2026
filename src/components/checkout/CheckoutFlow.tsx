@@ -183,6 +183,7 @@ const CheckoutFlow = ({
     address_line1: "",
     address_line2: "",
     city: "",
+    state: "",
     postal_code: "",
     business_type: "",
     message: "",
@@ -245,6 +246,7 @@ const CheckoutFlow = ({
         form.whatsapp.trim().length >= 5 &&
         form.country.trim().length >= 2 &&
         form.address_line1.trim().length >= 3 &&
+        form.address_line2.trim().length >= 2 &&
         form.city.trim().length >= 2 &&
         form.postal_code.trim().length >= 3 &&
         (!showBusinessType || form.business_type.trim().length >= 2) &&
@@ -291,8 +293,8 @@ const CheckoutFlow = ({
     const addressBlock =
       `\nResidential address:\n` +
       `${form.address_line1}\n` +
-      (form.address_line2 ? `${form.address_line2}\n` : "") +
-      `${form.city}, ${form.postal_code}\n` +
+      `${form.address_line2}\n` +
+      `${form.city}${form.state ? `, ${form.state}` : ""}, ${form.postal_code}\n` +
       `${form.country}\n` +
       (showBusinessType && form.business_type ? `\nBusiness type: ${form.business_type}\n` : "");
 
@@ -689,14 +691,17 @@ const CheckoutFlow = ({
                     minLength={3}
                   />
                   <Field
-                    label="Address line 2 (area, road) — optional"
+                    label="Address line 2 (area, road)"
                     value={form.address_line2}
                     onChange={(v) => setForm({ ...form, address_line2: v })}
+                    required
+                    minLength={2}
                   />
                   <div className="grid sm:grid-cols-2 gap-4">
                     <Field label="City" value={form.city} onChange={(v) => setForm({ ...form, city: v })} required minLength={2} />
-                    <Field label="Postal code" value={form.postal_code} onChange={(v) => setForm({ ...form, postal_code: v })} required minLength={3} />
+                    <Field label="State / Province (optional)" value={form.state} onChange={(v) => setForm({ ...form, state: v })} />
                   </div>
+                  <Field label="Postal code" value={form.postal_code} onChange={(v) => setForm({ ...form, postal_code: v })} required minLength={3} />
                   <Field label="Country of residence" value={form.country} onChange={(v) => setForm({ ...form, country: v })} required minLength={2} />
                 </div>
 
