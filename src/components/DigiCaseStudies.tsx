@@ -10,7 +10,7 @@ const cases = [
       "Company Formation",
       "Banks",
     ],
-    href: "/pricing",
+    href: "/uk-services/uk-ltd-formation/choose-jurisdiction",
   },
   {
     tag: "We launch your US business end-to-end",
@@ -20,7 +20,7 @@ const cases = [
       "EIN",
       "Banks",
     ],
-    href: "/pricing",
+    href: "/usa-services/us-llc-formation/choose-state",
   },
   {
     tag: "UK Compliance",
@@ -30,7 +30,7 @@ const cases = [
       "Annual accounts prepared and submitted",
       "Director and PSC records kept fully compliant",
     ],
-    href: "/contact",
+    href: "/uk-compliance",
   },
 ];
 
@@ -66,7 +66,7 @@ const DigiCaseStudies = () => (
               to={c.href}
               className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] hover:gap-3 transition-all"
             >
-              {c.href === "/pricing" ? "View Packages" : "Learn More"} <ArrowRight className="w-3.5 h-3.5" />
+              {c.href.startsWith("/uk-compliance") ? "View Compliance Services" : "View Packages"} <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </article>
           );
