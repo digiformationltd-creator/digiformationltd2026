@@ -135,14 +135,14 @@ const DigiFooter = () => {
       </>)}
 
       {/* Main grid */}
-      <div className="container mx-auto px-4 py-10 sm:py-14 grid gap-8 sm:gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="container mx-auto px-4 py-10 sm:py-14 grid gap-8 sm:gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 items-start">
         {/* Brand */}
-        <div className="flex flex-col items-center text-center sm:items-start sm:text-left sm:-mt-4 sm:col-span-2 lg:col-span-1">
-          <img src={logo} alt="Digiformation Ltd logo — trusted UK Limited Company & US LLC formation worldwide" className="h-24 sm:h-32 w-auto max-w-full object-contain mb-4 sm:-ml-2" />
+        <div className="flex flex-col items-center text-center sm:items-start sm:text-left sm:col-span-2 lg:col-span-1">
+          <img src={logo} alt="Digiformation Ltd logo — trusted UK Limited Company & US LLC formation worldwide" className="h-20 w-auto object-contain mb-4" />
           <p className="text-xs opacity-75 mb-4 leading-relaxed">
             Founded by Muhammad Haroon — UK & US company formation, banking & compliance.
           </p>
-          <div className="text-[10px] uppercase tracking-[0.18em] font-semibold mb-3 opacity-90">Connect With Us</div>
+          <div className="text-xs uppercase tracking-[0.18em] font-semibold mb-3 opacity-90">Connect With Us</div>
           <div className="grid grid-cols-4 gap-2 w-full max-w-[200px] sm:max-w-none">
             {socials.map((s) => {
               const IconComp = s.icon;
