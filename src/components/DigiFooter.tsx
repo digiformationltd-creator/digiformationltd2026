@@ -186,7 +186,6 @@ const DigiFooter = () => {
           </div>
           <ul className="space-y-2 text-sm">
             <li><Link to="/#about" className="hover:text-primary transition">About Us</Link></li>
-            <li><Link to="/#services" className="hover:text-primary transition">Packages</Link></li>
             <li><Link to="/blog" className="hover:text-primary transition">Blog</Link></li>
             <li><Link to="/faq" className="hover:text-primary transition">FAQ</Link></li>
             <li><Link to="/affiliate" className="hover:text-primary transition">Affiliate Program</Link></li>
