@@ -473,10 +473,18 @@ const CheckoutFlow = ({
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
         <div className="container mx-auto px-4 py-10 md:py-14 relative">
-          {backHref && (
+          {backHref ? (
             <Link to={backHref} className="inline-flex items-center gap-2 text-sm opacity-80 hover:opacity-100 mb-5">
               <ArrowLeft className="w-4 h-4" /> {backLabel || "Back"}
             </Link>
+          ) : (
+            <button
+              type="button"
+              onClick={() => (window.history.length > 1 ? window.history.back() : (window.location.href = "/"))}
+              className="inline-flex items-center gap-2 text-sm opacity-80 hover:opacity-100 mb-5"
+            >
+              <ArrowLeft className="w-4 h-4" /> {backLabel || "Back"}
+            </button>
           )}
           {eyebrow && (
             <div className="inline-flex items-center gap-3 mb-3">
