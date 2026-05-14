@@ -33,6 +33,7 @@ const LtdIdVerificationCheckout = () => {
         notesPlaceholder="Tell us your role (Director / PSC / Secretary / Shareholder), the company name, and any details we should know..."
         fixedPackageName="LTD ID Verification"
         liveSelfieMode="upload"
+        liveSelfieLink="https://verify.didit.me/u/dzhdYtifRt-jeb3kZsSptg"
       />
     </Layout>
   );
