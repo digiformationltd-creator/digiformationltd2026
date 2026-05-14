@@ -34,6 +34,16 @@ const AIAssistant = () => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
 
+  // Close on ESC key
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
   // Hide entirely on client portal / admin pages on mobile (must be after all hooks)
   const hideOnThisRoute = isMobile && (pathname.startsWith("/dashboard") || pathname.startsWith("/admin"));
   if (hideOnThisRoute) return null;
