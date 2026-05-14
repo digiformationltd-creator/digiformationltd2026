@@ -176,6 +176,8 @@ const CheckoutFlow = ({
   const [successInfo, setSuccessInfo] = useState<{ orderRef: string; invoiceUrl?: string } | null>(null);
   const [form, setForm] = useState({
     company_name: "",
+    first_name: "",
+    last_name: "",
     full_name: "",
     email: "",
     whatsapp: "",
@@ -241,7 +243,8 @@ const CheckoutFlow = ({
     if (stepIdx === detailsIdx) {
       return (
         (!showCompanyName || form.company_name.trim().length >= 2) &&
-        form.full_name.trim().length >= 2 &&
+        form.first_name.trim().length >= 2 &&
+        form.last_name.trim().length >= 2 &&
         /\S+@\S+\.\S+/.test(form.email) &&
         form.whatsapp.trim().length >= 5 &&
         form.country.trim().length >= 2 &&
@@ -672,7 +675,8 @@ const CheckoutFlow = ({
                   />
                 )}
                 <div className="grid sm:grid-cols-2 gap-4">
-                  <Field label="Full name" value={form.full_name} onChange={(v) => setForm({ ...form, full_name: v })} required minLength={2} />
+                  <Field label="First name" value={form.first_name} onChange={(v) => setForm({ ...form, first_name: v, full_name: `${v} ${form.last_name}`.trim() })} required minLength={2} />
+                  <Field label="Last name" value={form.last_name} onChange={(v) => setForm({ ...form, last_name: v, full_name: `${form.first_name} ${v}`.trim() })} required minLength={2} />
                   <Field label="Email" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
                   <Field label="WhatsApp" value={form.whatsapp} onChange={(v) => setForm({ ...form, whatsapp: v })} required minLength={5} />
                 </div>
@@ -942,7 +946,7 @@ const CheckoutFlow = ({
                 <div className="rounded-2xl border border-border/40 p-4">
                   <h3 className="font-semibold mb-2">Customer</h3>
                   <dl className="grid sm:grid-cols-2 gap-2 text-sm">
-                    <ReviewLine label="Name" value={form.full_name} />
+                    <ReviewLine label="Name" value={`${form.first_name} ${form.last_name}`.trim()} />
                     <ReviewLine label="Email" value={form.email} />
                     <ReviewLine label="WhatsApp" value={form.whatsapp} />
                     <ReviewLine label="Country" value={form.country} />
