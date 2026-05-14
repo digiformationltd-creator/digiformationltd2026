@@ -273,6 +273,8 @@ export const Contact = () => {
               </div>
             </div>
 
+            <div>
+              <Label htmlFor="service">Service Interested In</Label>
             {(() => {
               // Categorized service catalog. When the visitor arrives from a
               // specific service page (?service=...), we restrict the dropdown
