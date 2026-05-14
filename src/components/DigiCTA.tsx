@@ -12,11 +12,11 @@ const DigiCTA = () => (
             Ready to <em className="not-italic text-gradient">launch your business?</em>
           </h2>
           <p className="text-lg max-w-xl mx-auto mb-10 text-foreground/90">
-            Book a 30-minute strategy call. We'll map the highest-leverage moves for your roadmap.
+            Book a free 30-minute consultation. Our formation experts will map the fastest, fully-compliant path to launch your UK LTD or US LLC — with the right banking and payment setup from day one.
           </p>
           <Button asChild variant="hero" size="lg" className="rounded-full">
             <Link to="/contact">
-              Book a strategy call <ArrowRight className="w-4 h-4" />
+              Book Free Consultation <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
         </div>
