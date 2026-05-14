@@ -1152,8 +1152,8 @@ const UploadField = ({
   const inputId = `upload-${label.replace(/\s+/g, "-").toLowerCase()}`;
   return (
     <div>
-      <div className="flex items-center justify-between gap-3 mb-1.5">
-        <label htmlFor={inputId} className="block text-sm font-medium">{label}</label>
+      <div className="flex items-center justify-between gap-3 mb-2">
+        <label htmlFor={inputId} className="block text-sm font-semibold">{label}</label>
         <button
           type="button"
           onClick={onViewExample}
@@ -1162,19 +1162,39 @@ const UploadField = ({
           <Eye className="w-3.5 h-3.5" /> View example
         </button>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-stretch gap-2">
         <label
           htmlFor={inputId}
-          className="flex-1 cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-muted/30 border border-dashed border-border/60 hover:border-primary/60 text-sm transition-all"
+          className={`group flex-1 cursor-pointer flex items-center gap-3 px-4 py-4 rounded-xl border-2 border-dashed transition-all ${
+            file
+              ? "bg-primary/10 border-primary/60 hover:border-primary"
+              : "bg-background/80 border-primary/30 hover:bg-primary/5 hover:border-primary/70"
+          }`}
         >
-          <Upload className="w-4 h-4 opacity-70" />
-          <span className="truncate">{file ? file.name : "Choose file (JPG / PNG / PDF)"}</span>
+          <div className={`w-10 h-10 rounded-full grid place-items-center flex-shrink-0 transition-colors ${
+            file ? "bg-primary text-primary-foreground" : "bg-primary/15 text-primary group-hover:bg-primary/25"
+          }`}>
+            <Upload className="w-5 h-5" />
+          </div>
+          <div className="min-w-0 flex-1 text-left">
+            {file ? (
+              <>
+                <div className="text-sm font-semibold text-primary truncate">{file.name}</div>
+                <div className="text-[11px] opacity-70 mt-0.5">Click to replace · JPG / PNG / PDF</div>
+              </>
+            ) : (
+              <>
+                <div className="text-sm font-semibold">Click to upload</div>
+                <div className="text-[11px] opacity-70 mt-0.5">JPG, PNG or PDF · max 10 MB</div>
+              </>
+            )}
+          </div>
         </label>
         {file && (
           <button
             type="button"
             onClick={() => onChange(null)}
-            className="p-2 rounded-xl border border-border/40 hover:border-destructive/60 text-destructive"
+            className="px-3 rounded-xl border-2 border-border/40 hover:border-destructive/60 hover:bg-destructive/10 text-destructive transition-colors"
             aria-label="Remove file"
           >
             <X className="w-4 h-4" />
