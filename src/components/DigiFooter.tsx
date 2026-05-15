@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Mail, Clock, MapPin, Facebook, Instagram, Youtube, Linkedin, Building2, Handshake, UserCircle2 } from "lucide-react";
 import logo from "@/assets/digiformation-logo.png";
-import NewsletterForm from "./NewsletterForm";
+
 
 // WhatsApp icon — neutral monochrome to match other social icons
 const WhatsAppIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
@@ -234,10 +234,6 @@ const DigiFooter = () => {
           </ul>
         </div>
 
-        {/* Newsletter */}
-        <div className="sm:col-span-2 lg:col-span-1">
-          <NewsletterForm />
-        </div>
       </div>
 
       {/* Bottom bar */}
