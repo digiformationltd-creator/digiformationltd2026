@@ -176,8 +176,8 @@ const Auth = () => {
                     <div>
                       <Label htmlFor="fp-email">Email</Label>
                       <div className="relative mt-1.5">
-                        <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 opacity-60" />
-                        <Input id="fp-email" name="email" type="email" required placeholder="Enter your email" className="pl-9" autoComplete="email" />
+                        <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/80" />
+                        <Input id="fp-email" name="email" type="email" required placeholder="Enter your email" className="pl-9 bg-background/40 border-white/15 focus-visible:ring-primary/50" autoComplete="email" />
                       </div>
                     </div>
                     <Button type="submit" variant="hero" className="w-full rounded-full" disabled={loading}>
@@ -197,8 +197,8 @@ const Auth = () => {
                     <div>
                       <Label htmlFor="si-email">Email</Label>
                       <div className="relative mt-1.5">
-                        <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 opacity-60" />
-                        <Input id="si-email" name="email" type="email" required placeholder="Enter your email" className="pl-9" autoComplete="email" />
+                        <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/80" />
+                        <Input id="si-email" name="email" type="email" required placeholder="Enter your email" className="pl-9 bg-background/40 border-white/15 focus-visible:ring-primary/50" autoComplete="email" />
                       </div>
                     </div>
                     <div>
@@ -213,20 +213,20 @@ const Auth = () => {
                         </button>
                       </div>
                       <div className="relative mt-1.5">
-                        <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 opacity-60" />
+                        <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/80" />
                         <Input
                           id="si-password"
                           name="password"
                           type={showSignInPassword ? "text" : "password"}
                           required
                           placeholder="••••••••"
-                          className="pl-9 pr-11"
+                          className="pl-9 pr-12 bg-background/40 border-white/15 focus-visible:ring-primary/50"
                           autoComplete="current-password"
                         />
                         <button
                           type="button"
                           onClick={() => setShowSignInPassword((v) => !v)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 opacity-70 hover:opacity-100 transition"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 inline-flex items-center justify-center rounded-md bg-primary/15 text-primary hover:bg-primary/25 transition"
                           aria-label={showSignInPassword ? "Hide password" : "Show password"}
                         >
                           {showSignInPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -245,28 +245,35 @@ const Auth = () => {
                 <form onSubmit={handleSignUp} className="space-y-4">
                   <div>
                     <Label htmlFor="su-name">Full Name</Label>
-                    <Input id="su-name" name="fullName" required placeholder="Enter your full name" className="mt-1.5" autoComplete="name" />
+                    <div className="relative mt-1.5">
+                      <UserCircle2 className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/80" />
+                      <Input id="su-name" name="fullName" required placeholder="Enter your full name" className="pl-9 bg-background/40 border-white/15 focus-visible:ring-primary/50" autoComplete="name" />
+                    </div>
                   </div>
                   <div>
                     <Label htmlFor="su-email">Email</Label>
-                    <Input id="su-email" name="email" type="email" required placeholder="Enter your email" className="mt-1.5" autoComplete="email" />
+                    <div className="relative mt-1.5">
+                      <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/80" />
+                      <Input id="su-email" name="email" type="email" required placeholder="Enter your email" className="pl-9 bg-background/40 border-white/15 focus-visible:ring-primary/50" autoComplete="email" />
+                    </div>
                   </div>
                   <div>
                     <Label htmlFor="su-password">Password</Label>
                     <div className="relative mt-1.5">
+                      <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/80" />
                       <Input
                         id="su-password"
                         name="password"
                         type={showSignUpPassword ? "text" : "password"}
                         required
                         placeholder="Min 8 chars · Aa1!"
-                        className="pr-11"
+                        className="pl-9 pr-12 bg-background/40 border-white/15 focus-visible:ring-primary/50"
                         autoComplete="new-password"
                       />
                       <button
                         type="button"
                         onClick={() => setShowSignUpPassword((v) => !v)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 opacity-70 hover:opacity-100 transition"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 inline-flex items-center justify-center rounded-md bg-primary/15 text-primary hover:bg-primary/25 transition"
                         aria-label={showSignUpPassword ? "Hide password" : "Show password"}
                       >
                         {showSignUpPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
