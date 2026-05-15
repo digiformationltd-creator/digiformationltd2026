@@ -123,6 +123,8 @@ export type CheckoutFlowProps = {
   showServiceMode?: boolean;
   /** Show a role picker (Director / PSC / Shareholder / Secretary) — used for IDV */
   showRole?: boolean;
+  /** Hide the entire "Business activity" section (used for IDV) */
+  hideBusinessActivity?: boolean;
   /** Optional extra add-on services grouped by category. Shown below the
    *  main selection on step 1. Each group is rendered as its own card so
    *  customers only see add-ons relevant to the service they're ordering. */
