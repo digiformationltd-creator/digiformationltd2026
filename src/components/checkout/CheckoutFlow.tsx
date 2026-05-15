@@ -163,6 +163,7 @@ const CheckoutFlow = ({
   companyNameOptional = false,
   showServiceMode = false,
   showRole = false,
+  hideBusinessActivity = false,
   extras,
 }: CheckoutFlowProps) => {
   // Merge extras into the master items list so selection / pricing logic
