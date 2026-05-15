@@ -787,7 +787,6 @@ const CheckoutFlow = ({
                       onChange={(v) => setForm({ ...form, personal_code: v.replace(/\s+/g, "").toUpperCase() })}
                       required
                       minLength={8}
-                      maxLength={20}
                       placeholder="e.g. ABCD1234EFGH"
                     />
                   </div>
