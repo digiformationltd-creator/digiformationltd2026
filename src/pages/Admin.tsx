@@ -616,25 +616,49 @@ const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: stri
                     )}
                   </div>
                 </div>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={async () => {
-                    if (!profile.email) return toast.error("Client has no email");
-                    const { error } = await supabase.functions.invoke("send-transactional-email", {
-                      body: {
-                        templateName: "order-completed",
-                        recipientEmail: profile.email,
-                        idempotencyKey: `order-completed-manual-${o.id}-${Date.now()}`,
-                        templateData: { customerName: profile.full_name, orderRef: o.order_ref, service: o.service },
-                      },
-                    });
-                    if (error) toast.error(error.message); else toast.success("Order Completed email sent");
-                  }}
-                  title="Send Order Completed email to client"
-                >
-                  <Mail className="w-3.5 h-3.5 mr-1" />Send Order Complete
-                </Button>
+                {(() => {
+                  const isDone = /complete/i.test(o.status || "");
+                  return (
+                    <div className="flex flex-wrap gap-2">
+                      {!isDone && (
+                        <Button
+                          size="sm"
+                          onClick={async () => {
+                            if (!profile.email) return toast.error("Client has no email");
+                            await updateOrder(o.id, { status: "Completed" });
+                            toast.success("Order marked Completed — email sent to client");
+                          }}
+                          title="Mark this order Completed and notify the client by email"
+                        >
+                          <Mail className="w-3.5 h-3.5 mr-1" />Mark Complete & Notify
+                        </Button>
+                      )}
+                      {isDone && (
+                        <>
+                          <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30">Completed</Badge>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={async () => {
+                              if (!profile.email) return toast.error("Client has no email");
+                              const { error } = await supabase.functions.invoke("send-transactional-email", {
+                                body: {
+                                  templateName: "order-completed",
+                                  recipientEmail: profile.email,
+                                  idempotencyKey: `order-completed-manual-${o.id}-${Date.now()}`,
+                                  templateData: { customerName: profile.full_name, orderRef: o.order_ref, service: o.service },
+                                },
+                              });
+                              if (error) toast.error(error.message); else toast.success("Completion email re-sent");
+                            }}
+                          >
+                            <Mail className="w-3.5 h-3.5 mr-1" />Resend Email
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
               );
             })}
