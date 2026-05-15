@@ -36,6 +36,7 @@ const LtdIdVerificationCheckout = () => {
         showCompanyName
         companyNameOptional
         showRole
+        hideBusinessActivity
       />
     </Layout>
   );
