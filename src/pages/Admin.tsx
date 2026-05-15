@@ -445,6 +445,17 @@ const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: stri
         },
       }).catch(console.error);
     }
+    // If status moved to In Progress, send in-progress email
+    if (patch.status && patch.status !== prev?.status && /progress/i.test(patch.status) && profile.email) {
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "order-in-progress",
+          recipientEmail: profile.email,
+          idempotencyKey: `order-in-progress-${id}`,
+          templateData: { customerName: profile.full_name, orderRef: prev?.order_ref, service: prev?.service },
+        },
+      }).catch(console.error);
+    }
     reload();
   };
   const deleteRow = async (table: any, id: string) => {
@@ -618,8 +629,26 @@ const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: stri
                 </div>
                 {(() => {
                   const isDone = /complete/i.test(o.status || "");
+                  const isInProgress = /progress/i.test(o.status || "");
                   return (
                     <div className="flex flex-wrap gap-2">
+                      {!isDone && !isInProgress && (
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={async () => {
+                            if (!profile.email) return toast.error("Client has no email");
+                            await updateOrder(o.id, { status: "In Progress" });
+                            toast.success("Order marked In Progress — email sent to client");
+                          }}
+                          title="Mark this order as In Progress and notify the client by email"
+                        >
+                          <Mail className="w-3.5 h-3.5 mr-1" />Start Work & Notify
+                        </Button>
+                      )}
+                      {isInProgress && (
+                        <Badge className="bg-amber-500/15 text-amber-400 border-amber-500/30">In Progress</Badge>
+                      )}
                       {!isDone && (
                         <Button
                           size="sm"
