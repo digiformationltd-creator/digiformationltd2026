@@ -181,15 +181,38 @@ const CheckoutFlow = ({
     return new Set(items.filter((i) => i.fixed).map((i) => i.id));
   }, [items, defaultSelectedIds, lockSelection, multiSelect]);
 
-  const [selected, setSelected] = useState<Set<string>>(initialSelected);
-  const [stepIdx, setStepIdx] = useState(0);
+  // Draft persistence: keep form data alive across refresh / network glitches for 10 min
+  const DRAFT_TTL_MS = 10 * 60 * 1000;
+  const draftKey = `checkout-draft:${serviceTitle}`;
+  const loadDraft = (): any | null => {
+    try {
+      const raw = typeof window !== "undefined" ? window.localStorage.getItem(draftKey) : null;
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed.savedAt !== "number") return null;
+      if (Date.now() - parsed.savedAt > DRAFT_TTL_MS) {
+        window.localStorage.removeItem(draftKey);
+        return null;
+      }
+      return parsed;
+    } catch {
+      return null;
+    }
+  };
+  const draft = typeof window !== "undefined" ? loadDraft() : null;
+
+  const [selected, setSelected] = useState<Set<string>>(() => {
+    if (draft?.selected && Array.isArray(draft.selected)) return new Set<string>(draft.selected);
+    return initialSelected;
+  });
+  const [stepIdx, setStepIdx] = useState(draft?.stepIdx ?? 0);
   const [submitting, setSubmitting] = useState(false);
   const [successInfo, setSuccessInfo] = useState<{
     orderRef: string;
     invoiceUrl?: string;
     documents?: { label: string; url: string; filename: string }[];
   } | null>(null);
-  const [form, setForm] = useState({
+  const emptyForm = {
     company_name: "",
     first_name: "",
     last_name: "",
@@ -210,7 +233,8 @@ const CheckoutFlow = ({
     sic_codes: "",
     role: "",
     personal_code: "",
-  });
+  };
+  const [form, setForm] = useState(() => ({ ...emptyForm, ...(draft?.form ?? {}) }));
   const [idType, setIdType] = useState<"id_card" | "passport" | "driving_licence">("id_card");
   const [idTypeOpen, setIdTypeOpen] = useState(false);
   const [idFront, setIdFront] = useState<File | null>(null);
@@ -219,9 +243,43 @@ const CheckoutFlow = ({
   const [showSicCodes, setShowSicCodes] = useState(false);
   const [verificationLinkRequested, setVerificationLinkRequested] = useState(false);
   const [exampleOpen, setExampleOpen] = useState<null | { title: string; src: string }>(null);
-  const [serviceMode, setServiceMode] = useState<"ltd-only" | "both">("both");
+  const [serviceMode, setServiceMode] = useState<"ltd-only" | "both">(draft?.serviceMode ?? "both");
   const [serviceModeOpen, setServiceModeOpen] = useState(true);
   const idVerificationActive = !showServiceMode || serviceMode === "both";
+
+  const hasDraftData = !!draft;
+  const clearDraft = () => {
+    try { window.localStorage.removeItem(draftKey); } catch {}
+    setForm(emptyForm);
+    setSelected(initialSelected);
+    setStepIdx(0);
+    setServiceMode("both");
+    toast({ title: "Draft cleared", description: "Your saved form data was removed." });
+  };
+
+  // Persist draft on every change (debounced)
+  useEffect(() => {
+    if (successInfo) return; // don't save after success
+    const t = setTimeout(() => {
+      try {
+        window.localStorage.setItem(draftKey, JSON.stringify({
+          savedAt: Date.now(),
+          form,
+          selected: Array.from(selected),
+          stepIdx,
+          serviceMode,
+        }));
+      } catch {}
+    }, 300);
+    return () => clearTimeout(t);
+  }, [form, selected, stepIdx, serviceMode, successInfo, draftKey]);
+
+  // Clear draft after successful submit
+  useEffect(() => {
+    if (successInfo) {
+      try { window.localStorage.removeItem(draftKey); } catch {}
+    }
+  }, [successInfo, draftKey]);
 
   // Skip selection step entirely when locked
   const steps = lockSelection ? STEP_LABELS.slice(1) : STEP_LABELS;
@@ -722,7 +780,24 @@ const CheckoutFlow = ({
 
             {showDetails && (
               <div className="glass rounded-3xl p-6 md:p-8 space-y-5">
-                <h2 className="text-2xl font-bold">Your details</h2>
+                <div className="flex items-start justify-between gap-3 flex-wrap">
+                  <h2 className="text-2xl font-bold">Your details</h2>
+                  {hasDraftData && (
+                    <button
+                      type="button"
+                      onClick={clearDraft}
+                      className="text-xs text-muted-foreground hover:text-destructive underline-offset-2 hover:underline"
+                      title="Remove the auto-saved draft and start fresh"
+                    >
+                      Clear saved draft
+                    </button>
+                  )}
+                </div>
+                {hasDraftData && (
+                  <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 px-3 py-2 text-xs text-emerald-500/90">
+                    We restored your previous entries (auto-saved for 10 minutes). Continue where you left off.
+                  </div>
+                )}
 
                 {showServiceMode && (
                   <div className="rounded-2xl border border-primary/40 bg-primary/5 overflow-hidden">
