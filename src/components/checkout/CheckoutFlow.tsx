@@ -526,7 +526,7 @@ const CheckoutFlow = ({
                 <div className="flex flex-wrap gap-2 justify-center">
                   {successInfo.documents.map((d) => (
                     <a
-                      key={d.path ?? d.url}
+                      key={d.url}
                       href={d.url}
                       target="_blank"
                       rel="noopener noreferrer"
