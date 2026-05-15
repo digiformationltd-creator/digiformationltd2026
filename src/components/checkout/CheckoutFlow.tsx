@@ -346,6 +346,7 @@ const CheckoutFlow = ({
       `Ref: ${orderRef}\n` +
       (contextLabel ? `${contextLabel}\n` : "") +
       (showServiceMode ? `Service mode: ${serviceModeLabel}\n` : "") +
+      (showServiceMode && serviceMode === "ltd-only" && form.personal_code ? `Companies House Personal Code: ${form.personal_code.trim()}\n` : "") +
       (showCompanyName && form.company_name ? `Proposed company name: ${form.company_name}\n` : "") +
       (showRole && form.role ? `Applicant role: ${form.role}\n` : "") +
       `Items:\n${lines}\n` +
