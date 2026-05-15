@@ -125,6 +125,8 @@ export type CheckoutFlowProps = {
   showRole?: boolean;
   /** Hide the entire "Business activity" section (used for IDV) */
   hideBusinessActivity?: boolean;
+  /** Show a "Proof of address" upload field inside the ID documents section (used for IDV) */
+  showProofOfAddress?: boolean;
   /** Optional extra add-on services grouped by category. Shown below the
    *  main selection on step 1. Each group is rendered as its own card so
    *  customers only see add-ons relevant to the service they're ordering. */
@@ -164,6 +166,7 @@ const CheckoutFlow = ({
   showServiceMode = false,
   showRole = false,
   hideBusinessActivity = false,
+  showProofOfAddress = false,
   extras,
 }: CheckoutFlowProps) => {
   // Merge extras into the master items list so selection / pricing logic
@@ -240,6 +243,7 @@ const CheckoutFlow = ({
   const [idFront, setIdFront] = useState<File | null>(null);
   const [idBack, setIdBack] = useState<File | null>(null);
   const [holdingSelfie, setHoldingSelfie] = useState<File | null>(null);
+  const [proofOfAddress, setProofOfAddress] = useState<File | null>(null);
   const [showSicCodes, setShowSicCodes] = useState(false);
   const [verificationLinkRequested, setVerificationLinkRequested] = useState(false);
   const [exampleOpen, setExampleOpen] = useState<null | { title: string; src: string }>(null);
@@ -439,6 +443,7 @@ const CheckoutFlow = ({
     if (idFront) uploads.push({ file: idFront, label: `${idType.replace("_", " ")} (front)`, key: "id-front" });
     if (idBack) uploads.push({ file: idBack, label: `${idType.replace("_", " ")} (back)`, key: "id-back" });
     if (holdingSelfie) uploads.push({ file: holdingSelfie, label: "Holding selfie", key: "holding-selfie" });
+    if (proofOfAddress) uploads.push({ file: proofOfAddress, label: "Proof of address", key: "proof-of-address" });
 
     const uploadedDocs: { label: string; path: string; filename: string }[] = [];
     await Promise.all(
@@ -1142,6 +1147,21 @@ const CheckoutFlow = ({
                     />
                   )}
 
+                  {showProofOfAddress && (
+                    <div className="space-y-2">
+                      <UploadField
+                        label="Proof of address (utility bill or bank statement)"
+                        file={proofOfAddress}
+                        onChange={setProofOfAddress}
+                      />
+                      <p className="text-xs opacity-80 leading-relaxed rounded-lg bg-amber-500/10 border border-amber-500/40 p-3">
+                        <span className="font-semibold">Accepted:</span> Water bill, gas bill, electricity bill, or bank statement.
+                        <br />
+                        <span className="font-semibold">Important:</span> The document <strong>must clearly show your full home address</strong> (the same address entered above) and your name. It should be dated within the last 3 months. PDF, JPG or PNG accepted.
+                      </p>
+                    </div>
+                  )}
+
                   {liveSelfieMode === "upload" && (
                     <div className="space-y-2">
                       <UploadField
@@ -1439,20 +1459,22 @@ const UploadField = ({
   label: string;
   file: File | null;
   onChange: (f: File | null) => void;
-  onViewExample: () => void;
+  onViewExample?: () => void;
 }) => {
   const inputId = `upload-${label.replace(/\s+/g, "-").toLowerCase()}`;
   return (
     <div>
       <div className="flex items-center justify-between gap-3 mb-2">
         <label htmlFor={inputId} className="block text-sm font-semibold">{label}</label>
-        <button
-          type="button"
-          onClick={onViewExample}
-          className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
-        >
-          <Eye className="w-3.5 h-3.5" /> View example
-        </button>
+        {onViewExample && (
+          <button
+            type="button"
+            onClick={onViewExample}
+            className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+          >
+            <Eye className="w-3.5 h-3.5" /> View example
+          </button>
+        )}
       </div>
       <div className="flex items-stretch gap-2">
         <label
