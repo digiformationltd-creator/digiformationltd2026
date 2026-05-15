@@ -209,6 +209,7 @@ const CheckoutFlow = ({
     business_other: "",
     sic_codes: "",
     role: "",
+    personal_code: "",
   });
   const [idType, setIdType] = useState<"id_card" | "passport" | "driving_licence">("id_card");
   const [idTypeOpen, setIdTypeOpen] = useState(false);
