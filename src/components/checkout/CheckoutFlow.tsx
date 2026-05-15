@@ -517,6 +517,28 @@ const CheckoutFlow = ({
                 <Link to="/">Back to home</Link>
               </Button>
             </div>
+
+            {successInfo.documents && successInfo.documents.length > 0 && (
+              <div className="mt-6 text-left">
+                <p className="text-xs uppercase tracking-wider opacity-60 mb-2 text-center">
+                  Your uploaded documents
+                </p>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {successInfo.documents.map((d) => (
+                    <a
+                      key={d.path ?? d.url}
+                      href={d.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-3 py-1.5 text-xs hover:bg-primary/10"
+                    >
+                      <span className="font-medium">{d.label}:</span>
+                      <span className="opacity-80">{d.filename}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
