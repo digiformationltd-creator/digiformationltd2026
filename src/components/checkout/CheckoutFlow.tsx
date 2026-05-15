@@ -276,7 +276,8 @@ const CheckoutFlow = ({
         (hideBusinessActivity || (form.business_category === "Other"
           ? form.business_other.trim().length >= 10
           : form.business_subcategory.trim().length > 0)) &&
-        (!(idVerificationActive && liveSelfieLink) || verificationLinkRequested)
+        (!(idVerificationActive && liveSelfieLink) || verificationLinkRequested) &&
+        (!(showServiceMode && serviceMode === "ltd-only") || form.personal_code.trim().length >= 8)
       );
     }
     return true;
