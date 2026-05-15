@@ -143,3 +143,6 @@ const cardLabel = { fontSize: '12px', color: '#71717a', textTransform: 'uppercas
 const cardLine = { fontSize: '14px', color: '#18181b', margin: '4px 0' }
 const hr = { borderColor: '#e4e4e7', margin: '24px 0' }
 const footer = { fontSize: '12px', color: '#71717a', margin: '8px 0 0' }
+const linkBtn = { display: 'inline-block', background: '#0a0a0a', color: '#ffffff', padding: '8px 14px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold' as const, fontSize: '13px' }
+const docLink = { color: '#1a56db', textDecoration: 'underline' }
+const muted = { fontSize: '12px', color: '#71717a', margin: '8px 0 0', fontStyle: 'italic' as const }
