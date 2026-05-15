@@ -209,6 +209,7 @@ const CheckoutFlow = ({
     business_other: "",
     sic_codes: "",
     role: "",
+    personal_code: "",
   });
   const [idType, setIdType] = useState<"id_card" | "passport" | "driving_licence">("id_card");
   const [idTypeOpen, setIdTypeOpen] = useState(false);
@@ -275,7 +276,8 @@ const CheckoutFlow = ({
         (hideBusinessActivity || (form.business_category === "Other"
           ? form.business_other.trim().length >= 10
           : form.business_subcategory.trim().length > 0)) &&
-        (!(idVerificationActive && liveSelfieLink) || verificationLinkRequested)
+        (!(idVerificationActive && liveSelfieLink) || verificationLinkRequested) &&
+        (!(showServiceMode && serviceMode === "ltd-only") || form.personal_code.trim().length >= 8)
       );
     }
     return true;
@@ -344,6 +346,7 @@ const CheckoutFlow = ({
       `Ref: ${orderRef}\n` +
       (contextLabel ? `${contextLabel}\n` : "") +
       (showServiceMode ? `Service mode: ${serviceModeLabel}\n` : "") +
+      (showServiceMode && serviceMode === "ltd-only" && form.personal_code ? `Companies House Personal Code: ${form.personal_code.trim()}\n` : "") +
       (showCompanyName && form.company_name ? `Proposed company name: ${form.company_name}\n` : "") +
       (showRole && form.role ? `Applicant role: ${form.role}\n` : "") +
       `Items:\n${lines}\n` +
@@ -767,6 +770,25 @@ const CheckoutFlow = ({
                         })}
                       </div>
                     )}
+                  </div>
+                )}
+
+                {showServiceMode && serviceMode === "ltd-only" && (
+                  <div className="rounded-2xl border border-amber-500/40 bg-amber-500/5 p-4 md:p-5 space-y-3">
+                    <div>
+                      <div className="text-sm font-semibold text-amber-500">Companies House Personal Code</div>
+                      <div className="text-xs opacity-80 mt-1">
+                        Since your ID verification is already done elsewhere, please share your <strong>Companies House Personal Code</strong> (received after identity verification). We need this to incorporate your UK Ltd company.
+                      </div>
+                    </div>
+                    <Field
+                      label="Personal Code"
+                      value={form.personal_code}
+                      onChange={(v) => setForm({ ...form, personal_code: v.replace(/\s+/g, "").toUpperCase() })}
+                      required
+                      minLength={8}
+                      placeholder="e.g. ABCD1234EFGH"
+                    />
                   </div>
                 )}
 
