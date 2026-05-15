@@ -868,6 +868,7 @@ const CheckoutFlow = ({
                     minLength={2}
                   />
                 )}
+                {!hideBusinessActivity && (
                 <div className="rounded-2xl border border-border/40 p-4 md:p-5 space-y-4">
                   <div>
                     <h3 className="font-semibold">Business activity</h3>
@@ -956,6 +957,7 @@ const CheckoutFlow = ({
                     </div>
                   )}
                 </div>
+                )}
 
                 {/* ID Documents */}
                 {idVerificationActive && (
