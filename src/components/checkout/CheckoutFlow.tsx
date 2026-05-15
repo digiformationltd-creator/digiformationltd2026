@@ -125,6 +125,8 @@ export type CheckoutFlowProps = {
   showRole?: boolean;
   /** Hide the entire "Business activity" section (used for IDV) */
   hideBusinessActivity?: boolean;
+  /** Show a "Proof of address" upload field inside the ID documents section (used for IDV) */
+  showProofOfAddress?: boolean;
   /** Optional extra add-on services grouped by category. Shown below the
    *  main selection on step 1. Each group is rendered as its own card so
    *  customers only see add-ons relevant to the service they're ordering. */
