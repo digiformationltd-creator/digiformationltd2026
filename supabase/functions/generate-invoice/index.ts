@@ -356,6 +356,23 @@ Deno.serve(async (req) => {
     const issueDate = new Date().toISOString().slice(0, 10)
     const currency = body.currency ?? 'GBP'
 
+    // 1a. Sign URLs for any submitted client documents (passport / ID / selfie)
+    //     so the team can download them straight from the PDF and email.
+    const documentLinks: { label: string; url: string; filename: string }[] = []
+    if (Array.isArray(body.documents)) {
+      for (const d of body.documents) {
+        if (!d?.path) continue
+        const { data: ds, error: dsErr } = await admin.storage
+          .from('client-docs')
+          .createSignedUrl(d.path, 60 * 60 * 24 * 7)
+        if (dsErr) {
+          console.error('doc sign failed', d.path, dsErr)
+          continue
+        }
+        documentLinks.push({ label: d.label, url: ds.signedUrl, filename: d.filename })
+      }
+    }
+
     // 1. Build PDF
     const pdfBytes = buildPdf({
       invoiceNumber, orderRef, issueDate,
@@ -365,6 +382,7 @@ Deno.serve(async (req) => {
       currency,
       customer: body.customer,
       notes: body.notes,
+      documentLinks,
     })
 
     // 2. Upload to storage (under user folder if authed, else `guest/`)
