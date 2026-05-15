@@ -280,6 +280,37 @@ function buildPdf(opts: {
   doc.setFont('helvetica', 'bold').setFontSize(11).setTextColor(...INK)
   doc.text('THANK YOU FOR YOUR BUSINESS', M, H - 28)
 
+  // ------- Submitted documents (second page) -------
+  if (opts.documentLinks && opts.documentLinks.length > 0) {
+    doc.addPage()
+    drawCornerDecor()
+    let dy = M + 30
+    doc.setFont('helvetica', 'bold').setFontSize(22).setTextColor(...INK)
+    doc.text('Submitted Documents', M, dy)
+    dy += 26
+    doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(...MUTED)
+    doc.text(
+      `Order Ref: ${opts.orderRef} — secure download links (valid for 7 days).`,
+      M, dy,
+    )
+    dy += 24
+
+    for (const d of opts.documentLinks) {
+      // Card panel
+      doc.setFillColor(...GREY_LIGHT)
+      doc.rect(M, dy, W - M * 2, 60, 'F')
+      doc.setFont('helvetica', 'bold').setFontSize(12).setTextColor(...INK)
+      doc.text(d.label, M + 16, dy + 22)
+      doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(60)
+      doc.text(`File: ${d.filename}`, M + 16, dy + 38)
+      // Clickable Download link (right side)
+      doc.setFont('helvetica', 'bold').setFontSize(10).setTextColor(16, 100, 200)
+      doc.textWithLink('▼ Download', W - M - 90, dy + 36, { url: d.url })
+      dy += 72
+      if (dy > H - 80) { doc.addPage(); drawCornerDecor(); dy = M + 30 }
+    }
+  }
+
   return doc.output('arraybuffer') as ArrayBuffer
 }
 
