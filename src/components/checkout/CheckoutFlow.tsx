@@ -1289,7 +1289,8 @@ const CheckoutFlow = ({
                     <ReviewLine label="Name" value={`${form.first_name} ${form.last_name}`.trim()} />
                     <ReviewLine label="Email" value={form.email} />
                     <ReviewLine label="WhatsApp" value={form.whatsapp} />
-                    <ReviewLine label="Country" value={form.country} />
+                    <ReviewLine label="Country of residence" value={form.country} />
+                    <ReviewLine label="Nationality" value={form.nationality} />
                   </dl>
                   <div className="text-sm font-semibold mt-4 mb-1">Address</div>
                   <p className="text-sm opacity-85 whitespace-pre-wrap">
