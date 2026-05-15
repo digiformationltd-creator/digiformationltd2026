@@ -213,20 +213,20 @@ const Auth = () => {
                         </button>
                       </div>
                       <div className="relative mt-1.5">
-                        <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 opacity-60" />
+                        <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/80" />
                         <Input
                           id="si-password"
                           name="password"
                           type={showSignInPassword ? "text" : "password"}
                           required
                           placeholder="••••••••"
-                          className="pl-9 pr-11"
+                          className="pl-9 pr-12 bg-background/40 border-white/15 focus-visible:ring-primary/50"
                           autoComplete="current-password"
                         />
                         <button
                           type="button"
                           onClick={() => setShowSignInPassword((v) => !v)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 opacity-70 hover:opacity-100 transition"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 inline-flex items-center justify-center rounded-md bg-primary/15 text-primary hover:bg-primary/25 transition"
                           aria-label={showSignInPassword ? "Hide password" : "Show password"}
                         >
                           {showSignInPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
