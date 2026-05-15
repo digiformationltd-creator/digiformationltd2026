@@ -784,25 +784,43 @@ const CheckoutFlow = ({
                     }
                   />
                 )}
-                {showRole && (
-                  <div>
-                    <label className="block text-sm font-medium mb-1.5">
-                      Your role <span className="text-destructive">*</span>
-                    </label>
-                    <select
-                      value={form.role}
-                      onChange={(e) => setForm({ ...form, role: e.target.value })}
-                      required
-                      className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
-                    >
-                      <option value="">Select your role…</option>
-                      <option value="Director">Director</option>
-                      <option value="PSC (Person with Significant Control)">PSC (Person with Significant Control)</option>
-                      <option value="Shareholder">Shareholder</option>
-                      <option value="Secretary">Secretary</option>
-                    </select>
-                  </div>
-                )}
+                {showRole && (() => {
+                  const ROLES = ["Director", "PSC (Person with Significant Control)", "Shareholder", "Secretary"];
+                  const selectedRoles = form.role ? form.role.split(", ").filter(Boolean) : [];
+                  const toggleRole = (r: string) => {
+                    const set = new Set(selectedRoles);
+                    set.has(r) ? set.delete(r) : set.add(r);
+                    setForm({ ...form, role: Array.from(set).join(", ") });
+                  };
+                  return (
+                    <div>
+                      <label className="block text-sm font-medium mb-1.5">
+                        Your role <span className="text-destructive">*</span>
+                        <span className="opacity-60 font-normal ml-1">(select one or more)</span>
+                      </label>
+                      <div className="grid sm:grid-cols-2 gap-2">
+                        {ROLES.map((r) => {
+                          const active = selectedRoles.includes(r);
+                          return (
+                            <button
+                              type="button"
+                              key={r}
+                              onClick={() => toggleRole(r)}
+                              className={`text-left p-3 rounded-xl border transition-all flex items-start gap-3 ${
+                                active ? "border-primary bg-primary/10 shadow-glow" : "border-border/40 hover:border-primary/40 bg-muted/20"
+                              }`}
+                            >
+                              <span className={`mt-0.5 w-4 h-4 rounded-md border-2 grid place-items-center flex-shrink-0 ${active ? "bg-primary border-primary text-primary-foreground" : "border-border/60"}`}>
+                                {active && <CheckCircle2 className="w-3 h-3" />}
+                              </span>
+                              <span className="text-sm font-medium">{r}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })()}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Field label="First name" value={form.first_name} onChange={(v) => setForm({ ...form, first_name: v, full_name: `${v} ${form.last_name}`.trim() })} required minLength={2} />
                   <Field label="Last name" value={form.last_name} onChange={(v) => setForm({ ...form, last_name: v, full_name: `${form.first_name} ${v}`.trim() })} required minLength={2} />
