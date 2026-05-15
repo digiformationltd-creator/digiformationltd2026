@@ -233,17 +233,17 @@ function buildPdf(opts: {
 
   const infoY = bandY + 44
   doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...INK)
-  doc.text('UBL (United Bank Limited)', M + 14, infoY)
+  doc.text('Barclays Bank (GBP — Local transfer)', M + 14, infoY)
   doc.setFont('helvetica', 'normal').setTextColor(60)
-  doc.text('Account Title: Muhammad Haroon', M + 14, infoY + 12)
-  doc.text('Account No: 1482314848734', M + 14, infoY + 24)
-  doc.text('IBAN: PK21UNIL0109000314848734', M + 14, infoY + 36)
+  doc.text('Beneficiary: Muhammad Haroon', M + 14, infoY + 12)
+  doc.text('Sort Code: 23-14-86', M + 14, infoY + 24)
+  doc.text('Account No: 15737580', M + 14, infoY + 36)
 
   doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...INK)
-  doc.text('NayaPay / SadaPay / JazzCash / EasyPaisa / HBL', M + 14, infoY + 56)
+  doc.text('Binance Pay (Crypto)', M + 14, infoY + 56)
   doc.setFont('helvetica', 'normal').setTextColor(60)
-  doc.text('Account Title: Muhammad Haroon', M + 14, infoY + 68)
-  doc.text('Number: 03034226759', M + 14, infoY + 80)
+  doc.text('Account Title: Haroon-alhanfi', M + 14, infoY + 68)
+  doc.text('Binance ID: 477888953', M + 14, infoY + 80)
 
   doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(60)
   doc.text(SITE_PHONE, W - M - 14, infoY, { align: 'right' })
