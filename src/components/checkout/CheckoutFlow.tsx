@@ -780,7 +780,24 @@ const CheckoutFlow = ({
 
             {showDetails && (
               <div className="glass rounded-3xl p-6 md:p-8 space-y-5">
-                <h2 className="text-2xl font-bold">Your details</h2>
+                <div className="flex items-start justify-between gap-3 flex-wrap">
+                  <h2 className="text-2xl font-bold">Your details</h2>
+                  {hasDraftData && (
+                    <button
+                      type="button"
+                      onClick={clearDraft}
+                      className="text-xs text-muted-foreground hover:text-destructive underline-offset-2 hover:underline"
+                      title="Remove the auto-saved draft and start fresh"
+                    >
+                      Clear saved draft
+                    </button>
+                  )}
+                </div>
+                {hasDraftData && (
+                  <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 px-3 py-2 text-xs text-emerald-500/90">
+                    We restored your previous entries (auto-saved for 10 minutes). Continue where you left off.
+                  </div>
+                )}
 
                 {showServiceMode && (
                   <div className="rounded-2xl border border-primary/40 bg-primary/5 overflow-hidden">
