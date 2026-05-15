@@ -117,8 +117,12 @@ export type CheckoutFlowProps = {
   showBusinessType?: boolean;
   /** Show a "Company name to register" field at the top of details (used for UK LTD) */
   showCompanyName?: boolean;
+  /** When true, the company name field is shown but not required (used for IDV) */
+  companyNameOptional?: boolean;
   /** Show the "what do you need?" service-mode picker at top of details (UK LTD) */
   showServiceMode?: boolean;
+  /** Show a role picker (Director / PSC / Shareholder / Secretary) — used for IDV */
+  showRole?: boolean;
   /** Optional extra add-on services grouped by category. Shown below the
    *  main selection on step 1. Each group is rendered as its own card so
    *  customers only see add-ons relevant to the service they're ordering. */
@@ -154,7 +158,9 @@ const CheckoutFlow = ({
   liveSelfieLink,
   showBusinessType = false,
   showCompanyName = false,
+  companyNameOptional = false,
   showServiceMode = false,
+  showRole = false,
   extras,
 }: CheckoutFlowProps) => {
   // Merge extras into the master items list so selection / pricing logic
