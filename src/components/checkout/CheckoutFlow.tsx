@@ -584,7 +584,7 @@ const CheckoutFlow = ({
 
             <div className="grid sm:grid-cols-3 gap-3 mb-7 text-left">
               <Info icon={Mail} title="Confirmation sent" body="Check your inbox for the receipt and invoice PDF." />
-              <Info icon={Clock} title="Reply within 24h" body="A specialist reaches out shortly with next steps." />
+              <Info icon={Clock} title="Reply within 1h" body="A specialist reaches out shortly with next steps." />
               <Info icon={ShieldCheck} title="Secure & compliant" body="Your details are stored on encrypted servers." />
             </div>
 
