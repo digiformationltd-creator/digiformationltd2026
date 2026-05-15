@@ -1444,20 +1444,22 @@ const UploadField = ({
   label: string;
   file: File | null;
   onChange: (f: File | null) => void;
-  onViewExample: () => void;
+  onViewExample?: () => void;
 }) => {
   const inputId = `upload-${label.replace(/\s+/g, "-").toLowerCase()}`;
   return (
     <div>
       <div className="flex items-center justify-between gap-3 mb-2">
         <label htmlFor={inputId} className="block text-sm font-semibold">{label}</label>
-        <button
-          type="button"
-          onClick={onViewExample}
-          className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
-        >
-          <Eye className="w-3.5 h-3.5" /> View example
-        </button>
+        {onViewExample && (
+          <button
+            type="button"
+            onClick={onViewExample}
+            className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+          >
+            <Eye className="w-3.5 h-3.5" /> View example
+          </button>
+        )}
       </div>
       <div className="flex items-stretch gap-2">
         <label
