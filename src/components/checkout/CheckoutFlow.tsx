@@ -331,6 +331,7 @@ const CheckoutFlow = ({
         /\S+@\S+\.\S+/.test(form.email) &&
         form.whatsapp.trim().length >= 5 &&
         form.country.trim().length >= 2 &&
+        form.nationality.trim().length >= 2 &&
         form.address_line1.trim().length >= 3 &&
         form.address_line2.trim().length >= 2 &&
         form.city.trim().length >= 2 &&
