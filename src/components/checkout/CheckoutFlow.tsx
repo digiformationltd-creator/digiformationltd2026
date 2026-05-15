@@ -223,6 +223,7 @@ const CheckoutFlow = ({
     email: "",
     whatsapp: "",
     country: "",
+    nationality: "",
     address_line1: "",
     address_line2: "",
     city: "",
