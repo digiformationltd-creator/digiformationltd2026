@@ -181,15 +181,38 @@ const CheckoutFlow = ({
     return new Set(items.filter((i) => i.fixed).map((i) => i.id));
   }, [items, defaultSelectedIds, lockSelection, multiSelect]);
 
-  const [selected, setSelected] = useState<Set<string>>(initialSelected);
-  const [stepIdx, setStepIdx] = useState(0);
+  // Draft persistence: keep form data alive across refresh / network glitches for 10 min
+  const DRAFT_TTL_MS = 10 * 60 * 1000;
+  const draftKey = `checkout-draft:${serviceTitle}`;
+  const loadDraft = (): any | null => {
+    try {
+      const raw = typeof window !== "undefined" ? window.localStorage.getItem(draftKey) : null;
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed.savedAt !== "number") return null;
+      if (Date.now() - parsed.savedAt > DRAFT_TTL_MS) {
+        window.localStorage.removeItem(draftKey);
+        return null;
+      }
+      return parsed;
+    } catch {
+      return null;
+    }
+  };
+  const draft = typeof window !== "undefined" ? loadDraft() : null;
+
+  const [selected, setSelected] = useState<Set<string>>(() => {
+    if (draft?.selected && Array.isArray(draft.selected)) return new Set<string>(draft.selected);
+    return initialSelected;
+  });
+  const [stepIdx, setStepIdx] = useState(draft?.stepIdx ?? 0);
   const [submitting, setSubmitting] = useState(false);
   const [successInfo, setSuccessInfo] = useState<{
     orderRef: string;
     invoiceUrl?: string;
     documents?: { label: string; url: string; filename: string }[];
   } | null>(null);
-  const [form, setForm] = useState({
+  const emptyForm = {
     company_name: "",
     first_name: "",
     last_name: "",
@@ -210,7 +233,8 @@ const CheckoutFlow = ({
     sic_codes: "",
     role: "",
     personal_code: "",
-  });
+  };
+  const [form, setForm] = useState(() => ({ ...emptyForm, ...(draft?.form ?? {}) }));
   const [idType, setIdType] = useState<"id_card" | "passport" | "driving_licence">("id_card");
   const [idTypeOpen, setIdTypeOpen] = useState(false);
   const [idFront, setIdFront] = useState<File | null>(null);
