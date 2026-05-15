@@ -1147,6 +1147,21 @@ const CheckoutFlow = ({
                     />
                   )}
 
+                  {showProofOfAddress && (
+                    <div className="space-y-2">
+                      <UploadField
+                        label="Proof of address (utility bill or bank statement)"
+                        file={proofOfAddress}
+                        onChange={setProofOfAddress}
+                      />
+                      <p className="text-xs opacity-80 leading-relaxed rounded-lg bg-amber-500/10 border border-amber-500/40 p-3">
+                        <span className="font-semibold">Accepted:</span> Water bill, gas bill, electricity bill, or bank statement.
+                        <br />
+                        <span className="font-semibold">Important:</span> The document <strong>must clearly show your full home address</strong> (the same address entered above) and your name. It should be dated within the last 3 months. PDF, JPG or PNG accepted.
+                      </p>
+                    </div>
+                  )}
+
                   {liveSelfieMode === "upload" && (
                     <div className="space-y-2">
                       <UploadField
