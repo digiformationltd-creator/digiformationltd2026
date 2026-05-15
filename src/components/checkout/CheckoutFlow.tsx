@@ -443,6 +443,7 @@ const CheckoutFlow = ({
     if (idFront) uploads.push({ file: idFront, label: `${idType.replace("_", " ")} (front)`, key: "id-front" });
     if (idBack) uploads.push({ file: idBack, label: `${idType.replace("_", " ")} (back)`, key: "id-back" });
     if (holdingSelfie) uploads.push({ file: holdingSelfie, label: "Holding selfie", key: "holding-selfie" });
+    if (proofOfAddress) uploads.push({ file: proofOfAddress, label: "Proof of address", key: "proof-of-address" });
 
     const uploadedDocs: { label: string; path: string; filename: string }[] = [];
     await Promise.all(
