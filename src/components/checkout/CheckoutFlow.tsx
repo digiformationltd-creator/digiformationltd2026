@@ -175,7 +175,11 @@ const CheckoutFlow = ({
   const [selected, setSelected] = useState<Set<string>>(initialSelected);
   const [stepIdx, setStepIdx] = useState(0);
   const [submitting, setSubmitting] = useState(false);
-  const [successInfo, setSuccessInfo] = useState<{ orderRef: string; invoiceUrl?: string } | null>(null);
+  const [successInfo, setSuccessInfo] = useState<{
+    orderRef: string;
+    invoiceUrl?: string;
+    documents?: { label: string; url: string; filename: string }[];
+  } | null>(null);
   const [form, setForm] = useState({
     company_name: "",
     first_name: "",
