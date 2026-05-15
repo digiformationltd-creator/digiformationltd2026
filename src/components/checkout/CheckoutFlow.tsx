@@ -392,6 +392,7 @@ const CheckoutFlow = ({
       `${form.address_line2}\n` +
       `${form.city}${form.state ? `, ${form.state}` : ""}, ${form.postal_code}\n` +
       `${form.country}\n` +
+      `Nationality: ${form.nationality}\n` +
       (showBusinessType && form.business_type ? `\nBusiness type: ${form.business_type}\n` : "");
 
     const serviceModeLabel =
