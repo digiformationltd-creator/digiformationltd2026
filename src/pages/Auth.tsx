@@ -176,8 +176,8 @@ const Auth = () => {
                     <div>
                       <Label htmlFor="fp-email">Email</Label>
                       <div className="relative mt-1.5">
-                        <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 opacity-60" />
-                        <Input id="fp-email" name="email" type="email" required placeholder="Enter your email" className="pl-9" autoComplete="email" />
+                        <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/80" />
+                        <Input id="fp-email" name="email" type="email" required placeholder="Enter your email" className="pl-9 bg-background/40 border-white/15 focus-visible:ring-primary/50" autoComplete="email" />
                       </div>
                     </div>
                     <Button type="submit" variant="hero" className="w-full rounded-full" disabled={loading}>
@@ -197,8 +197,8 @@ const Auth = () => {
                     <div>
                       <Label htmlFor="si-email">Email</Label>
                       <div className="relative mt-1.5">
-                        <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 opacity-60" />
-                        <Input id="si-email" name="email" type="email" required placeholder="Enter your email" className="pl-9" autoComplete="email" />
+                        <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-primary/80" />
+                        <Input id="si-email" name="email" type="email" required placeholder="Enter your email" className="pl-9 bg-background/40 border-white/15 focus-visible:ring-primary/50" autoComplete="email" />
                       </div>
                     </div>
                     <div>
