@@ -117,8 +117,12 @@ export type CheckoutFlowProps = {
   showBusinessType?: boolean;
   /** Show a "Company name to register" field at the top of details (used for UK LTD) */
   showCompanyName?: boolean;
+  /** When true, the company name field is shown but not required (used for IDV) */
+  companyNameOptional?: boolean;
   /** Show the "what do you need?" service-mode picker at top of details (UK LTD) */
   showServiceMode?: boolean;
+  /** Show a role picker (Director / PSC / Shareholder / Secretary) — used for IDV */
+  showRole?: boolean;
   /** Optional extra add-on services grouped by category. Shown below the
    *  main selection on step 1. Each group is rendered as its own card so
    *  customers only see add-ons relevant to the service they're ordering. */
@@ -154,7 +158,9 @@ const CheckoutFlow = ({
   liveSelfieLink,
   showBusinessType = false,
   showCompanyName = false,
+  companyNameOptional = false,
   showServiceMode = false,
+  showRole = false,
   extras,
 }: CheckoutFlowProps) => {
   // Merge extras into the master items list so selection / pricing logic
@@ -199,6 +205,7 @@ const CheckoutFlow = ({
     business_subcategory: "",
     business_other: "",
     sic_codes: "",
+    role: "",
   });
   const [idType, setIdType] = useState<"id_card" | "passport" | "driving_licence">("id_card");
   const [idTypeOpen, setIdTypeOpen] = useState(false);
@@ -249,7 +256,8 @@ const CheckoutFlow = ({
     const detailsIdx = lockSelection ? 0 : 1;
     if (stepIdx === detailsIdx) {
       return (
-        (!showCompanyName || form.company_name.trim().length >= 2) &&
+        (!showCompanyName || companyNameOptional || form.company_name.trim().length >= 2) &&
+        (!showRole || form.role.trim().length > 0) &&
         form.first_name.trim().length >= 2 &&
         form.last_name.trim().length >= 2 &&
         /\S+@\S+\.\S+/.test(form.email) &&
@@ -333,6 +341,7 @@ const CheckoutFlow = ({
       (contextLabel ? `${contextLabel}\n` : "") +
       (showServiceMode ? `Service mode: ${serviceModeLabel}\n` : "") +
       (showCompanyName && form.company_name ? `Proposed company name: ${form.company_name}\n` : "") +
+      (showRole && form.role ? `Applicant role: ${form.role}\n` : "") +
       `Items:\n${lines}\n` +
       `Subtotal: ${formatMoney(subtotal, currency)}\n` +
       (vat ? `VAT (${(vatRate * 100).toFixed(0)}%): ${formatMoney(vat, currency)}\n` : "") +
@@ -759,13 +768,40 @@ const CheckoutFlow = ({
 
                 {showCompanyName && (
                   <Field
-                    label="Proposed company name (the company you want to register)"
+                    label={
+                      companyNameOptional
+                        ? "Company name (optional — if you've already registered)"
+                        : "Proposed company name (the company you want to register)"
+                    }
                     value={form.company_name}
                     onChange={(v) => setForm({ ...form, company_name: v })}
-                    required
-                    minLength={2}
-                    placeholder="e.g. Acme Trading Ltd — add alternatives in Notes below"
+                    required={!companyNameOptional}
+                    minLength={companyNameOptional ? 0 : 2}
+                    placeholder={
+                      companyNameOptional
+                        ? "e.g. Acme Trading Ltd"
+                        : "e.g. Acme Trading Ltd — add alternatives in Notes below"
+                    }
                   />
+                )}
+                {showRole && (
+                  <div>
+                    <label className="block text-sm font-medium mb-1.5">
+                      Your role <span className="text-destructive">*</span>
+                    </label>
+                    <select
+                      value={form.role}
+                      onChange={(e) => setForm({ ...form, role: e.target.value })}
+                      required
+                      className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+                    >
+                      <option value="">Select your role…</option>
+                      <option value="Director">Director</option>
+                      <option value="PSC (Person with Significant Control)">PSC (Person with Significant Control)</option>
+                      <option value="Shareholder">Shareholder</option>
+                      <option value="Secretary">Secretary</option>
+                    </select>
+                  </div>
                 )}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Field label="First name" value={form.first_name} onChange={(v) => setForm({ ...form, first_name: v, full_name: `${v} ${form.last_name}`.trim() })} required minLength={2} />

@@ -30,10 +30,12 @@ const LtdIdVerificationCheckout = () => {
         backHref="/uk-services/ltd-id-verification"
         backLabel="Back to ID Verification"
         eyebrow="UK · Compliance"
-        notesPlaceholder="Tell us your role (Director / PSC / Secretary / Shareholder), the company name, and any details we should know..."
         fixedPackageName="LTD ID Verification"
         liveSelfieMode="upload"
         liveSelfieLink="https://verify.didit.me/u/dzhdYtifRt-jeb3kZsSptg"
+        showCompanyName
+        companyNameOptional
+        showRole
       />
     </Layout>
   );
