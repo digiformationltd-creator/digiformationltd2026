@@ -110,7 +110,20 @@ function buildPdf(opts: {
   y = M + 160
 
   // ------- Billed-to / Invoice meta panel (light grey) -------
-  const panelH = 110
+  // Build the BILLED TO lines first so we can size the panel to fit.
+  const c = opts.customer
+  const billedLines: string[] = []
+  if (c.email) billedLines.push(c.email)
+  if (c.whatsapp) billedLines.push(`WhatsApp: ${c.whatsapp}`)
+  if (c.address_line1) billedLines.push(c.address_line1)
+  if (c.address_line2) billedLines.push(c.address_line2)
+  const cityLine = [c.city, c.state, c.postal_code].filter(Boolean).join(', ')
+  if (cityLine) billedLines.push(cityLine)
+  if (c.country) billedLines.push(c.country)
+  // Fallback: a single combined address string when fields aren't provided
+  if (billedLines.length <= (c.email ? 1 : 0) && c.address) billedLines.push(c.address)
+
+  const panelH = Math.max(110, 60 + billedLines.length * 14 + 16)
   doc.setFillColor(...GREY_LIGHT)
   doc.rect(M, y, W - M * 2, panelH, 'F')
 
@@ -119,10 +132,12 @@ function buildPdf(opts: {
   doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...MUTED)
   doc.text('BILLED TO:', M + 18, py); py += 18
   doc.setFont('helvetica', 'bold').setFontSize(13).setTextColor(...INK)
-  doc.text((opts.customer.full_name || '—').toUpperCase(), M + 18, py); py += 18
+  doc.text((c.full_name || '—').toUpperCase(), M + 18, py); py += 16
   doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(60)
-  if (opts.customer.email) { doc.text(opts.customer.email, M + 18, py); py += 14 }
-  if (opts.customer.address) { doc.text(opts.customer.address, M + 18, py); py += 14 }
+  for (const line of billedLines) {
+    const wrapped = doc.splitTextToSize(line, W / 2 - 60) as string[]
+    for (const w of wrapped) { doc.text(w, M + 18, py); py += 14 }
+  }
 
   // Invoice meta (right)
   const metaX = W / 2 + 20
