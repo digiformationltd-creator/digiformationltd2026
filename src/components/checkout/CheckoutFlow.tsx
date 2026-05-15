@@ -284,9 +284,16 @@ const CheckoutFlow = ({
     if (selectedItems.length === 0) return;
     setSubmitting(true);
 
+    // Use the actually selected item name (so if the user switches packages
+    // on the page, the invoice reflects their choice — not the URL default).
+    // Only fall back to fixedPackageName when the selection is locked.
+    const stripPkgSuffix = (n: string) => n.replace(/\s*Package$/i, "");
     const packageName =
-      fixedPackageName ||
-      (selectedItems.length === 1 ? selectedItems[0].name : `${selectedItems.length} services`);
+      lockSelection && fixedPackageName
+        ? fixedPackageName
+        : selectedItems.length === 1
+          ? stripPkgSuffix(selectedItems[0].name)
+          : fixedPackageName || `${selectedItems.length} services`;
     const orderRef = await buildOrderRef({
       service: serviceTitle,
       packageName,
