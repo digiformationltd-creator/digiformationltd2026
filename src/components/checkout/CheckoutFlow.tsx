@@ -358,8 +358,34 @@ const CheckoutFlow = ({
       return;
     }
 
+    // ---- Upload submitted documents (ID front/back, holding selfie) to
+    // private storage so they reach the business inbox + invoice as
+    // download links. Each file gets its own folder under the order ref.
+    const uploads: { file: File; label: string; key: string }[] = [];
+    if (idFront) uploads.push({ file: idFront, label: `${idType.replace("_", " ")} (front)`, key: "id-front" });
+    if (idBack) uploads.push({ file: idBack, label: `${idType.replace("_", " ")} (back)`, key: "id-back" });
+    if (holdingSelfie) uploads.push({ file: holdingSelfie, label: "Holding selfie", key: "holding-selfie" });
+
+    const uploadedDocs: { label: string; path: string; filename: string }[] = [];
+    await Promise.all(
+      uploads.map(async ({ file, label, key }) => {
+        const ext = (file.name.split(".").pop() || "bin").toLowerCase();
+        const safeName = `${key}.${ext}`;
+        const path = `submissions/${orderRef}/${safeName}`;
+        const { error: upErr } = await supabase.storage
+          .from("client-docs")
+          .upload(path, file, { contentType: file.type || undefined, upsert: true });
+        if (upErr) {
+          console.error("doc upload failed", label, upErr);
+          return;
+        }
+        uploadedDocs.push({ label, path, filename: file.name });
+      })
+    );
+
     let invoiceNumber: string | undefined;
     let invoiceUrl: string | undefined;
+    let documentLinks: { label: string; url: string; filename: string }[] = [];
     let finalOrderRef = orderRef;
     try {
       const { data: inv, error: invErr } = await supabase.functions.invoke("generate-invoice", {
@@ -368,14 +394,29 @@ const CheckoutFlow = ({
           packageName,
           amount_gbp: total,
           currency,
-          customer: { full_name: form.full_name, email: form.email, address: form.country },
+          customer: {
+            full_name: form.full_name,
+            email: form.email,
+            address: [form.address_line1, form.address_line2, form.city, form.state, form.postal_code, form.country]
+              .filter(Boolean)
+              .join(", "),
+            whatsapp: form.whatsapp,
+            address_line1: form.address_line1,
+            address_line2: form.address_line2,
+            city: form.city,
+            state: form.state,
+            postal_code: form.postal_code,
+            country: form.country,
+          },
           notes: `${contextLabel ? contextLabel + "\n" : ""}${lines}\nBusiness activity: ${activityText}`,
           orderRef,
+          documents: uploadedDocs,
         },
       });
       if (invErr) throw invErr;
       invoiceNumber = (inv as any)?.invoiceNumber;
       invoiceUrl = (inv as any)?.invoiceUrl;
+      documentLinks = (inv as any)?.documentLinks ?? [];
       if ((inv as any)?.orderRef) finalOrderRef = (inv as any).orderRef;
     } catch (err) {
       console.error("invoice generation failed", err);
@@ -415,20 +456,27 @@ const CheckoutFlow = ({
             customerEmail: form.email,
             whatsapp: form.whatsapp,
             country: form.country,
+            addressLine1: form.address_line1,
+            addressLine2: form.address_line2,
+            city: form.city,
+            state: form.state,
+            postalCode: form.postal_code,
             service: serviceTitle,
             packageName,
             price: priceStr,
             orderRef: finalOrderRef,
             invoiceNumber,
+            invoiceUrl,
             pagePath,
             notes: `Business activity: ${activityText}`,
+            documents: documentLinks,
           },
         },
       })
       .catch((err) => console.error("order-notification failed", err));
 
     setSubmitting(false);
-    setSuccessInfo({ orderRef: finalOrderRef, invoiceUrl });
+    setSuccessInfo({ orderRef: finalOrderRef, invoiceUrl, documents: documentLinks });
     toast({ title: "Order received", description: "Our team will contact you as soon as possible." });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
