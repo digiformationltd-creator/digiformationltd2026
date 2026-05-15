@@ -243,9 +243,43 @@ const CheckoutFlow = ({
   const [showSicCodes, setShowSicCodes] = useState(false);
   const [verificationLinkRequested, setVerificationLinkRequested] = useState(false);
   const [exampleOpen, setExampleOpen] = useState<null | { title: string; src: string }>(null);
-  const [serviceMode, setServiceMode] = useState<"ltd-only" | "both">("both");
+  const [serviceMode, setServiceMode] = useState<"ltd-only" | "both">(draft?.serviceMode ?? "both");
   const [serviceModeOpen, setServiceModeOpen] = useState(true);
   const idVerificationActive = !showServiceMode || serviceMode === "both";
+
+  const hasDraftData = !!draft;
+  const clearDraft = () => {
+    try { window.localStorage.removeItem(draftKey); } catch {}
+    setForm(emptyForm);
+    setSelected(initialSelected);
+    setStepIdx(0);
+    setServiceMode("both");
+    toast({ title: "Draft cleared", description: "Your saved form data was removed." });
+  };
+
+  // Persist draft on every change (debounced)
+  useEffect(() => {
+    if (successInfo) return; // don't save after success
+    const t = setTimeout(() => {
+      try {
+        window.localStorage.setItem(draftKey, JSON.stringify({
+          savedAt: Date.now(),
+          form,
+          selected: Array.from(selected),
+          stepIdx,
+          serviceMode,
+        }));
+      } catch {}
+    }, 300);
+    return () => clearTimeout(t);
+  }, [form, selected, stepIdx, serviceMode, successInfo, draftKey]);
+
+  // Clear draft after successful submit
+  useEffect(() => {
+    if (successInfo) {
+      try { window.localStorage.removeItem(draftKey); } catch {}
+    }
+  }, [successInfo, draftKey]);
 
   // Skip selection step entirely when locked
   const steps = lockSelection ? STEP_LABELS.slice(1) : STEP_LABELS;
