@@ -205,6 +205,7 @@ const CheckoutFlow = ({
     business_subcategory: "",
     business_other: "",
     sic_codes: "",
+    role: "",
   });
   const [idType, setIdType] = useState<"id_card" | "passport" | "driving_licence">("id_card");
   const [idTypeOpen, setIdTypeOpen] = useState(false);
@@ -255,7 +256,8 @@ const CheckoutFlow = ({
     const detailsIdx = lockSelection ? 0 : 1;
     if (stepIdx === detailsIdx) {
       return (
-        (!showCompanyName || form.company_name.trim().length >= 2) &&
+        (!showCompanyName || companyNameOptional || form.company_name.trim().length >= 2) &&
+        (!showRole || form.role.trim().length > 0) &&
         form.first_name.trim().length >= 2 &&
         form.last_name.trim().length >= 2 &&
         /\S+@\S+\.\S+/.test(form.email) &&
@@ -339,6 +341,7 @@ const CheckoutFlow = ({
       (contextLabel ? `${contextLabel}\n` : "") +
       (showServiceMode ? `Service mode: ${serviceModeLabel}\n` : "") +
       (showCompanyName && form.company_name ? `Proposed company name: ${form.company_name}\n` : "") +
+      (showRole && form.role ? `Applicant role: ${form.role}\n` : "") +
       `Items:\n${lines}\n` +
       `Subtotal: ${formatMoney(subtotal, currency)}\n` +
       (vat ? `VAT (${(vatRate * 100).toFixed(0)}%): ${formatMoney(vat, currency)}\n` : "") +
