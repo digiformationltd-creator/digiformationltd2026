@@ -27,6 +27,7 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'order-notification': orderNotification,
   'welcome': welcome,
   'order-completed': orderCompleted,
+  'order-in-progress': orderInProgress,
   'invoice-issued': invoiceIssued,
   'invoice-paid': invoicePaid,
   'document-uploaded': documentUploaded,
