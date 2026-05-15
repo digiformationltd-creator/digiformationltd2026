@@ -445,6 +445,17 @@ const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: stri
         },
       }).catch(console.error);
     }
+    // If status moved to In Progress, send in-progress email
+    if (patch.status && patch.status !== prev?.status && /progress/i.test(patch.status) && profile.email) {
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "order-in-progress",
+          recipientEmail: profile.email,
+          idempotencyKey: `order-in-progress-${id}`,
+          templateData: { customerName: profile.full_name, orderRef: prev?.order_ref, service: prev?.service },
+        },
+      }).catch(console.error);
+    }
     reload();
   };
   const deleteRow = async (table: any, id: string) => {
