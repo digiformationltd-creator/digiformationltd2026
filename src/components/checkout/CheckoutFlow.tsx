@@ -271,10 +271,10 @@ const CheckoutFlow = ({
         form.city.trim().length >= 2 &&
         form.postal_code.trim().length >= 3 &&
         (!showBusinessType || form.business_type.trim().length >= 2) &&
-        form.business_category.trim().length > 0 &&
-        (form.business_category === "Other"
+        (hideBusinessActivity || form.business_category.trim().length > 0) &&
+        (hideBusinessActivity || (form.business_category === "Other"
           ? form.business_other.trim().length >= 10
-          : form.business_subcategory.trim().length > 0) &&
+          : form.business_subcategory.trim().length > 0)) &&
         (!(idVerificationActive && liveSelfieLink) || verificationLinkRequested)
       );
     }
