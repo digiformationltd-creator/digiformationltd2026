@@ -768,13 +768,40 @@ const CheckoutFlow = ({
 
                 {showCompanyName && (
                   <Field
-                    label="Proposed company name (the company you want to register)"
+                    label={
+                      companyNameOptional
+                        ? "Company name (optional — if you've already registered)"
+                        : "Proposed company name (the company you want to register)"
+                    }
                     value={form.company_name}
                     onChange={(v) => setForm({ ...form, company_name: v })}
-                    required
-                    minLength={2}
-                    placeholder="e.g. Acme Trading Ltd — add alternatives in Notes below"
+                    required={!companyNameOptional}
+                    minLength={companyNameOptional ? 0 : 2}
+                    placeholder={
+                      companyNameOptional
+                        ? "e.g. Acme Trading Ltd"
+                        : "e.g. Acme Trading Ltd — add alternatives in Notes below"
+                    }
                   />
+                )}
+                {showRole && (
+                  <div>
+                    <label className="block text-sm font-medium mb-1.5">
+                      Your role <span className="text-destructive">*</span>
+                    </label>
+                    <select
+                      value={form.role}
+                      onChange={(e) => setForm({ ...form, role: e.target.value })}
+                      required
+                      className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+                    >
+                      <option value="">Select your role…</option>
+                      <option value="Director">Director</option>
+                      <option value="PSC (Person with Significant Control)">PSC (Person with Significant Control)</option>
+                      <option value="Shareholder">Shareholder</option>
+                      <option value="Secretary">Secretary</option>
+                    </select>
+                  </div>
                 )}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Field label="First name" value={form.first_name} onChange={(v) => setForm({ ...form, first_name: v, full_name: `${v} ${form.last_name}`.trim() })} required minLength={2} />
