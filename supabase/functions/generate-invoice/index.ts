@@ -20,9 +20,19 @@ interface Body {
     full_name: string
     email: string
     address?: string
+    whatsapp?: string
+    address_line1?: string
+    address_line2?: string
+    city?: string
+    state?: string
+    postal_code?: string
+    country?: string
   }
   notes?: string
   orderRef?: string
+  /** Storage paths (relative to client-docs bucket) of uploaded documents.
+   *  The function generates 7-day signed URLs and embeds them in the PDF. */
+  documents?: { label: string; path: string; filename: string }[]
 }
 
 const SITE_NAME = 'Digiformation Ltd'
@@ -53,6 +63,7 @@ function buildPdf(opts: {
   currency: string
   customer: Body['customer']
   notes?: string
+  documentLinks?: { label: string; url: string; filename: string }[]
 }) {
   const doc = new jsPDF({ unit: 'pt', format: 'a4' })
   const W = doc.internal.pageSize.getWidth()
@@ -100,7 +111,20 @@ function buildPdf(opts: {
   y = M + 160
 
   // ------- Billed-to / Invoice meta panel (light grey) -------
-  const panelH = 110
+  // Build the BILLED TO lines first so we can size the panel to fit.
+  const c = opts.customer
+  const billedLines: string[] = []
+  if (c.email) billedLines.push(c.email)
+  if (c.whatsapp) billedLines.push(`WhatsApp: ${c.whatsapp}`)
+  if (c.address_line1) billedLines.push(c.address_line1)
+  if (c.address_line2) billedLines.push(c.address_line2)
+  const cityLine = [c.city, c.state, c.postal_code].filter(Boolean).join(', ')
+  if (cityLine) billedLines.push(cityLine)
+  if (c.country) billedLines.push(c.country)
+  // Fallback: a single combined address string when fields aren't provided
+  if (billedLines.length <= (c.email ? 1 : 0) && c.address) billedLines.push(c.address)
+
+  const panelH = Math.max(110, 60 + billedLines.length * 14 + 16)
   doc.setFillColor(...GREY_LIGHT)
   doc.rect(M, y, W - M * 2, panelH, 'F')
 
@@ -109,10 +133,12 @@ function buildPdf(opts: {
   doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...MUTED)
   doc.text('BILLED TO:', M + 18, py); py += 18
   doc.setFont('helvetica', 'bold').setFontSize(13).setTextColor(...INK)
-  doc.text((opts.customer.full_name || '—').toUpperCase(), M + 18, py); py += 18
+  doc.text((c.full_name || '—').toUpperCase(), M + 18, py); py += 16
   doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(60)
-  if (opts.customer.email) { doc.text(opts.customer.email, M + 18, py); py += 14 }
-  if (opts.customer.address) { doc.text(opts.customer.address, M + 18, py); py += 14 }
+  for (const line of billedLines) {
+    const wrapped = doc.splitTextToSize(line, W / 2 - 60) as string[]
+    for (const w of wrapped) { doc.text(w, M + 18, py); py += 14 }
+  }
 
   // Invoice meta (right)
   const metaX = W / 2 + 20
@@ -254,6 +280,37 @@ function buildPdf(opts: {
   doc.setFont('helvetica', 'bold').setFontSize(11).setTextColor(...INK)
   doc.text('THANK YOU FOR YOUR BUSINESS', M, H - 28)
 
+  // ------- Submitted documents (second page) -------
+  if (opts.documentLinks && opts.documentLinks.length > 0) {
+    doc.addPage()
+    drawCornerDecor()
+    let dy = M + 30
+    doc.setFont('helvetica', 'bold').setFontSize(22).setTextColor(...INK)
+    doc.text('Submitted Documents', M, dy)
+    dy += 26
+    doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(...MUTED)
+    doc.text(
+      `Order Ref: ${opts.orderRef} — secure download links (valid for 7 days).`,
+      M, dy,
+    )
+    dy += 24
+
+    for (const d of opts.documentLinks) {
+      // Card panel
+      doc.setFillColor(...GREY_LIGHT)
+      doc.rect(M, dy, W - M * 2, 60, 'F')
+      doc.setFont('helvetica', 'bold').setFontSize(12).setTextColor(...INK)
+      doc.text(d.label, M + 16, dy + 22)
+      doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(60)
+      doc.text(`File: ${d.filename}`, M + 16, dy + 38)
+      // Clickable Download link (right side)
+      doc.setFont('helvetica', 'bold').setFontSize(10).setTextColor(16, 100, 200)
+      doc.textWithLink('▼ Download', W - M - 90, dy + 36, { url: d.url })
+      dy += 72
+      if (dy > H - 80) { doc.addPage(); drawCornerDecor(); dy = M + 30 }
+    }
+  }
+
   return doc.output('arraybuffer') as ArrayBuffer
 }
 
@@ -299,6 +356,23 @@ Deno.serve(async (req) => {
     const issueDate = new Date().toISOString().slice(0, 10)
     const currency = body.currency ?? 'GBP'
 
+    // 1a. Sign URLs for any submitted client documents (passport / ID / selfie)
+    //     so the team can download them straight from the PDF and email.
+    const documentLinks: { label: string; url: string; filename: string }[] = []
+    if (Array.isArray(body.documents)) {
+      for (const d of body.documents) {
+        if (!d?.path) continue
+        const { data: ds, error: dsErr } = await admin.storage
+          .from('client-docs')
+          .createSignedUrl(d.path, 60 * 60 * 24 * 7)
+        if (dsErr) {
+          console.error('doc sign failed', d.path, dsErr)
+          continue
+        }
+        documentLinks.push({ label: d.label, url: ds.signedUrl, filename: d.filename })
+      }
+    }
+
     // 1. Build PDF
     const pdfBytes = buildPdf({
       invoiceNumber, orderRef, issueDate,
@@ -308,6 +382,7 @@ Deno.serve(async (req) => {
       currency,
       customer: body.customer,
       notes: body.notes,
+      documentLinks,
     })
 
     // 2. Upload to storage (under user folder if authed, else `guest/`)
@@ -366,6 +441,7 @@ Deno.serve(async (req) => {
       orderRef,
       invoiceNumber,
       invoiceUrl: signed.signedUrl,
+      documentLinks,
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
