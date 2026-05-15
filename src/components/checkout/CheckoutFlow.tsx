@@ -773,6 +773,26 @@ const CheckoutFlow = ({
                   </div>
                 )}
 
+                {showServiceMode && serviceMode === "ltd-only" && (
+                  <div className="rounded-2xl border border-amber-500/40 bg-amber-500/5 p-4 md:p-5 space-y-3">
+                    <div>
+                      <div className="text-sm font-semibold text-amber-500">Companies House Personal Code</div>
+                      <div className="text-xs opacity-80 mt-1">
+                        Since your ID verification is already done elsewhere, please share your <strong>Companies House Personal Code</strong> (received after identity verification). We need this to incorporate your UK Ltd company.
+                      </div>
+                    </div>
+                    <Field
+                      label="Personal Code"
+                      value={form.personal_code}
+                      onChange={(v) => setForm({ ...form, personal_code: v.replace(/\s+/g, "").toUpperCase() })}
+                      required
+                      minLength={8}
+                      maxLength={20}
+                      placeholder="e.g. ABCD1234EFGH"
+                    />
+                  </div>
+                )}
+
                 {showCompanyName && (
                   <Field
                     label={
