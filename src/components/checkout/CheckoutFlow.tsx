@@ -123,6 +123,8 @@ export type CheckoutFlowProps = {
   showServiceMode?: boolean;
   /** Show a role picker (Director / PSC / Shareholder / Secretary) — used for IDV */
   showRole?: boolean;
+  /** Hide the entire "Business activity" section (used for IDV) */
+  hideBusinessActivity?: boolean;
   /** Optional extra add-on services grouped by category. Shown below the
    *  main selection on step 1. Each group is rendered as its own card so
    *  customers only see add-ons relevant to the service they're ordering. */
@@ -161,6 +163,7 @@ const CheckoutFlow = ({
   companyNameOptional = false,
   showServiceMode = false,
   showRole = false,
+  hideBusinessActivity = false,
   extras,
 }: CheckoutFlowProps) => {
   // Merge extras into the master items list so selection / pricing logic
@@ -268,10 +271,10 @@ const CheckoutFlow = ({
         form.city.trim().length >= 2 &&
         form.postal_code.trim().length >= 3 &&
         (!showBusinessType || form.business_type.trim().length >= 2) &&
-        form.business_category.trim().length > 0 &&
-        (form.business_category === "Other"
+        (hideBusinessActivity || form.business_category.trim().length > 0) &&
+        (hideBusinessActivity || (form.business_category === "Other"
           ? form.business_other.trim().length >= 10
-          : form.business_subcategory.trim().length > 0) &&
+          : form.business_subcategory.trim().length > 0)) &&
         (!(idVerificationActive && liveSelfieLink) || verificationLinkRequested)
       );
     }
@@ -329,11 +332,12 @@ const CheckoutFlow = ({
         ? "ID verification already done elsewhere — only register UK Ltd"
         : "Both: ID Verification + Company Formation";
 
-    const activityText =
-      (form.business_category === "Other"
-        ? form.business_other.trim()
-        : `${form.business_category}${form.business_subcategory ? ` — ${form.business_subcategory}` : ""}`) +
-      (form.sic_codes.trim() ? `\nSIC codes: ${form.sic_codes.trim()}` : "");
+    const activityText = hideBusinessActivity
+      ? ""
+      : (form.business_category === "Other"
+          ? form.business_other.trim()
+          : `${form.business_category}${form.business_subcategory ? ` — ${form.business_subcategory}` : ""}`) +
+        (form.sic_codes.trim() ? `\nSIC codes: ${form.sic_codes.trim()}` : "");
 
     const summary =
       `[${serviceTitle} Order]\n` +
@@ -348,7 +352,7 @@ const CheckoutFlow = ({
       `Total: ${formatMoney(total, currency)}\n` +
       
       addressBlock +
-      `\nBusiness activity:\n${activityText}`;
+      (activityText ? `\nBusiness activity:\n${activityText}` : "");
 
     const { error } = await supabase.from("contact_submissions").insert({
       full_name: form.full_name,
@@ -865,6 +869,7 @@ const CheckoutFlow = ({
                     minLength={2}
                   />
                 )}
+                {!hideBusinessActivity && (
                 <div className="rounded-2xl border border-border/40 p-4 md:p-5 space-y-4">
                   <div>
                     <h3 className="font-semibold">Business activity</h3>
@@ -953,6 +958,7 @@ const CheckoutFlow = ({
                     </div>
                   )}
                 </div>
+                )}
 
                 {/* ID Documents */}
                 {idVerificationActive && (
