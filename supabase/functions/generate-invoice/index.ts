@@ -441,6 +441,7 @@ Deno.serve(async (req) => {
       orderRef,
       invoiceNumber,
       invoiceUrl: signed.signedUrl,
+      documentLinks,
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
