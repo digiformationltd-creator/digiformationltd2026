@@ -13,12 +13,20 @@ interface Props {
   customerEmail?: string
   whatsapp?: string
   country?: string
+  addressLine1?: string
+  addressLine2?: string
+  city?: string
+  state?: string
+  postalCode?: string
   service?: string
   packageName?: string
   price?: string
   orderRef?: string
+  invoiceNumber?: string
+  invoiceUrl?: string
   pagePath?: string
   notes?: string
+  documents?: { label: string; url: string; filename: string }[]
 }
 
 const OrderNotificationEmail = ({
@@ -26,12 +34,20 @@ const OrderNotificationEmail = ({
   customerEmail,
   whatsapp,
   country,
+  addressLine1,
+  addressLine2,
+  city,
+  state,
+  postalCode,
   service,
   packageName,
   price,
   orderRef,
+  invoiceNumber,
+  invoiceUrl,
   pagePath,
   notes,
+  documents,
 }: Props) => (
   <Html lang="en" dir="ltr">
     <Head />
@@ -49,7 +65,13 @@ const OrderNotificationEmail = ({
           {packageName && <Text style={cardLine}><strong>Package:</strong> {packageName}</Text>}
           {price && <Text style={cardLine}><strong>Price:</strong> {price}</Text>}
           {orderRef && <Text style={cardLine}><strong>Reference:</strong> {orderRef}</Text>}
+          {invoiceNumber && <Text style={cardLine}><strong>Invoice #:</strong> {invoiceNumber}</Text>}
           {pagePath && <Text style={cardLine}><strong>Page:</strong> {pagePath}</Text>}
+          {invoiceUrl && (
+            <Text style={cardLine}>
+              <a href={invoiceUrl} style={linkBtn}>⬇ Download invoice (PDF)</a>
+            </Text>
+          )}
         </Section>
 
         <Section style={card}>
@@ -57,8 +79,26 @@ const OrderNotificationEmail = ({
           {customerName && <Text style={cardLine}><strong>Name:</strong> {customerName}</Text>}
           {customerEmail && <Text style={cardLine}><strong>Email:</strong> {customerEmail}</Text>}
           {whatsapp && <Text style={cardLine}><strong>WhatsApp:</strong> {whatsapp}</Text>}
+          {addressLine1 && <Text style={cardLine}><strong>Address line 1:</strong> {addressLine1}</Text>}
+          {addressLine2 && <Text style={cardLine}><strong>Address line 2:</strong> {addressLine2}</Text>}
+          {city && <Text style={cardLine}><strong>City:</strong> {city}</Text>}
+          {state && <Text style={cardLine}><strong>State / County:</strong> {state}</Text>}
+          {postalCode && <Text style={cardLine}><strong>Postal code:</strong> {postalCode}</Text>}
           {country && <Text style={cardLine}><strong>Country:</strong> {country}</Text>}
         </Section>
+
+        {documents && documents.length > 0 && (
+          <Section style={card}>
+            <Text style={cardLabel}>Submitted documents</Text>
+            {documents.map((d) => (
+              <Text key={d.url} style={cardLine}>
+                <strong>{d.label}:</strong>{' '}
+                <a href={d.url} style={docLink}>⬇ {d.filename}</a>
+              </Text>
+            ))}
+            <Text style={muted}>Links valid for 7 days.</Text>
+          </Section>
+        )}
 
         {notes && (
           <>
