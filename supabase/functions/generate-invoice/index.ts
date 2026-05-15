@@ -20,9 +20,19 @@ interface Body {
     full_name: string
     email: string
     address?: string
+    whatsapp?: string
+    address_line1?: string
+    address_line2?: string
+    city?: string
+    state?: string
+    postal_code?: string
+    country?: string
   }
   notes?: string
   orderRef?: string
+  /** Storage paths (relative to client-docs bucket) of uploaded documents.
+   *  The function generates 7-day signed URLs and embeds them in the PDF. */
+  documents?: { label: string; path: string; filename: string }[]
 }
 
 const SITE_NAME = 'Digiformation Ltd'
