@@ -64,6 +64,7 @@ interface CompanyDetails {
   activation_code: string | null;
   incorporation_date: string | null;
   sic_code: string | null;
+  address_start: string | null;
 }
 
 const services = [
@@ -518,7 +519,7 @@ const MyCompaniesSection = ({ userId, companies, onChange, editable = false }: {
     const { id, ...rest } = c as any;
     const cleaned: any = { ...rest };
     delete cleaned.created_at; delete cleaned.updated_at; delete cleaned.user_id;
-    ["incorporation_date", "address_expire", "confirmation_due", "accounts_filing_due"].forEach(k => {
+    ["incorporation_date", "address_expire", "address_start", "confirmation_due", "accounts_filing_due"].forEach(k => {
       if (cleaned[k] === "") cleaned[k] = null;
     });
     const { error } = await supabase.from("client_company_details").update(cleaned).eq("id", id);
@@ -534,20 +535,27 @@ const MyCompaniesSection = ({ userId, companies, onChange, editable = false }: {
     toast.success("Company removed");
   };
 
-  const fields: { key: keyof CompanyDetails; label: string; type?: string; textarea?: boolean }[] = [
+  // Top section (company info) — order matches admin panel
+  const topFields: { key: keyof CompanyDetails; label: string; type?: string }[] = [
     { key: "company_name", label: "Company Name" },
     { key: "company_number", label: "Company Number" },
-    { key: "director_name", label: "Director Name" },
-    { key: "sic_code", label: "SIC Code" },
-    { key: "auth_code", label: "Auth Code" },
+    { key: "incorporation_date", label: "Incorporation Date", type: "date" },
+    { key: "confirmation_due", label: "Confirmation Statement Due", type: "date" },
+    { key: "accounts_filing_due", label: "Annual Filing Due", type: "date" },
+    { key: "auth_code", label: "Authentication Code" },
     { key: "activation_code", label: "Activation Code" },
     { key: "utr_number", label: "UTR Number" },
-    { key: "incorporation_date", label: "Incorporation Date", type: "date" },
-    { key: "address_expire", label: "Address Expire", type: "date" },
-    { key: "confirmation_due", label: "Confirmation Due", type: "date" },
-    { key: "accounts_filing_due", label: "Accounts Filing Due", type: "date" },
-    { key: "registered_address", label: "Registered Office Address", textarea: true },
-    { key: "correspondence_address", label: "Correspondence Address", textarea: true },
+    { key: "director_name", label: "Director Name" },
+    { key: "sic_code", label: "SIC Code" },
+  ];
+  // Address section — order matches admin panel
+  const addressTextFields: { key: keyof CompanyDetails; label: string }[] = [
+    { key: "registered_address", label: "Registered Office Address" },
+    { key: "correspondence_address", label: "Correspondence Address" },
+  ];
+  const addressDateFields: { key: keyof CompanyDetails; label: string }[] = [
+    { key: "address_start", label: "Address Start Date" },
+    { key: "address_expire", label: "Address Expiry Date" },
   ];
 
   return (
@@ -570,7 +578,9 @@ const MyCompaniesSection = ({ userId, companies, onChange, editable = false }: {
             key={c.id}
             company={c}
             index={idx}
-            fields={fields}
+            topFields={topFields}
+            addressTextFields={addressTextFields}
+            addressDateFields={addressDateFields}
             editable={editable}
             saving={savingId === c.id}
             onChange={(patch) => updateField(c.id, patch)}
@@ -584,10 +594,12 @@ const MyCompaniesSection = ({ userId, companies, onChange, editable = false }: {
 };
 
 const CompanyCard = ({
-  company: c, index: idx, fields, saving, editable = true, onChange, onSave, onDelete,
+  company: c, index: idx, topFields, addressTextFields, addressDateFields, saving, editable = true, onChange, onSave, onDelete,
 }: {
   company: CompanyDetails; index: number;
-  fields: { key: keyof CompanyDetails; label: string; type?: string; textarea?: boolean }[];
+  topFields: { key: keyof CompanyDetails; label: string; type?: string }[];
+  addressTextFields: { key: keyof CompanyDetails; label: string }[];
+  addressDateFields: { key: keyof CompanyDetails; label: string }[];
   saving: boolean;
   editable?: boolean;
   onChange: (patch: Partial<CompanyDetails>) => void;
@@ -614,9 +626,9 @@ const CompanyCard = ({
           <ChevronDown className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`} />
         </button>
         {open && (
-          <div className="pt-4 mt-2 border-t border-border/40 space-y-4">
+          <div className="pt-4 mt-2 border-t border-border/40 space-y-5">
             <div className="grid sm:grid-cols-2 gap-3">
-              {fields.filter(f => !f.textarea).map(f => (
+              {topFields.map(f => (
                 <div key={f.key as string}>
                   <Label className="text-[11px] uppercase tracking-wider text-white/60">{f.label}</Label>
                   <Input
@@ -630,19 +642,39 @@ const CompanyCard = ({
                 </div>
               ))}
             </div>
-            {fields.filter(f => f.textarea).map(f => (
-              <div key={f.key as string}>
-                <Label className="text-[11px] uppercase tracking-wider text-white/60">{f.label}</Label>
-                <Textarea
-                  value={(c[f.key] as string) || ""}
-                  onChange={(e) => onChange({ [f.key]: e.target.value } as any)}
-                  className="mt-1.5 text-white"
-                  rows={2}
-                  readOnly={!editable}
-                  disabled={!editable}
-                />
+
+            <div className="pt-4 border-t border-border/40 space-y-4">
+              <h4 className="text-sm font-semibold uppercase tracking-wider text-white/80">Address Details</h4>
+              {addressTextFields.map(f => (
+                <div key={f.key as string}>
+                  <Label className="text-[11px] uppercase tracking-wider text-white/60">{f.label}</Label>
+                  <Textarea
+                    value={(c[f.key] as string) || ""}
+                    onChange={(e) => onChange({ [f.key]: e.target.value } as any)}
+                    className="mt-1.5 text-white"
+                    rows={2}
+                    readOnly={!editable}
+                    disabled={!editable}
+                  />
+                </div>
+              ))}
+              <div className="grid sm:grid-cols-2 gap-3">
+                {addressDateFields.map(f => (
+                  <div key={f.key as string}>
+                    <Label className="text-[11px] uppercase tracking-wider text-white/60">{f.label}</Label>
+                    <Input
+                      type="date"
+                      value={(c[f.key] as string) || ""}
+                      onChange={(e) => onChange({ [f.key]: e.target.value } as any)}
+                      className="mt-1.5 text-white"
+                      readOnly={!editable}
+                      disabled={!editable}
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+
             {editable && (
               <div className="flex justify-between items-center">
                 <Button variant="ghost" size="sm" onClick={onDelete} className="text-destructive">
