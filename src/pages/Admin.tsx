@@ -1189,10 +1189,8 @@ const CompanyFormSection = ({
             <Field label="Director Name" value={c.director_name} onChange={(v) => updateCompanyField(c.id, { director_name: v })} />
             <Field label="SIC Code" value={c.sic_code} onChange={(v) => updateCompanyField(c.id, { sic_code: v })} />
           </div>
-          <div className="space-y-2 pt-2 border-t border-border/40">
-            <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Address Details Below</h4>
-          </div>
-          <div className="space-y-4">
+          <div className="space-y-4 pt-2 border-t border-border/40">
+            <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Address Details</h4>
             <div>
               <Label>Registered Office Address</Label>
               <Textarea value={c.registered_address || ""} onChange={(e) => updateCompanyField(c.id, { registered_address: e.target.value })} />
