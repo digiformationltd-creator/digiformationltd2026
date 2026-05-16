@@ -1168,23 +1168,29 @@ const CompanyFormSection = ({
           <div className="grid md:grid-cols-2 gap-4">
             <Field label="Company Name" value={c.company_name} onChange={(v) => updateCompanyField(c.id, { company_name: v })} />
             <Field label="Company Number" value={c.company_number} onChange={(v) => updateCompanyField(c.id, { company_number: v })} />
+            <Field label="Incorporation Date" type="date" value={c.incorporation_date} onChange={(v) => updateCompanyField(c.id, { incorporation_date: v })} />
+            <Field label="Confirmation Statement Due" type="date" value={c.confirmation_due} onChange={(v) => updateCompanyField(c.id, { confirmation_due: v })} />
+            <Field label="Annual Filing Due" type="date" value={c.accounts_filing_due} onChange={(v) => updateCompanyField(c.id, { accounts_filing_due: v })} />
+            <Field label="Authentication Code" value={c.auth_code} onChange={(v) => updateCompanyField(c.id, { auth_code: v })} />
+            <Field label="Activation Code" value={(c as any).activation_code} onChange={(v) => updateCompanyField(c.id, { activation_code: v } as any)} />
+            <Field label="UTR Number" value={(c as any).utr_number} onChange={(v) => updateCompanyField(c.id, { utr_number: v } as any)} />
             <Field label="Director Name" value={c.director_name} onChange={(v) => updateCompanyField(c.id, { director_name: v })} />
             <Field label="SIC Code" value={c.sic_code} onChange={(v) => updateCompanyField(c.id, { sic_code: v })} />
-            <Field label="Auth Code" value={c.auth_code} onChange={(v) => updateCompanyField(c.id, { auth_code: v })} />
-            <Field label="UTR Number" value={(c as any).utr_number} onChange={(v) => updateCompanyField(c.id, { utr_number: v } as any)} />
-            <Field label="Activation Code" value={(c as any).activation_code} onChange={(v) => updateCompanyField(c.id, { activation_code: v } as any)} />
-            <Field label="Incorporation Date" type="date" value={c.incorporation_date} onChange={(v) => updateCompanyField(c.id, { incorporation_date: v })} />
-            <Field label="Address Expire" type="date" value={c.address_expire} onChange={(v) => updateCompanyField(c.id, { address_expire: v })} />
-            <Field label="Confirmation Due" type="date" value={c.confirmation_due} onChange={(v) => updateCompanyField(c.id, { confirmation_due: v })} />
-            <Field label="Accounts Filing Due" type="date" value={c.accounts_filing_due} onChange={(v) => updateCompanyField(c.id, { accounts_filing_due: v })} />
           </div>
-          <div>
-            <Label>Registered Office Address</Label>
-            <Textarea value={c.registered_address || ""} onChange={(e) => updateCompanyField(c.id, { registered_address: e.target.value })} />
-          </div>
-          <div>
-            <Label>Correspondence Address <span className="text-muted-foreground text-xs">(optional)</span></Label>
-            <Textarea value={c.correspondence_address || ""} onChange={(e) => updateCompanyField(c.id, { correspondence_address: e.target.value })} placeholder="Leave blank if not purchased" />
+          <div className="space-y-4 pt-2 border-t border-border/40">
+            <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Address Details</h4>
+            <div>
+              <Label>Registered Office Address</Label>
+              <Textarea value={c.registered_address || ""} onChange={(e) => updateCompanyField(c.id, { registered_address: e.target.value })} />
+            </div>
+            <div>
+              <Label>Correspondence Address <span className="text-muted-foreground text-xs">(optional)</span></Label>
+              <Textarea value={c.correspondence_address || ""} onChange={(e) => updateCompanyField(c.id, { correspondence_address: e.target.value })} placeholder="Leave blank if not purchased" />
+            </div>
+            <div className="grid md:grid-cols-2 gap-4">
+              <Field label="Address Start Date" type="date" value={(c as any).address_start} onChange={(v) => updateCompanyField(c.id, { address_start: v } as any)} />
+              <Field label="Address Expiry Date" type="date" value={c.address_expire} onChange={(v) => updateCompanyField(c.id, { address_expire: v })} />
+            </div>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button onClick={() => saveCompany(c)} disabled={saving} size="sm"><Save className="w-4 h-4 mr-2" />Save Company</Button>
