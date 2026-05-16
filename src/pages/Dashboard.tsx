@@ -65,6 +65,7 @@ interface CompanyDetails {
   incorporation_date: string | null;
   sic_code: string | null;
   address_start: string | null;
+  companies_house_personal_code: string | null;
 }
 
 const services = [
@@ -641,6 +642,20 @@ const CompanyCard = ({
                   />
                 </div>
               ))}
+            </div>
+
+            <div className="pt-4 border-t border-border/40 space-y-2">
+              <h4 className="text-sm font-semibold uppercase tracking-wider text-white/80">Companies House Personal Code</h4>
+              <p className="text-[11px] text-white/60">11-character code per director. Add one per line for multiple directors.</p>
+              <Textarea
+                value={(c.companies_house_personal_code as string) || ""}
+                onChange={(e) => onChange({ companies_house_personal_code: e.target.value } as any)}
+                className="mt-1.5 text-white"
+                rows={4}
+                placeholder={"Director 1: XXXXXXXXXXX\nDirector 2: XXXXXXXXXXX"}
+                readOnly={!editable}
+                disabled={!editable}
+              />
             </div>
 
             <div className="pt-4 border-t border-border/40 space-y-4">
