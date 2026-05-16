@@ -87,6 +87,7 @@ export type Database = {
           address_expire: string | null
           address_start: string | null
           auth_code: string | null
+          companies_house_personal_code: string | null
           company_address: string | null
           company_name: string | null
           company_number: string | null
@@ -108,6 +109,7 @@ export type Database = {
           address_expire?: string | null
           address_start?: string | null
           auth_code?: string | null
+          companies_house_personal_code?: string | null
           company_address?: string | null
           company_name?: string | null
           company_number?: string | null
@@ -129,6 +131,7 @@ export type Database = {
           address_expire?: string | null
           address_start?: string | null
           auth_code?: string | null
+          companies_house_personal_code?: string | null
           company_address?: string | null
           company_name?: string | null
           company_number?: string | null
