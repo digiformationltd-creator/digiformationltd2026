@@ -38,6 +38,7 @@ interface Body {
 const SITE_NAME = 'Digiformation Ltd'
 const SITE_ADDRESS = ''
 const SITE_PHONE = '+44 7438 351454'
+const SITE_PHONE_PK = '+92 316 4467464'
 const SITE_EMAIL = 'info@digiformation.uk'
 const SITE_WEB = 'www.digiformation.uk'
 const GREY_LIGHT: [number, number, number] = [232, 232, 232] // panels / row stripe
@@ -273,8 +274,9 @@ function buildPdf(opts: {
 
   doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(60)
   doc.text(SITE_PHONE, W - M - 14, infoY, { align: 'right' })
-  doc.text(SITE_EMAIL, W - M - 14, infoY + 14, { align: 'right' })
-  doc.text(SITE_WEB,   W - M - 14, infoY + 28, { align: 'right' })
+  doc.text(SITE_PHONE_PK, W - M - 14, infoY + 14, { align: 'right' })
+  doc.text(SITE_EMAIL, W - M - 14, infoY + 28, { align: 'right' })
+  doc.text(SITE_WEB,   W - M - 14, infoY + 42, { align: 'right' })
 
   // ------- Thank you footer -------
   doc.setFont('helvetica', 'bold').setFontSize(11).setTextColor(...INK)

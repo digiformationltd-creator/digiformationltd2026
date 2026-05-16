@@ -62,7 +62,7 @@ const OrderNotificationEmail = ({
         <Section style={card}>
           <Text style={cardLabel}>Order</Text>
           {service && <Text style={cardLine}><strong>Service:</strong> {service}</Text>}
-          {packageName && <Text style={cardLine}><strong>Package:</strong> {packageName}</Text>}
+          {packageName && packageName !== service && <Text style={cardLine}><strong>Package:</strong> {packageName}</Text>}
           {price && <Text style={cardLine}><strong>Price:</strong> {price}</Text>}
           {orderRef && <Text style={cardLine}><strong>Reference:</strong> {orderRef}</Text>}
           {invoiceNumber && <Text style={cardLine}><strong>Invoice #:</strong> {invoiceNumber}</Text>}
