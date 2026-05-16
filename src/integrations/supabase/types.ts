@@ -85,6 +85,7 @@ export type Database = {
           accounts_filing_due: string | null
           activation_code: string | null
           address_expire: string | null
+          address_start: string | null
           auth_code: string | null
           company_address: string | null
           company_name: string | null
@@ -105,6 +106,7 @@ export type Database = {
           accounts_filing_due?: string | null
           activation_code?: string | null
           address_expire?: string | null
+          address_start?: string | null
           auth_code?: string | null
           company_address?: string | null
           company_name?: string | null
@@ -125,6 +127,7 @@ export type Database = {
           accounts_filing_due?: string | null
           activation_code?: string | null
           address_expire?: string | null
+          address_start?: string | null
           auth_code?: string | null
           company_address?: string | null
           company_name?: string | null
