@@ -1167,6 +1167,18 @@ const CompanyFormSection = ({
           </div>
           <div className="grid md:grid-cols-2 gap-4">
             <Field label="Company Name" value={c.company_name} onChange={(v) => updateCompanyField(c.id, { company_name: v })} />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-sm font-semibold">Companies House Personal Code</Label>
+            <p className="text-xs text-muted-foreground">Enter the 11-character personal code for each director. Add one per line for multiple directors.</p>
+            <Textarea
+              rows={4}
+              value={(c as any).companies_house_personal_code || ""}
+              onChange={(e) => updateCompanyField(c.id, { companies_house_personal_code: e.target.value } as any)}
+              placeholder={"Director 1: XXXXXXXXXXX\nDirector 2: XXXXXXXXXXX"}
+            />
+          </div>
+          <div className="grid md:grid-cols-2 gap-4">
             <Field label="Company Number" value={c.company_number} onChange={(v) => updateCompanyField(c.id, { company_number: v })} />
             <Field label="Incorporation Date" type="date" value={c.incorporation_date} onChange={(v) => updateCompanyField(c.id, { incorporation_date: v })} />
             <Field label="Confirmation Statement Due" type="date" value={c.confirmation_due} onChange={(v) => updateCompanyField(c.id, { confirmation_due: v })} />
@@ -1178,17 +1190,9 @@ const CompanyFormSection = ({
             <Field label="SIC Code" value={c.sic_code} onChange={(v) => updateCompanyField(c.id, { sic_code: v })} />
           </div>
           <div className="space-y-2 pt-2 border-t border-border/40">
-            <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Companies House Personal Code</h4>
-            <p className="text-xs text-muted-foreground">Enter the 11-character personal code for each director. Add one per line for multiple directors.</p>
-            <Textarea
-              rows={4}
-              value={(c as any).companies_house_personal_code || ""}
-              onChange={(e) => updateCompanyField(c.id, { companies_house_personal_code: e.target.value } as any)}
-              placeholder={"Director 1: XXXXXXXXXXX\nDirector 2: XXXXXXXXXXX"}
-            />
+            <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Address Details Below</h4>
           </div>
-          <div className="space-y-4 pt-2 border-t border-border/40">
-            <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Address Details</h4>
+          <div className="space-y-4">
             <div>
               <Label>Registered Office Address</Label>
               <Textarea value={c.registered_address || ""} onChange={(e) => updateCompanyField(c.id, { registered_address: e.target.value })} />
