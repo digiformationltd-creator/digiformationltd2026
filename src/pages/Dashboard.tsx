@@ -594,10 +594,12 @@ const MyCompaniesSection = ({ userId, companies, onChange, editable = false }: {
 };
 
 const CompanyCard = ({
-  company: c, index: idx, fields, saving, editable = true, onChange, onSave, onDelete,
+  company: c, index: idx, topFields, addressTextFields, addressDateFields, saving, editable = true, onChange, onSave, onDelete,
 }: {
   company: CompanyDetails; index: number;
-  fields: { key: keyof CompanyDetails; label: string; type?: string; textarea?: boolean }[];
+  topFields: { key: keyof CompanyDetails; label: string; type?: string }[];
+  addressTextFields: { key: keyof CompanyDetails; label: string }[];
+  addressDateFields: { key: keyof CompanyDetails; label: string }[];
   saving: boolean;
   editable?: boolean;
   onChange: (patch: Partial<CompanyDetails>) => void;
@@ -624,9 +626,9 @@ const CompanyCard = ({
           <ChevronDown className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`} />
         </button>
         {open && (
-          <div className="pt-4 mt-2 border-t border-border/40 space-y-4">
+          <div className="pt-4 mt-2 border-t border-border/40 space-y-5">
             <div className="grid sm:grid-cols-2 gap-3">
-              {fields.filter(f => !f.textarea).map(f => (
+              {topFields.map(f => (
                 <div key={f.key as string}>
                   <Label className="text-[11px] uppercase tracking-wider text-white/60">{f.label}</Label>
                   <Input
@@ -640,19 +642,39 @@ const CompanyCard = ({
                 </div>
               ))}
             </div>
-            {fields.filter(f => f.textarea).map(f => (
-              <div key={f.key as string}>
-                <Label className="text-[11px] uppercase tracking-wider text-white/60">{f.label}</Label>
-                <Textarea
-                  value={(c[f.key] as string) || ""}
-                  onChange={(e) => onChange({ [f.key]: e.target.value } as any)}
-                  className="mt-1.5 text-white"
-                  rows={2}
-                  readOnly={!editable}
-                  disabled={!editable}
-                />
+
+            <div className="pt-4 border-t border-border/40 space-y-4">
+              <h4 className="text-sm font-semibold uppercase tracking-wider text-white/80">Address Details</h4>
+              {addressTextFields.map(f => (
+                <div key={f.key as string}>
+                  <Label className="text-[11px] uppercase tracking-wider text-white/60">{f.label}</Label>
+                  <Textarea
+                    value={(c[f.key] as string) || ""}
+                    onChange={(e) => onChange({ [f.key]: e.target.value } as any)}
+                    className="mt-1.5 text-white"
+                    rows={2}
+                    readOnly={!editable}
+                    disabled={!editable}
+                  />
+                </div>
+              ))}
+              <div className="grid sm:grid-cols-2 gap-3">
+                {addressDateFields.map(f => (
+                  <div key={f.key as string}>
+                    <Label className="text-[11px] uppercase tracking-wider text-white/60">{f.label}</Label>
+                    <Input
+                      type="date"
+                      value={(c[f.key] as string) || ""}
+                      onChange={(e) => onChange({ [f.key]: e.target.value } as any)}
+                      className="mt-1.5 text-white"
+                      readOnly={!editable}
+                      disabled={!editable}
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+
             {editable && (
               <div className="flex justify-between items-center">
                 <Button variant="ghost" size="sm" onClick={onDelete} className="text-destructive">
