@@ -359,7 +359,7 @@ const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: stri
     setSaving(true);
     const { id, created_at, updated_at, ...payload } = c;
     const cleaned: any = { ...payload };
-    ["incorporation_date", "address_expire", "confirmation_due", "accounts_filing_due"].forEach(k => {
+    ["incorporation_date", "address_start", "address_expire", "confirmation_due", "accounts_filing_due"].forEach(k => {
       if (cleaned[k] === "") cleaned[k] = null;
     });
     const { error } = await supabase.from("client_company_details").update(cleaned).eq("id", id);
