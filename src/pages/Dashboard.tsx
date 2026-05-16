@@ -64,6 +64,7 @@ interface CompanyDetails {
   activation_code: string | null;
   incorporation_date: string | null;
   sic_code: string | null;
+  address_start: string | null;
 }
 
 const services = [
