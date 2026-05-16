@@ -274,8 +274,9 @@ function buildPdf(opts: {
 
   doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(60)
   doc.text(SITE_PHONE, W - M - 14, infoY, { align: 'right' })
-  doc.text(SITE_EMAIL, W - M - 14, infoY + 14, { align: 'right' })
-  doc.text(SITE_WEB,   W - M - 14, infoY + 28, { align: 'right' })
+  doc.text(SITE_PHONE_PK, W - M - 14, infoY + 14, { align: 'right' })
+  doc.text(SITE_EMAIL, W - M - 14, infoY + 28, { align: 'right' })
+  doc.text(SITE_WEB,   W - M - 14, infoY + 42, { align: 'right' })
 
   // ------- Thank you footer -------
   doc.setFont('helvetica', 'bold').setFontSize(11).setTextColor(...INK)
