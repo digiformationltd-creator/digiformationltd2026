@@ -38,6 +38,7 @@ interface Body {
 const SITE_NAME = 'Digiformation Ltd'
 const SITE_ADDRESS = ''
 const SITE_PHONE = '+44 7438 351454'
+const SITE_PHONE_PK = '+92 316 4467464'
 const SITE_EMAIL = 'info@digiformation.uk'
 const SITE_WEB = 'www.digiformation.uk'
 const GREY_LIGHT: [number, number, number] = [232, 232, 232] // panels / row stripe
