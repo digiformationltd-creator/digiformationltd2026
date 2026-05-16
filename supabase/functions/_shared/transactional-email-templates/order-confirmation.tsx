@@ -26,7 +26,7 @@ const OrderConfirmationEmail = ({
   notes,
   liveSelfieLink,
 }: Props) => {
-  const serviceLine = packageName && service
+  const serviceLine = packageName && service && packageName !== service
     ? `${service} — ${packageName}`
     : service || ''
   return (
