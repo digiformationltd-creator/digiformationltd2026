@@ -578,7 +578,9 @@ const MyCompaniesSection = ({ userId, companies, onChange, editable = false }: {
             key={c.id}
             company={c}
             index={idx}
-            fields={fields}
+            topFields={topFields}
+            addressTextFields={addressTextFields}
+            addressDateFields={addressDateFields}
             editable={editable}
             saving={savingId === c.id}
             onChange={(patch) => updateField(c.id, patch)}
