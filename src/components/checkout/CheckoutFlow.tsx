@@ -1184,6 +1184,20 @@ const CheckoutFlow = ({
                     />
                   )}
 
+                  {liveSelfieMode === "upload" && (
+                    <div className="space-y-2">
+                      <UploadField
+                        label="Holding selfie (you holding your ID)"
+                        file={holdingSelfie}
+                        onChange={setHoldingSelfie}
+                        onViewExample={() => setExampleOpen({ title: "Example: Holding selfie", src: exampleHoldingSelfie })}
+                      />
+                      <p className="text-xs opacity-75 leading-relaxed rounded-lg bg-muted/40 border border-border/60 p-3">
+                        <span className="font-semibold">Tip:</span> Hold your ID next to your face — both must be fully visible and readable in one photo.
+                      </p>
+                    </div>
+                  )}
+
                   {showProofOfAddress && (
                     <div className="space-y-2">
                       <UploadField
@@ -1195,20 +1209,6 @@ const CheckoutFlow = ({
                         <span className="font-semibold">Accepted:</span> Water bill, gas bill, electricity bill, or bank statement.
                         <br />
                         <span className="font-semibold">Important:</span> The document <strong>must clearly show your full home address</strong> (the same address entered above) and your name. It should be dated within the last 3 months. PDF, JPG or PNG accepted.
-                      </p>
-                    </div>
-                  )}
-
-                  {liveSelfieMode === "upload" && (
-                    <div className="space-y-2">
-                      <UploadField
-                        label="Holding selfie (you holding your ID)"
-                        file={holdingSelfie}
-                        onChange={setHoldingSelfie}
-                        onViewExample={() => setExampleOpen({ title: "Example: Holding selfie", src: exampleHoldingSelfie })}
-                      />
-                      <p className="text-xs opacity-75 leading-relaxed rounded-lg bg-muted/40 border border-border/60 p-3">
-                        <span className="font-semibold">Tip:</span> Hold your ID next to your face — both must be fully visible and readable in one photo.
                       </p>
                     </div>
                   )}
