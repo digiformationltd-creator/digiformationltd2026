@@ -1132,22 +1132,46 @@ const CompanyFormSection = ({
     const dueDate = computeCompanyDueDate(template, c);
     if (!dueDate) return toast.error(`Please set the ${label} due date or Incorporation Date first`);
     const daysRemaining = Math.max(0, Math.ceil((new Date(dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
+    const templateData = { customerName: clientName, companyName: c.company_name, companyNumber: c.company_number, dueDate, daysRemaining };
     const { error } = await supabase.functions.invoke("send-transactional-email", {
+      body: { templateName: template, recipientEmail: clientEmail, idempotencyKey: `${template}-${c.id}-${Date.now()}`, templateData },
+    });
+    await supabase.functions.invoke("send-transactional-email", {
       body: {
         templateName: template,
-        recipientEmail: clientEmail,
-        idempotencyKey: `${template}-${c.id}-${Date.now()}`,
-        templateData: {
-          customerName: clientName,
-          companyName: c.company_name,
-          companyNumber: c.company_number,
-          dueDate,
-          daysRemaining,
-        },
+        recipientEmail: "info@digiformation.uk",
+        idempotencyKey: `${template}-${c.id}-${Date.now()}-admin`,
+        templateData: { ...templateData, customerName: `[ADMIN COPY] ${clientName || ""} <${clientEmail}>` },
       },
     });
-    if (error) toast.error(error.message); else toast.success(`${label} reminder sent (${daysRemaining} days remaining)`);
+    if (error) toast.error(error.message); else toast.success(`${label} reminder sent — admin copy sent`);
   };
+
+  const sendAddressRenewalFromCompany = async (c: any) => {
+    if (!clientEmail) return toast.error("Client has no email");
+    const expireDate: string | null = c.address_expire || null;
+    if (!expireDate) return toast.error("Please set the Address Expiry Date first");
+    const daysRemaining = Math.max(0, Math.ceil((new Date(expireDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
+    const templateData = {
+      customerName: clientName,
+      address: c.registered_address || c.correspondence_address || c.company_name || "Registered Office Address",
+      expireDate,
+      daysRemaining,
+    };
+    const { error } = await supabase.functions.invoke("send-transactional-email", {
+      body: { templateName: "address-renewal-reminder", recipientEmail: clientEmail, idempotencyKey: `address-renewal-co-${c.id}-${Date.now()}`, templateData },
+    });
+    await supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: "address-renewal-reminder",
+        recipientEmail: "info@digiformation.uk",
+        idempotencyKey: `address-renewal-co-${c.id}-${Date.now()}-admin`,
+        templateData: { ...templateData, customerName: `[ADMIN COPY] ${clientName || ""} <${clientEmail}>` },
+      },
+    });
+    if (error) toast.error(error.message); else toast.success(`Address renewal reminder sent (${daysRemaining} days remaining) — admin copy sent`);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-end">
