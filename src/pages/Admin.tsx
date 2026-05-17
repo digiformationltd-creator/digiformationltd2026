@@ -1254,6 +1254,7 @@ const CompanyFormSection = ({
               title="Send Annual Accounts filing reminder email to client"
             >
               <Mail className="w-4 h-4 mr-2" />Send Accounts Reminder
+            </Button>
             <Button
               onClick={() => sendAddressRenewalFromCompany(c)}
               size="sm"
