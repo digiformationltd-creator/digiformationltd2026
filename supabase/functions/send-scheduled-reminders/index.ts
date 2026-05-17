@@ -58,6 +58,8 @@ async function logSent(supabase: any, row: any) {
   await supabase.from('email_reminder_log').insert(row)
 }
 
+const ADMIN_EMAIL = 'info@digiformation.uk'
+
 async function sendReminder(
   supabase: any,
   templateName: string,
@@ -69,6 +71,22 @@ async function sendReminder(
     body: { templateName, recipientEmail, idempotencyKey, templateData },
   })
   if (error) console.error('send-transactional-email error', error)
+  // Best-effort admin acknowledgement copy so info@digiformation.uk knows who got reminded
+  try {
+    await supabase.functions.invoke('send-transactional-email', {
+      body: {
+        templateName,
+        recipientEmail: ADMIN_EMAIL,
+        idempotencyKey: `${idempotencyKey}-admin`,
+        templateData: {
+          ...templateData,
+          customerName: `[ADMIN COPY] ${templateData.customerName || ''} <${recipientEmail}>`,
+        },
+      },
+    })
+  } catch (e) {
+    console.error('admin copy send failed', e)
+  }
   return !error
 }
 
