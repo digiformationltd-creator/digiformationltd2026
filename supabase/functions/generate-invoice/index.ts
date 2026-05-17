@@ -251,32 +251,39 @@ function buildPdf(opts: {
   y += 22
 
   // ------- Bottom band: Payment Method | Contact -------
-  const bandY = H - 180
+  const bandY = H - 240
   doc.setFillColor(...GREY_LIGHT)
   doc.rect(M, bandY, W - M * 2, 28, 'F')
   doc.setFont('helvetica', 'bold').setFontSize(10).setTextColor(...INK)
-  doc.text('PAYMENT METHOD:', M + 14, bandY + 18)
+  doc.text('PAYMENT METHODS:', M + 14, bandY + 18)
   doc.text('CONTACT:', W - M - 14, bandY + 18, { align: 'right' })
 
   const infoY = bandY + 44
+  // Barclays
   doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...INK)
-  doc.text('Barclays Bank (GBP — Local transfer)', M + 14, infoY)
+  doc.text('Barclays Bank (GBP — UK Local transfer)', M + 14, infoY)
   doc.setFont('helvetica', 'normal').setTextColor(60)
-  doc.text('Beneficiary: Muhammad Haroon', M + 14, infoY + 12)
-  doc.text('Sort Code: 23-14-86', M + 14, infoY + 24)
-  doc.text('Account No: 15737580', M + 14, infoY + 36)
+  doc.text('Beneficiary: Muhammad Haroon  ·  Sort Code: 23-14-86  ·  Account No: 15737580', M + 14, infoY + 12)
 
+  // Binance
   doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...INK)
-  doc.text('Binance Pay (Crypto)', M + 14, infoY + 56)
+  doc.text('Binance Pay (Crypto)', M + 14, infoY + 30)
   doc.setFont('helvetica', 'normal').setTextColor(60)
-  doc.text('Account Title: Haroon-alhanfi', M + 14, infoY + 68)
-  doc.text('Binance ID: 477888953', M + 14, infoY + 80)
+  doc.text('Account Title: Haroon-alhanfi  ·  Binance ID: 477888953', M + 14, infoY + 42)
 
+  // Pakistan wallets / bank
+  doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...INK)
+  doc.text('Pakistan (PKR) — Muhammad Haroon', M + 14, infoY + 60)
+  doc.setFont('helvetica', 'normal').setTextColor(60)
+  doc.text('NayaPay  ·  JazzCash  ·  EasyPaisa  ·  FirstPay HBL', M + 14, infoY + 72)
+  doc.text('Mobile / Account: 0303 4226759', M + 14, infoY + 84)
+
+  // Contact column (PK number above UK number)
   doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(60)
-  doc.text(SITE_PHONE, W - M - 14, infoY, { align: 'right' })
-  doc.text(SITE_PHONE_PK, W - M - 14, infoY + 14, { align: 'right' })
-  doc.text(SITE_EMAIL, W - M - 14, infoY + 28, { align: 'right' })
-  doc.text(SITE_WEB,   W - M - 14, infoY + 42, { align: 'right' })
+  doc.text(SITE_PHONE_PK, W - M - 14, infoY, { align: 'right' })
+  doc.text(SITE_PHONE,    W - M - 14, infoY + 14, { align: 'right' })
+  doc.text(SITE_EMAIL,    W - M - 14, infoY + 28, { align: 'right' })
+  doc.text(SITE_WEB,      W - M - 14, infoY + 42, { align: 'right' })
 
   // ------- Thank you footer -------
   doc.setFont('helvetica', 'bold').setFontSize(11).setTextColor(...INK)
