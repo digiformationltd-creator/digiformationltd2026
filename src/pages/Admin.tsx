@@ -914,15 +914,20 @@ const EmailsSection = ({
     const dueDate = computeCompanyDueDate(template, c);
     if (!dueDate) return toast.error(`Please set the ${label} due date or Incorporation Date in Company tab first`);
     const daysRemaining = Math.max(0, Math.ceil((new Date(dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
+    const templateData = { customerName: clientName, companyName: c.company_name, companyNumber: c.company_number, dueDate, daysRemaining };
     const { error } = await supabase.functions.invoke("send-transactional-email", {
+      body: { templateName: template, recipientEmail: clientEmail, idempotencyKey: `${template}-${c.id}-${Date.now()}`, templateData },
+    });
+    // BCC: admin acknowledgement copy
+    await supabase.functions.invoke("send-transactional-email", {
       body: {
         templateName: template,
-        recipientEmail: clientEmail,
-        idempotencyKey: `${template}-${c.id}-${Date.now()}`,
-        templateData: { customerName: clientName, companyName: c.company_name, companyNumber: c.company_number, dueDate, daysRemaining },
+        recipientEmail: "info@digiformation.uk",
+        idempotencyKey: `${template}-${c.id}-${Date.now()}-admin`,
+        templateData: { ...templateData, customerName: `[ADMIN COPY] ${clientName || ""} <${clientEmail}>` },
       },
     });
-    if (error) toast.error(error.message); else toast.success(`${label} reminder sent (${daysRemaining} days remaining)`);
+    if (error) toast.error(error.message); else toast.success(`${label} reminder sent (${daysRemaining} days remaining) — admin copy sent to info@digiformation.uk`);
   };
 
   const sendAddressReminder = async (a: any) => {
@@ -930,15 +935,19 @@ const EmailsSection = ({
     const expireDate = computeAddressExpireDate(a);
     if (!expireDate) return toast.error("Cannot determine expiry date — set Start Date or Expire Date first");
     const daysRemaining = Math.max(0, Math.ceil((new Date(expireDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
+    const templateData = { customerName: clientName, address: a.address_line1, expireDate, daysRemaining };
     const { error } = await supabase.functions.invoke("send-transactional-email", {
+      body: { templateName: "address-renewal-reminder", recipientEmail: clientEmail, idempotencyKey: `address-renewal-${a.id}-${Date.now()}`, templateData },
+    });
+    await supabase.functions.invoke("send-transactional-email", {
       body: {
         templateName: "address-renewal-reminder",
-        recipientEmail: clientEmail,
-        idempotencyKey: `address-renewal-${a.id}-${Date.now()}`,
-        templateData: { customerName: clientName, address: a.address_line1, expireDate, daysRemaining },
+        recipientEmail: "info@digiformation.uk",
+        idempotencyKey: `address-renewal-${a.id}-${Date.now()}-admin`,
+        templateData: { ...templateData, customerName: `[ADMIN COPY] ${clientName || ""} <${clientEmail}>` },
       },
     });
-    if (error) toast.error(error.message); else toast.success(`Address renewal reminder sent (${daysRemaining} days remaining)`);
+    if (error) toast.error(error.message); else toast.success(`Address renewal reminder sent (${daysRemaining} days remaining) — admin copy sent to info@digiformation.uk`);
   };
 
   const pendingOrders = orders.filter(o => !/complete/i.test(o.status || ""));
