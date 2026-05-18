@@ -1086,10 +1086,41 @@ const CheckoutFlow = ({
                 {/* ID Documents */}
                 {idVerificationActive && (
                 <div className="rounded-2xl border border-border/40 p-4 md:p-5 space-y-4">
-                  <div>
-                    <h3 className="font-semibold">ID documents <span className="opacity-60 font-normal text-sm">(optional — speeds up verification)</span></h3>
-                    <p className="text-xs opacity-70 mt-1">Pick the ID type, then upload a clear photo. Tap "View example" to see what we need.</p>
+                  <div className="flex items-start justify-between gap-3 flex-wrap">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold">ID documents <span className="opacity-60 font-normal text-sm">(optional — speeds up verification)</span></h3>
+                      <p className="text-xs opacity-70 mt-1">Pick the ID type, then upload a clear photo. Tap "View example" to see what we need.</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const next = !submitDocsManually;
+                        setSubmitDocsManually(next);
+                        if (next) {
+                          setIdFront(null);
+                          setIdBack(null);
+                          setHoldingSelfie(null);
+                          setProofOfAddress(null);
+                        }
+                      }}
+                      className={`text-xs font-semibold px-3 py-2 rounded-lg border transition-all ${
+                        submitDocsManually
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border/60 hover:border-primary/60 hover:bg-primary/5"
+                      }`}
+                    >
+                      {submitDocsManually ? "✓ I'll submit manually" : "I'll submit manually"}
+                    </button>
                   </div>
+
+                  {submitDocsManually && (
+                    <div className="rounded-xl bg-amber-500/10 border border-amber-500/40 p-3 text-xs leading-relaxed">
+                      No problem — you can skip uploading documents here. Our team will contact you on email/WhatsApp to collect them manually after you place the order.
+                    </div>
+                  )}
+
+                  {!submitDocsManually && (<>
+
 
                   {/* ID type accordion */}
                   {(() => {
