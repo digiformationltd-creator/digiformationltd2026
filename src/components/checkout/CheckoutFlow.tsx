@@ -1244,6 +1244,7 @@ const CheckoutFlow = ({
                       </p>
                     </div>
                   )}
+                  </>)}
 
                   {liveSelfieLink && (
                     <div className="rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-background border-2 border-primary/40 p-5 space-y-4">
