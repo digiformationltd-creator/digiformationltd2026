@@ -246,6 +246,7 @@ const CheckoutFlow = ({
   const [idBack, setIdBack] = useState<File | null>(null);
   const [holdingSelfie, setHoldingSelfie] = useState<File | null>(null);
   const [proofOfAddress, setProofOfAddress] = useState<File | null>(null);
+  const [submitDocsManually, setSubmitDocsManually] = useState(false);
   const [showSicCodes, setShowSicCodes] = useState(false);
   const [verificationLinkRequested, setVerificationLinkRequested] = useState(false);
   const [exampleOpen, setExampleOpen] = useState<null | { title: string; src: string }>(null);
