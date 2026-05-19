@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { ShieldCheck, UserCircle2, Mail, Lock, Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import logo from "@/assets/digiformation-logo.png";
 import { z } from "zod";
+import { attributeReferralIfPresent } from "@/lib/affiliate";
 
 const emailSchema = z.string().trim().email("Please enter a valid email").max(255);
 const passwordSchema = z
@@ -40,6 +41,7 @@ const Auth = () => {
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "PASSWORD_RECOVERY") return;
       if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {
+        attributeReferralIfPresent(session.user.id).catch(() => {});
         const dest = session.user.email?.toLowerCase() === "info@digiformation.uk" ? "/admin" : "/dashboard";
         navigate(dest, { replace: true });
       }
