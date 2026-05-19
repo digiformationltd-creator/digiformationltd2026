@@ -154,6 +154,8 @@ const Admin = () => {
             </table>
           </div>
         </div>
+          </>
+        )}
       </div>
     </Layout>
   );
