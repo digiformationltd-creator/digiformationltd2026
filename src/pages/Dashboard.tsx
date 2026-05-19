@@ -19,6 +19,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import logo from "@/assets/digiformation-logo.png";
 import UserDrawer from "@/components/UserDrawer";
 import { downloadInvoicePdf } from "@/lib/invoice";
+import { SERVICE_RATE_LIST, COMMISSION_GBP } from "@/lib/affiliate";
 
 type SectionId =
   | "overview" | "company" | "addresses" | "orders" | "invoices" | "wallet" | "documents"
