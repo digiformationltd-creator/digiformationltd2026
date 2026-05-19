@@ -97,8 +97,6 @@ const UsaLlcCheckout = () => {
         eyebrow="U.S. LLC · Step 3 of 3"
         notesPlaceholder="Tell us your proposed company name, alternatives, and business activity..."
         fixedPackageName={packageName}
-        liveSelfieMode="upload"
-        liveSelfieLink="https://verify.didit.me/u/dzhdYtifRt-jeb3kZsSptg"
         showBusinessType
       />
     </Layout>
