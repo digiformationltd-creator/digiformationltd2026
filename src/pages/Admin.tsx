@@ -31,6 +31,7 @@ const Admin = () => {
   const [selected, setSelected] = useState<string | null>(null);
   const [initialTab, setInitialTab] = useState<"company" | "addresses">("company");
   const [loadingClients, setLoadingClients] = useState(false);
+  const [view, setView] = useState<"clients" | "affiliates">("clients");
 
   useSeo({ title: "Admin Panel | Digiformation", description: "Internal admin panel", noindex: true });
 
@@ -90,15 +91,30 @@ const Admin = () => {
           <ShieldCheck className="w-8 h-8 text-primary" />
           <div>
             <h1 className="text-3xl font-bold">Admin Panel</h1>
-            <p className="text-muted-foreground text-sm">Manage clients and their data</p>
+            <p className="text-muted-foreground text-sm">Manage clients, affiliates and their data</p>
           </div>
           </div>
-          <Button variant="outline" onClick={loadClients} disabled={loadingClients}>
-            {loadingClients ? <Loader2 className="w-4 h-4 animate-spin" /> : <Users className="w-4 h-4" />}
-            Refresh Clients
+          {view === "clients" && (
+            <Button variant="outline" onClick={loadClients} disabled={loadingClients}>
+              {loadingClients ? <Loader2 className="w-4 h-4 animate-spin" /> : <Users className="w-4 h-4" />}
+              Refresh Clients
+            </Button>
+          )}
+        </div>
+
+        <div className="flex gap-2 mb-4">
+          <Button variant={view === "clients" ? "default" : "outline"} size="sm" onClick={() => setView("clients")}>
+            <Users className="w-4 h-4" /> Clients
+          </Button>
+          <Button variant={view === "affiliates" ? "default" : "outline"} size="sm" onClick={() => setView("affiliates")}>
+            <ShieldCheck className="w-4 h-4" /> Affiliate Partners
           </Button>
         </div>
 
+        {view === "affiliates" ? (
+          <AffiliatesPanel />
+        ) : (
+          <>
         <div className="glass rounded-2xl p-4 mb-4 flex items-center gap-3">
           <Search className="w-5 h-5 text-muted-foreground" />
           <Input placeholder="Search by name, email, or company…" value={search} onChange={(e) => setSearch(e.target.value)} className="border-0 focus-visible:ring-0" />
