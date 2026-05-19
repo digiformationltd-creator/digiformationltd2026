@@ -1115,34 +1115,170 @@ const OpenTicketForm = ({ userId, onSubmitted }: { userId: string; onSubmitted: 
 
 /* ---- Affiliate Dashboard Section ---- */
 
+import { SERVICE_RATE_LIST, COMMISSION_GBP } from "@/lib/affiliate";
+
+interface AffiliateProfile {
+  ref_code: string;
+  status: string;
+  commission_per_sale_gbp: number;
+  total_clicks: number;
+  total_signups: number;
+  total_paid_orders: number;
+  lifetime_commission_gbp: number;
+  pending_commission_gbp: number;
+  payout_method: string | null;
+  payout_details: string | null;
+}
+
+interface CommissionRow {
+  id: string;
+  order_ref: string | null;
+  service: string | null;
+  retail_amount_gbp: number;
+  commission_gbp: number;
+  status: string;
+  created_at: string;
+}
+
 const AffiliateDashboardSection = ({ user, displayName }: { user: User; displayName: string }) => {
-  const refCode = (user.id?.slice(0, 8) || "YOURCODE").toUpperCase();
-  const refLink = `https://digiformation.uk/?ref=${refCode}`;
+  const [profile, setProfile] = useState<AffiliateProfile | null>(null);
+  const [commissions, setCommissions] = useState<CommissionRow[]>([]);
+  const [clickCount, setClickCount] = useState<number>(0);
+  const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
+  const [payoutMethod, setPayoutMethod] = useState("");
+  const [payoutDetails, setPayoutDetails] = useState("");
+  const [savingPayout, setSavingPayout] = useState(false);
 
-  const stats = [
-    { label: "Total Clicks", value: "0", icon: Link2 },
-    { label: "Signups", value: "0", icon: UserCircle2 },
-    { label: "Paid Orders", value: "0", icon: ShoppingBag },
-    { label: "Pending Commission", value: "£0.00", icon: Wallet },
-    { label: "Lifetime Earnings", value: "£0.00", icon: TrendingUp },
-    { label: "Tier", value: "Starter", icon: Handshake },
-  ];
+  const loadData = async () => {
+    setLoading(true);
+    const { data: prof } = await (supabase as any)
+      .from("affiliate_profiles")
+      .select("*")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    setProfile(prof || null);
+    if (prof) {
+      setPayoutMethod(prof.payout_method || "");
+      setPayoutDetails(prof.payout_details || "");
+      const [{ data: comms }, { count }] = await Promise.all([
+        (supabase as any)
+          .from("affiliate_commissions")
+          .select("id,order_ref,service,retail_amount_gbp,commission_gbp,status,created_at")
+          .eq("affiliate_user_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(25),
+        (supabase as any)
+          .from("affiliate_clicks")
+          .select("id", { count: "exact", head: true })
+          .eq("ref_code", prof.ref_code),
+      ]);
+      setCommissions(comms || []);
+      setClickCount(count || 0);
+    }
+    setLoading(false);
+  };
 
-  const trainingItems = [
-    { icon: Megaphone, title: "Advertising — done with you", desc: "We manually set up your Facebook, Google & TikTok ads and launch your first campaigns together." },
-    { icon: GraduationCap, title: "Marketing funnel & strategy", desc: "Learn the exact methods, offers and audiences that convert in the formations market." },
-    { icon: TrendingUp, title: "Order generation playbook", desc: "Proven scripts, funnels and follow-ups that turn clicks into paid orders." },
-    { icon: Handshake, title: "1-on-1 manual guidance", desc: "Direct WhatsApp & screen-share sessions with our partner team — real humans, anytime." },
-  ];
+  useEffect(() => {
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user.id]);
 
-  const copyLink = async () => {
+  const joinProgram = async () => {
+    setCreating(true);
+    const { data: code, error: codeErr } = await (supabase as any).rpc(
+      "generate_affiliate_ref_code",
+      { _name: displayName }
+    );
+    if (codeErr || !code) {
+      setCreating(false);
+      toast.error("Could not generate referral code. Please try again.");
+      return;
+    }
+    const { error } = await (supabase as any).from("affiliate_profiles").insert({
+      user_id: user.id,
+      ref_code: code,
+      name_slug: code.split("-")[0],
+      status: "pending",
+      commission_per_sale_gbp: COMMISSION_GBP,
+    });
+    setCreating(false);
+    if (error) {
+      toast.error(error.message || "Could not join program");
+      return;
+    }
+    toast.success("Application submitted! Awaiting admin approval.");
+    loadData();
+  };
+
+  const savePayout = async () => {
+    setSavingPayout(true);
+    const { error } = await (supabase as any)
+      .from("affiliate_profiles")
+      .update({ payout_method: payoutMethod || null, payout_details: payoutDetails || null })
+      .eq("user_id", user.id);
+    setSavingPayout(false);
+    if (error) toast.error(error.message);
+    else toast.success("Payout details saved");
+  };
+
+  const copyLink = async (link: string) => {
     try {
-      await navigator.clipboard.writeText(refLink);
+      await navigator.clipboard.writeText(link);
       toast.success("Referral link copied");
     } catch {
       toast.error("Could not copy");
     }
   };
+
+  if (loading) {
+    return (
+      <div className="glass rounded-2xl p-10 flex items-center justify-center">
+        <Loader2 className="w-5 h-5 animate-spin opacity-70" />
+      </div>
+    );
+  }
+
+  // Not yet a partner
+  if (!profile) {
+    return (
+      <div className="space-y-6">
+        <div className="glass rounded-2xl p-6">
+          <div className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-full bg-primary/15 text-primary inline-flex w-fit mb-3">
+            <Handshake className="w-3.5 h-3.5" />
+            <span>Affiliate / B2B Partner</span>
+          </div>
+          <h2 className="text-xl sm:text-2xl font-semibold mb-2">Become a DigiFormation Partner</h2>
+          <p className="text-sm opacity-75 mb-4">
+            Get your unique referral link, earn <strong>£{COMMISSION_GBP} commission</strong> on every paid order, and access the full B2B rate list.
+            Click below to apply — our team approves new partners within 24 hours.
+          </p>
+          <Button onClick={joinProgram} disabled={creating} variant="hero" className="rounded-full">
+            {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Handshake className="w-4 h-4" />}
+            Apply to Join the Program
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const refLink = `https://digiformation.uk/?ref=${profile.ref_code}`;
+  const isApproved = profile.status === "approved";
+
+  const stats = [
+    { label: "Total Clicks", value: String(clickCount), icon: Link2 },
+    { label: "Signups", value: String(profile.total_signups), icon: UserCircle2 },
+    { label: "Paid Orders", value: String(profile.total_paid_orders), icon: ShoppingBag },
+    { label: "Pending Commission", value: `£${Number(profile.pending_commission_gbp).toFixed(2)}`, icon: Wallet },
+    { label: "Lifetime Earnings", value: `£${Number(profile.lifetime_commission_gbp).toFixed(2)}`, icon: TrendingUp },
+    { label: "Status", value: profile.status.charAt(0).toUpperCase() + profile.status.slice(1), icon: ShieldCheck },
+  ];
+
+  // group rate list by category
+  const grouped = SERVICE_RATE_LIST.reduce<Record<string, typeof SERVICE_RATE_LIST>>((acc, s) => {
+    (acc[s.category] = acc[s.category] || []).push(s);
+    return acc;
+  }, {});
 
   return (
     <div className="space-y-6">
@@ -1150,18 +1286,25 @@ const AffiliateDashboardSection = ({ user, displayName }: { user: User; displayN
       <div className="glass rounded-2xl p-6">
         <div className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-full bg-primary/15 text-primary inline-flex w-fit mb-3">
           <Handshake className="w-3.5 h-3.5" />
-          <span>Affiliate / B2B Partner</span>
+          <span>Affiliate / B2B Partner · {profile.status}</span>
         </div>
         <h2 className="text-xl sm:text-2xl font-semibold mb-1">Welcome, {displayName}</h2>
-        <p className="text-sm opacity-75 mb-5">Share your unique link, refer clients and earn recurring commissions on every paid order.</p>
+        <p className="text-sm opacity-75 mb-5">
+          {isApproved
+            ? "Share your link and earn £15 on every paid order generated through it."
+            : "Your application is pending admin approval. You can still view your link and rates."}
+        </p>
 
         <Label htmlFor="ref-link" className="text-xs uppercase tracking-widest opacity-70">Your referral link</Label>
         <div className="flex flex-col sm:flex-row gap-2 mt-2">
           <Input id="ref-link" value={refLink} readOnly className="font-mono text-sm" />
-          <Button onClick={copyLink} variant="hero" className="rounded-full shrink-0">
+          <Button onClick={() => copyLink(refLink)} variant="hero" className="rounded-full shrink-0">
             <Copy className="w-4 h-4" /> Copy Link
           </Button>
         </div>
+        <p className="text-xs opacity-60 mt-2">
+          Tip: add <code>?ref={profile.ref_code}</code> to any DigiFormation page URL to deep-link to a specific service.
+        </p>
       </div>
 
       {/* Stats grid */}
@@ -1178,56 +1321,148 @@ const AffiliateDashboardSection = ({ user, displayName }: { user: User; displayN
         })}
       </div>
 
-      {/* Recent referrals empty state */}
+      {/* B2B Rate List */}
       <div className="glass rounded-2xl p-6">
-        <h3 className="font-semibold mb-1">Recent Referred Orders</h3>
-        <p className="text-xs opacity-70 mb-4">Live orders placed through your link will appear here.</p>
-        <EmptyState
-          icon={Inbox}
-          title="No referred orders yet"
-          description="Share your link with clients, agencies or audiences. Once they place a paid order, it will show up here with status and commission."
-        />
+        <h3 className="font-semibold mb-1">Your B2B Rate List</h3>
+        <p className="text-xs opacity-70 mb-4">
+          Customer sees the retail price. You earn <strong>£{COMMISSION_GBP}</strong> on every paid order — your effective cost is shown below.
+        </p>
+        <div className="space-y-5">
+          {Object.entries(grouped).map(([cat, rows]) => (
+            <div key={cat}>
+              <div className="text-[11px] uppercase tracking-widest opacity-70 mb-2">{cat}</div>
+              <div className="rounded-xl overflow-hidden border border-border/60">
+                <table className="w-full text-sm">
+                  <thead className="bg-background/40">
+                    <tr>
+                      <th className="text-left p-3 font-medium">Service</th>
+                      <th className="text-right p-3 font-medium">Retail</th>
+                      <th className="text-right p-3 font-medium">Your Price</th>
+                      <th className="text-right p-3 font-medium">Commission</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows.map((r) => {
+                      const sym = r.currency === "USD" ? "$" : "£";
+                      // commission only applies to GBP services (per agreement); for USD show n/a
+                      const isUsd = r.currency === "USD";
+                      const yourPrice = isUsd ? r.retail : Math.max(r.retail - COMMISSION_GBP, 0);
+                      return (
+                        <tr key={r.name} className="border-t border-border/40">
+                          <td className="p-3">{r.name}</td>
+                          <td className="p-3 text-right opacity-80">{sym}{r.retail}</td>
+                          <td className="p-3 text-right font-semibold">
+                            {isUsd ? "—" : `£${yourPrice}`}
+                          </td>
+                          <td className="p-3 text-right text-primary font-semibold">
+                            {isUsd ? "—" : `£${COMMISSION_GBP}`}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="text-[11px] opacity-60 mt-3">
+          USA LLC commission rates are negotiated separately. Contact our partner team on WhatsApp for the USD rate sheet.
+        </p>
       </div>
 
-      {/* Training & support */}
+      {/* Recent commissions */}
       <div className="glass rounded-2xl p-6">
-        <h3 className="font-semibold mb-1">Your training & support</h3>
-        <p className="text-xs opacity-70 mb-4">We teach you advertising, marketing and order generation — manually, step by step.</p>
+        <h3 className="font-semibold mb-1">Recent Referred Orders</h3>
+        <p className="text-xs opacity-70 mb-4">Live orders placed through your link.</p>
+        {commissions.length === 0 ? (
+          <EmptyState
+            icon={Inbox}
+            title="No referred orders yet"
+            description="Share your link with clients, agencies or audiences. Once they place a paid order, it will show up here with status and commission."
+          />
+        ) : (
+          <div className="rounded-xl overflow-hidden border border-border/60">
+            <table className="w-full text-sm">
+              <thead className="bg-background/40">
+                <tr>
+                  <th className="text-left p-3 font-medium">Date</th>
+                  <th className="text-left p-3 font-medium">Order</th>
+                  <th className="text-left p-3 font-medium">Service</th>
+                  <th className="text-right p-3 font-medium">Order £</th>
+                  <th className="text-right p-3 font-medium">Commission</th>
+                  <th className="text-left p-3 font-medium">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {commissions.map((c) => (
+                  <tr key={c.id} className="border-t border-border/40">
+                    <td className="p-3 whitespace-nowrap">{new Date(c.created_at).toLocaleDateString()}</td>
+                    <td className="p-3 font-mono text-xs">{c.order_ref || "—"}</td>
+                    <td className="p-3">{c.service || "—"}</td>
+                    <td className="p-3 text-right">£{Number(c.retail_amount_gbp).toFixed(2)}</td>
+                    <td className="p-3 text-right text-primary font-semibold">£{Number(c.commission_gbp).toFixed(2)}</td>
+                    <td className="p-3">
+                      <Badge variant={c.status === "paid" ? "default" : "secondary"} className="capitalize">
+                        {c.status}
+                      </Badge>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Payout details */}
+      <div className="glass rounded-2xl p-6">
+        <h3 className="font-semibold mb-1">Payout Details</h3>
+        <p className="text-xs opacity-70 mb-4">Commissions are paid monthly once your pending balance reaches £50.</p>
         <div className="grid sm:grid-cols-2 gap-4">
-          {trainingItems.map((t) => {
-            const Icon = t.icon;
-            return (
-              <div key={t.title} className="rounded-xl border border-border/60 p-4 bg-background/30">
-                <div className="w-9 h-9 rounded-lg bg-primary/15 grid place-items-center mb-2">
-                  <Icon className="w-4 h-4 text-primary" />
-                </div>
-                <div className="font-semibold text-sm">{t.title}</div>
-                <p className="text-xs opacity-75 mt-1">{t.desc}</p>
-              </div>
-            );
-          })}
+          <div>
+            <Label htmlFor="po-method">Payout Method</Label>
+            <Input
+              id="po-method"
+              value={payoutMethod}
+              onChange={(e) => setPayoutMethod(e.target.value)}
+              placeholder="Bank transfer / Wise / JazzCash / etc."
+              className="mt-1.5"
+            />
+          </div>
+          <div>
+            <Label htmlFor="po-details">Account Details</Label>
+            <Input
+              id="po-details"
+              value={payoutDetails}
+              onChange={(e) => setPayoutDetails(e.target.value)}
+              placeholder="Account number / IBAN / wallet ID"
+              className="mt-1.5"
+            />
+          </div>
         </div>
-        <div className="mt-5 flex flex-wrap gap-3">
+        <Button onClick={savePayout} disabled={savingPayout} variant="hero" className="rounded-full mt-4">
+          {savingPayout ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          Save Payout Details
+        </Button>
+      </div>
+
+      {/* Support */}
+      <div className="glass rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h3 className="font-semibold">Need marketing help?</h3>
+          <p className="text-xs opacity-75 mt-1">Our partner team helps you launch ads, build funnels and generate orders.</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
           <Button asChild variant="hero" className="rounded-full">
             <a href="https://wa.me/923164467464?text=Hi%2C%20I%27m%20a%20DigiFormation%20partner%20and%20need%20guidance" target="_blank" rel="noopener noreferrer">
               <Handshake className="w-4 h-4" /> WhatsApp Partner Team
             </a>
           </Button>
           <Button asChild variant="outline" className="rounded-full">
-            <a href="mailto:Info@digiformation.uk?subject=Partner%20Support%20Request">
-              Email Support
-            </a>
+            <a href="mailto:Info@digiformation.uk?subject=Partner%20Support%20Request">Email Support</a>
           </Button>
         </div>
-      </div>
-
-      {/* Payout info */}
-      <div className="glass rounded-2xl p-6">
-        <h3 className="font-semibold mb-1">Payouts</h3>
-        <p className="text-sm opacity-75">
-          Commissions are paid monthly via bank transfer or wallet credit once your pending balance reaches <strong>£50</strong>.
-          Payout settings will appear here once your first commission is earned.
-        </p>
       </div>
     </div>
   );
