@@ -1116,7 +1116,6 @@ const OpenTicketForm = ({ userId, onSubmitted }: { userId: string; onSubmitted: 
 
 /* ---- Affiliate Dashboard Section ---- */
 
-import { SERVICE_RATE_LIST, COMMISSION_GBP } from "@/lib/affiliate";
 
 interface AffiliateProfile {
   ref_code: string;
