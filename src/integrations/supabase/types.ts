@@ -14,6 +14,162 @@ export type Database = {
   }
   public: {
     Tables: {
+      affiliate_clicks: {
+        Row: {
+          created_at: string
+          id: string
+          page_path: string | null
+          ref_code: string
+          referrer: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          page_path?: string | null
+          ref_code: string
+          referrer?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          page_path?: string | null
+          ref_code?: string
+          referrer?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      affiliate_commissions: {
+        Row: {
+          affiliate_user_id: string
+          approved_at: string | null
+          commission_gbp: number
+          created_at: string
+          customer_user_id: string
+          id: string
+          notes: string | null
+          order_id: string | null
+          order_ref: string | null
+          paid_at: string | null
+          retail_amount_gbp: number
+          service: string | null
+          status: string
+        }
+        Insert: {
+          affiliate_user_id: string
+          approved_at?: string | null
+          commission_gbp?: number
+          created_at?: string
+          customer_user_id: string
+          id?: string
+          notes?: string | null
+          order_id?: string | null
+          order_ref?: string | null
+          paid_at?: string | null
+          retail_amount_gbp?: number
+          service?: string | null
+          status?: string
+        }
+        Update: {
+          affiliate_user_id?: string
+          approved_at?: string | null
+          commission_gbp?: number
+          created_at?: string
+          customer_user_id?: string
+          id?: string
+          notes?: string | null
+          order_id?: string | null
+          order_ref?: string | null
+          paid_at?: string | null
+          retail_amount_gbp?: number
+          service?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+      affiliate_profiles: {
+        Row: {
+          approved_at: string | null
+          commission_per_sale_gbp: number
+          created_at: string
+          id: string
+          lifetime_commission_gbp: number
+          name_slug: string
+          payout_details: string | null
+          payout_method: string | null
+          pending_commission_gbp: number
+          ref_code: string
+          status: string
+          total_clicks: number
+          total_paid_orders: number
+          total_signups: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          commission_per_sale_gbp?: number
+          created_at?: string
+          id?: string
+          lifetime_commission_gbp?: number
+          name_slug: string
+          payout_details?: string | null
+          payout_method?: string | null
+          pending_commission_gbp?: number
+          ref_code: string
+          status?: string
+          total_clicks?: number
+          total_paid_orders?: number
+          total_signups?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          commission_per_sale_gbp?: number
+          created_at?: string
+          id?: string
+          lifetime_commission_gbp?: number
+          name_slug?: string
+          payout_details?: string | null
+          payout_method?: string | null
+          pending_commission_gbp?: number
+          ref_code?: string
+          status?: string
+          total_clicks?: number
+          total_paid_orders?: number
+          total_signups?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      affiliate_referrals: {
+        Row: {
+          affiliate_user_id: string
+          attributed_at: string
+          customer_user_id: string
+          id: string
+          ref_code: string
+        }
+        Insert: {
+          affiliate_user_id: string
+          attributed_at?: string
+          customer_user_id: string
+          id?: string
+          ref_code: string
+        }
+        Update: {
+          affiliate_user_id?: string
+          attributed_at?: string
+          customer_user_id?: string
+          id?: string
+          ref_code?: string
+        }
+        Relationships: []
+      }
       client_addresses: {
         Row: {
           activation_code: string | null
@@ -753,6 +909,7 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      generate_affiliate_ref_code: { Args: { _name: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
