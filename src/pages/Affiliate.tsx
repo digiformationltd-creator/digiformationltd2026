@@ -23,18 +23,27 @@ import {
   LineChart,
   Rocket,
   Users,
+  Download,
+  CheckCircle2,
 } from "lucide-react";
 import { z } from "zod";
+import { supabase } from "@/integrations/supabase/client";
+import { buildApplicationPdf, downloadApplicationPdf, type ApplicationData } from "@/lib/applicationPdf";
 
 const formSchema = z.object({
   fullName: z.string().trim().min(2, "Please enter your full name").max(100),
   email: z.string().trim().email("Please enter a valid email").max(255),
-  phone: z.string().trim().min(6, "Please enter a valid phone").max(30),
-  company: z.string().trim().max(150).optional().or(z.literal("")),
-  country: z.string().trim().min(2, "Please enter your country").max(80),
-  audience: z.string().trim().min(2, "Tell us about your audience").max(200),
-  monthlyVolume: z.string().trim().min(1, "Please choose volume").max(60),
-  message: z.string().trim().max(1000).optional().or(z.literal("")),
+  whatsapp: z
+    .string()
+    .trim()
+    .min(6, "Please enter a valid WhatsApp number")
+    .max(30)
+    .regex(/^[+0-9 ()\-]+$/, "WhatsApp number can only contain digits, +, -, () and spaces"),
+  employeeCode: z.string().trim().max(60).optional().or(z.literal("")),
+  joiningDate: z.string().trim().max(20).optional().or(z.literal("")),
+  education: z.string().trim().max(300).optional().or(z.literal("")),
+  experience: z.string().trim().max(1000).optional().or(z.literal("")),
+  message: z.string().trim().max(2000).optional().or(z.literal("")),
 });
 
 const benefits = [
@@ -46,10 +55,19 @@ const benefits = [
   { icon: Handshake, title: "Dedicated Support", desc: "Direct WhatsApp line to our partner team for queries & escalations." },
 ];
 
+const pad4 = (n: number) => n.toString().padStart(4, "0");
 
+const generateApplicationId = async (): Promise<string> => {
+  const { count } = await supabase
+    .from("affiliate_applications")
+    .select("id", { count: "exact", head: true });
+  const next = (count || 0) + 1;
+  return `Application-${pad4(next)}`;
+};
 
 const Affiliate = () => {
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState<ApplicationData | null>(null);
 
   useEffect(() => {
     document.title = "Affiliate & B2B Partner Program | DigiFormation Ltd";
@@ -69,28 +87,84 @@ const Affiliate = () => {
     const data = {
       fullName: String(fd.get("fullName") || ""),
       email: String(fd.get("email") || ""),
-      phone: String(fd.get("phone") || ""),
-      company: String(fd.get("company") || ""),
-      country: String(fd.get("country") || ""),
-      audience: String(fd.get("audience") || ""),
-      monthlyVolume: String(fd.get("monthlyVolume") || ""),
+      whatsapp: String(fd.get("whatsapp") || ""),
+      employeeCode: String(fd.get("employeeCode") || ""),
+      joiningDate: String(fd.get("joiningDate") || ""),
+      education: String(fd.get("education") || ""),
+      experience: String(fd.get("experience") || ""),
       message: String(fd.get("message") || ""),
     };
     const v = formSchema.safeParse(data);
     if (!v.success) return toast.error(v.error.issues[0].message);
 
     setLoading(true);
-    // For now: open prefilled email to our team
-    const subject = encodeURIComponent("New Affiliate / B2B Partner Application");
-    const body = encodeURIComponent(
-      `Name: ${v.data.fullName}\nEmail: ${v.data.email}\nPhone: ${v.data.phone}\nCompany: ${v.data.company || "-"}\nCountry: ${v.data.country}\nAudience: ${v.data.audience}\nMonthly Volume: ${v.data.monthlyVolume}\n\nMessage:\n${v.data.message || "-"}`
-    );
-    window.location.href = `mailto:Info@digiformation.uk?subject=${subject}&body=${body}`;
-    setTimeout(() => {
-      setLoading(false);
-      toast.success("Application ready — please send the email to complete.");
+    try {
+      const application_id = await generateApplicationId();
+      const submitted_at = new Date().toISOString();
+
+      const { data: inserted, error: insErr } = await supabase
+        .from("affiliate_applications")
+        .insert({
+          application_id,
+          full_name: v.data.fullName,
+          email: v.data.email,
+          whatsapp: v.data.whatsapp,
+          employee_code: v.data.employeeCode || null,
+          joining_date: v.data.joiningDate || null,
+          education: v.data.education || null,
+          experience: v.data.experience || null,
+          message: v.data.message || null,
+          page_path: window.location.pathname,
+          user_agent: navigator.userAgent.slice(0, 500),
+        })
+        .select()
+        .single();
+      if (insErr) throw insErr;
+
+      const appData: ApplicationData = {
+        application_id,
+        full_name: v.data.fullName,
+        email: v.data.email,
+        whatsapp: v.data.whatsapp,
+        employee_code: v.data.employeeCode || null,
+        joining_date: v.data.joiningDate || null,
+        education: v.data.education || null,
+        experience: v.data.experience || null,
+        message: v.data.message || null,
+        submitted_at,
+      };
+
+      const { blob, filename } = await buildApplicationPdf(appData);
+      const path = `${new Date().getFullYear()}/${filename}`;
+      const { error: upErr } = await supabase.storage
+        .from("affiliate-applications")
+        .upload(path, blob, { contentType: "application/pdf", upsert: true });
+      if (!upErr) {
+        const { data: pub } = supabase.storage.from("affiliate-applications").getPublicUrl(path);
+        await supabase
+          .from("affiliate_applications")
+          .update({ pdf_url: pub.publicUrl })
+          .eq("id", inserted.id);
+      }
+
+      await downloadApplicationPdf(appData);
+
+      setSubmitted(appData);
+      toast.success("Application submitted! Your PDF has been downloaded.");
       (e.target as HTMLFormElement).reset();
-    }, 600);
+      setTimeout(() => {
+        document.getElementById("join")?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.message || "Could not submit application. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const redownload = async () => {
+    if (submitted) await downloadApplicationPdf(submitted);
   };
 
   return (
