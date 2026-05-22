@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      affiliate_applications: {
+        Row: {
+          application_id: string
+          created_at: string
+          education: string | null
+          email: string
+          employee_code: string | null
+          experience: string | null
+          full_name: string
+          id: string
+          joining_date: string | null
+          message: string | null
+          page_path: string | null
+          pdf_url: string | null
+          user_agent: string | null
+          whatsapp: string
+        }
+        Insert: {
+          application_id: string
+          created_at?: string
+          education?: string | null
+          email: string
+          employee_code?: string | null
+          experience?: string | null
+          full_name: string
+          id?: string
+          joining_date?: string | null
+          message?: string | null
+          page_path?: string | null
+          pdf_url?: string | null
+          user_agent?: string | null
+          whatsapp: string
+        }
+        Update: {
+          application_id?: string
+          created_at?: string
+          education?: string | null
+          email?: string
+          employee_code?: string | null
+          experience?: string | null
+          full_name?: string
+          id?: string
+          joining_date?: string | null
+          message?: string | null
+          page_path?: string | null
+          pdf_url?: string | null
+          user_agent?: string | null
+          whatsapp?: string
+        }
+        Relationships: []
+      }
       affiliate_clicks: {
         Row: {
           created_at: string
