@@ -80,13 +80,25 @@ const DigiNav = () => {
           </div>
         </div>
         {user ? (
-          <Link
-            to="/dashboard"
-            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 bg-primary/30 hover:bg-primary/40 transition font-semibold shrink-0"
-          >
-            <LayoutDashboard className="w-3.5 h-3.5" />
-            <span>Client Dashboard</span>
-          </Link>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <Link
+              to="/dashboard"
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 bg-primary/30 hover:bg-primary/40 transition font-semibold"
+            >
+              <LayoutDashboard className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Client Dashboard</span>
+              <span className="sm:hidden">Dashboard</span>
+            </Link>
+            <button
+              onClick={handleLogout}
+              aria-label="Sign out"
+              title="Sign out"
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 bg-destructive/20 hover:bg-destructive/30 transition font-semibold"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
+          </div>
         ) : (
           <Link
             to="/auth"
