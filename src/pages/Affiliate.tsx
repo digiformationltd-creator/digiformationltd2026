@@ -23,18 +23,27 @@ import {
   LineChart,
   Rocket,
   Users,
+  Download,
+  CheckCircle2,
 } from "lucide-react";
 import { z } from "zod";
+import { supabase } from "@/integrations/supabase/client";
+import { buildApplicationPdf, downloadApplicationPdf, type ApplicationData } from "@/lib/applicationPdf";
 
 const formSchema = z.object({
   fullName: z.string().trim().min(2, "Please enter your full name").max(100),
   email: z.string().trim().email("Please enter a valid email").max(255),
-  phone: z.string().trim().min(6, "Please enter a valid phone").max(30),
-  company: z.string().trim().max(150).optional().or(z.literal("")),
-  country: z.string().trim().min(2, "Please enter your country").max(80),
-  audience: z.string().trim().min(2, "Tell us about your audience").max(200),
-  monthlyVolume: z.string().trim().min(1, "Please choose volume").max(60),
-  message: z.string().trim().max(1000).optional().or(z.literal("")),
+  whatsapp: z
+    .string()
+    .trim()
+    .min(6, "Please enter a valid WhatsApp number")
+    .max(30)
+    .regex(/^[+0-9 ()\-]+$/, "WhatsApp number can only contain digits, +, -, () and spaces"),
+  employeeCode: z.string().trim().max(60).optional().or(z.literal("")),
+  joiningDate: z.string().trim().max(20).optional().or(z.literal("")),
+  education: z.string().trim().max(300).optional().or(z.literal("")),
+  experience: z.string().trim().max(1000).optional().or(z.literal("")),
+  message: z.string().trim().max(2000).optional().or(z.literal("")),
 });
 
 const benefits = [
@@ -46,10 +55,19 @@ const benefits = [
   { icon: Handshake, title: "Dedicated Support", desc: "Direct WhatsApp line to our partner team for queries & escalations." },
 ];
 
+const pad4 = (n: number) => n.toString().padStart(4, "0");
 
+const generateApplicationId = async (): Promise<string> => {
+  const { count } = await supabase
+    .from("affiliate_applications")
+    .select("id", { count: "exact", head: true });
+  const next = (count || 0) + 1;
+  return `Application-${pad4(next)}`;
+};
 
 const Affiliate = () => {
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState<ApplicationData | null>(null);
 
   useEffect(() => {
     document.title = "Affiliate & B2B Partner Program | DigiFormation Ltd";
@@ -69,28 +87,84 @@ const Affiliate = () => {
     const data = {
       fullName: String(fd.get("fullName") || ""),
       email: String(fd.get("email") || ""),
-      phone: String(fd.get("phone") || ""),
-      company: String(fd.get("company") || ""),
-      country: String(fd.get("country") || ""),
-      audience: String(fd.get("audience") || ""),
-      monthlyVolume: String(fd.get("monthlyVolume") || ""),
+      whatsapp: String(fd.get("whatsapp") || ""),
+      employeeCode: String(fd.get("employeeCode") || ""),
+      joiningDate: String(fd.get("joiningDate") || ""),
+      education: String(fd.get("education") || ""),
+      experience: String(fd.get("experience") || ""),
       message: String(fd.get("message") || ""),
     };
     const v = formSchema.safeParse(data);
     if (!v.success) return toast.error(v.error.issues[0].message);
 
     setLoading(true);
-    // For now: open prefilled email to our team
-    const subject = encodeURIComponent("New Affiliate / B2B Partner Application");
-    const body = encodeURIComponent(
-      `Name: ${v.data.fullName}\nEmail: ${v.data.email}\nPhone: ${v.data.phone}\nCompany: ${v.data.company || "-"}\nCountry: ${v.data.country}\nAudience: ${v.data.audience}\nMonthly Volume: ${v.data.monthlyVolume}\n\nMessage:\n${v.data.message || "-"}`
-    );
-    window.location.href = `mailto:Info@digiformation.uk?subject=${subject}&body=${body}`;
-    setTimeout(() => {
-      setLoading(false);
-      toast.success("Application ready — please send the email to complete.");
+    try {
+      const application_id = await generateApplicationId();
+      const submitted_at = new Date().toISOString();
+
+      const { data: inserted, error: insErr } = await supabase
+        .from("affiliate_applications")
+        .insert({
+          application_id,
+          full_name: v.data.fullName,
+          email: v.data.email,
+          whatsapp: v.data.whatsapp,
+          employee_code: v.data.employeeCode || null,
+          joining_date: v.data.joiningDate || null,
+          education: v.data.education || null,
+          experience: v.data.experience || null,
+          message: v.data.message || null,
+          page_path: window.location.pathname,
+          user_agent: navigator.userAgent.slice(0, 500),
+        })
+        .select()
+        .single();
+      if (insErr) throw insErr;
+
+      const appData: ApplicationData = {
+        application_id,
+        full_name: v.data.fullName,
+        email: v.data.email,
+        whatsapp: v.data.whatsapp,
+        employee_code: v.data.employeeCode || null,
+        joining_date: v.data.joiningDate || null,
+        education: v.data.education || null,
+        experience: v.data.experience || null,
+        message: v.data.message || null,
+        submitted_at,
+      };
+
+      const { blob, filename } = await buildApplicationPdf(appData);
+      const path = `${new Date().getFullYear()}/${filename}`;
+      const { error: upErr } = await supabase.storage
+        .from("affiliate-applications")
+        .upload(path, blob, { contentType: "application/pdf", upsert: true });
+      if (!upErr) {
+        const { data: pub } = supabase.storage.from("affiliate-applications").getPublicUrl(path);
+        await supabase
+          .from("affiliate_applications")
+          .update({ pdf_url: pub.publicUrl })
+          .eq("id", inserted.id);
+      }
+
+      await downloadApplicationPdf(appData);
+
+      setSubmitted(appData);
+      toast.success("Application submitted! Your PDF has been downloaded.");
       (e.target as HTMLFormElement).reset();
-    }, 600);
+      setTimeout(() => {
+        document.getElementById("join")?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.message || "Could not submit application. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const redownload = async () => {
+    if (submitted) await downloadApplicationPdf(submitted);
   };
 
   return (
@@ -220,68 +294,106 @@ const Affiliate = () => {
             </div>
           </div>
 
-          {/* Right: Form */}
-          <form onSubmit={handleSubmit} className="glass rounded-2xl p-6 space-y-4">
-            <div>
-              <h3 className="text-xl font-semibold">Apply to Join</h3>
-              <p className="text-xs opacity-70 mt-1">Tell us about you — we'll get back within 24 hours.</p>
-            </div>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="aff-name">Full Name *</Label>
-                <Input id="aff-name" name="fullName" required className="mt-1.5" />
+          {/* Right: Form / Success */}
+          {submitted ? (
+            <div className="glass rounded-2xl p-6 space-y-5 text-center">
+              <div className="w-14 h-14 rounded-full bg-primary/15 grid place-items-center mx-auto">
+                <CheckCircle2 className="w-7 h-7 text-primary" />
               </div>
               <div>
-                <Label htmlFor="aff-email">Email *</Label>
-                <Input id="aff-email" name="email" type="email" required className="mt-1.5" />
+                <h3 className="text-xl font-semibold">Application Received</h3>
+                <p className="text-sm opacity-75 mt-1">
+                  Thank you, <strong>{submitted.full_name}</strong>. Your application{" "}
+                  <strong>{submitted.application_id}</strong> has been recorded and the PDF copy has been
+                  downloaded to your device. Our partner team will be in touch within 24–48 hours.
+                </p>
               </div>
-              <div>
-                <Label htmlFor="aff-phone">Phone / WhatsApp *</Label>
-                <Input id="aff-phone" name="phone" required className="mt-1.5" />
-              </div>
-              <div>
-                <Label htmlFor="aff-country">Country *</Label>
-                <Input id="aff-country" name="country" required className="mt-1.5" />
-              </div>
-              <div className="sm:col-span-2">
-                <Label htmlFor="aff-company">Company / Brand (optional)</Label>
-                <Input id="aff-company" name="company" className="mt-1.5" />
-              </div>
-              <div className="sm:col-span-2">
-                <Label htmlFor="aff-audience">Your audience / niche *</Label>
-                <Input id="aff-audience" name="audience" required placeholder="e.g. Accountants, freelancers, e-commerce sellers…" className="mt-1.5" />
-              </div>
-              <div className="sm:col-span-2">
-                <Label htmlFor="aff-volume">Expected monthly referrals *</Label>
-                <select
-                  id="aff-volume"
-                  name="monthlyVolume"
-                  required
-                  className="mt-1.5 w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
-                  defaultValue=""
-                >
-                  <option value="" disabled>Select volume…</option>
-                  <option>1 – 5</option>
-                  <option>5 – 20</option>
-                  <option>20 – 50</option>
-                  <option>50+</option>
-                </select>
-              </div>
-              <div className="sm:col-span-2">
-                <Label htmlFor="aff-msg">Message (optional)</Label>
-                <Textarea id="aff-msg" name="message" rows={3} className="mt-1.5" />
+              <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                <Button onClick={redownload} variant="hero" className="rounded-full">
+                  <Download className="w-4 h-4" /> Download PDF Again
+                </Button>
+                <Button variant="outline" className="rounded-full" onClick={() => setSubmitted(null)}>
+                  Submit another application
+                </Button>
               </div>
             </div>
-            <Button type="submit" variant="hero" className="w-full rounded-full" disabled={loading}>
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-              Submit Application
-            </Button>
-            <p className="text-[11px] opacity-70 text-center">
-              By submitting you agree to our{" "}
-              <Link to="/terms" className="underline">Terms</Link> &{" "}
-              <Link to="/privacy-policy" className="underline">Privacy Policy</Link>.
-            </p>
-          </form>
+          ) : (
+            <form onSubmit={handleSubmit} className="glass rounded-2xl p-6 space-y-4">
+              <div>
+                <h3 className="text-xl font-semibold">Affiliate Application Form</h3>
+                <p className="text-xs opacity-70 mt-1">
+                  Fill in your details — a professional PDF copy will be generated and downloaded
+                  instantly after submission.
+                </p>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="aff-name">Full Name *</Label>
+                  <Input id="aff-name" name="fullName" required maxLength={100} className="mt-1.5" />
+                </div>
+                <div>
+                  <Label htmlFor="aff-email">Email Address *</Label>
+                  <Input id="aff-email" name="email" type="email" required maxLength={255} className="mt-1.5" />
+                </div>
+                <div>
+                  <Label htmlFor="aff-whatsapp">WhatsApp Number *</Label>
+                  <Input
+                    id="aff-whatsapp"
+                    name="whatsapp"
+                    required
+                    inputMode="tel"
+                    placeholder="+44 7438 351454"
+                    pattern="^[+0-9 ()\-]+$"
+                    maxLength={30}
+                    className="mt-1.5"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="aff-empcode">Employee Code</Label>
+                  <Input id="aff-empcode" name="employeeCode" maxLength={60} placeholder="e.g. DF-EMP-001" className="mt-1.5" />
+                </div>
+                <div>
+                  <Label htmlFor="aff-join">Joining Date</Label>
+                  <Input id="aff-join" name="joiningDate" type="date" className="mt-1.5" />
+                </div>
+                <div>
+                  <Label htmlFor="aff-edu">Education</Label>
+                  <Input id="aff-edu" name="education" maxLength={300} placeholder="e.g. BBA, Marketing" className="mt-1.5" />
+                </div>
+                <div className="sm:col-span-2">
+                  <Label htmlFor="aff-exp">Experience</Label>
+                  <Textarea
+                    id="aff-exp"
+                    name="experience"
+                    rows={3}
+                    maxLength={1000}
+                    placeholder="Briefly describe your sales / marketing / referral experience…"
+                    className="mt-1.5"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <Label htmlFor="aff-msg">Message / Note</Label>
+                  <Textarea
+                    id="aff-msg"
+                    name="message"
+                    rows={3}
+                    maxLength={2000}
+                    placeholder="Anything else you'd like us to know?"
+                    className="mt-1.5"
+                  />
+                </div>
+              </div>
+              <Button type="submit" variant="hero" className="w-full rounded-full" disabled={loading}>
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                {loading ? "Submitting…" : "Submit Application"}
+              </Button>
+              <p className="text-[11px] opacity-70 text-center">
+                By submitting you agree to our{" "}
+                <Link to="/terms" className="underline">Terms</Link> &{" "}
+                <Link to="/privacy-policy" className="underline">Privacy Policy</Link>.
+              </p>
+            </form>
+          )}
         </div>
       </section>
     </Layout>
