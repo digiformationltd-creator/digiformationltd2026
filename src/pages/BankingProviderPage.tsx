@@ -97,20 +97,6 @@ const BankingProviderPage = () => {
         </div>
       </section>
 
-      <section className="py-10 border-t border-border/60">
-        <div className="container mx-auto px-4 max-w-5xl">
-          <div className="text-xs uppercase tracking-[0.18em] opacity-70 mb-3">Key Features</div>
-          <h2 className="text-4xl font-bold mb-10">Why choose {provider.name}</h2>
-          <div className="grid sm:grid-cols-2 gap-5">
-            {provider.features.map((f) => (
-              <div key={f} className="glass rounded-2xl p-6 flex gap-4 hover:-translate-y-1 transition-transform">
-                <CheckCircle2 className="w-5 h-5 mt-1 text-primary flex-shrink-0" />
-                <span className="font-medium">{f}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       <section className="py-10 border-t border-border/60 bg-muted/10">
         <div className="container mx-auto px-4 max-w-5xl">
