@@ -140,6 +140,14 @@ export type CheckoutFlowProps = {
   whatsappPlaceholder?: string;
   /** Optional extra add-on services grouped by category. */
   extras?: { categoryLabel: string; description?: string; items: CheckoutItem[] }[];
+  /** Per-item dynamic field sections rendered in the details step when the
+   *  matching itemId is selected. Used by UK Compliance to gather filing
+   *  requirements (CRN, auth code, director personal code etc.). */
+  extraSections?: {
+    itemId: string;
+    title: string;
+    fields: { key: string; label: string; placeholder?: string; required?: boolean; type?: "text" | "textarea" | "date"; helper?: string }[];
+  }[];
 };
 
 const STEP_ICONS = [ShoppingBag, UserRound, ClipboardCheck];
