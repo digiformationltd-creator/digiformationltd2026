@@ -1217,8 +1217,7 @@ const CheckoutFlow = ({
                       )}
                     </div>
                   )}
-                </div>
-                )}
+
               </div>
             )}
 
