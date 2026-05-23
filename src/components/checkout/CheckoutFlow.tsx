@@ -285,6 +285,7 @@ const CheckoutFlow = ({
   const clearDraft = () => {
     try { window.localStorage.removeItem(draftKey); } catch {}
     setForm(emptyForm);
+    setExtra({});
     setSelected(initialSelected);
     setStepIdx(0);
     setServiceMode("both");
@@ -299,6 +300,7 @@ const CheckoutFlow = ({
         window.localStorage.setItem(draftKey, JSON.stringify({
           savedAt: Date.now(),
           form,
+          extra,
           selected: Array.from(selected),
           stepIdx,
           serviceMode,
@@ -306,7 +308,7 @@ const CheckoutFlow = ({
       } catch {}
     }, 300);
     return () => clearTimeout(t);
-  }, [form, selected, stepIdx, serviceMode, successInfo, draftKey]);
+  }, [form, extra, selected, stepIdx, serviceMode, successInfo, draftKey]);
 
   // Clear draft after successful submit
   useEffect(() => {
