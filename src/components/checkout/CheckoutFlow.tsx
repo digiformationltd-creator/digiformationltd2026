@@ -128,9 +128,17 @@ export type CheckoutFlowProps = {
   hideBusinessActivity?: boolean;
   /** Show a "Proof of address" upload field inside the ID documents section (used for IDV) */
   showProofOfAddress?: boolean;
-  /** Optional extra add-on services grouped by category. Shown below the
-   *  main selection on step 1. Each group is rendered as its own card so
-   *  customers only see add-ons relevant to the service they're ordering. */
+  /** Show a "Date of birth" field (used for IDV) */
+  showDateOfBirth?: boolean;
+  /** Show a "Passport number" field (used for IDV) */
+  showPassportNumber?: boolean;
+  /** Show a "Website" field (used for banks) */
+  showWebsite?: boolean;
+  /** Override the WhatsApp field label (e.g. "UK Number", "USA Number"). Defaults to "WhatsApp". */
+  whatsappLabel?: string;
+  /** Placeholder hint for the WhatsApp/phone field */
+  whatsappPlaceholder?: string;
+  /** Optional extra add-on services grouped by category. */
   extras?: { categoryLabel: string; description?: string; items: CheckoutItem[] }[];
 };
 
