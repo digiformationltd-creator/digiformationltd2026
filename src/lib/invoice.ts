@@ -106,10 +106,24 @@ const drawWatermark = (doc: jsPDF, W: number, H: number) => {
   const GState = (doc as any).GState;
   if (GState) {
     // @ts-ignore
-    doc.setGState(new GState({ opacity: 0.07 }));
+    doc.setGState(new GState({ opacity: 0.08 }));
   }
-  doc.setFont("helvetica", "bold").setFontSize(78).setTextColor(40, 40, 40);
-  doc.text("DIGIFORMATION LTD", W / 2, H / 2, { align: "center", angle: 30 });
+  // Main diagonal watermark — corner-to-corner, very large
+  const diag = Math.sqrt(W * W + H * H);
+  const angle = (Math.atan2(H, W) * 180) / Math.PI;
+  const mainSize = Math.floor(diag / 11);
+  doc.setFont("helvetica", "bold").setFontSize(mainSize).setTextColor(40, 40, 40);
+  doc.text("DIGIFORMATION LTD", W / 2, H / 2, { align: "center", angle });
+
+  // Two smaller vertical watermarks on the sides
+  if (GState) {
+    // @ts-ignore
+    doc.setGState(new GState({ opacity: 0.06 }));
+  }
+  doc.setFontSize(26);
+  doc.text("DIGIFORMATION LTD", W * 0.10, H * 0.80, { align: "center", angle: 90 });
+  doc.text("DIGIFORMATION LTD", W * 0.90, H * 0.20, { align: "center", angle: 90 });
+
   doc.restoreGraphicsState();
 };
 
@@ -135,7 +149,7 @@ export const downloadInvoicePdf = async (inv: InvoiceData, logoUrl = "/digiforma
 
   // ---- Header: Logo (left) + Invoice No (right) ----
   if (logoDataUrl) {
-    doc.addImage(logoDataUrl, "PNG", M, M, 64, 64, undefined, "FAST");
+    doc.addImage(logoDataUrl, "PNG", M, M, 96, 96, undefined, "FAST");
   } else {
     doc.setFont("helvetica", "bold").setFontSize(11).setTextColor(...INK);
     doc.text("DIGIFORMATION", M, M + 20);
