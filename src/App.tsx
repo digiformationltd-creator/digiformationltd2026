@@ -99,6 +99,7 @@ const App = () => (
           <Route path="/llc-formation-services/bio-report" element={<UsaServicePage />} />
 
           {/* Banking dedicated pages */}
+          <Route path="/banks-payment-solutions/:slug/checkout" element={<BankingCheckout />} />
           <Route path="/banks-payment-solutions/:slug" element={<BankingProviderPage />} />
 
           {/* Dynamic service sub-pages (fallback) */}
