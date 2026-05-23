@@ -452,12 +452,35 @@ const CheckoutFlow = ({
           : `${form.business_category}${form.business_subcategory ? ` — ${form.business_subcategory}` : ""}`) +
         (form.sic_codes.trim() ? `\nSIC codes: ${form.sic_codes.trim()}` : "");
 
+    // Build a "Filing requirements" block from active extra sections so the
+    // collected data reaches the team in the summary email + invoice notes.
+    const extraSummary = activeExtraSections
+      .map((sec) => {
+        const lines = sec.fields
+          .map((f) => `  ${f.label}: ${(extra[f.key] || "").trim() || "—"}`)
+          .join("\n");
+        return `\n[${sec.title}]\n${lines}`;
+      })
+      .join("\n");
+
     const summary =
       `[${serviceTitle} Order]\n` +
       `Ref: ${orderRef}\n` +
       (contextLabel ? `${contextLabel}\n` : "") +
       (showServiceMode ? `Service mode: ${serviceModeLabel}\n` : "") +
       (showServiceMode && serviceMode === "ltd-only" && form.personal_code ? `Companies House Personal Code: ${form.personal_code.trim()}\n` : "") +
+      (showCompanyName && form.company_name ? `Proposed company name: ${form.company_name}\n` : "") +
+      (showRole && form.role ? `Applicant role: ${form.role}\n` : "") +
+      (showDateOfBirth && form.date_of_birth ? `Date of birth: ${form.date_of_birth}\n` : "") +
+      (showPassportNumber && form.passport_number ? `Passport number: ${form.passport_number}\n` : "") +
+      (showWebsite && form.website ? `Website: ${form.website}\n` : "") +
+      `Items:\n${lines}\n` +
+      `Subtotal: ${formatMoney(subtotal, currency)}\n` +
+      (vat ? `VAT (${(vatRate * 100).toFixed(0)}%): ${formatMoney(vat, currency)}\n` : "") +
+      `Total: ${formatMoney(total, currency)}\n` +
+      addressBlock +
+      (activityText ? `\nBusiness activity:\n${activityText}` : "") +
+      (extraSummary ? `\n\nFiling requirements:${extraSummary}` : "");
       (showCompanyName && form.company_name ? `Proposed company name: ${form.company_name}\n` : "") +
       (showRole && form.role ? `Applicant role: ${form.role}\n` : "") +
       (showDateOfBirth && form.date_of_birth ? `Date of birth: ${form.date_of_birth}\n` : "") +
