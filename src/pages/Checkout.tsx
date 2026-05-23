@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import CheckoutFlow, { CheckoutItem } from "@/components/checkout/CheckoutFlow";
+import { complianceItemFormFields } from "@/data/compliance";
 
 /**
  * Category-grouped catalog. Each group contains only services that belong
