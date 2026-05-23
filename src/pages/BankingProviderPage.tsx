@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { ArrowRight, CheckCircle2, Wallet } from "lucide-react";
+import { ArrowRight, Wallet } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { bankingProviders } from "@/data/banking";
