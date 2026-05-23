@@ -190,6 +190,7 @@ const CheckoutFlow = ({
   whatsappLabel = "WhatsApp",
   whatsappPlaceholder,
   extras,
+  extraSections,
 }: CheckoutFlowProps) => {
   // Merge extras into the master items list so selection / pricing logic
   // continues to work uniformly.
