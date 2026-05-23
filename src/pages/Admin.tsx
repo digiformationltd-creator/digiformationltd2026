@@ -33,6 +33,11 @@ const Admin = () => {
   const [initialTab, setInitialTab] = useState<"company" | "addresses">("company");
   const [loadingClients, setLoadingClients] = useState(false);
   const [view, setView] = useState<"clients" | "affiliates">("clients");
+  const [testEmailOpen, setTestEmailOpen] = useState(false);
+  const [testEmailTo, setTestEmailTo] = useState("info@digiformation.uk");
+  const [testEmailTpl, setTestEmailTpl] = useState("order-confirmation");
+  const [testEmailSending, setTestEmailSending] = useState(false);
+  const [testEmailResult, setTestEmailResult] = useState<{ ok: boolean; msg: string } | null>(null);
 
   useSeo({ title: "Admin Panel | Digiformation", description: "Internal admin panel", noindex: true });
 
