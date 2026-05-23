@@ -12,6 +12,7 @@ import Layout from "@/components/layout/Layout";
 import { useSeo } from "@/lib/seo";
 import { SERVICE_CODES, generateInvoiceNumber, generateOrderNumber, downloadInvoicePdf } from "@/lib/invoice";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 
 interface ClientRow {
   user_id: string;
@@ -32,6 +33,11 @@ const Admin = () => {
   const [initialTab, setInitialTab] = useState<"company" | "addresses">("company");
   const [loadingClients, setLoadingClients] = useState(false);
   const [view, setView] = useState<"clients" | "affiliates">("clients");
+  const [testEmailOpen, setTestEmailOpen] = useState(false);
+  const [testEmailTo, setTestEmailTo] = useState("info@digiformation.uk");
+  const [testEmailTpl, setTestEmailTpl] = useState("order-confirmation");
+  const [testEmailSending, setTestEmailSending] = useState(false);
+  const [testEmailResult, setTestEmailResult] = useState<{ ok: boolean; msg: string } | null>(null);
 
   useSeo({ title: "Admin Panel | Digiformation", description: "Internal admin panel", noindex: true });
 
@@ -98,35 +104,8 @@ const Admin = () => {
             <Button
               variant="secondary"
               size="sm"
-              onClick={async () => {
-                const to = window.prompt("Send test email to which address?", "info@digiformation.uk");
-                if (!to) return;
-                const tpl = window.prompt(
-                  "Template name (welcome, order-confirmation, order-notification, invoice-issued, order-completed, ticket-received, address-renewal-reminder)",
-                  "welcome",
-                ) || "welcome";
-                const idem = `admin-test-${tpl}-${Date.now()}`;
-                const { error } = await supabase.functions.invoke("send-transactional-email", {
-                  body: {
-                    templateName: tpl,
-                    recipientEmail: to,
-                    idempotencyKey: idem,
-                    templateData: {
-                      customerName: "Test User",
-                      orderRef: "TEST-0001",
-                      service: "Test Service",
-                      invoiceNumber: "DFT-TEST-001",
-                      amount: "£0.00",
-                      address: "Test Address",
-                      expireDate: new Date().toISOString().slice(0, 10),
-                      daysRemaining: 30,
-                    },
-                  },
-                });
-                if (error) toast.error(`Test failed: ${error.message}`);
-                else toast.success(`✅ Test "${tpl}" queued → ${to}. Check inbox in ~10s.`);
-              }}
-              title="Send a test email from the configured sender domain"
+              onClick={() => { setTestEmailResult(null); setTestEmailOpen(true); }}
+              title="Send a test email to verify the email flow"
             >
               <Mail className="w-4 h-4 mr-1" /> Test Email
             </Button>
@@ -139,6 +118,91 @@ const Admin = () => {
           </div>
 
         </div>
+
+        <Dialog open={testEmailOpen} onOpenChange={setTestEmailOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Send Test Email</DialogTitle>
+              <DialogDescription>
+                Verify that emails are being delivered. Sends a real email using the configured sender.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-3">
+              <div>
+                <Label htmlFor="test-email-to">Recipient email</Label>
+                <Input
+                  id="test-email-to"
+                  type="email"
+                  value={testEmailTo}
+                  onChange={(e) => setTestEmailTo(e.target.value)}
+                  placeholder="you@example.com"
+                />
+              </div>
+              <div>
+                <Label htmlFor="test-email-tpl">Template</Label>
+                <Select value={testEmailTpl} onValueChange={setTestEmailTpl}>
+                  <SelectTrigger id="test-email-tpl"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="welcome">welcome</SelectItem>
+                    <SelectItem value="order-confirmation">order-confirmation (client)</SelectItem>
+                    <SelectItem value="order-notification">order-notification (admin)</SelectItem>
+                    <SelectItem value="invoice-issued">invoice-issued</SelectItem>
+                    <SelectItem value="order-completed">order-completed</SelectItem>
+                    <SelectItem value="ticket-received">ticket-received</SelectItem>
+                    <SelectItem value="address-renewal-reminder">address-renewal-reminder</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {testEmailResult && (
+                <div className={`text-sm rounded-md p-3 ${testEmailResult.ok ? "bg-green-50 text-green-800 border border-green-200" : "bg-red-50 text-red-800 border border-red-200"}`}>
+                  {testEmailResult.msg}
+                </div>
+              )}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setTestEmailOpen(false)} disabled={testEmailSending}>Close</Button>
+              <Button
+                onClick={async () => {
+                  if (!testEmailTo || !/.+@.+\..+/.test(testEmailTo)) {
+                    setTestEmailResult({ ok: false, msg: "Please enter a valid email address." });
+                    return;
+                  }
+                  setTestEmailSending(true);
+                  setTestEmailResult(null);
+                  const idem = `admin-test-${testEmailTpl}-${Date.now()}`;
+                  const { error } = await supabase.functions.invoke("send-transactional-email", {
+                    body: {
+                      templateName: testEmailTpl,
+                      recipientEmail: testEmailTo,
+                      idempotencyKey: idem,
+                      templateData: {
+                        customerName: "Test User",
+                        orderRef: "TEST-0001",
+                        service: "Test Service",
+                        invoiceNumber: "DFT-TEST-001",
+                        amount: "£0.00",
+                        address: "Test Address",
+                        expireDate: new Date().toISOString().slice(0, 10),
+                        daysRemaining: 30,
+                      },
+                    },
+                  });
+                  setTestEmailSending(false);
+                  if (error) {
+                    setTestEmailResult({ ok: false, msg: `❌ Failed: ${error.message}` });
+                    toast.error(`Test failed: ${error.message}`);
+                  } else {
+                    setTestEmailResult({ ok: true, msg: `✅ Queued "${testEmailTpl}" → ${testEmailTo}. Check inbox in ~10s.` });
+                    toast.success("Test email queued");
+                  }
+                }}
+                disabled={testEmailSending}
+              >
+                {testEmailSending ? <><Loader2 className="w-4 h-4 mr-1 animate-spin" />Sending…</> : <><Mail className="w-4 h-4 mr-1" />Send Test</>}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         <div className="flex gap-2 mb-4">
           <Button variant={view === "clients" ? "default" : "outline"} size="sm" onClick={() => setView("clients")}>
