@@ -102,25 +102,6 @@ const Affiliate = () => {
       const application_id = await generateApplicationId();
       const submitted_at = new Date().toISOString();
 
-      const { data: inserted, error: insErr } = await supabase
-        .from("affiliate_applications")
-        .insert({
-          application_id,
-          full_name: v.data.fullName,
-          email: v.data.email,
-          whatsapp: v.data.whatsapp,
-          employee_code: v.data.employeeCode || null,
-          joining_date: v.data.joiningDate || null,
-          education: v.data.education || null,
-          experience: v.data.experience || null,
-          message: v.data.message || null,
-          page_path: window.location.pathname,
-          user_agent: navigator.userAgent.slice(0, 500),
-        })
-        .select()
-        .single();
-      if (insErr) throw insErr;
-
       const appData: ApplicationData = {
         application_id,
         full_name: v.data.fullName,
@@ -134,18 +115,32 @@ const Affiliate = () => {
         submitted_at,
       };
 
+      // Build & upload PDF to private bucket first, then insert row with path
       const { blob, filename } = await buildApplicationPdf(appData);
       const path = `${new Date().getFullYear()}/${filename}`;
+      let storedPath: string | null = null;
       const { error: upErr } = await supabase.storage
         .from("affiliate-applications")
         .upload(path, blob, { contentType: "application/pdf", upsert: true });
-      if (!upErr) {
-        const { data: pub } = supabase.storage.from("affiliate-applications").getPublicUrl(path);
-        await supabase
-          .from("affiliate_applications")
-          .update({ pdf_url: pub.publicUrl })
-          .eq("id", inserted.id);
-      }
+      if (!upErr) storedPath = path;
+
+      const { error: insErr } = await supabase
+        .from("affiliate_applications")
+        .insert({
+          application_id,
+          full_name: v.data.fullName,
+          email: v.data.email,
+          whatsapp: v.data.whatsapp,
+          employee_code: v.data.employeeCode || null,
+          joining_date: v.data.joiningDate || null,
+          education: v.data.education || null,
+          experience: v.data.experience || null,
+          message: v.data.message || null,
+          pdf_url: storedPath,
+          page_path: window.location.pathname,
+          user_agent: navigator.userAgent.slice(0, 500),
+        });
+      if (insErr) throw insErr;
 
       await downloadApplicationPdf(appData);
 
