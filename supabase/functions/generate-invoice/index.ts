@@ -73,19 +73,44 @@ function buildPdf(opts: {
   const sym = opts.currency === 'USD' ? '$' : '£'
   const fmt = (n: number) => `${sym}${n.toFixed(2)}`
 
-  // ------- Decorative corner triangles (subtle grey + thin black accent) -------
+  // ------- Watermark + decorative corner triangles -------
   const drawCornerDecor = () => {
+    // Watermark FIRST so all content overlays it
+    doc.saveGraphicsState()
+    // @ts-ignore - jsPDF GState exists at runtime
+    const GState = (doc as any).GState
+    if (GState) {
+      // @ts-ignore
+      doc.setGState(new GState({ opacity: 0.06 }))
+    }
+    try {
+      const wmSize = 380
+      doc.addImage(
+        `data:image/png;base64,${LOGO_PNG_BASE64}`,
+        'PNG',
+        (W - wmSize) / 2, (H - wmSize) / 2, wmSize, wmSize, undefined, 'FAST',
+      )
+    } catch (_) { /* ignore */ }
+    if (GState) {
+      // @ts-ignore
+      doc.setGState(new GState({ opacity: 0.05 }))
+    }
+    doc.setFont('helvetica', 'bold').setFontSize(56).setTextColor(60, 60, 60)
+    for (let wy = -40; wy < H + 80; wy += 130) {
+      for (let wx = -40; wx < W + 120; wx += 360) {
+        doc.text('DIGIFORMATION', wx, wy, { angle: -30 })
+      }
+    }
+    doc.restoreGraphicsState()
+
     doc.setFillColor(...GREY_MID)
-    // Top-left chevron set
     doc.triangle(0, 0, 150, 0, 0, 110, 'F')
     doc.setFillColor(210, 210, 210)
     doc.triangle(60, 0, 230, 0, 60, 90, 'F')
-    // Bottom-right chevron set
     doc.setFillColor(...GREY_MID)
     doc.triangle(W, H, W - 150, H, W, H - 110, 'F')
     doc.setFillColor(210, 210, 210)
     doc.triangle(W - 60, H, W - 230, H, W - 60, H - 90, 'F')
-    // Thin black accent strokes
     doc.setDrawColor(20).setLineWidth(1.2)
     doc.line(0, 116, 130, 0)
     doc.line(W, H - 116, W - 130, H)
