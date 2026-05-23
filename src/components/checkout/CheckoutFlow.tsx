@@ -349,10 +349,22 @@ const CheckoutFlow = ({
   const vat = +(subtotal * vatRate).toFixed(2);
   const total = subtotal + vat;
 
+  // Compute which extraSections are active (their item is selected)
+  const activeExtraSections = useMemo(
+    () => (extraSections || []).filter((s) => selected.has(s.itemId)),
+    [extraSections, selected]
+  );
+
   const canNext = () => {
     if (!lockSelection && stepIdx === 0) return selectedItems.length > 0;
     const detailsIdx = lockSelection ? 0 : 1;
     if (stepIdx === detailsIdx) {
+      // Validate dynamic extra fields
+      for (const sec of activeExtraSections) {
+        for (const f of sec.fields) {
+          if (f.required && !(extra[f.key] || "").trim()) return false;
+        }
+      }
       return (
         (!showCompanyName || companyNameOptional || form.company_name.trim().length >= 2) &&
         (!showRole || form.role.trim().length > 0) &&
