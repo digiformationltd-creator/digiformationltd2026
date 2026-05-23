@@ -24,6 +24,7 @@ import UsaLlcChooseState from "./pages/UsaLlcChooseState";
 import UsaLlcCheckout from "./pages/UsaLlcCheckout";
 import UsaServicePage from "./pages/UsaServicePage";
 import BankingProviderPage from "./pages/BankingProviderPage";
+import BankingCheckout from "./pages/BankingCheckout";
 import WhatsAppFloat from "./components/WhatsAppFloat";
 import AIAssistant from "./components/AIAssistant";
 import ScrollToTop from "./components/ScrollToTop";
