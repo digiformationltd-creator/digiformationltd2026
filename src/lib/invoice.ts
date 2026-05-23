@@ -97,6 +97,41 @@ export const downloadInvoicePdf = async (inv: InvoiceData, logoUrl = "/digiforma
   const H = doc.internal.pageSize.getHeight();
   const M = 48;
 
+  // ---- Load logo data URL (used for header + watermark) ----
+  let logoDataUrl: string | null = null;
+  try {
+    const blob = await fetch(logoUrl).then(r => r.blob());
+    logoDataUrl = await new Promise<string>(res => {
+      const fr = new FileReader();
+      fr.onload = () => res(fr.result as string);
+      fr.readAsDataURL(blob);
+    });
+  } catch { /* ignore */ }
+
+  // ---- Watermark (diagonal repeating brand text + faint center logo) ----
+  doc.saveGraphicsState();
+  // @ts-ignore
+  const GState = (doc as any).GState;
+  if (GState) {
+    // @ts-ignore
+    doc.setGState(new GState({ opacity: 0.06 }));
+  }
+  if (logoDataUrl) {
+    const wmSize = 380;
+    doc.addImage(logoDataUrl, "PNG", (W - wmSize) / 2, (H - wmSize) / 2, wmSize, wmSize, undefined, "FAST");
+  }
+  if (GState) {
+    // @ts-ignore
+    doc.setGState(new GState({ opacity: 0.05 }));
+  }
+  doc.setFont("helvetica", "bold").setFontSize(56).setTextColor(60, 60, 60);
+  for (let wy = -40; wy < H + 80; wy += 130) {
+    for (let wx = -40; wx < W + 120; wx += 360) {
+      doc.text("DIGIFORMATION", wx, wy, { angle: -30 });
+    }
+  }
+  doc.restoreGraphicsState();
+
   // ---- Decorative corner triangles ----
   doc.setFillColor(...GREY_MID);
   doc.triangle(0, 0, 150, 0, 0, 110, "F");
@@ -112,15 +147,9 @@ export const downloadInvoicePdf = async (inv: InvoiceData, logoUrl = "/digiforma
   doc.setLineWidth(0.2);
 
   // ---- Header: logo + INVOICE ----
-  try {
-    const blob = await fetch(logoUrl).then(r => r.blob());
-    const dataUrl: string = await new Promise(res => {
-      const fr = new FileReader();
-      fr.onload = () => res(fr.result as string);
-      fr.readAsDataURL(blob);
-    });
-    doc.addImage(dataUrl, "PNG", M, M + 8, 130, 130, undefined, "FAST");
-  } catch {
+  if (logoDataUrl) {
+    doc.addImage(logoDataUrl, "PNG", M, M + 8, 130, 130, undefined, "FAST");
+  } else {
     doc.setFont("helvetica", "bold").setFontSize(18).setTextColor(...INK);
     doc.text(COMPANY.name, M, M + 60);
   }
