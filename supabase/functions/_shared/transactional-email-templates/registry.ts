@@ -23,6 +23,7 @@ import { template as confirmationStatementReminder } from './confirmation-statem
 import { template as annualAccountsReminder } from './annual-accounts-reminder.tsx'
 import { template as affiliateApplicationReceived } from './affiliate-application-received.tsx'
 import { template as affiliateApplicationNotification } from './affiliate-application-notification.tsx'
+import { template as emailSystemCheck } from './email-system-check.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'order-confirmation': orderConfirmation,
@@ -39,4 +40,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'annual-accounts-reminder': annualAccountsReminder,
   'affiliate-application-received': affiliateApplicationReceived,
   'affiliate-application-notification': affiliateApplicationNotification,
+  'email-system-check': emailSystemCheck,
 }
