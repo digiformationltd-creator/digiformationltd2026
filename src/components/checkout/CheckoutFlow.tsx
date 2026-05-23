@@ -251,6 +251,9 @@ const CheckoutFlow = ({
     sic_codes: "",
     role: "",
     personal_code: "",
+    date_of_birth: "",
+    passport_number: "",
+    website: "",
   };
   const [form, setForm] = useState(() => ({ ...emptyForm, ...(draft?.form ?? {}) }));
   const [idType, setIdType] = useState<"id_card" | "passport" | "driving_licence">("id_card");
