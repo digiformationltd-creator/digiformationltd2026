@@ -105,7 +105,7 @@ export const buildApplicationPdf = async (
 
   // ---- Header ----
   if (logoDataUrl) {
-    doc.addImage(logoDataUrl, "PNG", M, M, 64, 64, undefined, "FAST");
+    doc.addImage(logoDataUrl, "PNG", M, M, 96, 96, undefined, "FAST");
   } else {
     doc.setFont("helvetica", "bold").setFontSize(11).setTextColor(...INK);
     doc.text("DIGIFORMATION", M, M + 20);
