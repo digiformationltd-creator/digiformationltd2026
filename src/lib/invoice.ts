@@ -27,11 +27,6 @@ const pad2 = (n: number) => n.toString().padStart(2, "0");
 export const dateKey = (d = new Date()) =>
   `${d.getFullYear()}${pad2(d.getMonth() + 1)}${pad2(d.getDate())}`;
 
-/**
- * Generate a unique invoice/order number in the format:
- *   DF + ServiceCode + YYYYMMDD + -NN
- * Looks at existing invoices for today+code to compute next sequence.
- */
 export const generateInvoiceNumber = async (serviceCode: string): Promise<string> => {
   const code = (serviceCode || "O").toUpperCase().slice(0, 1);
   const prefix = `DF${code}${dateKey()}`;
@@ -43,7 +38,6 @@ export const generateInvoiceNumber = async (serviceCode: string): Promise<string
   return `${prefix}-${pad2(next)}`;
 };
 
-/** Same logic but for client_orders.order_ref — uses unified buildOrderRef format. */
 export const generateOrderNumber = async (serviceCode: string): Promise<string> => {
   const code = (serviceCode || "O").toUpperCase().slice(0, 1);
   const mapped = ADMIN_CODE_TO_SERVICE_CODE[code] || "ORD";
@@ -74,10 +68,12 @@ const COMPANY = {
   website: "www.digiformation.uk",
 };
 
-const GREY_LIGHT: [number, number, number] = [232, 232, 232];
-const GREY_MID: [number, number, number] = [180, 180, 180];
 const INK: [number, number, number] = [20, 20, 20];
-const MUTED: [number, number, number] = [100, 100, 100];
+const SUB: [number, number, number] = [90, 90, 90];
+const HEADER_BG: [number, number, number] = [225, 225, 225];
+const DIVIDER: [number, number, number] = [215, 215, 215];
+const WAVE_LIGHT: [number, number, number] = [205, 208, 212];
+const WAVE_DARK: [number, number, number] = [70, 75, 82];
 
 const fmtGBP = (n: number) =>
   new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n || 0);
@@ -87,17 +83,43 @@ const longDate = (iso?: string | null) => {
   const [y, m, d] = iso.split("-").map((s) => parseInt(s, 10));
   if (!y || !m || !d) return iso;
   const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-  return `${months[m - 1]} ${d}, ${y}`;
+  return `${d.toString().padStart(2,"0")} ${months[m - 1]}, ${y}`;
 };
 
-/** Generate a branded invoice PDF (matches the order-confirmation email template) and trigger download. */
+/** Draw bottom-right organic wave shapes (decorative) */
+const drawWaves = (doc: jsPDF, W: number, H: number) => {
+  // Light gray large blob — bottom-left
+  doc.setFillColor(...WAVE_LIGHT);
+  doc.ellipse(W * 0.32, H + 30, W * 0.55, 110, "F");
+  // Darker wave — bottom-right
+  doc.setFillColor(...WAVE_DARK);
+  doc.ellipse(W * 0.85, H + 20, W * 0.45, 95, "F");
+  // Light overlap
+  doc.setFillColor(...WAVE_LIGHT);
+  doc.ellipse(W * 0.55, H + 50, W * 0.35, 70, "F");
+};
+
+/** Diagonal watermark "DIGIFORMATION LTD" — single large, professional */
+const drawWatermark = (doc: jsPDF, W: number, H: number) => {
+  doc.saveGraphicsState();
+  // @ts-ignore
+  const GState = (doc as any).GState;
+  if (GState) {
+    // @ts-ignore
+    doc.setGState(new GState({ opacity: 0.07 }));
+  }
+  doc.setFont("helvetica", "bold").setFontSize(78).setTextColor(40, 40, 40);
+  doc.text("DIGIFORMATION LTD", W / 2, H / 2, { align: "center", angle: 30 });
+  doc.restoreGraphicsState();
+};
+
 export const downloadInvoicePdf = async (inv: InvoiceData, logoUrl = "/digiformation-logo-official.png") => {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const W = doc.internal.pageSize.getWidth();
   const H = doc.internal.pageSize.getHeight();
-  const M = 48;
+  const M = 56;
 
-  // ---- Load logo data URL (used for header + watermark) ----
+  // Load logo
   let logoDataUrl: string | null = null;
   try {
     const blob = await fetch(logoUrl).then(r => r.blob());
@@ -108,201 +130,146 @@ export const downloadInvoicePdf = async (inv: InvoiceData, logoUrl = "/digiforma
     });
   } catch { /* ignore */ }
 
-  // ---- Watermark (diagonal repeating brand text + faint center logo) ----
-  doc.saveGraphicsState();
-  // @ts-ignore
-  const GState = (doc as any).GState;
-  if (GState) {
-    // @ts-ignore
-    doc.setGState(new GState({ opacity: 0.06 }));
-  }
-  if (logoDataUrl) {
-    const wmSize = 380;
-    doc.addImage(logoDataUrl, "PNG", (W - wmSize) / 2, (H - wmSize) / 2, wmSize, wmSize, undefined, "FAST");
-  }
-  if (GState) {
-    // @ts-ignore
-    doc.setGState(new GState({ opacity: 0.05 }));
-  }
-  doc.setFont("helvetica", "bold").setFontSize(56).setTextColor(60, 60, 60);
-  for (let wy = -40; wy < H + 80; wy += 130) {
-    for (let wx = -40; wx < W + 120; wx += 360) {
-      doc.text("DIGIFORMATION", wx, wy, { angle: -30 });
-    }
-  }
-  doc.restoreGraphicsState();
+  // Watermark first (under everything)
+  drawWatermark(doc, W, H);
 
-  // ---- Decorative corner triangles ----
-  doc.setFillColor(...GREY_MID);
-  doc.triangle(0, 0, 150, 0, 0, 110, "F");
-  doc.setFillColor(210, 210, 210);
-  doc.triangle(60, 0, 230, 0, 60, 90, "F");
-  doc.setFillColor(...GREY_MID);
-  doc.triangle(W, H, W - 150, H, W, H - 110, "F");
-  doc.setFillColor(210, 210, 210);
-  doc.triangle(W - 60, H, W - 230, H, W - 60, H - 90, "F");
-  doc.setDrawColor(20).setLineWidth(1.2);
-  doc.line(0, 116, 130, 0);
-  doc.line(W, H - 116, W - 130, H);
-  doc.setLineWidth(0.2);
-
-  // ---- Header: logo + INVOICE ----
+  // ---- Header: Logo (left) + Invoice No (right) ----
   if (logoDataUrl) {
-    doc.addImage(logoDataUrl, "PNG", M, M + 8, 130, 130, undefined, "FAST");
+    doc.addImage(logoDataUrl, "PNG", M, M, 64, 64, undefined, "FAST");
   } else {
-    doc.setFont("helvetica", "bold").setFontSize(18).setTextColor(...INK);
-    doc.text(COMPANY.name, M, M + 60);
+    doc.setFont("helvetica", "bold").setFontSize(11).setTextColor(...INK);
+    doc.text("DIGIFORMATION", M, M + 20);
+    doc.text("LTD", M, M + 34);
   }
-  doc.setFont("helvetica", "bold").setFontSize(40).setTextColor(...INK);
-  doc.text("INVOICE", W - M, M + 70, { align: "right" });
+  doc.setFont("helvetica", "normal").setFontSize(11).setTextColor(...INK);
+  doc.text(`NO. ${inv.invoice_number}`, W - M, M + 20, { align: "right" });
 
-  let y = M + 160;
+  // ---- Big INVOICE title ----
+  doc.setFont("helvetica", "bold").setFontSize(58).setTextColor(...INK);
+  doc.text("INVOICE", M, M + 160);
 
-  // ---- Billed-to / Invoice meta panel ----
-  const billedLines: string[] = [];
-  if (inv.bill_to_email) billedLines.push(inv.bill_to_email);
-  if (inv.bill_to_address) billedLines.push(inv.bill_to_address);
-  const panelH = Math.max(110, 60 + billedLines.length * 14 + 16);
-  doc.setFillColor(...GREY_LIGHT);
-  doc.rect(M, y, W - M * 2, panelH, "F");
+  let y = M + 220;
 
-  let py = y + 24;
-  doc.setFont("helvetica", "bold").setFontSize(9).setTextColor(...MUTED);
-  doc.text("BILLED TO:", M + 18, py); py += 18;
-  doc.setFont("helvetica", "bold").setFontSize(13).setTextColor(...INK);
-  doc.text((inv.bill_to_name || "—").toUpperCase(), M + 18, py); py += 16;
-  doc.setFont("helvetica", "normal").setFontSize(10).setTextColor(60);
-  for (const line of billedLines) {
-    const wrapped = doc.splitTextToSize(line, W / 2 - 60) as string[];
-    for (const w of wrapped) { doc.text(w, M + 18, py); py += 14; }
+  // ---- Date ----
+  doc.setFont("helvetica", "bold").setFontSize(11).setTextColor(...INK);
+  doc.text("Date:", M, y);
+  doc.setFont("helvetica", "normal").setTextColor(...SUB);
+  doc.text(longDate(inv.issue_date), M + 50, y);
+  y += 36;
+
+  // ---- Billed To (left) | From (right) ----
+  const colR = W / 2 + 10;
+  doc.setFont("helvetica", "bold").setFontSize(11).setTextColor(...INK);
+  doc.text("Billed to:", M, y);
+  doc.text("From:", colR, y);
+
+  let ly = y + 16;
+  doc.setFont("helvetica", "normal").setFontSize(10.5).setTextColor(...SUB);
+  const billedName = inv.bill_to_name || "—";
+  doc.text(billedName, M, ly); ly += 14;
+  if (inv.bill_to_address) {
+    const wrappedAddr = doc.splitTextToSize(inv.bill_to_address, W / 2 - M - 20) as string[];
+    for (const w of wrappedAddr) { doc.text(w, M, ly); ly += 14; }
   }
+  if (inv.bill_to_email) { doc.text(inv.bill_to_email, M, ly); ly += 14; }
 
-  // Meta (right)
-  const metaX = W / 2 + 20;
-  const metaVX = W - M - 18;
-  let my = y + 24;
-  const metaRow = (label: string, value: string) => {
-    doc.setFont("helvetica", "normal").setFontSize(10).setTextColor(60);
-    doc.text(label, metaX, my);
-    doc.setFont("helvetica", "bold").setTextColor(...INK);
-    doc.text(value, metaVX, my, { align: "right" });
-    my += 18;
-  };
-  metaRow("Invoice No:", inv.invoice_number);
-  metaRow("Invoice Date:", longDate(inv.issue_date));
-  metaRow("Due Date:", longDate(inv.due_date || inv.issue_date));
-  metaRow("Status:", inv.status || "Unpaid");
+  let ry = y + 16;
+  doc.text(COMPANY.name, colR, ry); ry += 14;
+  doc.text(COMPANY.website, colR, ry); ry += 14;
+  doc.text(COMPANY.email, colR, ry); ry += 14;
+  doc.text(`UK: ${COMPANY.phoneUk}`, colR, ry); ry += 14;
+  doc.text(`PK: ${COMPANY.phonePk}`, colR, ry); ry += 14;
 
-  y += panelH + 26;
+  y = Math.max(ly, ry) + 24;
 
   // ---- Items table ----
-  doc.setDrawColor(20).setLineWidth(1.2).line(M, y, W - M, y);
-  y += 4;
-  const colDescX = M + 14;
-  const colQtyX  = W * 0.50;
-  const colPriceX = W * 0.70;
-  const colTotalX = W - M - 14;
-  doc.setFont("helvetica", "bold").setFontSize(10).setTextColor(...INK);
-  const headY = y + 22;
-  doc.text("DESCRIPTION", colDescX, headY);
-  doc.text("QTY", colQtyX, headY, { align: "center" });
-  doc.text("PRICE", colPriceX, headY, { align: "center" });
-  doc.text("TOTAL", colTotalX, headY, { align: "right" });
-  y += 32;
-  doc.setLineWidth(1.2).line(M, y, W - M, y);
-  doc.setLineWidth(0.2);
-  y += 14;
+  // Header bar
+  doc.setFillColor(...HEADER_BG);
+  doc.rect(M, y, W - M * 2, 30, "F");
+  doc.setFont("helvetica", "normal").setFontSize(11).setTextColor(...INK);
+  const colItem = M + 14;
+  const colQty = W * 0.55;
+  const colPrice = W * 0.72;
+  const colAmt = W - M - 14;
+  doc.text("Item", colItem, y + 20);
+  doc.text("Quantity", colQty, y + 20, { align: "center" });
+  doc.text("Price", colPrice, y + 20, { align: "center" });
+  doc.text("Amount", colAmt, y + 20, { align: "right" });
+  y += 30;
 
-  const wrapped = doc.splitTextToSize(inv.service_description || "Service", (colQtyX - colDescX) - 20);
-  const rowH = Math.max(34, wrapped.length * 13 + 18);
-  doc.setFillColor(...GREY_LIGHT);
-  doc.rect(M, y, W - M * 2, rowH, "F");
-  doc.setFont("helvetica", "bold").setFontSize(11).setTextColor(...INK);
-  doc.text(wrapped, colDescX, y + 20);
-  doc.setFont("helvetica", "normal").setTextColor(40);
-  doc.text("1", colQtyX, y + 20, { align: "center" });
-  doc.setFont("helvetica", "bold");
-  doc.text(fmtGBP(inv.amount_gbp), colPriceX, y + 20, { align: "center" });
-  doc.text(fmtGBP(inv.amount_gbp), colTotalX, y + 20, { align: "right" });
-  y += rowH + 6;
-  doc.setDrawColor(20).setLineWidth(1.2).line(M, y, W - M, y);
-  doc.setLineWidth(0.2);
-  y += 24;
+  // Item row
+  const desc = inv.service_description || "Service";
+  const wrapped = doc.splitTextToSize(desc, (colQty - colItem) - 30) as string[];
+  const rowH = Math.max(40, wrapped.length * 14 + 20);
+  doc.setFont("helvetica", "normal").setFontSize(10.5).setTextColor(...INK);
+  doc.text(wrapped, colItem, y + 22);
+  doc.text("1", colQty, y + 22, { align: "center" });
+  doc.text(fmtGBP(inv.amount_gbp), colPrice, y + 22, { align: "center" });
+  doc.text(fmtGBP(inv.amount_gbp), colAmt, y + 22, { align: "right" });
+  y += rowH;
 
-  // ---- Terms + Totals ----
-  const totalsX = W - M - 200;
-  const totalsVX = W - M - 14;
-  const termsW = totalsX - M - 24;
-  doc.setFont("helvetica", "bold").setFontSize(10).setTextColor(...INK);
-  doc.text("TERMS & CONDITIONS:", M, y);
-  doc.setFont("helvetica", "normal").setFontSize(9).setTextColor(80);
-  const terms = (inv.notes && inv.notes.trim())
-    ? inv.notes
-    : "Payment is due within 7 days of invoice date. All services are subject to the Digiformation Ltd standard terms of service. Late payments may delay order processing.";
-  const termsLines = doc.splitTextToSize(terms, termsW);
-  doc.text(termsLines, M, y + 18);
+  // Divider
+  doc.setDrawColor(...DIVIDER).setLineWidth(0.6).line(M, y, W - M, y);
+  y += 18;
 
-  let ty = y;
-  doc.setFont("helvetica", "bold").setFontSize(11).setTextColor(...INK);
-  doc.text("Subtotal", totalsX, ty);
-  doc.setFont("helvetica", "normal");
-  doc.text(fmtGBP(inv.amount_gbp), totalsVX, ty, { align: "right" });
-  ty += 22;
-  doc.setFont("helvetica", "bold");
-  doc.text(`VAT (${inv.vat_rate || 0}%)`, totalsX, ty);
-  doc.setFont("helvetica", "normal");
-  doc.text(fmtGBP(inv.vat_gbp), totalsVX, ty, { align: "right" });
-  ty += 18;
-  doc.setFillColor(...GREY_LIGHT);
-  doc.rect(totalsX - 10, ty, (W - M) - (totalsX - 10), 28, "F");
+  // Subtotal / VAT (small, right)
+  if (inv.vat_rate && inv.vat_rate > 0) {
+    doc.setFont("helvetica", "normal").setFontSize(10).setTextColor(...SUB);
+    doc.text("Subtotal", colPrice, y, { align: "center" });
+    doc.text(fmtGBP(inv.amount_gbp), colAmt, y, { align: "right" });
+    y += 14;
+    doc.text(`VAT (${inv.vat_rate}%)`, colPrice, y, { align: "center" });
+    doc.text(fmtGBP(inv.vat_gbp), colAmt, y, { align: "right" });
+    y += 14;
+  }
+
+  // Total
   doc.setFont("helvetica", "bold").setFontSize(12).setTextColor(...INK);
-  doc.text("Total", totalsX, ty + 18);
-  doc.text(fmtGBP(inv.total_gbp), totalsVX, ty + 18, { align: "right" });
+  doc.text("Total", colPrice, y + 4, { align: "center" });
+  doc.text(fmtGBP(inv.total_gbp), colAmt, y + 4, { align: "right" });
+  y += 32;
 
-  y = Math.max(y + 18 + termsLines.length * 12, ty + 28) + 30;
+  doc.setDrawColor(...DIVIDER).setLineWidth(0.6).line(M, y, W - M, y);
+  y += 28;
 
-  // ---- Signature ----
-  doc.setFont("times", "italic").setFontSize(22).setTextColor(...INK);
-  doc.text("Digiformation", M, y);
-  y += 8;
-  doc.setDrawColor(...INK).setLineWidth(0.6).line(M, y, M + 160, y);
-  y += 14;
-  doc.setFont("helvetica", "bold").setFontSize(10).setTextColor(...INK);
-  doc.text(COMPANY.name, M, y);
-
-  // ---- Bottom band: Payment Methods + Contact ----
-  const bandY = H - 240;
-  doc.setFillColor(...GREY_LIGHT);
-  doc.rect(M, bandY, W - M * 2, 28, "F");
-  doc.setFont("helvetica", "bold").setFontSize(10).setTextColor(...INK);
-  doc.text("PAYMENT METHODS:", M + 14, bandY + 18);
-  doc.text("CONTACT:", W - M - 14, bandY + 18, { align: "right" });
-
-  const infoY = bandY + 44;
-  doc.setFont("helvetica", "bold").setFontSize(9).setTextColor(...INK);
-  doc.text("Barclays Bank (GBP — UK Local transfer)", M + 14, infoY);
-  doc.setFont("helvetica", "normal").setTextColor(60);
-  doc.text("Beneficiary: Muhammad Haroon  ·  Sort Code: 23-14-86  ·  Account No: 15737580", M + 14, infoY + 12);
-
-  doc.setFont("helvetica", "bold").setFontSize(9).setTextColor(...INK);
-  doc.text("Binance Pay (Crypto)", M + 14, infoY + 30);
-  doc.setFont("helvetica", "normal").setTextColor(60);
-  doc.text("Account Title: Haroon-alhanfi  ·  Binance ID: 477888953", M + 14, infoY + 42);
-
-  doc.setFont("helvetica", "bold").setFontSize(9).setTextColor(...INK);
-  doc.text("Pakistan (PKR) — Muhammad Haroon", M + 14, infoY + 60);
-  doc.setFont("helvetica", "normal").setTextColor(60);
-  doc.text("NayaPay  ·  JazzCash  ·  EasyPaisa  ·  FirstPay HBL", M + 14, infoY + 72);
-  doc.text("Mobile / Account: 0303 4226759", M + 14, infoY + 84);
-
-  doc.setFont("helvetica", "normal").setFontSize(10).setTextColor(60);
-  doc.text(COMPANY.phonePk, W - M - 14, infoY, { align: "right" });
-  doc.text(COMPANY.phoneUk, W - M - 14, infoY + 14, { align: "right" });
-  doc.text(COMPANY.email, W - M - 14, infoY + 28, { align: "right" });
-  doc.text(COMPANY.website, W - M - 14, infoY + 42, { align: "right" });
-
+  // ---- Payment method + Note ----
   doc.setFont("helvetica", "bold").setFontSize(11).setTextColor(...INK);
-  doc.text("THANK YOU FOR YOUR BUSINESS", M, H - 28);
+  doc.text("Payment method:", M, y);
+  doc.setFont("helvetica", "normal").setTextColor(...SUB);
+  doc.text("Bank Transfer / Binance Pay / NayaPay / JazzCash / EasyPaisa", M + 115, y);
+  y += 18;
+
+  doc.setFont("helvetica", "bold").setTextColor(...INK);
+  doc.text("Note:", M, y);
+  doc.setFont("helvetica", "normal").setTextColor(...SUB);
+  const note = (inv.notes && inv.notes.trim())
+    ? inv.notes
+    : `Thank you for choosing ${COMPANY.name}. Payment is due within 7 days of invoice date.`;
+  const noteLines = doc.splitTextToSize(note, W - M * 2 - 50) as string[];
+  doc.text(noteLines, M + 42, y);
+  y += noteLines.length * 14 + 22;
+
+  // ---- Payment account details (compact) ----
+  if (y < H - 230) {
+    doc.setFont("helvetica", "bold").setFontSize(10).setTextColor(...INK);
+    doc.text("Payment Accounts", M, y);
+    y += 14;
+    doc.setFont("helvetica", "normal").setFontSize(9).setTextColor(...SUB);
+    doc.text("Barclays Bank (GBP — UK)  ·  Muhammad Haroon  ·  Sort 23-14-86  ·  Acc 15737580", M, y); y += 12;
+    doc.text("Binance Pay (Crypto)  ·  Haroon-alhanfi  ·  Binance ID 477888953", M, y); y += 12;
+    doc.text("Pakistan (PKR) — Muhammad Haroon  ·  NayaPay / JazzCash / EasyPaisa / FirstPay HBL  ·  0303 4226759", M, y); y += 12;
+  }
+
+  // Signature (small, above waves)
+  const sigY = H - 160;
+  doc.setFont("times", "italic").setFontSize(20).setTextColor(...INK);
+  doc.text("Digiformation", M, sigY);
+  doc.setDrawColor(...INK).setLineWidth(0.5).line(M, sigY + 6, M + 140, sigY + 6);
+  doc.setFont("helvetica", "bold").setFontSize(9).setTextColor(...INK);
+  doc.text(COMPANY.name, M, sigY + 20);
+
+  // ---- Decorative waves at bottom ----
+  drawWaves(doc, W, H);
 
   doc.save(`${inv.invoice_number}.pdf`);
 };
