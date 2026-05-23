@@ -892,8 +892,60 @@ const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: stri
                 {!isCancelled && (() => {
                   const isDone = /complete/i.test(o.status || "");
                   const isInProgress = /progress/i.test(o.status || "");
+                  const isPaid = /paid/i.test(o.status || "") || /paid/i.test(linkedInvoice?.status || "");
                   return (
                     <div className="flex flex-wrap gap-2">
+                      {/* Payment Received → mark order Paid, invoice Paid, email client */}
+                      {!isPaid && (
+                        <Button
+                          size="sm"
+                          variant="default"
+                          className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                          onClick={async () => {
+                            await updateOrder(o.id, { status: "Paid" });
+                            if (linkedInvoice) await updateInvoice(linkedInvoice.id, { status: "Paid" });
+                            toast.success("Marked as Paid — receipt email sent");
+                          }}
+                          title="Mark this order as Paid and notify the client by email"
+                        >
+                          <Mail className="w-3.5 h-3.5 mr-1" />Payment Received
+                        </Button>
+                      )}
+                      {isPaid && (
+                        <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30">Paid</Badge>
+                      )}
+                      {/* Payment Pending → mark Pending, resend the invoice/reminder */}
+                      {!isPaid && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={async () => {
+                            await updateOrder(o.id, { status: "Pending" });
+                            if (profile.email && linkedInvoice) {
+                              const { error } = await supabase.functions.invoke("send-transactional-email", {
+                                body: {
+                                  templateName: "invoice-issued",
+                                  recipientEmail: profile.email,
+                                  idempotencyKey: `invoice-pending-${linkedInvoice.id}-${Date.now()}`,
+                                  templateData: {
+                                    customerName: profile.full_name,
+                                    invoiceNumber: linkedInvoice.invoice_number,
+                                    service: linkedInvoice.service_description,
+                                    amount: `£${linkedInvoice.total_gbp}`,
+                                  },
+                                },
+                              });
+                              if (error) toast.error(error.message);
+                              else toast.success("Payment reminder sent");
+                            } else {
+                              toast.success("Marked Pending");
+                            }
+                          }}
+                          title="Mark Pending and send the client a payment reminder"
+                        >
+                          <Mail className="w-3.5 h-3.5 mr-1" />Payment Pending
+                        </Button>
+                      )}
                       {!isDone && !isInProgress && (
                         <Button
                           size="sm"

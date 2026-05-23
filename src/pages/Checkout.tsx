@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import CheckoutFlow, { CheckoutItem } from "@/components/checkout/CheckoutFlow";
+import { complianceItemFormFields } from "@/data/compliance";
 
 /**
  * Category-grouped catalog. Each group contains only services that belong
@@ -99,6 +100,19 @@ const Checkout = () => {
     return CATALOG_GROUPS[1]; // default to UK Compliance
   }, [params, preselected]);
 
+  // For the UK Compliance group, wire per-item dynamic field sections so the
+  // checkout collects exactly what each filing needs (CRN, auth code, etc.).
+  const extraSections = useMemo(() => {
+    if (activeGroup.key !== "uk-compliance") return undefined;
+    return activeGroup.items
+      .filter((it) => complianceItemFormFields[it.id])
+      .map((it) => ({
+        itemId: it.id,
+        title: complianceItemFormFields[it.id].title,
+        fields: complianceItemFormFields[it.id].fields,
+      }));
+  }, [activeGroup]);
+
   return (
     <Layout>
       <CheckoutFlow
@@ -111,6 +125,7 @@ const Checkout = () => {
         contextLabel={contextLabel || activeGroup.categoryLabel}
         eyebrow={`${activeGroup.categoryLabel} · Secure checkout`}
         notesPlaceholder="Share company name, registration number, or any details we'll need..."
+        extraSections={extraSections}
       />
     </Layout>
   );
