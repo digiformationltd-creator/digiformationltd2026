@@ -176,6 +176,11 @@ const CheckoutFlow = ({
   showRole = false,
   hideBusinessActivity = false,
   showProofOfAddress = false,
+  showDateOfBirth = false,
+  showPassportNumber = false,
+  showWebsite = false,
+  whatsappLabel = "WhatsApp",
+  whatsappPlaceholder,
   extras,
 }: CheckoutFlowProps) => {
   // Merge extras into the master items list so selection / pricing logic
