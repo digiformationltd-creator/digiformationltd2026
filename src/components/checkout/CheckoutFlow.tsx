@@ -140,6 +140,14 @@ export type CheckoutFlowProps = {
   whatsappPlaceholder?: string;
   /** Optional extra add-on services grouped by category. */
   extras?: { categoryLabel: string; description?: string; items: CheckoutItem[] }[];
+  /** Per-item dynamic field sections rendered in the details step when the
+   *  matching itemId is selected. Used by UK Compliance to gather filing
+   *  requirements (CRN, auth code, director personal code etc.). */
+  extraSections?: {
+    itemId: string;
+    title: string;
+    fields: { key: string; label: string; placeholder?: string; required?: boolean; type?: "text" | "textarea" | "date"; helper?: string }[];
+  }[];
 };
 
 const STEP_ICONS = [ShoppingBag, UserRound, ClipboardCheck];
@@ -182,6 +190,7 @@ const CheckoutFlow = ({
   whatsappLabel = "WhatsApp",
   whatsappPlaceholder,
   extras,
+  extraSections,
 }: CheckoutFlowProps) => {
   // Merge extras into the master items list so selection / pricing logic
   // continues to work uniformly.
@@ -256,6 +265,8 @@ const CheckoutFlow = ({
     website: "",
   };
   const [form, setForm] = useState(() => ({ ...emptyForm, ...(draft?.form ?? {}) }));
+  const [extra, setExtra] = useState<Record<string, string>>(() => (draft?.extra && typeof draft.extra === "object" ? draft.extra : {}));
+  const setExtraField = (key: string, value: string) => setExtra((p) => ({ ...p, [key]: value }));
   const [idType, setIdType] = useState<"id_card" | "passport" | "driving_licence">("id_card");
   const [idTypeOpen, setIdTypeOpen] = useState(false);
   const [idFront, setIdFront] = useState<File | null>(null);
@@ -274,6 +285,7 @@ const CheckoutFlow = ({
   const clearDraft = () => {
     try { window.localStorage.removeItem(draftKey); } catch {}
     setForm(emptyForm);
+    setExtra({});
     setSelected(initialSelected);
     setStepIdx(0);
     setServiceMode("both");
@@ -288,6 +300,7 @@ const CheckoutFlow = ({
         window.localStorage.setItem(draftKey, JSON.stringify({
           savedAt: Date.now(),
           form,
+          extra,
           selected: Array.from(selected),
           stepIdx,
           serviceMode,
@@ -295,7 +308,7 @@ const CheckoutFlow = ({
       } catch {}
     }, 300);
     return () => clearTimeout(t);
-  }, [form, selected, stepIdx, serviceMode, successInfo, draftKey]);
+  }, [form, extra, selected, stepIdx, serviceMode, successInfo, draftKey]);
 
   // Clear draft after successful submit
   useEffect(() => {
@@ -336,10 +349,22 @@ const CheckoutFlow = ({
   const vat = +(subtotal * vatRate).toFixed(2);
   const total = subtotal + vat;
 
+  // Compute which extraSections are active (their item is selected)
+  const activeExtraSections = useMemo(
+    () => (extraSections || []).filter((s) => selected.has(s.itemId)),
+    [extraSections, selected]
+  );
+
   const canNext = () => {
     if (!lockSelection && stepIdx === 0) return selectedItems.length > 0;
     const detailsIdx = lockSelection ? 0 : 1;
     if (stepIdx === detailsIdx) {
+      // Validate dynamic extra fields
+      for (const sec of activeExtraSections) {
+        for (const f of sec.fields) {
+          if (f.required && !(extra[f.key] || "").trim()) return false;
+        }
+      }
       return (
         (!showCompanyName || companyNameOptional || form.company_name.trim().length >= 2) &&
         (!showRole || form.role.trim().length > 0) &&
@@ -427,6 +452,17 @@ const CheckoutFlow = ({
           : `${form.business_category}${form.business_subcategory ? ` — ${form.business_subcategory}` : ""}`) +
         (form.sic_codes.trim() ? `\nSIC codes: ${form.sic_codes.trim()}` : "");
 
+    // Build a "Filing requirements" block from active extra sections so the
+    // collected data reaches the team in the summary email + invoice notes.
+    const extraSummary = activeExtraSections
+      .map((sec) => {
+        const lines = sec.fields
+          .map((f) => `  ${f.label}: ${(extra[f.key] || "").trim() || "—"}`)
+          .join("\n");
+        return `\n[${sec.title}]\n${lines}`;
+      })
+      .join("\n");
+
     const summary =
       `[${serviceTitle} Order]\n` +
       `Ref: ${orderRef}\n` +
@@ -442,9 +478,10 @@ const CheckoutFlow = ({
       `Subtotal: ${formatMoney(subtotal, currency)}\n` +
       (vat ? `VAT (${(vatRate * 100).toFixed(0)}%): ${formatMoney(vat, currency)}\n` : "") +
       `Total: ${formatMoney(total, currency)}\n` +
-      
       addressBlock +
-      (activityText ? `\nBusiness activity:\n${activityText}` : "");
+      (activityText ? `\nBusiness activity:\n${activityText}` : "") +
+      (extraSummary ? `\n\nFiling requirements:${extraSummary}` : "");
+
 
     const { error } = await supabase.from("contact_submissions").insert({
       full_name: form.full_name,
