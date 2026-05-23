@@ -40,4 +40,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'annual-accounts-reminder': annualAccountsReminder,
   'affiliate-application-received': affiliateApplicationReceived,
   'affiliate-application-notification': affiliateApplicationNotification,
+  'email-system-check': emailSystemCheck,
 }
