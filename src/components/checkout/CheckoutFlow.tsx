@@ -359,7 +359,10 @@ const CheckoutFlow = ({
           ? form.business_other.trim().length >= 10
           : form.business_subcategory.trim().length > 0)) &&
         (!(idVerificationActive && liveSelfieLink) || verificationLinkRequested) &&
-        (!(showServiceMode && serviceMode === "ltd-only") || form.personal_code.trim().length >= 8)
+        (!(showServiceMode && serviceMode === "ltd-only") || form.personal_code.trim().length >= 8) &&
+        (!showDateOfBirth || form.date_of_birth.trim().length >= 8) &&
+        (!showPassportNumber || form.passport_number.trim().length >= 4) &&
+        (!showWebsite || form.website.trim().length >= 3)
       );
     }
     return true;
