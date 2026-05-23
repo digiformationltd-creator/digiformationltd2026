@@ -121,7 +121,7 @@ const BankingProviderPage = () => {
           <h2 className="text-4xl md:text-5xl font-bold mb-4">Apply for {provider.name}</h2>
           <p className="opacity-80 mb-8">Setup fee <span className="text-gradient font-bold">{provider.setupPrice}</span> — we handle the application end-to-end and keep you updated.</p>
           <Button asChild variant="hero" size="lg" className="rounded-full">
-            <Link to={`/contact?service=${encodeURIComponent(provider.name)}`}>Apply for {provider.name} <ArrowRight className="w-4 h-4" /></Link>
+            <Link to={`/banks-payment-solutions/${provider.slug}/checkout`}>Apply for {provider.name} <ArrowRight className="w-4 h-4" /></Link>
           </Button>
         </div>
       </section>
