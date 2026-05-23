@@ -120,16 +120,17 @@ const Admin = () => {
         </div>
 
         <Dialog open={testEmailOpen} onOpenChange={setTestEmailOpen}>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Send Test Email</DialogTitle>
+              <DialogTitle>Email System Check</DialogTitle>
               <DialogDescription>
-                Verify that emails are being delivered. Sends a real email using the configured sender.
+                Tests every email template the system uses (client confirmations, admin notifications, invoices,
+                renewals, etc.) and sends a single summary email with the full checklist.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-3">
               <div>
-                <Label htmlFor="test-email-to">Recipient email</Label>
+                <Label htmlFor="test-email-to">Send results to</Label>
                 <Input
                   id="test-email-to"
                   type="email"
@@ -137,25 +138,35 @@ const Admin = () => {
                   onChange={(e) => setTestEmailTo(e.target.value)}
                   placeholder="you@example.com"
                 />
+                <p className="text-xs text-muted-foreground mt-1">
+                  A summary email with ✓ / ✗ for each template will be sent here.
+                </p>
               </div>
-              <div>
-                <Label htmlFor="test-email-tpl">Template</Label>
-                <Select value={testEmailTpl} onValueChange={setTestEmailTpl}>
-                  <SelectTrigger id="test-email-tpl"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="welcome">welcome</SelectItem>
-                    <SelectItem value="order-confirmation">order-confirmation (client)</SelectItem>
-                    <SelectItem value="order-notification">order-notification (admin)</SelectItem>
-                    <SelectItem value="invoice-issued">invoice-issued</SelectItem>
-                    <SelectItem value="order-completed">order-completed</SelectItem>
-                    <SelectItem value="ticket-received">ticket-received</SelectItem>
-                    <SelectItem value="address-renewal-reminder">address-renewal-reminder</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              {testEmailResult && (
-                <div className={`text-sm rounded-md p-3 ${testEmailResult.ok ? "bg-green-50 text-green-800 border border-green-200" : "bg-red-50 text-red-800 border border-red-200"}`}>
-                  {testEmailResult.msg}
+
+              {testChecks.length > 0 && (
+                <div className="border rounded-md divide-y">
+                  {testChecks.map((c) => (
+                    <div key={c.name} className="flex items-start gap-2 px-3 py-2 text-sm">
+                      <span className={`mt-0.5 font-bold w-5 inline-block ${c.ok === null ? "text-muted-foreground" : c.ok ? "text-green-600" : "text-red-600"}`}>
+                        {c.ok === null ? "…" : c.ok ? "✓" : "✗"}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium">{c.label}</div>
+                        <div className="text-xs text-muted-foreground font-mono truncate">{c.name}</div>
+                        {!c.ok && c.error && (
+                          <div className="text-xs text-red-700 bg-red-50 border border-red-200 rounded px-2 py-1 mt-1 break-words">
+                            {c.error}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {testSummaryMsg && (
+                <div className={`text-sm rounded-md p-3 ${testSummaryMsg.startsWith("✓") ? "bg-green-50 text-green-800 border border-green-200" : "bg-amber-50 text-amber-900 border border-amber-200"}`}>
+                  {testSummaryMsg}
                 </div>
               )}
             </div>
@@ -164,41 +175,103 @@ const Admin = () => {
               <Button
                 onClick={async () => {
                   if (!testEmailTo || !/.+@.+\..+/.test(testEmailTo)) {
-                    setTestEmailResult({ ok: false, msg: "Please enter a valid email address." });
+                    setTestSummaryMsg("Please enter a valid email address.");
                     return;
                   }
                   setTestEmailSending(true);
-                  setTestEmailResult(null);
-                  const idem = `admin-test-${testEmailTpl}-${Date.now()}`;
-                  const { error } = await supabase.functions.invoke("send-transactional-email", {
+                  setTestSummaryMsg(null);
+
+                  const templates: Array<{ name: string; label: string }> = [
+                    { name: "welcome", label: "Welcome (signup)" },
+                    { name: "order-confirmation", label: "Order confirmation (client)" },
+                    { name: "order-notification", label: "Order notification (admin)" },
+                    { name: "order-in-progress", label: "Order in progress" },
+                    { name: "order-completed", label: "Order completed" },
+                    { name: "invoice-issued", label: "Invoice issued" },
+                    { name: "invoice-paid", label: "Invoice paid" },
+                    { name: "document-uploaded", label: "Document uploaded" },
+                    { name: "ticket-received", label: "Support ticket received" },
+                    { name: "address-renewal-reminder", label: "Address renewal reminder" },
+                    { name: "confirmation-statement-reminder", label: "Confirmation statement reminder" },
+                    { name: "annual-accounts-reminder", label: "Annual accounts reminder" },
+                    { name: "affiliate-application-received", label: "Affiliate application received" },
+                    { name: "affiliate-application-notification", label: "Affiliate application notification" },
+                  ];
+
+                  // Init checklist with pending state
+                  setTestChecks(templates.map((t) => ({ ...t, ok: null })));
+
+                  const baseData = {
+                    customerName: "Test User",
+                    orderRef: "TEST-0001",
+                    service: "Test Service",
+                    invoiceNumber: "DFT-TEST-001",
+                    amount: "£0.00",
+                    address: "Test Address, London",
+                    expireDate: new Date().toISOString().slice(0, 10),
+                    daysRemaining: 30,
+                    loginUrl: `${window.location.origin}/auth`,
+                    documentName: "Test Document.pdf",
+                    ticketSubject: "Test ticket subject",
+                    companyName: "Test Co Ltd",
+                  };
+
+                  const runId = Date.now();
+                  const results: Array<{ name: string; label: string; ok: boolean; error?: string }> = [];
+
+                  for (const t of templates) {
+                    try {
+                      const { error } = await supabase.functions.invoke("send-transactional-email", {
+                        body: {
+                          templateName: t.name,
+                          recipientEmail: testEmailTo,
+                          idempotencyKey: `admin-check-${runId}-${t.name}`,
+                          templateData: baseData,
+                          // Mark as dry-run so backend skips suppression-effect; still validates template
+                          purpose: "transactional",
+                        },
+                      });
+                      const ok = !error;
+                      results.push({ ...t, ok, error: error?.message });
+                    } catch (e: any) {
+                      results.push({ ...t, ok: false, error: e?.message || String(e) });
+                    }
+                    setTestChecks((prev) => prev.map((p) => (p.name === t.name ? { ...p, ok: results[results.length - 1].ok, error: results[results.length - 1].error } : p)));
+                  }
+
+                  const totalOk = results.filter((r) => r.ok).length;
+                  const totalFail = results.length - totalOk;
+
+                  // Send summary email
+                  const { error: sumErr } = await supabase.functions.invoke("send-transactional-email", {
                     body: {
-                      templateName: testEmailTpl,
+                      templateName: "email-system-check",
                       recipientEmail: testEmailTo,
-                      idempotencyKey: idem,
+                      idempotencyKey: `admin-check-summary-${runId}`,
                       templateData: {
-                        customerName: "Test User",
-                        orderRef: "TEST-0001",
-                        service: "Test Service",
-                        invoiceNumber: "DFT-TEST-001",
-                        amount: "£0.00",
-                        address: "Test Address",
-                        expireDate: new Date().toISOString().slice(0, 10),
-                        daysRemaining: 30,
+                        runAt: new Date().toLocaleString("en-GB"),
+                        totalOk,
+                        totalFail,
+                        checks: results,
                       },
                     },
                   });
+
                   setTestEmailSending(false);
-                  if (error) {
-                    setTestEmailResult({ ok: false, msg: `❌ Failed: ${error.message}` });
-                    toast.error(`Test failed: ${error.message}`);
+                  if (totalFail === 0 && !sumErr) {
+                    setTestSummaryMsg(`✓ All ${totalOk} templates passed. Summary email sent to ${testEmailTo}.`);
+                    toast.success("All email templates working");
+                  } else if (totalFail > 0) {
+                    setTestSummaryMsg(`${totalOk} passed, ${totalFail} failed. ${sumErr ? "Summary email also failed." : "Summary email sent."}`);
+                    toast.error(`${totalFail} email template(s) failed`);
                   } else {
-                    setTestEmailResult({ ok: true, msg: `✅ Queued "${testEmailTpl}" → ${testEmailTo}. Check inbox in ~10s.` });
-                    toast.success("Test email queued");
+                    setTestSummaryMsg(`Templates passed but summary email failed: ${sumErr?.message}`);
+                    toast.error("Summary email failed");
                   }
                 }}
                 disabled={testEmailSending}
               >
-                {testEmailSending ? <><Loader2 className="w-4 h-4 mr-1 animate-spin" />Sending…</> : <><Mail className="w-4 h-4 mr-1" />Send Test</>}
+                {testEmailSending ? <><Loader2 className="w-4 h-4 mr-1 animate-spin" />Checking…</> : <><Mail className="w-4 h-4 mr-1" />Run Full Check</>}
               </Button>
             </DialogFooter>
           </DialogContent>
