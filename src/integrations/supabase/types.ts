@@ -396,32 +396,44 @@ export type Database = {
         Row: {
           amount_gbp: number
           created_at: string
+          customer_email: string | null
+          customer_name: string | null
+          customer_whatsapp: string | null
           id: string
+          notes: string | null
           order_date: string
           order_ref: string
           service: string
           status: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           amount_gbp?: number
           created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_whatsapp?: string | null
           id?: string
+          notes?: string | null
           order_date?: string
           order_ref: string
           service: string
           status?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           amount_gbp?: number
           created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_whatsapp?: string | null
           id?: string
+          notes?: string | null
           order_date?: string
           order_ref?: string
           service?: string
           status?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -721,7 +733,7 @@ export type Database = {
           status: string
           total_gbp: number
           updated_at: string
-          user_id: string
+          user_id: string | null
           vat_gbp: number
           vat_rate: number
         }
@@ -744,7 +756,7 @@ export type Database = {
           status?: string
           total_gbp?: number
           updated_at?: string
-          user_id: string
+          user_id?: string | null
           vat_gbp?: number
           vat_rate?: number
         }
@@ -767,7 +779,7 @@ export type Database = {
           status?: string
           total_gbp?: number
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
           vat_gbp?: number
           vat_rate?: number
         }
