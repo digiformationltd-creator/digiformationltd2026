@@ -1151,6 +1151,53 @@ const CheckoutFlow = ({
                 </div>
                 )}
 
+                {/* Filing requirements — dynamic per selected service */}
+                {activeExtraSections.length > 0 && (
+                  <div className="space-y-4">
+                    {activeExtraSections.map((sec) => (
+                      <div key={sec.itemId} className="rounded-2xl border-2 border-primary/30 bg-primary/[0.04] p-4 md:p-5 space-y-4">
+                        <div>
+                          <h3 className="font-semibold text-base">{sec.title} — filing details</h3>
+                          <p className="text-xs opacity-70 mt-1">
+                            These details go straight to our filing team — make sure they're accurate.
+                          </p>
+                        </div>
+                        <div className="grid gap-3">
+                          {sec.fields.map((f) => (
+                            <div key={f.key}>
+                              <label className="block text-sm font-medium mb-1.5">
+                                {f.label}{" "}
+                                {f.required && <span className="text-destructive">*</span>}
+                              </label>
+                              {f.type === "textarea" ? (
+                                <textarea
+                                  value={extra[f.key] || ""}
+                                  onChange={(e) => setExtraField(f.key, e.target.value)}
+                                  placeholder={f.placeholder}
+                                  required={f.required}
+                                  rows={3}
+                                  className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+                                />
+                              ) : (
+                                <input
+                                  type={f.type === "date" ? "date" : "text"}
+                                  value={extra[f.key] || ""}
+                                  onChange={(e) => setExtraField(f.key, e.target.value)}
+                                  placeholder={f.placeholder}
+                                  required={f.required}
+                                  className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+                                />
+                              )}
+                              {f.helper && <p className="text-xs opacity-70 mt-1">{f.helper}</p>}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+
                 {/* Required documents — manual submission via WhatsApp */}
                 {idVerificationActive && (
                 <div className="rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-primary/5 via-background to-background p-4 md:p-5 space-y-4">
