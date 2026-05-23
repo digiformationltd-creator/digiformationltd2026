@@ -938,7 +938,16 @@ const CheckoutFlow = ({
                   <Field label="First name" value={form.first_name} onChange={(v) => setForm({ ...form, first_name: v, full_name: `${v} ${form.last_name}`.trim() })} required minLength={2} />
                   <Field label="Last name" value={form.last_name} onChange={(v) => setForm({ ...form, last_name: v, full_name: `${form.first_name} ${v}`.trim() })} required minLength={2} />
                   <Field label="Email" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
-                  <Field label="WhatsApp" value={form.whatsapp} onChange={(v) => setForm({ ...form, whatsapp: v })} required minLength={5} />
+                  <Field label={whatsappLabel} value={form.whatsapp} onChange={(v) => setForm({ ...form, whatsapp: v })} required minLength={5} placeholder={whatsappPlaceholder} />
+                  {showDateOfBirth && (
+                    <Field label="Date of birth" type="date" value={form.date_of_birth} onChange={(v) => setForm({ ...form, date_of_birth: v })} required />
+                  )}
+                  {showPassportNumber && (
+                    <Field label="Passport number" value={form.passport_number} onChange={(v) => setForm({ ...form, passport_number: v.toUpperCase() })} required minLength={4} placeholder="e.g. AB1234567" />
+                  )}
+                  {showWebsite && (
+                    <Field label="Website" type="url" value={form.website} onChange={(v) => setForm({ ...form, website: v })} required minLength={3} placeholder="https://yourbusiness.com" />
+                  )}
                 </div>
 
                 {/* Residential address */}
