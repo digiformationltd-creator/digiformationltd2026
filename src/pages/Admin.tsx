@@ -170,8 +170,36 @@ const Admin = () => {
                 </div>
               )}
             </div>
-            <DialogFooter>
+            <DialogFooter className="gap-2 sm:gap-2 flex-wrap">
               <Button variant="outline" onClick={() => setTestEmailOpen(false)} disabled={testEmailSending}>Close</Button>
+              <Button
+                variant="secondary"
+                onClick={async () => {
+                  try {
+                    await downloadInvoicePdf({
+                      invoice_number: `DFT-TEST-${Date.now().toString().slice(-6)}`,
+                      issue_date: new Date().toISOString().slice(0, 10),
+                      due_date: new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10),
+                      service_description: "TEST INVOICE — UK LTD Formation (Starter Package)",
+                      bill_to_name: "Test Client",
+                      bill_to_email: testEmailTo,
+                      bill_to_address: "123 Test Street, London, EC1A 1AA, United Kingdom",
+                      amount_gbp: 140,
+                      vat_rate: 0,
+                      vat_gbp: 0,
+                      total_gbp: 140,
+                      notes: "This is a TEST invoice generated from the admin panel for preview/QA purposes only.",
+                      status: "Unpaid",
+                    });
+                    toast.success("Test invoice PDF downloaded");
+                  } catch (e: any) {
+                    toast.error(`Failed to generate test invoice: ${e?.message || e}`);
+                  }
+                }}
+                disabled={testEmailSending}
+              >
+                <Mail className="w-4 h-4 mr-1" /> Download Test Invoice PDF
+              </Button>
               <Button
                 onClick={async () => {
                   if (!testEmailTo || !/.+@.+\..+/.test(testEmailTo)) {
