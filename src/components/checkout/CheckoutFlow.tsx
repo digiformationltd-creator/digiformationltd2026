@@ -481,18 +481,7 @@ const CheckoutFlow = ({
       addressBlock +
       (activityText ? `\nBusiness activity:\n${activityText}` : "") +
       (extraSummary ? `\n\nFiling requirements:${extraSummary}` : "");
-      (showCompanyName && form.company_name ? `Proposed company name: ${form.company_name}\n` : "") +
-      (showRole && form.role ? `Applicant role: ${form.role}\n` : "") +
-      (showDateOfBirth && form.date_of_birth ? `Date of birth: ${form.date_of_birth}\n` : "") +
-      (showPassportNumber && form.passport_number ? `Passport number: ${form.passport_number}\n` : "") +
-      (showWebsite && form.website ? `Website: ${form.website}\n` : "") +
-      `Items:\n${lines}\n` +
-      `Subtotal: ${formatMoney(subtotal, currency)}\n` +
-      (vat ? `VAT (${(vatRate * 100).toFixed(0)}%): ${formatMoney(vat, currency)}\n` : "") +
-      `Total: ${formatMoney(total, currency)}\n` +
-      
-      addressBlock +
-      (activityText ? `\nBusiness activity:\n${activityText}` : "");
+
 
     const { error } = await supabase.from("contact_submissions").insert({
       full_name: form.full_name,
