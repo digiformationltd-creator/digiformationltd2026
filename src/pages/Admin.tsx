@@ -94,12 +94,50 @@ const Admin = () => {
             <p className="text-muted-foreground text-sm">Manage clients, affiliates and their data</p>
           </div>
           </div>
-          {view === "clients" && (
-            <Button variant="outline" onClick={loadClients} disabled={loadingClients}>
-              {loadingClients ? <Loader2 className="w-4 h-4 animate-spin" /> : <Users className="w-4 h-4" />}
-              Refresh Clients
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={async () => {
+                const to = window.prompt("Send test email to which address?", "info@digiformation.uk");
+                if (!to) return;
+                const tpl = window.prompt(
+                  "Template name (welcome, order-confirmation, order-notification, invoice-issued, order-completed, ticket-received, address-renewal-reminder)",
+                  "welcome",
+                ) || "welcome";
+                const idem = `admin-test-${tpl}-${Date.now()}`;
+                const { error } = await supabase.functions.invoke("send-transactional-email", {
+                  body: {
+                    templateName: tpl,
+                    recipientEmail: to,
+                    idempotencyKey: idem,
+                    templateData: {
+                      customerName: "Test User",
+                      orderRef: "TEST-0001",
+                      service: "Test Service",
+                      invoiceNumber: "DFT-TEST-001",
+                      amount: "£0.00",
+                      address: "Test Address",
+                      expireDate: new Date().toISOString().slice(0, 10),
+                      daysRemaining: 30,
+                    },
+                  },
+                });
+                if (error) toast.error(`Test failed: ${error.message}`);
+                else toast.success(`✅ Test "${tpl}" queued → ${to}. Check inbox in ~10s.`);
+              }}
+              title="Send a test email from the configured sender domain"
+            >
+              <Mail className="w-4 h-4 mr-1" /> Test Email
             </Button>
-          )}
+            {view === "clients" && (
+              <Button variant="outline" onClick={loadClients} disabled={loadingClients}>
+                {loadingClients ? <Loader2 className="w-4 h-4 animate-spin" /> : <Users className="w-4 h-4" />}
+                Refresh Clients
+              </Button>
+            )}
+          </div>
+
         </div>
 
         <div className="flex gap-2 mb-4">
