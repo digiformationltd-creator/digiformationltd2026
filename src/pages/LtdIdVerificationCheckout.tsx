@@ -38,6 +38,8 @@ const LtdIdVerificationCheckout = () => {
         showRole
         hideBusinessActivity
         showProofOfAddress
+        showDateOfBirth
+        showPassportNumber
       />
     </Layout>
   );

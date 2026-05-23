@@ -74,8 +74,10 @@ const BankingProviderPage = () => {
               <p className="mt-6 text-lg md:text-xl leading-relaxed max-w-2xl opacity-90">{provider.tagline}</p>
               <p className="mt-4 text-base leading-relaxed max-w-2xl opacity-80">{provider.description}</p>
               <div className="mt-10 flex flex-wrap gap-4 items-center">
-                <Button variant="hero" size="lg" className="rounded-full" onClick={() => scrollTo("apply")}>
-                  Apply Now <ArrowRight className="w-4 h-4" />
+                <Button asChild variant="hero" size="lg" className="rounded-full">
+                  <Link to={`/banks-payment-solutions/${provider.slug}/checkout`}>
+                    Apply Now <ArrowRight className="w-4 h-4" />
+                  </Link>
                 </Button>
                 <div className="glass rounded-full px-5 py-2 text-sm flex items-center gap-2">
                   <Wallet className="w-4 h-4" />
@@ -119,7 +121,7 @@ const BankingProviderPage = () => {
           <h2 className="text-4xl md:text-5xl font-bold mb-4">Apply for {provider.name}</h2>
           <p className="opacity-80 mb-8">Setup fee <span className="text-gradient font-bold">{provider.setupPrice}</span> — we handle the application end-to-end and keep you updated.</p>
           <Button asChild variant="hero" size="lg" className="rounded-full">
-            <Link to={`/contact?service=${encodeURIComponent(provider.name)}`}>Apply for {provider.name} <ArrowRight className="w-4 h-4" /></Link>
+            <Link to={`/banks-payment-solutions/${provider.slug}/checkout`}>Apply for {provider.name} <ArrowRight className="w-4 h-4" /></Link>
           </Button>
         </div>
       </section>

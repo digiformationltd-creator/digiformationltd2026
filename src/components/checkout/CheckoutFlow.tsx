@@ -128,9 +128,17 @@ export type CheckoutFlowProps = {
   hideBusinessActivity?: boolean;
   /** Show a "Proof of address" upload field inside the ID documents section (used for IDV) */
   showProofOfAddress?: boolean;
-  /** Optional extra add-on services grouped by category. Shown below the
-   *  main selection on step 1. Each group is rendered as its own card so
-   *  customers only see add-ons relevant to the service they're ordering. */
+  /** Show a "Date of birth" field (used for IDV) */
+  showDateOfBirth?: boolean;
+  /** Show a "Passport number" field (used for IDV) */
+  showPassportNumber?: boolean;
+  /** Show a "Website" field (used for banks) */
+  showWebsite?: boolean;
+  /** Override the WhatsApp field label (e.g. "UK Number", "USA Number"). Defaults to "WhatsApp". */
+  whatsappLabel?: string;
+  /** Placeholder hint for the WhatsApp/phone field */
+  whatsappPlaceholder?: string;
+  /** Optional extra add-on services grouped by category. */
   extras?: { categoryLabel: string; description?: string; items: CheckoutItem[] }[];
 };
 
@@ -168,6 +176,11 @@ const CheckoutFlow = ({
   showRole = false,
   hideBusinessActivity = false,
   showProofOfAddress = false,
+  showDateOfBirth = false,
+  showPassportNumber = false,
+  showWebsite = false,
+  whatsappLabel = "WhatsApp",
+  whatsappPlaceholder,
   extras,
 }: CheckoutFlowProps) => {
   // Merge extras into the master items list so selection / pricing logic
@@ -238,6 +251,9 @@ const CheckoutFlow = ({
     sic_codes: "",
     role: "",
     personal_code: "",
+    date_of_birth: "",
+    passport_number: "",
+    website: "",
   };
   const [form, setForm] = useState(() => ({ ...emptyForm, ...(draft?.form ?? {}) }));
   const [idType, setIdType] = useState<"id_card" | "passport" | "driving_licence">("id_card");
@@ -343,7 +359,10 @@ const CheckoutFlow = ({
           ? form.business_other.trim().length >= 10
           : form.business_subcategory.trim().length > 0)) &&
         (!(idVerificationActive && liveSelfieLink) || verificationLinkRequested) &&
-        (!(showServiceMode && serviceMode === "ltd-only") || form.personal_code.trim().length >= 8)
+        (!(showServiceMode && serviceMode === "ltd-only") || form.personal_code.trim().length >= 8) &&
+        (!showDateOfBirth || form.date_of_birth.trim().length >= 8) &&
+        (!showPassportNumber || form.passport_number.trim().length >= 4) &&
+        (!showWebsite || form.website.trim().length >= 3)
       );
     }
     return true;
@@ -416,6 +435,9 @@ const CheckoutFlow = ({
       (showServiceMode && serviceMode === "ltd-only" && form.personal_code ? `Companies House Personal Code: ${form.personal_code.trim()}\n` : "") +
       (showCompanyName && form.company_name ? `Proposed company name: ${form.company_name}\n` : "") +
       (showRole && form.role ? `Applicant role: ${form.role}\n` : "") +
+      (showDateOfBirth && form.date_of_birth ? `Date of birth: ${form.date_of_birth}\n` : "") +
+      (showPassportNumber && form.passport_number ? `Passport number: ${form.passport_number}\n` : "") +
+      (showWebsite && form.website ? `Website: ${form.website}\n` : "") +
       `Items:\n${lines}\n` +
       `Subtotal: ${formatMoney(subtotal, currency)}\n` +
       (vat ? `VAT (${(vatRate * 100).toFixed(0)}%): ${formatMoney(vat, currency)}\n` : "") +
@@ -919,7 +941,16 @@ const CheckoutFlow = ({
                   <Field label="First name" value={form.first_name} onChange={(v) => setForm({ ...form, first_name: v, full_name: `${v} ${form.last_name}`.trim() })} required minLength={2} />
                   <Field label="Last name" value={form.last_name} onChange={(v) => setForm({ ...form, last_name: v, full_name: `${form.first_name} ${v}`.trim() })} required minLength={2} />
                   <Field label="Email" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
-                  <Field label="WhatsApp" value={form.whatsapp} onChange={(v) => setForm({ ...form, whatsapp: v })} required minLength={5} />
+                  <Field label={whatsappLabel} value={form.whatsapp} onChange={(v) => setForm({ ...form, whatsapp: v })} required minLength={5} placeholder={whatsappPlaceholder} />
+                  {showDateOfBirth && (
+                    <Field label="Date of birth" type="date" value={form.date_of_birth} onChange={(v) => setForm({ ...form, date_of_birth: v })} required />
+                  )}
+                  {showPassportNumber && (
+                    <Field label="Passport number" value={form.passport_number} onChange={(v) => setForm({ ...form, passport_number: v.toUpperCase() })} required minLength={4} placeholder="e.g. AB1234567" />
+                  )}
+                  {showWebsite && (
+                    <Field label="Website" type="url" value={form.website} onChange={(v) => setForm({ ...form, website: v })} required minLength={3} placeholder="https://yourbusiness.com" />
+                  )}
                 </div>
 
                 {/* Residential address */}

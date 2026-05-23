@@ -24,6 +24,7 @@ import UsaLlcChooseState from "./pages/UsaLlcChooseState";
 import UsaLlcCheckout from "./pages/UsaLlcCheckout";
 import UsaServicePage from "./pages/UsaServicePage";
 import BankingProviderPage from "./pages/BankingProviderPage";
+import BankingCheckout from "./pages/BankingCheckout";
 import WhatsAppFloat from "./components/WhatsAppFloat";
 import AIAssistant from "./components/AIAssistant";
 import ScrollToTop from "./components/ScrollToTop";
@@ -98,6 +99,7 @@ const App = () => (
           <Route path="/llc-formation-services/bio-report" element={<UsaServicePage />} />
 
           {/* Banking dedicated pages */}
+          <Route path="/banks-payment-solutions/:slug/checkout" element={<BankingCheckout />} />
           <Route path="/banks-payment-solutions/:slug" element={<BankingProviderPage />} />
 
           {/* Dynamic service sub-pages (fallback) */}
