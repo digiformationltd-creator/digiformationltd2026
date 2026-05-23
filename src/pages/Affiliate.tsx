@@ -142,10 +142,44 @@ const Affiliate = () => {
         });
       if (insErr) throw insErr;
 
+      // Fire-and-forget: confirmation to applicant + notification to business inbox
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "affiliate-application-received",
+          recipientEmail: v.data.email,
+          idempotencyKey: `affiliate-received-${application_id}`,
+          templateData: {
+            customerName: v.data.fullName,
+            applicationId: application_id,
+            email: v.data.email,
+            whatsapp: v.data.whatsapp,
+          },
+        },
+      }).catch((err) => console.error("affiliate-application-received failed", err));
+
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "affiliate-application-notification",
+          idempotencyKey: `affiliate-notify-${application_id}`,
+          templateData: {
+            customerName: v.data.fullName,
+            email: v.data.email,
+            whatsapp: v.data.whatsapp,
+            applicationId: application_id,
+            employeeCode: v.data.employeeCode || null,
+            joiningDate: v.data.joiningDate || null,
+            education: v.data.education || null,
+            experience: v.data.experience || null,
+            message: v.data.message || null,
+            pagePath: window.location.pathname,
+          },
+        },
+      }).catch((err) => console.error("affiliate-application-notification failed", err));
+
       await downloadApplicationPdf(appData);
 
       setSubmitted(appData);
-      toast.success("Application submitted! Your PDF has been downloaded.");
+      toast.success("Application submitted! Your PDF has been downloaded and a confirmation email is on its way.");
       (e.target as HTMLFormElement).reset();
       setTimeout(() => {
         document.getElementById("join")?.scrollIntoView({ behavior: "smooth" });
