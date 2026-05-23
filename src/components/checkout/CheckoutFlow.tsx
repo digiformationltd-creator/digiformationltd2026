@@ -176,8 +176,8 @@ const CheckoutFlow = ({
   showRole = false,
   hideBusinessActivity = false,
   showProofOfAddress = false,
-  showDateOfBirth = false,
-  showPassportNumber = false,
+  showDateOfBirth = true,
+  showPassportNumber = true,
   showWebsite = false,
   whatsappLabel = "WhatsApp",
   whatsappPlaceholder,
@@ -1114,168 +1114,46 @@ const CheckoutFlow = ({
                 </div>
                 )}
 
-                {/* ID Documents */}
+                {/* Required documents — manual submission via WhatsApp */}
                 {idVerificationActive && (
-                <div className="rounded-2xl border border-border/40 p-4 md:p-5 space-y-4">
-                  <div className="flex items-start justify-between gap-3 flex-wrap">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold">ID documents <span className="opacity-60 font-normal text-sm">(optional — speeds up verification)</span></h3>
-                      <p className="text-xs opacity-70 mt-1">Pick the ID type, then upload a clear photo. Tap "View example" to see what we need.</p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const next = !submitDocsManually;
-                        setSubmitDocsManually(next);
-                        if (next) {
-                          setIdFront(null);
-                          setIdBack(null);
-                          setHoldingSelfie(null);
-                          setProofOfAddress(null);
-                        }
-                      }}
-                      className={`text-xs font-semibold px-3 py-2 rounded-lg border transition-all ${
-                        submitDocsManually
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-border/60 hover:border-primary/60 hover:bg-primary/5"
-                      }`}
-                    >
-                      {submitDocsManually ? "✓ I'll submit manually" : "I'll submit manually"}
-                    </button>
+                <div className="rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-primary/5 via-background to-background p-4 md:p-5 space-y-4">
+                  <div>
+                    <h3 className="font-semibold text-base">Required documents</h3>
+                    <p className="text-xs opacity-75 mt-1">
+                      To keep your files safe, we collect documents manually over WhatsApp — not through this form.
+                      Please send the items below to our team after placing the order.
+                    </p>
                   </div>
 
-                  {submitDocsManually && (
-                    <div className="rounded-xl bg-amber-500/10 border border-amber-500/40 p-3 text-xs leading-relaxed">
-                      No problem — you can skip uploading documents here. Our team will contact you on email/WhatsApp to collect them manually after you place the order.
-                    </div>
-                  )}
+                  <ul className="text-sm space-y-2 leading-relaxed">
+                    <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" /><span><strong>Passport</strong> — clear photo of the photo page.</span></li>
+                    <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" /><span><strong>National ID / Driving licence</strong> — front &amp; back (if no passport).</span></li>
+                    {liveSelfieMode === "upload" && (
+                      <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" /><span><strong>Holding selfie</strong> — you holding your ID next to your face, both fully visible.</span></li>
+                    )}
+                    {showProofOfAddress && (
+                      <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" /><span><strong>Proof of address</strong> — utility bill or bank statement (last 3 months) showing your name &amp; home address.</span></li>
+                    )}
+                  </ul>
 
-                  {!submitDocsManually && (<>
+                  <a
+                    href={`https://wa.me/923164467464?text=${encodeURIComponent(`Hello Digiformation, I'd like to submit my verification documents manually for my order.${form.first_name ? `\nName: ${form.first_name} ${form.last_name}` : ""}${form.email ? `\nEmail: ${form.email}` : ""}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#25D366] text-white font-semibold text-sm hover:bg-[#1ebe57] transition-all shadow-md"
+                  >
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current" aria-hidden="true">
+                      <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.595 5.392l-.999 3.648 3.893-.739z"/>
+                    </svg>
+                    I'll Submit Manually by WhatsApp
+                  </a>
 
+                  <p className="text-xs opacity-70 text-center">
+                    Our team will reply with a secure channel to receive your documents.
+                  </p>
+                </div>
+                )}
 
-                  {/* ID type accordion */}
-                  {(() => {
-                    const ID_OPTIONS = [
-                      { id: "id_card", title: "National ID Card", desc: "Front + back required.", icon: IdCard },
-                      { id: "passport", title: "Passport", desc: "Photo page only.", icon: BookUser },
-                      { id: "driving_licence", title: "Driving Licence", desc: "Front + back required.", icon: Car },
-                    ] as const;
-                    const current = ID_OPTIONS.find((o) => o.id === idType)!;
-                    const CurrentIcon = current.icon;
-                    return (
-                      <div className="rounded-xl border border-border/40 overflow-hidden">
-                        <button
-                          type="button"
-                          onClick={() => setIdTypeOpen((o) => !o)}
-                          className="w-full flex items-center justify-between gap-3 p-3 md:p-4 text-left bg-muted/20"
-                          aria-expanded={idTypeOpen}
-                        >
-                          <span className="flex items-center gap-3">
-                            <CurrentIcon className="w-5 h-5 text-primary" />
-                            <span>
-                              <span className="block text-sm font-semibold">ID type — {current.title}</span>
-                              <span className="block text-xs opacity-70 mt-0.5">{current.desc}</span>
-                            </span>
-                          </span>
-                          <ChevronDown className={`w-4 h-4 transition-transform ${idTypeOpen ? "rotate-180" : ""}`} />
-                        </button>
-                        {idTypeOpen && (
-                          <div className="p-2 space-y-1.5 bg-background/40">
-                            {ID_OPTIONS.map((opt) => {
-                              const active = idType === opt.id;
-                              const OptIcon = opt.icon;
-                              return (
-                                <button
-                                  type="button"
-                                  key={opt.id}
-                                  onClick={() => {
-                                    setIdType(opt.id);
-                                    setIdTypeOpen(false);
-                                    if (opt.id === "passport") setIdBack(null);
-                                  }}
-                                  className={`w-full flex items-start gap-3 text-left p-3 rounded-lg border transition-all ${
-                                    active ? "border-primary bg-primary/10" : "border-transparent hover:border-primary/30 hover:bg-primary/5"
-                                  }`}
-                                >
-                                  <OptIcon className={`w-5 h-5 mt-0.5 ${active ? "text-primary" : "opacity-70"}`} />
-                                  <span className="flex-1 min-w-0">
-                                    <span className="block text-sm font-semibold">{opt.title}</span>
-                                    <span className="block text-xs opacity-70 mt-0.5">{opt.desc}</span>
-                                  </span>
-                                </button>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })()}
-
-                  <UploadField
-                    label={
-                      idType === "passport"
-                        ? "Passport (photo page)"
-                        : idType === "driving_licence"
-                          ? "Driving licence — front"
-                          : "ID card — front"
-                    }
-                    file={idFront}
-                    onChange={setIdFront}
-                    onViewExample={() =>
-                      setExampleOpen(
-                        idType === "passport"
-                          ? { title: "Example: Passport photo page", src: examplePassport }
-                          : idType === "driving_licence"
-                            ? { title: "Example: Driving licence (front)", src: exampleIdFront }
-                            : { title: "Example: ID card (front)", src: exampleIdFront }
-                      )
-                    }
-                  />
-
-                  {idType !== "passport" && (
-                    <UploadField
-                      label={idType === "driving_licence" ? "Driving licence — back" : "ID card — back"}
-                      file={idBack}
-                      onChange={setIdBack}
-                      onViewExample={() =>
-                        setExampleOpen(
-                          idType === "driving_licence"
-                            ? { title: "Example: Driving licence (back)", src: exampleIdBack }
-                            : { title: "Example: ID card (back)", src: exampleIdBack }
-                        )
-                      }
-                    />
-                  )}
-
-                  {liveSelfieMode === "upload" && (
-                    <div className="space-y-2">
-                      <UploadField
-                        label="Holding selfie (you holding your ID)"
-                        file={holdingSelfie}
-                        onChange={setHoldingSelfie}
-                        onViewExample={() => setExampleOpen({ title: "Example: Holding selfie", src: exampleHoldingSelfie })}
-                      />
-                      <p className="text-xs opacity-75 leading-relaxed rounded-lg bg-muted/40 border border-border/60 p-3">
-                        <span className="font-semibold">Tip:</span> Hold your ID next to your face — both must be fully visible and readable in one photo.
-                      </p>
-                    </div>
-                  )}
-
-                  {showProofOfAddress && (
-                    <div className="space-y-2">
-                      <UploadField
-                        label="Proof of address (utility bill or bank statement)"
-                        file={proofOfAddress}
-                        onChange={setProofOfAddress}
-                      />
-                      <p className="text-xs opacity-80 leading-relaxed rounded-lg bg-amber-500/10 border border-amber-500/40 p-3">
-                        <span className="font-semibold">Accepted:</span> Water bill, gas bill, electricity bill, or bank statement.
-                        <br />
-                        <span className="font-semibold">Important:</span> The document <strong>must clearly show your full home address</strong> (the same address entered above) and your name. It should be dated within the last 3 months. PDF, JPG or PNG accepted.
-                      </p>
-                    </div>
-                  )}
-                  </>)}
 
                   {liveSelfieLink && (
                     <div className="rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-background border-2 border-primary/40 p-5 space-y-4">
@@ -1339,8 +1217,7 @@ const CheckoutFlow = ({
                       )}
                     </div>
                   )}
-                </div>
-                )}
+
               </div>
             )}
 

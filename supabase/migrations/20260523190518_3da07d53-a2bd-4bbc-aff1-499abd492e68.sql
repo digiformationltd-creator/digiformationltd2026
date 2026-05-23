@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Anyone can upload form submissions" ON storage.objects;
