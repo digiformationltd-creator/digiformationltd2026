@@ -12,6 +12,7 @@ import Layout from "@/components/layout/Layout";
 import { useSeo } from "@/lib/seo";
 import { SERVICE_CODES, generateInvoiceNumber, generateOrderNumber, downloadInvoicePdf } from "@/lib/invoice";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 
 interface ClientRow {
   user_id: string;
