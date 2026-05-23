@@ -104,8 +104,8 @@ const Admin = () => {
             <Button
               variant="secondary"
               size="sm"
-              onClick={() => { setTestEmailResult(null); setTestEmailOpen(true); }}
-              title="Send a test email to verify the email flow"
+              onClick={() => { setTestChecks([]); setTestSummaryMsg(null); setTestEmailOpen(true); }}
+              title="Run a full email system check"
             >
               <Mail className="w-4 h-4 mr-1" /> Test Email
             </Button>
