@@ -382,7 +382,6 @@ const CheckoutFlow = ({
         (!(idVerificationActive && liveSelfieLink) || verificationLinkRequested) &&
         (!(showServiceMode && serviceMode === "ltd-only") || form.personal_code.trim().length >= 8) &&
         (!showDateOfBirth || form.date_of_birth.trim().length >= 8) &&
-        (!showPassportNumber || form.passport_number.trim().length >= 2) &&
         (!showWebsite || form.website.trim().length >= 3)
       );
     }
@@ -468,7 +467,6 @@ const CheckoutFlow = ({
       (showCompanyName && form.company_name ? `Proposed company name: ${form.company_name}\n` : "") +
       (showRole && form.role ? `Applicant role: ${form.role}\n` : "") +
       (showDateOfBirth && form.date_of_birth ? `Date of birth: ${form.date_of_birth}\n` : "") +
-      (showPassportNumber && form.passport_number ? `${form.id_doc_type || "ID document"} number: ${form.passport_number}\n` : "") +
       (showWebsite && form.website ? `Website: ${form.website}\n` : "") +
       `Items:\n${lines}\n` +
       `Subtotal: ${formatMoney(subtotal, currency)}\n` +
@@ -977,26 +975,6 @@ const CheckoutFlow = ({
                   <Field label={whatsappLabel} value={form.whatsapp} onChange={(v) => setForm({ ...form, whatsapp: v })} required minLength={5} placeholder={whatsappPlaceholder} />
                   {showDateOfBirth && (
                     <Field label="Date of birth" type="date" value={form.date_of_birth} onChange={(v) => setForm({ ...form, date_of_birth: v })} required />
-                  )}
-                  {showPassportNumber && (
-                    <div className="sm:col-span-2 grid sm:grid-cols-2 gap-3">
-                      <Field
-                        label="Document type"
-                        value={form.id_doc_type}
-                        onChange={(v) => setForm({ ...form, id_doc_type: v })}
-                        required
-                        minLength={2}
-                        placeholder="e.g. Passport, CNIC, SSN, Driving Licence"
-                      />
-                      <Field
-                        label="Document number"
-                        value={form.passport_number}
-                        onChange={(v) => setForm({ ...form, passport_number: v })}
-                        required
-                        minLength={2}
-                        placeholder="Enter your document number"
-                      />
-                    </div>
                   )}
                   {showWebsite && (
                     <Field label="Website" type="url" value={form.website} onChange={(v) => setForm({ ...form, website: v })} required minLength={3} placeholder="https://yourbusiness.com" />
