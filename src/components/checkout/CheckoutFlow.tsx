@@ -262,14 +262,12 @@ const CheckoutFlow = ({
     personal_code: "",
     date_of_birth: "",
     passport_number: "",
-    id_doc_type: "passport" as "passport" | "id_card" | "driving_licence",
+    id_doc_type: "",
     website: "",
   };
   const [form, setForm] = useState(() => ({ ...emptyForm, ...(draft?.form ?? {}) }));
   const [extra, setExtra] = useState<Record<string, string>>(() => (draft?.extra && typeof draft.extra === "object" ? draft.extra : {}));
   const setExtraField = (key: string, value: string) => setExtra((p) => ({ ...p, [key]: value }));
-  const [idType, setIdType] = useState<"id_card" | "passport" | "driving_licence">("id_card");
-  const [idTypeOpen, setIdTypeOpen] = useState(false);
   const [idFront, setIdFront] = useState<File | null>(null);
   const [idBack, setIdBack] = useState<File | null>(null);
   const [holdingSelfie, setHoldingSelfie] = useState<File | null>(null);
