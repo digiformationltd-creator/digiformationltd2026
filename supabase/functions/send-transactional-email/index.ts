@@ -25,9 +25,18 @@ function generateToken(): string {
     .join('')
 }
 
-// Auth note: this function uses verify_jwt = true in config.toml, so Supabase's
-// gateway validates the caller's JWT (anon or service_role) before the request
-// reaches this code. No in-function auth check is needed.
+// Auth: this function is callable by anon (public checkout/contact flows),
+// but we restrict which templates anon callers may invoke. All other templates
+// require an authenticated user (admin actions, dashboards, etc.).
+const ANON_ALLOWED_TEMPLATES = new Set([
+  'order-confirmation',
+  'order-notification',
+  'contact-confirmation',
+  'welcome',
+  'ticket-received',
+  'affiliate-application-received',
+  'affiliate-application-notification',
+])
 
 Deno.serve(async (req) => {
   // Handle CORS preflight
