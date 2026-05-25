@@ -101,7 +101,7 @@ function buildPdf(opts: {
 
   // ---- Header: Logo + Invoice No ----
   try {
-    doc.addImage(`data:image/png;base64,${LOGO_PNG_BASE64}`, 'PNG', M, M, 64, 64, undefined, 'FAST')
+    doc.addImage(`data:image/png;base64,${LOGO_PNG_BASE64}`, 'PNG', M, M, 110, 110, undefined, 'FAST')
   } catch (_) {
     doc.setFont('helvetica', 'bold').setFontSize(11).setTextColor(...INK)
     doc.text('DIGIFORMATION', M, M + 20)
