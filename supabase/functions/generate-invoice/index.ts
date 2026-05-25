@@ -302,10 +302,25 @@ Deno.serve(async (req) => {
 
     // 1a. Sign URLs for any submitted client documents (passport / ID / selfie)
     //     so the team can download them straight from the PDF and email.
+    //     SECURITY: only accept paths that live under this request's own
+    //     submissions/{orderRef}/ folder (or the authenticated user's folder).
+    //     This prevents callers from supplying arbitrary paths to read other
+    //     users' documents from the private client-docs bucket.
     const documentLinks: { label: string; url: string; filename: string }[] = []
+    const allowedPrefixes: string[] = [`submissions/${orderRef}/`]
+    if (user?.id) allowedPrefixes.push(`${user.id}/`)
     if (Array.isArray(body.documents)) {
       for (const d of body.documents) {
-        if (!d?.path) continue
+        if (!d?.path || typeof d.path !== 'string') continue
+        if (d.path.includes('..') || d.path.startsWith('/')) {
+          console.warn('rejected suspicious doc path', d.path)
+          continue
+        }
+        const allowed = allowedPrefixes.some((p) => d.path.startsWith(p))
+        if (!allowed) {
+          console.warn('rejected out-of-scope doc path', d.path)
+          continue
+        }
         const { data: ds, error: dsErr } = await admin.storage
           .from('client-docs')
           .createSignedUrl(d.path, 60 * 60 * 24 * 7)
