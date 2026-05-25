@@ -978,26 +978,6 @@ const CheckoutFlow = ({
                   {showDateOfBirth && (
                     <Field label="Date of birth" type="date" value={form.date_of_birth} onChange={(v) => setForm({ ...form, date_of_birth: v })} required />
                   )}
-                  {showPassportNumber && (
-                    <div className="sm:col-span-2 grid sm:grid-cols-2 gap-3">
-                      <Field
-                        label="Document type"
-                        value={form.id_doc_type}
-                        onChange={(v) => setForm({ ...form, id_doc_type: v })}
-                        required
-                        minLength={2}
-                        placeholder="e.g. Passport, CNIC, SSN, Driving Licence"
-                      />
-                      <Field
-                        label="Document number"
-                        value={form.passport_number}
-                        onChange={(v) => setForm({ ...form, passport_number: v })}
-                        required
-                        minLength={2}
-                        placeholder="Enter your document number"
-                      />
-                    </div>
-                  )}
                   {showWebsite && (
                     <Field label="Website" type="url" value={form.website} onChange={(v) => setForm({ ...form, website: v })} required minLength={3} placeholder="https://yourbusiness.com" />
                   )}
