@@ -15,9 +15,6 @@ import {
   Eye,
   X,
   ChevronDown,
-  IdCard,
-  BookUser,
-  Car,
   Send,
   ScanFace,
 } from "lucide-react";
