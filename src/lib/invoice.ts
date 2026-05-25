@@ -149,7 +149,7 @@ export const downloadInvoicePdf = async (inv: InvoiceData, logoUrl = "/digiforma
 
   // ---- Header: Logo (left) + Invoice No (right) ----
   if (logoDataUrl) {
-    doc.addImage(logoDataUrl, "PNG", M, M, 96, 96, undefined, "FAST");
+    doc.addImage(logoDataUrl, "PNG", M, M, 140, 140, undefined, "FAST");
   } else {
     doc.setFont("helvetica", "bold").setFontSize(11).setTextColor(...INK);
     doc.text("DIGIFORMATION", M, M + 20);
