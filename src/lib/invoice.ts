@@ -149,7 +149,7 @@ export const downloadInvoicePdf = async (inv: InvoiceData, logoUrl = "/digiforma
 
   // ---- Header: Logo (left) + Invoice No (right) ----
   if (logoDataUrl) {
-    doc.addImage(logoDataUrl, "PNG", M, M, 96, 96, undefined, "FAST");
+    doc.addImage(logoDataUrl, "PNG", M, M, 140, 140, undefined, "FAST");
   } else {
     doc.setFont("helvetica", "bold").setFontSize(11).setTextColor(...INK);
     doc.text("DIGIFORMATION", M, M + 20);
@@ -246,14 +246,8 @@ export const downloadInvoicePdf = async (inv: InvoiceData, logoUrl = "/digiforma
   doc.setDrawColor(...DIVIDER).setLineWidth(0.6).line(M, y, W - M, y);
   y += 28;
 
-  // ---- Payment method + Note ----
+  // ---- Note ----
   doc.setFont("helvetica", "bold").setFontSize(11).setTextColor(...INK);
-  doc.text("Payment method:", M, y);
-  doc.setFont("helvetica", "normal").setTextColor(...SUB);
-  doc.text("Bank Transfer / Binance Pay / NayaPay / JazzCash / EasyPaisa", M + 115, y);
-  y += 18;
-
-  doc.setFont("helvetica", "bold").setTextColor(...INK);
   doc.text("Note:", M, y);
   doc.setFont("helvetica", "normal").setTextColor(...SUB);
   const note = (inv.notes && inv.notes.trim())
@@ -262,17 +256,6 @@ export const downloadInvoicePdf = async (inv: InvoiceData, logoUrl = "/digiforma
   const noteLines = doc.splitTextToSize(note, W - M * 2 - 50) as string[];
   doc.text(noteLines, M + 42, y);
   y += noteLines.length * 14 + 22;
-
-  // ---- Payment account details (compact) ----
-  if (y < H - 230) {
-    doc.setFont("helvetica", "bold").setFontSize(10).setTextColor(...INK);
-    doc.text("Payment Accounts", M, y);
-    y += 14;
-    doc.setFont("helvetica", "normal").setFontSize(9).setTextColor(...SUB);
-    doc.text("Barclays Bank (GBP — UK)  ·  Muhammad Haroon  ·  Sort 23-14-86  ·  Acc 15737580", M, y); y += 12;
-    doc.text("Binance Pay (Crypto)  ·  Haroon-alhanfi  ·  Binance ID 477888953", M, y); y += 12;
-    doc.text("Pakistan (PKR) — Muhammad Haroon  ·  NayaPay / JazzCash / EasyPaisa / FirstPay HBL  ·  0303 4226759", M, y); y += 12;
-  }
 
   // Signature (small, above waves)
   const sigY = H - 160;
