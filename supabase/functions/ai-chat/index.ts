@@ -66,6 +66,38 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Cap input size to prevent credit abuse via oversized prompts.
+    const MAX_MESSAGES = 20;
+    const MAX_CHARS_PER_MSG = 2000;
+    const MAX_TOTAL_CHARS = 12000;
+    if (messages.length > MAX_MESSAGES) {
+      return new Response(JSON.stringify({ error: "Too many messages" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    let totalChars = 0;
+    const safeMessages = [] as Array<{ role: string; content: string }>;
+    for (const m of messages) {
+      if (!m || typeof m.role !== "string" || typeof m.content !== "string") {
+        return new Response(JSON.stringify({ error: "Invalid message format" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (!["system", "user", "assistant"].includes(m.role)) {
+        return new Response(JSON.stringify({ error: "Invalid role" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const content = m.content.slice(0, MAX_CHARS_PER_MSG);
+      totalChars += content.length;
+      if (totalChars > MAX_TOTAL_CHARS) {
+        return new Response(JSON.stringify({ error: "Conversation too long" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      safeMessages.push({ role: m.role, content });
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       return new Response(JSON.stringify({ error: "LOVABLE_API_KEY missing" }), {
@@ -83,7 +115,7 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         stream: true,
-        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
+        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...safeMessages],
       }),
     });
 

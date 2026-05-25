@@ -25,9 +25,18 @@ function generateToken(): string {
     .join('')
 }
 
-// Auth note: this function uses verify_jwt = true in config.toml, so Supabase's
-// gateway validates the caller's JWT (anon or service_role) before the request
-// reaches this code. No in-function auth check is needed.
+// Auth: this function is callable by anon (public checkout/contact flows),
+// but we restrict which templates anon callers may invoke. All other templates
+// require an authenticated user (admin actions, dashboards, etc.).
+const ANON_ALLOWED_TEMPLATES = new Set([
+  'order-confirmation',
+  'order-notification',
+  'contact-confirmation',
+  'welcome',
+  'ticket-received',
+  'affiliate-application-received',
+  'affiliate-application-notification',
+])
 
 Deno.serve(async (req) => {
   // Handle CORS preflight
@@ -81,6 +90,29 @@ Deno.serve(async (req) => {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
+    )
+  }
+
+  // Auth gate: anon callers can only invoke whitelisted public templates.
+  // Authenticated callers may invoke any registered template.
+  const authHeader = req.headers.get('Authorization') || ''
+  let isAuthenticated = false
+  if (authHeader.startsWith('Bearer ')) {
+    try {
+      const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!
+      const userClient = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: authHeader } },
+      })
+      const { data } = await userClient.auth.getUser()
+      isAuthenticated = !!data?.user
+    } catch {
+      isAuthenticated = false
+    }
+  }
+  if (!isAuthenticated && !ANON_ALLOWED_TEMPLATES.has(templateName)) {
+    return new Response(
+      JSON.stringify({ error: 'Authentication required for this template' }),
+      { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     )
   }
 
