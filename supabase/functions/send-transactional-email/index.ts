@@ -93,6 +93,29 @@ Deno.serve(async (req) => {
     )
   }
 
+  // Auth gate: anon callers can only invoke whitelisted public templates.
+  // Authenticated callers may invoke any registered template.
+  const authHeader = req.headers.get('Authorization') || ''
+  let isAuthenticated = false
+  if (authHeader.startsWith('Bearer ')) {
+    try {
+      const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!
+      const userClient = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: authHeader } },
+      })
+      const { data } = await userClient.auth.getUser()
+      isAuthenticated = !!data?.user
+    } catch {
+      isAuthenticated = false
+    }
+  }
+  if (!isAuthenticated && !ANON_ALLOWED_TEMPLATES.has(templateName)) {
+    return new Response(
+      JSON.stringify({ error: 'Authentication required for this template' }),
+      { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    )
+  }
+
   // 1. Look up template from registry (early — needed to resolve recipient)
   const template = TEMPLATES[templateName]
 
