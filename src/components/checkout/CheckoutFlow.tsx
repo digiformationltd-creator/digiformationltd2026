@@ -262,6 +262,7 @@ const CheckoutFlow = ({
     personal_code: "",
     date_of_birth: "",
     passport_number: "",
+    id_doc_type: "passport" as "passport" | "id_card" | "driving_licence",
     website: "",
   };
   const [form, setForm] = useState(() => ({ ...emptyForm, ...(draft?.form ?? {}) }));
