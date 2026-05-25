@@ -382,7 +382,6 @@ const CheckoutFlow = ({
         (!(idVerificationActive && liveSelfieLink) || verificationLinkRequested) &&
         (!(showServiceMode && serviceMode === "ltd-only") || form.personal_code.trim().length >= 8) &&
         (!showDateOfBirth || form.date_of_birth.trim().length >= 8) &&
-        (!showPassportNumber || form.passport_number.trim().length >= 2) &&
         (!showWebsite || form.website.trim().length >= 3)
       );
     }
