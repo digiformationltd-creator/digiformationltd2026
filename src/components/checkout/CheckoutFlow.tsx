@@ -15,9 +15,6 @@ import {
   Eye,
   X,
   ChevronDown,
-  IdCard,
-  BookUser,
-  Car,
   Send,
   ScanFace,
 } from "lucide-react";
@@ -262,14 +259,12 @@ const CheckoutFlow = ({
     personal_code: "",
     date_of_birth: "",
     passport_number: "",
-    id_doc_type: "passport" as "passport" | "id_card" | "driving_licence",
+    id_doc_type: "",
     website: "",
   };
   const [form, setForm] = useState(() => ({ ...emptyForm, ...(draft?.form ?? {}) }));
   const [extra, setExtra] = useState<Record<string, string>>(() => (draft?.extra && typeof draft.extra === "object" ? draft.extra : {}));
   const setExtraField = (key: string, value: string) => setExtra((p) => ({ ...p, [key]: value }));
-  const [idType, setIdType] = useState<"id_card" | "passport" | "driving_licence">("id_card");
-  const [idTypeOpen, setIdTypeOpen] = useState(false);
   const [idFront, setIdFront] = useState<File | null>(null);
   const [idBack, setIdBack] = useState<File | null>(null);
   const [holdingSelfie, setHoldingSelfie] = useState<File | null>(null);
@@ -387,12 +382,7 @@ const CheckoutFlow = ({
         (!(idVerificationActive && liveSelfieLink) || verificationLinkRequested) &&
         (!(showServiceMode && serviceMode === "ltd-only") || form.personal_code.trim().length >= 8) &&
         (!showDateOfBirth || form.date_of_birth.trim().length >= 8) &&
-        (!showPassportNumber || (() => {
-          const v = form.passport_number.trim();
-          const t = form.id_doc_type;
-          if (t === "id_card") { const digits = v.replace(/\D/g, ""); return digits.length >= 11 && digits.length <= 15; }
-          return v.length >= 4;
-        })()) &&
+        (!showPassportNumber || form.passport_number.trim().length >= 2) &&
         (!showWebsite || form.website.trim().length >= 3)
       );
     }
@@ -478,7 +468,7 @@ const CheckoutFlow = ({
       (showCompanyName && form.company_name ? `Proposed company name: ${form.company_name}\n` : "") +
       (showRole && form.role ? `Applicant role: ${form.role}\n` : "") +
       (showDateOfBirth && form.date_of_birth ? `Date of birth: ${form.date_of_birth}\n` : "") +
-      (showPassportNumber && form.passport_number ? `${form.id_doc_type === "id_card" ? "ID Card" : form.id_doc_type === "driving_licence" ? "Driving Licence" : "Passport"} number: ${form.passport_number}\n` : "") +
+      (showPassportNumber && form.passport_number ? `${form.id_doc_type || "ID document"} number: ${form.passport_number}\n` : "") +
       (showWebsite && form.website ? `Website: ${form.website}\n` : "") +
       `Items:\n${lines}\n` +
       `Subtotal: ${formatMoney(subtotal, currency)}\n` +
@@ -510,8 +500,8 @@ const CheckoutFlow = ({
     // private storage so they reach the business inbox + invoice as
     // download links. Each file gets its own folder under the order ref.
     const uploads: { file: File; label: string; key: string }[] = [];
-    if (idFront) uploads.push({ file: idFront, label: `${idType.replace("_", " ")} (front)`, key: "id-front" });
-    if (idBack) uploads.push({ file: idBack, label: `${idType.replace("_", " ")} (back)`, key: "id-back" });
+    if (idFront) uploads.push({ file: idFront, label: `${form.id_doc_type || "ID"} (front)`, key: "id-front" });
+    if (idBack) uploads.push({ file: idBack, label: `${form.id_doc_type || "ID"} (back)`, key: "id-back" });
     if (holdingSelfie) uploads.push({ file: holdingSelfie, label: "Holding selfie", key: "holding-selfie" });
     if (proofOfAddress) uploads.push({ file: proofOfAddress, label: "Proof of address", key: "proof-of-address" });
 
@@ -989,44 +979,22 @@ const CheckoutFlow = ({
                     <Field label="Date of birth" type="date" value={form.date_of_birth} onChange={(v) => setForm({ ...form, date_of_birth: v })} required />
                   )}
                   {showPassportNumber && (
-                    <div className="sm:col-span-2 grid sm:grid-cols-[200px_1fr] gap-3">
-                      <div className="space-y-1.5">
-                        <label className="text-sm font-medium">ID document type</label>
-                        <select
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                          value={form.id_doc_type}
-                          onChange={(e) => setForm({ ...form, id_doc_type: e.target.value as typeof form.id_doc_type, passport_number: "" })}
-                        >
-                          <option value="passport">Passport</option>
-                          <option value="id_card">National ID Card</option>
-                          <option value="driving_licence">Driving Licence</option>
-                        </select>
-                      </div>
+                    <div className="sm:col-span-2 grid sm:grid-cols-2 gap-3">
                       <Field
-                        label={
-                          form.id_doc_type === "id_card"
-                            ? "ID card number (11–15 digits)"
-                            : form.id_doc_type === "driving_licence"
-                              ? "Driving licence number"
-                              : "Passport number"
-                        }
-                        value={form.passport_number}
-                        onChange={(v) => {
-                          if (form.id_doc_type === "id_card") {
-                            setForm({ ...form, passport_number: v.replace(/\D/g, "").slice(0, 15) });
-                          } else {
-                            setForm({ ...form, passport_number: v.toUpperCase() });
-                          }
-                        }}
+                        label="Document type"
+                        value={form.id_doc_type}
+                        onChange={(v) => setForm({ ...form, id_doc_type: v })}
                         required
-                        minLength={form.id_doc_type === "id_card" ? 11 : 4}
-                        placeholder={
-                          form.id_doc_type === "id_card"
-                            ? "e.g. 3520112345678"
-                            : form.id_doc_type === "driving_licence"
-                              ? "e.g. SMITH123456AB7"
-                              : "e.g. AB1234567"
-                        }
+                        minLength={2}
+                        placeholder="e.g. Passport, CNIC, SSN, Driving Licence"
+                      />
+                      <Field
+                        label="Document number"
+                        value={form.passport_number}
+                        onChange={(v) => setForm({ ...form, passport_number: v })}
+                        required
+                        minLength={2}
+                        placeholder="Enter your document number"
                       />
                     </div>
                   )}
