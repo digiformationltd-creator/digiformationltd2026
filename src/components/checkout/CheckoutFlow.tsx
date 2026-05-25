@@ -387,7 +387,12 @@ const CheckoutFlow = ({
         (!(idVerificationActive && liveSelfieLink) || verificationLinkRequested) &&
         (!(showServiceMode && serviceMode === "ltd-only") || form.personal_code.trim().length >= 8) &&
         (!showDateOfBirth || form.date_of_birth.trim().length >= 8) &&
-        (!showPassportNumber || form.passport_number.trim().length >= 4) &&
+        (!showPassportNumber || (() => {
+          const v = form.passport_number.trim();
+          const t = form.id_doc_type;
+          if (t === "id_card") { const digits = v.replace(/\D/g, ""); return digits.length >= 11 && digits.length <= 15; }
+          return v.length >= 4;
+        })()) &&
         (!showWebsite || form.website.trim().length >= 3)
       );
     }
