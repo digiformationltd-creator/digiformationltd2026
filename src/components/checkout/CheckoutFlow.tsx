@@ -989,7 +989,46 @@ const CheckoutFlow = ({
                     <Field label="Date of birth" type="date" value={form.date_of_birth} onChange={(v) => setForm({ ...form, date_of_birth: v })} required />
                   )}
                   {showPassportNumber && (
-                    <Field label="Passport number" value={form.passport_number} onChange={(v) => setForm({ ...form, passport_number: v.toUpperCase() })} required minLength={4} placeholder="e.g. AB1234567" />
+                    <div className="sm:col-span-2 grid sm:grid-cols-[200px_1fr] gap-3">
+                      <div className="space-y-1.5">
+                        <label className="text-sm font-medium">ID document type</label>
+                        <select
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          value={form.id_doc_type}
+                          onChange={(e) => setForm({ ...form, id_doc_type: e.target.value as typeof form.id_doc_type, passport_number: "" })}
+                        >
+                          <option value="passport">Passport</option>
+                          <option value="id_card">National ID Card</option>
+                          <option value="driving_licence">Driving Licence</option>
+                        </select>
+                      </div>
+                      <Field
+                        label={
+                          form.id_doc_type === "id_card"
+                            ? "ID card number (11–15 digits)"
+                            : form.id_doc_type === "driving_licence"
+                              ? "Driving licence number"
+                              : "Passport number"
+                        }
+                        value={form.passport_number}
+                        onChange={(v) => {
+                          if (form.id_doc_type === "id_card") {
+                            setForm({ ...form, passport_number: v.replace(/\D/g, "").slice(0, 15) });
+                          } else {
+                            setForm({ ...form, passport_number: v.toUpperCase() });
+                          }
+                        }}
+                        required
+                        minLength={form.id_doc_type === "id_card" ? 11 : 4}
+                        placeholder={
+                          form.id_doc_type === "id_card"
+                            ? "e.g. 3520112345678"
+                            : form.id_doc_type === "driving_licence"
+                              ? "e.g. SMITH123456AB7"
+                              : "e.g. AB1234567"
+                        }
+                      />
+                    </div>
                   )}
                   {showWebsite && (
                     <Field label="Website" type="url" value={form.website} onChange={(v) => setForm({ ...form, website: v })} required minLength={3} placeholder="https://yourbusiness.com" />
