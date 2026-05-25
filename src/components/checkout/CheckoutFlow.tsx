@@ -1189,45 +1189,6 @@ const CheckoutFlow = ({
                 )}
 
 
-                {/* Required documents — manual submission via WhatsApp */}
-                {idVerificationActive && (
-                <div className="rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-primary/5 via-background to-background p-4 md:p-5 space-y-4">
-                  <div>
-                    <h3 className="font-semibold text-base">Required documents</h3>
-                    <p className="text-xs opacity-75 mt-1">
-                      To keep your files safe, we collect documents manually over WhatsApp — not through this form.
-                      Please send the items below to our team after placing the order.
-                    </p>
-                  </div>
-
-                  <ul className="text-sm space-y-2 leading-relaxed">
-                    <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" /><span><strong>Passport</strong> — clear photo of the photo page.</span></li>
-                    <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" /><span><strong>National ID / Driving licence</strong> — front &amp; back (if no passport).</span></li>
-                    {liveSelfieMode === "upload" && (
-                      <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" /><span><strong>Holding selfie</strong> — you holding your ID next to your face, both fully visible.</span></li>
-                    )}
-                    {showProofOfAddress && (
-                      <li className="flex items-start gap-2"><CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" /><span><strong>Proof of address</strong> — utility bill or bank statement (last 3 months) showing your name &amp; home address.</span></li>
-                    )}
-                  </ul>
-
-                  <a
-                    href={`https://wa.me/923164467464?text=${encodeURIComponent(`Hello Digiformation, I'd like to submit my verification documents manually for my order.${form.first_name ? `\nName: ${form.first_name} ${form.last_name}` : ""}${form.email ? `\nEmail: ${form.email}` : ""}`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#25D366] text-white font-semibold text-sm hover:bg-[#1ebe57] transition-all shadow-md"
-                  >
-                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current" aria-hidden="true">
-                      <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.595 5.392l-.999 3.648 3.893-.739z"/>
-                    </svg>
-                    I'll Submit Manually by WhatsApp
-                  </a>
-
-                  <p className="text-xs opacity-70 text-center">
-                    Our team will reply with a secure channel to receive your documents.
-                  </p>
-                </div>
-                )}
 
 
                   {liveSelfieLink && (
