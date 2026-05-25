@@ -478,7 +478,7 @@ const CheckoutFlow = ({
       (showCompanyName && form.company_name ? `Proposed company name: ${form.company_name}\n` : "") +
       (showRole && form.role ? `Applicant role: ${form.role}\n` : "") +
       (showDateOfBirth && form.date_of_birth ? `Date of birth: ${form.date_of_birth}\n` : "") +
-      (showPassportNumber && form.passport_number ? `Passport number: ${form.passport_number}\n` : "") +
+      (showPassportNumber && form.passport_number ? `${form.id_doc_type === "id_card" ? "ID Card" : form.id_doc_type === "driving_licence" ? "Driving Licence" : "Passport"} number: ${form.passport_number}\n` : "") +
       (showWebsite && form.website ? `Website: ${form.website}\n` : "") +
       `Items:\n${lines}\n` +
       `Subtotal: ${formatMoney(subtotal, currency)}\n` +
