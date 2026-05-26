@@ -232,7 +232,7 @@ const RegisteredOfficeAddress = () => {
             </h2>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {packages.map((p) => {
               const Icon = p.icon;
               return (
