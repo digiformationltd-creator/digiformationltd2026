@@ -41,7 +41,6 @@ const packages: Pkg[] = [
     price: "£60",
     icon: Briefcase,
     short: "Ideal for businesses needing a professional UK address for marketing, correspondence, and registration.",
-    highlighted: true,
     features: [
       "Unique Office Number with Address",
       "Use for registration of 1 Company/Business",
@@ -73,12 +72,36 @@ const packages: Pkg[] = [
       "1 Year Contract (Billed Annually)",
     ],
   },
+  {
+    id: "all-in-one",
+    name: "Business Address — All in One",
+    price: "£80",
+    icon: Sparkles,
+    short: "The complete bundle — Registered Office, Business Service and Director Service Address combined.",
+    highlighted: true,
+    features: [
+      "Business Service Address",
+      "Registered Office Address",
+      "Directors' Service Address",
+      "Unique Office Number with Address",
+      "Use Address for Registration of maximum 1 Company / Business",
+      "Receive all mail from UK government bodies",
+      "Use Address for Marketing & Advertising",
+      "Receive Post (up to 15 items per month)",
+      "Notify you via email when you receive post",
+      "Proof of Address",
+      "Scan and Email Your Mail",
+      "Forward Your Mail Via Post (Paid)",
+      "1 Year Contract (Billed Annually)",
+    ],
+  },
 ];
 
 const CHECKOUT_ITEM_FOR: Record<string, string> = {
   "registered-office": "roa",
   "business-service": "bsa",
   "director-service": "dsa",
+  "all-in-one": "aio",
 };
 
 const whoNeeds = [
