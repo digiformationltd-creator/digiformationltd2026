@@ -30,6 +30,7 @@ const CATALOG_GROUPS: CatalogGroup[] = [
       { id: "roa", name: "Registered Office Address (1 yr)", description: "Official UK address for company registration & government mail.", price: 40 },
       { id: "bsa", name: "Business Service Address (1 yr)", description: "Professional UK address for marketing, correspondence & registration.", price: 60 },
       { id: "dsa", name: "Director Service Address (1 yr)", description: "Official UK address for individual directors.", price: 20 },
+      { id: "aio", name: "Business Address — All in One (1 yr)", description: "Registered Office + Business Service + Director Service — all bundled into one address.", price: 80 },
     ],
   },
   {
