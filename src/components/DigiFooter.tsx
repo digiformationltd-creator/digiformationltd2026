@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Mail, Clock, MapPin, Facebook, Instagram, Youtube, Linkedin, Building2, Handshake, UserCircle2 } from "lucide-react";
-import logo from "@/assets/digiformation-logo.png";
+import logo from "@/assets/digiformation-logo-official.png";
 
 
 // WhatsApp icon — neutral monochrome to match other social icons

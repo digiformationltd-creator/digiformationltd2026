@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { ShieldCheck, UserCircle2, Mail, Lock, Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react";
-import logo from "@/assets/digiformation-logo.png";
+import logo from "@/assets/digiformation-logo-official.png";
 import { z } from "zod";
 
 
