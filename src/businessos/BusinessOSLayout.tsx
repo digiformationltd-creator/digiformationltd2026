@@ -18,14 +18,12 @@ export default function BusinessOSLayout() {
     const verify = async () => {
       const result = await checkAdminSession();
       if (!mounted) return;
-      if (!result.ok) {
-        setReady(true);
-        setAllowed(false);
-        navigate(result.reason === "not_admin" ? "/dashboard" : "/auth", { replace: true });
-        return;
-      }
       setAllowed(true);
       setReady(true);
+      if (result.ok) return;
+
+      setAllowed(false);
+      navigate(result.reason === "not_admin" ? "/dashboard" : "/auth", { replace: true });
     };
 
     verify();
@@ -46,7 +44,8 @@ export default function BusinessOSLayout() {
     };
 
     const onFocus = () => verify();
-    window.addEventListener("admin-signout", () => { userInitiatedSignOut = true; });
+    const onAdminSignOut = () => { userInitiatedSignOut = true; };
+    window.addEventListener("admin-signout", onAdminSignOut);
     document.addEventListener("visibilitychange", onForeground);
     window.addEventListener("focus", onFocus);
 
@@ -55,6 +54,7 @@ export default function BusinessOSLayout() {
       authSub.subscription.unsubscribe();
       document.removeEventListener("visibilitychange", onForeground);
       window.removeEventListener("focus", onFocus);
+      window.removeEventListener("admin-signout", onAdminSignOut);
     };
   }, [navigate]);
 
