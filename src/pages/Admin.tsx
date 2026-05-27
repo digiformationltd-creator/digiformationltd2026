@@ -109,12 +109,10 @@ const Admin = () => {
             >
               <Mail className="w-4 h-4 mr-1" /> Test Email
             </Button>
-            {view === "clients" && (
-              <Button variant="outline" onClick={loadClients} disabled={loadingClients}>
-                {loadingClients ? <Loader2 className="w-4 h-4 animate-spin" /> : <Users className="w-4 h-4" />}
-                Refresh Clients
-              </Button>
-            )}
+            <Button variant="outline" onClick={loadClients} disabled={loadingClients}>
+              {loadingClients ? <Loader2 className="w-4 h-4 animate-spin" /> : <Users className="w-4 h-4" />}
+              Refresh Clients
+            </Button>
           </div>
 
         </div>
