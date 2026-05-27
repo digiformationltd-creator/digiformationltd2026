@@ -18,12 +18,15 @@ export default function BusinessOSLayout() {
     const verify = async () => {
       const result = await checkAdminSession();
       if (!mounted) return;
-      setAllowed(true);
-      setReady(true);
-      if (result.ok) return;
+      if (result.ok) {
+        setAllowed(true);
+        setReady(true);
+        return;
+      }
 
       setAllowed(false);
-      navigate(result.reason === "not_admin" ? "/dashboard" : "/auth", { replace: true });
+      setReady(true);
+      navigate("reason" in result && result.reason === "not_admin" ? "/dashboard" : "/auth", { replace: true });
     };
 
     verify();
