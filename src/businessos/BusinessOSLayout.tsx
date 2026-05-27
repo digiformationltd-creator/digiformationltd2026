@@ -41,8 +41,10 @@ export default function BusinessOSLayout() {
         setReady(true);
         return;
       }
+      // Narrow to the failure branch.
+      const failure = result as Extract<typeof result, { ok: false }>;
+      const reason = failure.reason;
 
-      const reason = result.reason;
       // Transient failures (network/refresh) should NOT log out a user who
       // was previously authorized. Keep them on the page; the next interaction
       // will retry. Only redirect on explicit signed_out / not_admin.
