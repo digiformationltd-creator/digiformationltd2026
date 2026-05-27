@@ -35,7 +35,7 @@ export default function BusinessOSLayout() {
       lastCheckRef.current = Date.now();
       const result = await checkAdminSession();
       if (!mounted) return;
-      if (result.ok) {
+      if (result.ok === true) {
         wasAllowedRef.current = true;
         setAllowed(true);
         setReady(true);
