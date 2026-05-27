@@ -21,6 +21,12 @@ export default function Topbar() {
         </div>
       </div>
       <div className="flex items-center gap-2">
+        <button
+          onClick={() => navigate("/admin/legacy")}
+          title="Open legacy admin (stable fallback)"
+          className="hidden sm:inline-flex h-10 px-3 rounded-xl os-glass text-xs font-semibold items-center">
+          Legacy Admin
+        </button>
         <button className="w-10 h-10 grid place-items-center rounded-xl os-glass os-glow-blue">
           <Bell className="w-4 h-4" />
         </button>
