@@ -90,7 +90,7 @@ const Auth = () => {
     if (!pv.success) return toast.error(pv.error.issues[0].message);
 
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data: signUpData, error } = await supabase.auth.signUp({
       email: ev.data,
       password: pv.data,
       options: {
@@ -98,13 +98,28 @@ const Auth = () => {
         data: { full_name: nv.data },
       },
     });
-    setLoading(false);
     if (error) {
+      setLoading(false);
       const msg = error.message.toLowerCase().includes("already")
         ? "This email is already registered. Please sign in."
         : error.message;
       return toast.error(msg);
     }
+
+    // If auto-confirm is on but no session returned, sign in immediately
+    if (!signUpData.session) {
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: ev.data,
+        password: pv.data,
+      });
+      setLoading(false);
+      if (signInError) {
+        return toast.error("Account created but auto-login failed. Please sign in manually.");
+      }
+    } else {
+      setLoading(false);
+    }
+
     supabase.functions.invoke("send-transactional-email", {
       body: {
         templateName: "welcome",
@@ -113,6 +128,7 @@ const Auth = () => {
         templateData: { customerName: nv.data, loginUrl: `${window.location.origin}/auth` },
       },
     }).catch((err) => console.error("welcome email failed", err));
+
     toast.success("Account created! Logging you in...");
     const dest = ev.data.toLowerCase() === "info@digiformation.uk" ? "/admin" : "/dashboard";
     navigate(dest, { replace: true });
