@@ -4,6 +4,7 @@ import { Menu, X, ChevronDown, UserCircle2, Handshake, LogOut, LayoutDashboard, 
 import { Button } from "@/components/ui/button";
 import { navGroups } from "@/data/navigation";
 import { supabase } from "@/integrations/supabase/client";
+import { recoverSession } from "@/lib/auth/session";
 import { toast } from "sonner";
 import { setNavDrawerOpen } from "@/lib/nav-drawer";
 import logo from "@/assets/digiformation-logo.png";
@@ -27,11 +28,13 @@ const DigiNav = () => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
-      setUser(session?.user ?? null);
+      if (session?.user) {
+        setUser(session.user);
+        return;
+      }
+      recoverSession().then(({ session: recovered }) => setUser(recovered?.user ?? null));
     });
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
+    recoverSession().then(({ session }) => setUser(session?.user ?? null));
     return () => subscription.unsubscribe();
   }, []);
 
