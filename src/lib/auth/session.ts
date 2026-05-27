@@ -6,46 +6,54 @@ export type AdminSessionResult =
   | { ok: false; reason: "signed_out" | "not_admin" | "refresh_failed" | "role_check_failed" };
 
 const OWNER_EMAIL = "info@digiformation.uk";
-const SETTLE_DELAY_MS = 250;
-
-const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
 export const isOwnerEmail = (email?: string | null) =>
   email?.toLowerCase() === OWNER_EMAIL;
 
+/**
+ * Get the current session WITHOUT proactively calling refreshSession().
+ *
+ * The Supabase client is configured with `autoRefreshToken: true`, which
+ * already refreshes the token in the background well before expiry. Calling
+ * refreshSession() manually here was creating a feedback loop:
+ *   recoverSession -> refreshSession -> TOKEN_REFRESHED event ->
+ *   listeners call recoverSession again -> 429 rate limit -> revoked token
+ *   -> forced logout.
+ *
+ * We only force a refresh if the token has ALREADY expired (very rare,
+ * usually after the device wakes from sleep with a long backgrounded tab).
+ */
 export const recoverSession = async () => {
   const { data, error } = await supabase.auth.getSession();
   if (error) return { session: null, error };
+  const session = data.session;
+  if (!session) return { session: null, error: null };
 
-  if (!data.session) {
-    await wait(SETTLE_DELAY_MS);
-    const retry = await supabase.auth.getSession();
-    return { session: retry.data.session ?? null, error: retry.error ?? null };
-  }
-
-  const expiresAt = data.session.expires_at ? data.session.expires_at * 1000 : 0;
-  const refreshSoon = expiresAt > 0 && expiresAt - Date.now() < 5 * 60 * 1000;
-
-  if (refreshSoon) {
-    const refreshed = await supabase.auth.refreshSession(data.session);
+  const expiresAt = session.expires_at ? session.expires_at * 1000 : 0;
+  // Only refresh if actually expired — autoRefreshToken handles the rest.
+  if (expiresAt > 0 && expiresAt <= Date.now()) {
+    const refreshed = await supabase.auth.refreshSession();
     if (!refreshed.error && refreshed.data.session) {
       return { session: refreshed.data.session, error: null };
     }
+    return { session: null, error: refreshed.error };
   }
 
-  return { session: data.session, error: null };
+  return { session, error: null };
 };
 
+/**
+ * Returns the user from the local session when possible (no network),
+ * falling back to getUser() only if the session has no embedded user.
+ * Avoids hammering /auth/v1/user on every visibility / focus event.
+ */
 export const getReliableUser = async () => {
   const { session, error } = await recoverSession();
   if (error || !session) return { user: null, error };
+  if (session.user) return { user: session.user, error: null };
 
   const { data, error: userError } = await supabase.auth.getUser();
-  if (!userError && data.user) return { user: data.user, error: null };
-
-  await wait(SETTLE_DELAY_MS);
-  const retry = await supabase.auth.getUser();
-  return { user: retry.data.user ?? null, error: retry.error ?? userError };
+  return { user: data.user ?? null, error: userError };
 };
 
 export const checkAdminSession = async (): Promise<AdminSessionResult> => {

@@ -1,18 +1,23 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { NAV } from "./nav";
+import logo from "@/assets/digiformation-logo.png";
 
 export default function Sidebar() {
   const { pathname } = useLocation();
   return (
     <aside className="os-sidebar-bg w-[260px] shrink-0 border-r border-white/5 h-screen sticky top-0 flex flex-col">
       <div className="px-5 py-5 border-b border-white/5">
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 grid place-items-center text-white font-bold">D</div>
-          <div>
-            <div className="text-sm font-bold tracking-tight">DigiFormation</div>
-            <div className="text-[10px] text-white/50 uppercase tracking-widest">Business OS</div>
+        <NavLink to="/" className="flex items-center gap-3 group" title="DigiFormation home">
+          <img
+            src={logo}
+            alt="DigiFormation"
+            className="h-12 w-auto object-contain shrink-0 drop-shadow-[0_0_18px_rgba(99,102,241,0.35)]"
+          />
+          <div className="min-w-0">
+            <div className="text-[10px] text-white/50 uppercase tracking-[0.2em]">Business OS</div>
+            <div className="text-xs font-semibold text-white/80 truncate">Admin Console</div>
           </div>
-        </div>
+        </NavLink>
       </div>
       <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-1">
         {NAV.map((item) => {
