@@ -12,14 +12,13 @@ import {
   CalendarDays, ShoppingBag, Wallet, Building2, FileText, UserCog,
   MapPin, ShoppingCart, Ticket, LifeBuoy, LogOut, UserCircle2,
   ChevronRight, Loader2, Inbox, Download, ArrowUpRight,
-  Handshake, Link2, TrendingUp, Copy, Megaphone, GraduationCap, LayoutDashboard,
+  LayoutDashboard,
   Menu, ShieldCheck, Save, Trash2, ChevronDown, ArrowLeft, Home,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import logo from "@/assets/digiformation-logo.png";
 import UserDrawer from "@/components/UserDrawer";
 import { downloadInvoicePdf } from "@/lib/invoice";
-import { SERVICE_RATE_LIST, COMMISSION_GBP } from "@/lib/affiliate";
 
 type SectionId =
   | "overview" | "company" | "addresses" | "orders" | "invoices" | "wallet" | "documents"
