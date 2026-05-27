@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { checkAdminSession } from "@/lib/auth/session";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -43,21 +44,20 @@ const LegacyAdmin = () => {
   useSeo({ title: "Admin Panel | Digiformation", description: "Internal admin panel", noindex: true });
 
   useEffect(() => {
+    let mounted = true;
     (async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { navigate("/auth"); return; }
-      const ownerEmail = "info@digiformation.uk";
-      const isOwner = session.user.email?.toLowerCase() === ownerEmail;
-      let isAdmin = isOwner;
-      if (!isAdmin) {
-        const { data: role } = await supabase.from("user_roles").select("role").eq("user_id", session.user.id).eq("role", "admin").maybeSingle();
-        isAdmin = !!role;
+      const result = await checkAdminSession();
+      if (!mounted) return;
+      if (!result.ok) {
+        if ("reason" in result && result.reason === "not_admin") toast.error("Admin access required");
+        navigate("reason" in result && result.reason === "not_admin" ? "/dashboard" : "/auth", { replace: true });
+        return;
       }
-      if (!isAdmin) { toast.error("Admin access required"); navigate("/dashboard"); return; }
       setAuthorized(true);
       await loadClients();
-      setLoading(false);
+      if (mounted) setLoading(false);
     })();
+    return () => { mounted = false; };
   }, [navigate]);
 
   const loadClients = async () => {

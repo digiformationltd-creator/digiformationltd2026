@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { checkAdminSession } from "@/lib/auth/session";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import "./styles.css";
@@ -8,23 +9,58 @@ import "./styles.css";
 export default function BusinessOSLayout() {
   const [ready, setReady] = useState(false);
   const [allowed, setAllowed] = useState(false);
+  const wasAllowedRef = useRef(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     let mounted = true;
-    (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { navigate("/auth"); return; }
-      const { data: roles } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id);
-      const isAdmin = (roles || []).some((r: any) => r.role === "admin");
+
+    const verify = async () => {
+      const result = await checkAdminSession();
       if (!mounted) return;
-      if (!isAdmin) { navigate("/dashboard"); return; }
-      setAllowed(true); setReady(true);
-    })();
-    return () => { mounted = false; };
+      if (result.ok) {
+        wasAllowedRef.current = true;
+        setAllowed(true);
+        setReady(true);
+        return;
+      }
+
+      if ("reason" in result && wasAllowedRef.current && (result.reason === "refresh_failed" || result.reason === "role_check_failed")) {
+        setReady(true);
+        return;
+      }
+
+      setAllowed(false);
+      setReady(true);
+      navigate("reason" in result && result.reason === "not_admin" ? "/dashboard" : "/auth", { replace: true });
+    };
+
+    verify();
+
+    const { data: authSub } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") {
+        window.setTimeout(verify, 0);
+        return;
+      }
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED" || event === "USER_UPDATED") {
+        window.setTimeout(verify, 0);
+      }
+    });
+
+    const onForeground = () => {
+      if (document.visibilityState === "visible") verify();
+    };
+
+    const onFocus = () => verify();
+    document.addEventListener("visibilitychange", onForeground);
+    window.addEventListener("focus", onFocus);
+
+    return () => {
+      mounted = false;
+      authSub.subscription.unsubscribe();
+      document.removeEventListener("visibilitychange", onForeground);
+      window.removeEventListener("focus", onFocus);
+    };
   }, [navigate]);
 
   if (!ready) {
