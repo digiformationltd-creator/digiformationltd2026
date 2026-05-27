@@ -17,7 +17,7 @@ import {
   Menu, ShieldCheck, Save, Trash2, ChevronDown, ArrowLeft, Home,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import logo from "@/assets/digiformation-logo.png";
+import logo from "@/assets/digiformation-logo-official.png";
 import UserDrawer from "@/components/UserDrawer";
 import { downloadInvoicePdf } from "@/lib/invoice";
 

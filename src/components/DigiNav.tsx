@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { recoverSession } from "@/lib/auth/session";
 import { toast } from "sonner";
 import { setNavDrawerOpen } from "@/lib/nav-drawer";
-import logo from "@/assets/digiformation-logo.png";
+import logo from "@/assets/digiformation-logo-official.png";
 
 const topLinks = [
   { name: "Home", path: "/" },

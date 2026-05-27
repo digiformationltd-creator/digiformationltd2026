@@ -9,7 +9,7 @@ import {
   ShieldCheck, Lock, Loader2, ArrowLeft, Eye, EyeOff,
   Check, X, KeyRound, AlertTriangle, CheckCircle2,
 } from "lucide-react";
-import logo from "@/assets/digiformation-logo.png";
+import logo from "@/assets/digiformation-logo-official.png";
 import { z } from "zod";
 
 const passwordSchema = z
