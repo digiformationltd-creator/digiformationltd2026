@@ -131,8 +131,13 @@ const Dashboard = () => {
         return;
       }
       if (event === "SIGNED_OUT") {
-        setUser(null);
-        navigate("/auth", { replace: true });
+        recoverSession().then(({ session: recovered }) => {
+          if (recovered) setUser(recovered.user);
+          else {
+            setUser(null);
+            navigate("/auth", { replace: true });
+          }
+        });
         return;
       }
       // Handle initial session + sign in. INITIAL_SESSION always fires once on mount,
