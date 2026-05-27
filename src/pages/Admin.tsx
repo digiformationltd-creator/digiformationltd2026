@@ -15,7 +15,7 @@ export default function Admin() {
         <Route index element={<OsDashboard />} />
         <Route path="leads" element={<OsLeads />} />
         <Route path="services" element={<OsServices />} />
-        <Route path="clients" element={<Placeholder title="Clients" description="Full client database with profile tabs (overview, orders, payments, communication, documents, notes)." />} />
+        <Route path="clients" element={<OsClients />} />
         <Route path="orders" element={<Placeholder title="Orders" description="Lifecycle board: Pending → In Progress → Delivered → Completed → Revision." />} />
         <Route path="invoices" element={<Placeholder title="Invoices" description="Paid / pending / overdue. PDF generator + send via legacy email engine." />} />
         <Route path="finance" element={<Placeholder title="Finance" />} />
