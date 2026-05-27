@@ -6,6 +6,7 @@ import OsServices from "@/businessos/pages/OsServices";
 import OsClients from "@/businessos/pages/OsClients";
 import OsOrders from "@/businessos/pages/OsOrders";
 import OsInvoices from "@/businessos/pages/OsInvoices";
+import OsDocuments from "@/businessos/pages/OsDocuments";
 import Placeholder from "@/businessos/pages/Placeholder";
 import LegacyAdmin from "@/pages/LegacyAdmin";
 
