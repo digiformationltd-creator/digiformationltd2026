@@ -19,7 +19,7 @@ export default function Admin() {
         <Route path="services" element={<OsServices />} />
         <Route path="clients" element={<OsClients />} />
         <Route path="orders" element={<OsOrders />} />
-        <Route path="invoices" element={<Placeholder title="Invoices" description="Paid / pending / overdue. PDF generator + send via legacy email engine." />} />
+        <Route path="invoices" element={<OsInvoices />} />
         <Route path="finance" element={<Placeholder title="Finance" />} />
         <Route path="whatsapp" element={<Placeholder title="WhatsApp CRM" />} />
         <Route path="email-marketing" element={<Placeholder title="Email Marketing" description="Campaigns dispatched through the existing email queue — no new sender." />} />
