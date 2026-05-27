@@ -46,7 +46,6 @@ const App = () => (
       <BrowserRouter>
         <ScrollToTop />
         <RecoveryRedirect />
-        <RefCapture />
         <Routes>
           <Route path="/" element={<Index />} />
 
