@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { checkAdminSession, recoverSession } from "@/lib/auth/session";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,9 +42,18 @@ const Auth = () => {
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "PASSWORD_RECOVERY") return;
       if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {
-        
-        const dest = session.user.email?.toLowerCase() === "info@digiformation.uk" ? "/admin" : "/dashboard";
-        navigate(dest, { replace: true });
+        if (session.user.email?.toLowerCase() === "info@digiformation.uk") {
+          checkAdminSession().then((result) => {
+            navigate(result.ok ? "/admin" : "/dashboard", { replace: true });
+          });
+          return;
+        }
+        navigate("/dashboard", { replace: true });
+      }
+      if (event === "INITIAL_SESSION" && !session) {
+        recoverSession().then(({ session: recovered }) => {
+          if (recovered) navigate(recovered.user.email?.toLowerCase() === "info@digiformation.uk" ? "/admin" : "/dashboard", { replace: true });
+        });
       }
     });
     return () => sub.subscription.unsubscribe();
@@ -71,7 +81,8 @@ const Auth = () => {
       return toast.error(msg);
     }
     toast.success("Welcome back!");
-    const dest = ev.data.toLowerCase() === "info@digiformation.uk" ? "/admin" : "/dashboard";
+    const admin = ev.data.toLowerCase() === "info@digiformation.uk" ? await checkAdminSession() : null;
+    const dest = admin?.ok ? "/admin" : "/dashboard";
     navigate(dest, { replace: true });
   };
 
