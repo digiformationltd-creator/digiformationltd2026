@@ -3,6 +3,7 @@ import BusinessOSLayout from "@/businessos/BusinessOSLayout";
 import OsDashboard from "@/businessos/pages/OsDashboard";
 import OsLeads from "@/businessos/pages/OsLeads";
 import OsServices from "@/businessos/pages/OsServices";
+import OsClients from "@/businessos/pages/OsClients";
 import Placeholder from "@/businessos/pages/Placeholder";
 import LegacyAdmin from "@/pages/LegacyAdmin";
 
