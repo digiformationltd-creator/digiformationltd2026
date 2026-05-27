@@ -6,6 +6,7 @@ import OsServices from "@/businessos/pages/OsServices";
 import OsClients from "@/businessos/pages/OsClients";
 import OsOrders from "@/businessos/pages/OsOrders";
 import OsInvoices from "@/businessos/pages/OsInvoices";
+import OsDocuments from "@/businessos/pages/OsDocuments";
 import Placeholder from "@/businessos/pages/Placeholder";
 import LegacyAdmin from "@/pages/LegacyAdmin";
 
@@ -27,7 +28,7 @@ export default function Admin() {
         <Route path="tasks" element={<Placeholder title="Tasks" />} />
         <Route path="team" element={<Placeholder title="Team" />} />
         <Route path="support" element={<Placeholder title="Support" />} />
-        <Route path="documents" element={<Placeholder title="Documents" />} />
+        <Route path="documents" element={<OsDocuments />} />
         <Route path="automation" element={<Placeholder title="Automation" description="Event-based rules that fire the legacy email engine. No new sender." />} />
         <Route path="settings" element={<Placeholder title="Settings" />} />
       </Route>
