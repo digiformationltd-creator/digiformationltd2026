@@ -93,6 +93,33 @@ async function sendReminder(
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
+  // AUTH: only allow service-role JWT (cron) or a matching CRON_SECRET header.
+  // This prevents anonymous callers from triggering early reminder sends and
+  // burning the per-stage idempotency slot in email_reminder_log.
+  const authHeader = req.headers.get('Authorization') || ''
+  const cronSecretHeader = req.headers.get('x-cron-secret') || ''
+  const expectedCronSecret = Deno.env.get('CRON_SECRET') || ''
+  let allowed = false
+  if (authHeader.startsWith('Bearer ')) {
+    const token = authHeader.replace('Bearer ', '')
+    if (token === SERVICE_KEY) {
+      allowed = true
+    } else {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1] || ''))
+        if (payload?.role === 'service_role') allowed = true
+      } catch { /* ignore */ }
+    }
+  }
+  if (!allowed && expectedCronSecret && cronSecretHeader === expectedCronSecret) {
+    allowed = true
+  }
+  if (!allowed) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  }
+
   const supabase = createClient(SUPABASE_URL, SERVICE_KEY)
   const today = new Date()
   today.setUTCHours(0, 0, 0, 0)
