@@ -36,6 +36,22 @@ const ANON_ALLOWED_TEMPLATES = new Set([
   'ticket-received',
 ])
 
+// Templates that contain admin-branded content (invoices, status updates,
+// compliance reminders, system checks). Only callers with the `admin` role
+// may invoke these — a regular authenticated client must NOT be able to send
+// official-looking emails to arbitrary recipients.
+const ADMIN_ONLY_TEMPLATES = new Set([
+  'order-completed',
+  'order-in-progress',
+  'invoice-issued',
+  'invoice-paid',
+  'document-uploaded',
+  'address-renewal-reminder',
+  'confirmation-statement-reminder',
+  'annual-accounts-reminder',
+  'email-system-check',
+])
+
 Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
