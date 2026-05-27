@@ -168,12 +168,6 @@ const DigiNav = () => {
 
           {/* CTA */}
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <Button asChild variant="outline" className="rounded-full hidden sm:inline-flex h-9 sm:h-10 px-3 text-xs sm:text-sm">
-              <Link to="/affiliate" aria-label="Join the affiliate program">
-                <Handshake className="w-4 h-4" />
-                <span>Join Us</span>
-              </Link>
-            </Button>
             <button
               aria-label="Toggle menu"
               onClick={() => setOpen(!open)}
