@@ -220,8 +220,6 @@ const Admin = () => {
                     { name: "address-renewal-reminder", label: "Address renewal reminder" },
                     { name: "confirmation-statement-reminder", label: "Confirmation statement reminder" },
                     { name: "annual-accounts-reminder", label: "Annual accounts reminder" },
-                    { name: "affiliate-application-received", label: "Affiliate application received" },
-                    { name: "affiliate-application-notification", label: "Affiliate application notification" },
                   ];
 
                   // Init checklist with pending state
