@@ -97,7 +97,7 @@ const Admin = () => {
           <ShieldCheck className="w-8 h-8 text-primary" />
           <div>
             <h1 className="text-3xl font-bold">Admin Panel</h1>
-            <p className="text-muted-foreground text-sm">Manage clients, affiliates and their data</p>
+            <p className="text-muted-foreground text-sm">Manage clients and their data</p>
           </div>
           </div>
           <div className="flex items-center gap-2">
