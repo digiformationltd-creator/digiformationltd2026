@@ -72,7 +72,7 @@ const UserDrawer = () => {
     { id: "documents", label: "Documents", icon: FileText },
     { id: "editAccount", label: "Edit Account", icon: UserCog },
     { id: "newServices", label: "Order Services", icon: ShoppingCart },
-    { id: "affiliate", label: "Affiliate", icon: Handshake },
+    
     { id: "tickets", label: "My Tickets", icon: Ticket },
     { id: "openTicket", label: "Open Ticket", icon: LifeBuoy },
   ];
