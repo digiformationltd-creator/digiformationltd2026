@@ -22,8 +22,7 @@ import { downloadInvoicePdf } from "@/lib/invoice";
 
 type SectionId =
   | "overview" | "company" | "addresses" | "orders" | "invoices" | "wallet" | "documents"
-  | "editAccount" | "newServices" | "tickets" | "openTicket"
-  | "affiliate";
+  | "editAccount" | "newServices" | "tickets" | "openTicket";
 
 const menu: { id: SectionId; label: string; icon: any }[] = [
   { id: "overview", label: "Dashboard", icon: LayoutDashboard },
@@ -35,7 +34,6 @@ const menu: { id: SectionId; label: string; icon: any }[] = [
   { id: "documents", label: "Documents", icon: FileText },
   { id: "editAccount", label: "Edit Account", icon: UserCog },
   { id: "newServices", label: "Order New Services", icon: ShoppingCart },
-  { id: "affiliate", label: "Affiliate Program", icon: Handshake },
   { id: "tickets", label: "My Tickets", icon: Ticket },
   { id: "openTicket", label: "Open a Ticket", icon: LifeBuoy },
 ];
