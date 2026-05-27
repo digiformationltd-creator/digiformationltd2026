@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,12 +25,13 @@ interface ClientRow {
 
 const LegacyAdmin = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
   const [clients, setClients] = useState<ClientRow[]>([]);
   const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState<string | null>(null);
-  const [initialTab, setInitialTab] = useState<"company" | "addresses">("company");
+  const [selected, setSelected] = useState<string | null>(searchParams.get("client"));
+  const [initialTab, setInitialTab] = useState<"company" | "addresses" | "orders" | "invoices" | "wallet" | "docs" | "emails">((searchParams.get("tab") as any) || "company");
   const [loadingClients, setLoadingClients] = useState(false);
   // affiliate view removed
   const [testEmailOpen, setTestEmailOpen] = useState(false);
@@ -87,7 +88,7 @@ const LegacyAdmin = () => {
   if (loading) return <Layout><div className="container mx-auto py-20 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto" /></div></Layout>;
   if (!authorized) return null;
 
-  if (selected) return <Layout><ClientDetail userId={selected} initialTab={initialTab} onBack={() => setSelected(null)} /></Layout>;
+  if (selected) return <Layout><ClientDetail userId={selected} initialTab={initialTab} onBack={() => { setSelected(null); setSearchParams({}); }} /></Layout>;
 
   return (
     <Layout>
@@ -513,7 +514,7 @@ const CreateClientPanel = ({ onCreated }: { onCreated: () => void }) => {
   );
 };
 
-const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: string; initialTab?: "company" | "addresses"; onBack: () => void }) => {
+const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: string; initialTab?: "company" | "addresses" | "orders" | "invoices" | "wallet" | "docs" | "emails"; onBack: () => void }) => {
   const [tab, setTab] = useState<"company" | "addresses" | "orders" | "invoices" | "wallet" | "docs" | "emails">(initialTab);
   const [profile, setProfile] = useState<any>({});
   const [companies, setCompanies] = useState<any[]>([]);
