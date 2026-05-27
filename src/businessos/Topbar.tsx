@@ -1,6 +1,7 @@
 import { Bell, Plus, Search } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NAV } from "./nav";
+import logo from "@/assets/digiformation-logo-official.png";
 
 export default function Topbar() {
   const { pathname } = useLocation();
@@ -12,8 +13,15 @@ export default function Topbar() {
   const title = current?.label || "Dashboard";
 
   return (
-    <header className="h-16 sticky top-0 z-20 border-b border-white/5 bg-[hsl(222,36%,7%)]/80 backdrop-blur-xl flex items-center justify-between px-6 gap-4">
-      <h1 className="text-xl font-bold tracking-tight">{title}</h1>
+    <header className="h-16 sticky top-0 z-20 border-b border-white/5 bg-[hsl(222,36%,7%)]/80 backdrop-blur-xl flex items-center justify-between px-4 sm:px-6 gap-3 sm:gap-4">
+      <div className="flex items-center gap-3 min-w-0">
+        <img
+          src={logo}
+          alt="DigiFormation"
+          className="md:hidden h-10 w-10 object-contain rounded-lg bg-white/[0.03] p-1 shrink-0"
+        />
+        <h1 className="text-base sm:text-xl font-bold tracking-tight truncate">{title}</h1>
+      </div>
       <div className="flex-1 max-w-md hidden md:block">
         <div className="relative">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
