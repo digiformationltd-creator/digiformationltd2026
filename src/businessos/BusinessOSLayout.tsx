@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { checkAdminSession } from "@/lib/auth/session";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import "./styles.css";
@@ -12,19 +13,49 @@ export default function BusinessOSLayout() {
 
   useEffect(() => {
     let mounted = true;
-    (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { navigate("/auth"); return; }
-      const { data: roles } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id);
-      const isAdmin = (roles || []).some((r: any) => r.role === "admin");
+    let userInitiatedSignOut = false;
+
+    const verify = async () => {
+      const result = await checkAdminSession();
       if (!mounted) return;
-      if (!isAdmin) { navigate("/dashboard"); return; }
-      setAllowed(true); setReady(true);
-    })();
-    return () => { mounted = false; };
+      if (!result.ok) {
+        setReady(true);
+        setAllowed(false);
+        navigate(result.reason === "not_admin" ? "/dashboard" : "/auth", { replace: true });
+        return;
+      }
+      setAllowed(true);
+      setReady(true);
+    };
+
+    verify();
+
+    const { data: authSub } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") {
+        if (!userInitiatedSignOut) return;
+        setAllowed(false);
+        navigate("/auth", { replace: true });
+      }
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED" || event === "USER_UPDATED") {
+        verify();
+      }
+    });
+
+    const onForeground = () => {
+      if (document.visibilityState === "visible") verify();
+    };
+
+    const onFocus = () => verify();
+    window.addEventListener("admin-signout", () => { userInitiatedSignOut = true; });
+    document.addEventListener("visibilitychange", onForeground);
+    window.addEventListener("focus", onFocus);
+
+    return () => {
+      mounted = false;
+      authSub.subscription.unsubscribe();
+      document.removeEventListener("visibilitychange", onForeground);
+      window.removeEventListener("focus", onFocus);
+    };
   }, [navigate]);
 
   if (!ready) {
