@@ -13,7 +13,6 @@ export default function BusinessOSLayout() {
 
   useEffect(() => {
     let mounted = true;
-    let userInitiatedSignOut = false;
 
     const verify = async () => {
       const result = await checkAdminSession();
@@ -33,12 +32,11 @@ export default function BusinessOSLayout() {
 
     const { data: authSub } = supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_OUT") {
-        if (!userInitiatedSignOut) return;
-        setAllowed(false);
-        navigate("/auth", { replace: true });
+        window.setTimeout(verify, 0);
+        return;
       }
       if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED" || event === "USER_UPDATED") {
-        verify();
+        window.setTimeout(verify, 0);
       }
     });
 
@@ -47,8 +45,6 @@ export default function BusinessOSLayout() {
     };
 
     const onFocus = () => verify();
-    const onAdminSignOut = () => { userInitiatedSignOut = true; };
-    window.addEventListener("admin-signout", onAdminSignOut);
     document.addEventListener("visibilitychange", onForeground);
     window.addEventListener("focus", onFocus);
 
@@ -57,7 +53,6 @@ export default function BusinessOSLayout() {
       authSub.subscription.unsubscribe();
       document.removeEventListener("visibilitychange", onForeground);
       window.removeEventListener("focus", onFocus);
-      window.removeEventListener("admin-signout", onAdminSignOut);
     };
   }, [navigate]);
 
