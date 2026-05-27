@@ -9,6 +9,7 @@ import LegacyAdmin from "@/pages/LegacyAdmin";
 export default function Admin() {
   return (
     <Routes>
+      <Route path="legacy/*" element={<LegacyAdmin />} />
       <Route element={<BusinessOSLayout />}>
         <Route index element={<OsDashboard />} />
         <Route path="leads" element={<OsLeads />} />
