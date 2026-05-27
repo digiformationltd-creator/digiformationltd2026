@@ -27,12 +27,12 @@ const DigiNav = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
         setUser(session.user);
         return;
       }
-      recoverSession().then(({ session: recovered }) => setUser(recovered?.user ?? null));
+      if (event === "SIGNED_OUT") setUser(null);
     });
     recoverSession().then(({ session }) => setUser(session?.user ?? null));
     return () => subscription.unsubscribe();

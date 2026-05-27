@@ -52,6 +52,7 @@ export default function BusinessOSLayout() {
         wasAllowedRef.current &&
         (reason === "refresh_failed" || reason === "role_check_failed")
       ) {
+        setAllowed(true);
         setReady(true);
         return;
       }
