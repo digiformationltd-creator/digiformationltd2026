@@ -29,11 +29,9 @@ import WhatsAppFloat from "./components/WhatsAppFloat";
 import AIAssistant from "./components/AIAssistant";
 import ScrollToTop from "./components/ScrollToTop";
 import RecoveryRedirect from "./components/RecoveryRedirect";
-import RefCapture from "./components/RefCapture";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import ResetPassword from "./pages/ResetPassword";
-import Affiliate from "./pages/Affiliate";
 import Admin from "./pages/Admin";
 import Unsubscribe from "./pages/Unsubscribe";
 import Checkout from "./pages/Checkout";
@@ -48,7 +46,6 @@ const App = () => (
       <BrowserRouter>
         <ScrollToTop />
         <RecoveryRedirect />
-        <RefCapture />
         <Routes>
           <Route path="/" element={<Index />} />
 
@@ -122,7 +119,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/affiliate" element={<Affiliate />} />
+          
           <Route path="/admin" element={<Admin />} />
 
           <Route path="/checkout" element={<Checkout />} />
