@@ -151,7 +151,7 @@ const DigiFooter = () => {
             <li><Link to="/#about" className="hover:text-primary transition">About Us</Link></li>
             <li><Link to="/blog" className="hover:text-primary transition">Blog</Link></li>
             <li><Link to="/faq" className="hover:text-primary transition">FAQ</Link></li>
-            <li><Link to="/affiliate" className="hover:text-primary transition">Affiliate Program</Link></li>
+            
             <li><Link to="/#contact" className="hover:text-primary transition">Contact</Link></li>
             <li><Link to="/privacy-policy" className="hover:text-primary transition">Privacy Policy</Link></li>
             <li><Link to="/terms" className="hover:text-primary transition">Terms & Conditions</Link></li>
