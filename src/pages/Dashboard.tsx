@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { recoverSession } from "@/lib/auth/session";
 import type { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -138,7 +139,10 @@ const Dashboard = () => {
       // so we don't need a separate getSession() call (which would cause duplicate refreshes).
       if (event === "INITIAL_SESSION" || event === "SIGNED_IN") {
         if (!session) {
-          navigate("/auth", { replace: true });
+          recoverSession().then(({ session: recovered }) => {
+            if (recovered) setUser(recovered.user);
+            else navigate("/auth", { replace: true });
+          });
           return;
         }
         if (session.user.email?.toLowerCase() === "info@digiformation.uk") {
