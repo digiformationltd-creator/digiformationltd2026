@@ -25,12 +25,13 @@ interface ClientRow {
 
 const LegacyAdmin = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
   const [clients, setClients] = useState<ClientRow[]>([]);
   const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState<string | null>(null);
-  const [initialTab, setInitialTab] = useState<"company" | "addresses">("company");
+  const [selected, setSelected] = useState<string | null>(searchParams.get("client"));
+  const [initialTab, setInitialTab] = useState<"company" | "addresses" | "orders" | "invoices" | "wallet" | "docs" | "emails">((searchParams.get("tab") as any) || "company");
   const [loadingClients, setLoadingClients] = useState(false);
   // affiliate view removed
   const [testEmailOpen, setTestEmailOpen] = useState(false);
