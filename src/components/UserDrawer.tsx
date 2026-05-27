@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { recoverSession } from "@/lib/auth/session";
 import type { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -25,11 +26,13 @@ const UserDrawer = () => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
-      setUser(session?.user ?? null);
+      if (session?.user) {
+        setUser(session.user);
+        return;
+      }
+      recoverSession().then(({ session: recovered }) => setUser(recovered?.user ?? null));
     });
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
+    recoverSession().then(({ session }) => setUser(session?.user ?? null));
     return () => subscription.unsubscribe();
   }, []);
 
