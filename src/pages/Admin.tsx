@@ -8,6 +8,7 @@ import OsOrders from "@/businessos/pages/OsOrders";
 import OsInvoices from "@/businessos/pages/OsInvoices";
 import OsDocuments from "@/businessos/pages/OsDocuments";
 import OsSupport from "@/businessos/pages/OsSupport";
+import OsCompanies from "@/businessos/pages/OsCompanies";
 import Placeholder from "@/businessos/pages/Placeholder";
 import LegacyAdmin from "@/pages/LegacyAdmin";
 
@@ -20,6 +21,7 @@ export default function Admin() {
         <Route path="leads" element={<OsLeads />} />
         <Route path="services" element={<OsServices />} />
         <Route path="clients" element={<OsClients />} />
+        <Route path="companies" element={<OsCompanies />} />
         <Route path="orders" element={<OsOrders />} />
         <Route path="invoices" element={<OsInvoices />} />
         <Route path="finance" element={<Placeholder title="Finance" />} />
