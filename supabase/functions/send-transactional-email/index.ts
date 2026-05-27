@@ -36,6 +36,22 @@ const ANON_ALLOWED_TEMPLATES = new Set([
   'ticket-received',
 ])
 
+// Templates that contain admin-branded content (invoices, status updates,
+// compliance reminders, system checks). Only callers with the `admin` role
+// may invoke these — a regular authenticated client must NOT be able to send
+// official-looking emails to arbitrary recipients.
+const ADMIN_ONLY_TEMPLATES = new Set([
+  'order-completed',
+  'order-in-progress',
+  'invoice-issued',
+  'invoice-paid',
+  'document-uploaded',
+  'address-renewal-reminder',
+  'confirmation-statement-reminder',
+  'annual-accounts-reminder',
+  'email-system-check',
+])
+
 Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -92,10 +108,15 @@ Deno.serve(async (req) => {
   }
 
   // Auth gate: anon callers can only invoke whitelisted public templates.
-  // Authenticated callers may invoke any registered template.
+  // Authenticated callers may invoke any non-admin template.
+  // Admin-only templates require the caller to have the `admin` role,
+  // OR for the call to come from a service-role context (cron, edge-to-edge).
   const authHeader = req.headers.get('Authorization') || ''
   let isAuthenticated = false
+  let isAdmin = false
+  let isServiceRole = false
   if (authHeader.startsWith('Bearer ')) {
+    const token = authHeader.replace('Bearer ', '')
     try {
       const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!
       const userClient = createClient(supabaseUrl, anonKey, {
@@ -103,14 +124,39 @@ Deno.serve(async (req) => {
       })
       const { data } = await userClient.auth.getUser()
       isAuthenticated = !!data?.user
+      // Detect service-role JWT (used by cron / edge-to-edge invokes)
+      if (token === supabaseServiceKey) {
+        isServiceRole = true
+      } else {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1] || ''))
+          if (payload?.role === 'service_role') isServiceRole = true
+        } catch { /* ignore */ }
+      }
+      if (isAuthenticated && data?.user?.id) {
+        const adminClient = createClient(supabaseUrl, supabaseServiceKey)
+        const { data: roleRow } = await adminClient
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', data.user.id)
+          .eq('role', 'admin')
+          .maybeSingle()
+        isAdmin = !!roleRow
+      }
     } catch {
       isAuthenticated = false
     }
   }
-  if (!isAuthenticated && !ANON_ALLOWED_TEMPLATES.has(templateName)) {
+  if (!isAuthenticated && !isServiceRole && !ANON_ALLOWED_TEMPLATES.has(templateName)) {
     return new Response(
       JSON.stringify({ error: 'Authentication required for this template' }),
       { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    )
+  }
+  if (ADMIN_ONLY_TEMPLATES.has(templateName) && !isAdmin && !isServiceRole) {
+    return new Response(
+      JSON.stringify({ error: 'Admin privileges required for this template' }),
+      { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     )
   }
 
