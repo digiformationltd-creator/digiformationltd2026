@@ -99,7 +99,7 @@ export default function OsLeads() {
     if (!lead || lead.stage === overId) return;
     const prev = leads;
     setLeads(ls => ls.map(l => l.id === id ? { ...l, stage: overId as Stage } : l));
-    const { error } = await supabase.from("leads").update({ stage: overId }).eq("id", id);
+    const { error } = await supabase.from("leads").update({ stage: overId as Stage }).eq("id", id);
     if (error) { setLeads(prev); toast.error(error.message); return; }
     toast.success(`Moved ${lead.name} → ${STAGES.find(s=>s.id===overId)?.label}`);
     await supabase.from("lead_activities").insert({

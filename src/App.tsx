@@ -120,7 +120,7 @@ const App = () => (
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/dashboard" element={<Dashboard />} />
           
-          <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/*" element={<Admin />} />
 
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/unsubscribe" element={<Unsubscribe />} />
