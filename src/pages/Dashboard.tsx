@@ -420,7 +420,7 @@ const Dashboard = () => {
             </div>
           )}
 
-          {active === "affiliate" && <AffiliateDashboardSection user={user} displayName={displayName} />}
+
 
           {active === "tickets" && (
             <ClientTicketsSection rows={tickets} onOpen={() => setActive("openTicket")} />
