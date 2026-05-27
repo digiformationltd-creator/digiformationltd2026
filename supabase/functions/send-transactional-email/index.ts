@@ -34,8 +34,6 @@ const ANON_ALLOWED_TEMPLATES = new Set([
   'contact-confirmation',
   'welcome',
   'ticket-received',
-  'affiliate-application-received',
-  'affiliate-application-notification',
 ])
 
 Deno.serve(async (req) => {
