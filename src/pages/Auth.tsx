@@ -37,22 +37,22 @@ const Auth = () => {
     document.title = "Client Dashboard Login | DigiFormation Ltd";
     const isRecovery = /[#&?]type=recovery(&|$)/.test(window.location.hash || "");
     if (isRecovery) return; // let RecoveryRedirect handle it
+    let redirected = false;
+    const routeForSession = (session: NonNullable<Awaited<ReturnType<typeof recoverSession>>["session"]>) => {
+      if (redirected) return;
+      redirected = true;
+      navigate(session.user.email?.toLowerCase() === "info@digiformation.uk" ? "/admin" : "/dashboard", { replace: true });
+    };
     // INITIAL_SESSION fires automatically on mount with current session, so no need
     // to call getSession() separately (which would cause an extra token refresh).
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "PASSWORD_RECOVERY") return;
       if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {
-        if (session.user.email?.toLowerCase() === "info@digiformation.uk") {
-          checkAdminSession().then((result) => {
-            navigate(result.ok ? "/admin" : "/dashboard", { replace: true });
-          });
-          return;
-        }
-        navigate("/dashboard", { replace: true });
+        routeForSession(session);
       }
       if (event === "INITIAL_SESSION" && !session) {
         recoverSession().then(({ session: recovered }) => {
-          if (recovered) navigate(recovered.user.email?.toLowerCase() === "info@digiformation.uk" ? "/admin" : "/dashboard", { replace: true });
+          if (recovered) routeForSession(recovered);
         });
       }
     });
