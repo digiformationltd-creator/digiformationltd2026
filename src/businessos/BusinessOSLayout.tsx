@@ -42,12 +42,13 @@ export default function BusinessOSLayout() {
         return;
       }
 
+      const reason = result.reason;
       // Transient failures (network/refresh) should NOT log out a user who
       // was previously authorized. Keep them on the page; the next interaction
       // will retry. Only redirect on explicit signed_out / not_admin.
       if (
         wasAllowedRef.current &&
-        (result.reason === "refresh_failed" || result.reason === "role_check_failed")
+        (reason === "refresh_failed" || reason === "role_check_failed")
       ) {
         setReady(true);
         return;
@@ -55,7 +56,7 @@ export default function BusinessOSLayout() {
 
       setAllowed(false);
       setReady(true);
-      navigate(result.reason === "not_admin" ? "/dashboard" : "/auth", { replace: true });
+      navigate(reason === "not_admin" ? "/dashboard" : "/auth", { replace: true });
     };
 
     verify();
