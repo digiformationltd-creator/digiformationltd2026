@@ -21,8 +21,6 @@ import { template as ticketReceived } from './ticket-received.tsx'
 import { template as addressRenewalReminder } from './address-renewal-reminder.tsx'
 import { template as confirmationStatementReminder } from './confirmation-statement-reminder.tsx'
 import { template as annualAccountsReminder } from './annual-accounts-reminder.tsx'
-import { template as affiliateApplicationReceived } from './affiliate-application-received.tsx'
-import { template as affiliateApplicationNotification } from './affiliate-application-notification.tsx'
 import { template as emailSystemCheck } from './email-system-check.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
