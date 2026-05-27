@@ -49,8 +49,13 @@ const LegacyAdmin = () => {
       const result = await checkAdminSession();
       if (!mounted) return;
       if (!result.ok) {
-        if ("reason" in result && result.reason === "not_admin") toast.error("Admin access required");
-        navigate("reason" in result && result.reason === "not_admin" ? "/dashboard" : "/auth", { replace: true });
+        if (result.reason === "role_check_failed") {
+          toast.error("Unable to verify admin access. Please check your connection and try again.");
+          setLoading(false);
+          return;
+        }
+        if (result.reason === "not_admin") toast.error("Admin access required");
+        navigate(result.reason === "not_admin" ? "/dashboard" : "/auth", { replace: true });
         return;
       }
       setAuthorized(true);
