@@ -41,7 +41,7 @@ const Auth = () => {
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "PASSWORD_RECOVERY") return;
       if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session) {
-        attributeReferralIfPresent(session.user.id).catch(() => {});
+        
         const dest = session.user.email?.toLowerCase() === "info@digiformation.uk" ? "/admin" : "/dashboard";
         navigate(dest, { replace: true });
       }
