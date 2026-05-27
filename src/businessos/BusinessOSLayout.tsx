@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminSession } from "@/lib/auth/session";
@@ -9,6 +9,7 @@ import "./styles.css";
 export default function BusinessOSLayout() {
   const [ready, setReady] = useState(false);
   const [allowed, setAllowed] = useState(false);
+  const wasAllowedRef = useRef(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,12 +19,13 @@ export default function BusinessOSLayout() {
       const result = await checkAdminSession();
       if (!mounted) return;
       if (result.ok) {
+        wasAllowedRef.current = true;
         setAllowed(true);
         setReady(true);
         return;
       }
 
-      if ("reason" in result && (result.reason === "refresh_failed" || result.reason === "role_check_failed")) {
+      if ("reason" in result && wasAllowedRef.current && (result.reason === "refresh_failed" || result.reason === "role_check_failed")) {
         setReady(true);
         return;
       }
