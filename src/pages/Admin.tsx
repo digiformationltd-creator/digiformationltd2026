@@ -4,10 +4,12 @@ import OsDashboard from "@/businessos/pages/OsDashboard";
 import OsLeads from "@/businessos/pages/OsLeads";
 import OsServices from "@/businessos/pages/OsServices";
 import Placeholder from "@/businessos/pages/Placeholder";
+import LegacyAdmin from "@/pages/LegacyAdmin";
 
 export default function Admin() {
   return (
     <Routes>
+      <Route path="legacy/*" element={<LegacyAdmin />} />
       <Route element={<BusinessOSLayout />}>
         <Route index element={<OsDashboard />} />
         <Route path="leads" element={<OsLeads />} />
