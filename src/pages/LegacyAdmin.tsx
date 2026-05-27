@@ -514,7 +514,7 @@ const CreateClientPanel = ({ onCreated }: { onCreated: () => void }) => {
   );
 };
 
-const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: string; initialTab?: "company" | "addresses"; onBack: () => void }) => {
+const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: string; initialTab?: "company" | "addresses" | "orders" | "invoices" | "wallet" | "docs" | "emails"; onBack: () => void }) => {
   const [tab, setTab] = useState<"company" | "addresses" | "orders" | "invoices" | "wallet" | "docs" | "emails">(initialTab);
   const [profile, setProfile] = useState<any>({});
   const [companies, setCompanies] = useState<any[]>([]);
