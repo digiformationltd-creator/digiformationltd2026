@@ -124,6 +124,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     document.title = "Client Dashboard | DigiFormation Ltd";
+    let authenticatedOnce = false;
 
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "PASSWORD_RECOVERY") {
@@ -131,13 +132,8 @@ const Dashboard = () => {
         return;
       }
       if (event === "SIGNED_OUT") {
-        recoverSession().then(({ session: recovered }) => {
-          if (recovered) setUser(recovered.user);
-          else {
-            setUser(null);
-            navigate("/auth", { replace: true });
-          }
-        });
+        setUser(null);
+        navigate("/auth", { replace: true });
         return;
       }
       // Handle initial session + sign in. INITIAL_SESSION always fires once on mount,
@@ -145,8 +141,12 @@ const Dashboard = () => {
       if (event === "INITIAL_SESSION" || event === "SIGNED_IN") {
         if (!session) {
           recoverSession().then(({ session: recovered }) => {
-            if (recovered) setUser(recovered.user);
-            else navigate("/auth", { replace: true });
+            if (recovered) {
+              authenticatedOnce = true;
+              setUser(recovered.user);
+            } else if (!authenticatedOnce) {
+              navigate("/auth", { replace: true });
+            }
           });
           return;
         }
@@ -154,6 +154,7 @@ const Dashboard = () => {
           navigate("/admin", { replace: true });
           return;
         }
+        authenticatedOnce = true;
         setUser((prev) => (prev?.id === session.user.id ? prev : session.user));
       }
     });
