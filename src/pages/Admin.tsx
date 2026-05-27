@@ -345,7 +345,6 @@ const Admin = () => {
           </div>
         </div>
           </>
-        )}
       </div>
     </Layout>
   );
