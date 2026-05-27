@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { ShieldCheck, UserCircle2, Mail, Lock, Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import logo from "@/assets/digiformation-logo.png";
 import { z } from "zod";
-import { attributeReferralIfPresent } from "@/lib/affiliate";
+
 
 const emailSchema = z.string().trim().email("Please enter a valid email").max(255);
 const passwordSchema = z
