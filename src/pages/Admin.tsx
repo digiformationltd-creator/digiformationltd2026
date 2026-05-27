@@ -32,7 +32,7 @@ const Admin = () => {
   const [selected, setSelected] = useState<string | null>(null);
   const [initialTab, setInitialTab] = useState<"company" | "addresses">("company");
   const [loadingClients, setLoadingClients] = useState(false);
-  const [view, setView] = useState<"clients" | "affiliates">("clients");
+  // affiliate view removed
   const [testEmailOpen, setTestEmailOpen] = useState(false);
   const [testEmailTo, setTestEmailTo] = useState("info@digiformation.uk");
   const [testEmailSending, setTestEmailSending] = useState(false);
