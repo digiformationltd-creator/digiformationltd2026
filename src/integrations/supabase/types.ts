@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      automation_rules: {
+        Row: {
+          action_config: Json
+          action_type: string
+          conditions: Json
+          created_at: string
+          id: string
+          is_enabled: boolean
+          name: string
+          trigger_event: string
+          updated_at: string
+        }
+        Insert: {
+          action_config?: Json
+          action_type: string
+          conditions?: Json
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          name: string
+          trigger_event: string
+          updated_at?: string
+        }
+        Update: {
+          action_config?: Json
+          action_type?: string
+          conditions?: Json
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          name?: string
+          trigger_event?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       client_addresses: {
         Row: {
           activation_code: string | null
@@ -383,6 +419,54 @@ export type Database = {
         }
         Relationships: []
       }
+      email_campaigns: {
+        Row: {
+          audience_filter: Json
+          clicked_count: number
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          opened_count: number
+          scheduled_at: string | null
+          sent_count: number
+          status: string
+          subject: string
+          template_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          audience_filter?: Json
+          clicked_count?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+          opened_count?: number
+          scheduled_at?: string | null
+          sent_count?: number
+          status?: string
+          subject: string
+          template_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          audience_filter?: Json
+          clicked_count?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          opened_count?: number
+          scheduled_at?: string | null
+          sent_count?: number
+          status?: string
+          subject?: string
+          template_name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       email_reminder_log: {
         Row: {
           due_date: string
@@ -578,6 +662,90 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_activities: {
+        Row: {
+          activity_type: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          lead_id: string
+        }
+        Insert: {
+          activity_type: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          lead_id: string
+        }
+        Update: {
+          activity_type?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          lead_id?: string
+        }
+        Relationships: []
+      }
+      leads: {
+        Row: {
+          assigned_to: string | null
+          country: string | null
+          created_at: string
+          created_by: string | null
+          email: string | null
+          follow_up_date: string | null
+          id: string
+          name: string
+          notes: string | null
+          position: number
+          service: string | null
+          source: string | null
+          stage: Database["public"]["Enums"]["lead_stage"]
+          updated_at: string
+          value_gbp: number
+          whatsapp: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          country?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          follow_up_date?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          position?: number
+          service?: string | null
+          source?: string | null
+          stage?: Database["public"]["Enums"]["lead_stage"]
+          updated_at?: string
+          value_gbp?: number
+          whatsapp?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          country?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          follow_up_date?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          position?: number
+          service?: string | null
+          source?: string | null
+          stage?: Database["public"]["Enums"]["lead_stage"]
+          updated_at?: string
+          value_gbp?: number
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       newsletter_subscribers: {
         Row: {
           created_at: string
@@ -638,6 +806,48 @@ export type Database = {
         }
         Relationships: []
       }
+      services: {
+        Row: {
+          category: string | null
+          created_at: string
+          currency: string
+          description: string | null
+          display_order: number
+          id: string
+          is_active: boolean
+          name: string
+          price_gbp: number
+          slug: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          price_gbp?: number
+          slug?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          price_gbp?: number
+          slug?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       suppressed_emails: {
         Row: {
           created_at: string
@@ -659,6 +869,90 @@ export type Database = {
           id?: string
           metadata?: Json | null
           reason?: string
+        }
+        Relationships: []
+      }
+      tasks: {
+        Row: {
+          assigned_to: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          due_date: string | null
+          id: string
+          priority: Database["public"]["Enums"]["task_priority"]
+          related_lead_id: string | null
+          related_order_id: string | null
+          status: Database["public"]["Enums"]["task_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: Database["public"]["Enums"]["task_priority"]
+          related_lead_id?: string | null
+          related_order_id?: string | null
+          status?: Database["public"]["Enums"]["task_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          priority?: Database["public"]["Enums"]["task_priority"]
+          related_lead_id?: string | null
+          related_order_id?: string | null
+          status?: Database["public"]["Enums"]["task_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      team_members: {
+        Row: {
+          created_at: string
+          department: string | null
+          email: string | null
+          full_name: string
+          id: string
+          is_active: boolean
+          job_title: string | null
+          phone: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          department?: string | null
+          email?: string | null
+          full_name: string
+          id?: string
+          is_active?: boolean
+          job_title?: string | null
+          phone?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          department?: string | null
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_active?: boolean
+          job_title?: string | null
+          phone?: string | null
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -752,6 +1046,48 @@ export type Database = {
         }
         Relationships: []
       }
+      whatsapp_threads: {
+        Row: {
+          contact_name: string | null
+          created_at: string
+          id: string
+          last_message: string | null
+          last_message_at: string | null
+          phone: string
+          related_lead_id: string | null
+          related_user_id: string | null
+          status: string
+          unread_count: number
+          updated_at: string
+        }
+        Insert: {
+          contact_name?: string | null
+          created_at?: string
+          id?: string
+          last_message?: string | null
+          last_message_at?: string | null
+          phone: string
+          related_lead_id?: string | null
+          related_user_id?: string | null
+          status?: string
+          unread_count?: number
+          updated_at?: string
+        }
+        Update: {
+          contact_name?: string | null
+          created_at?: string
+          id?: string
+          last_message?: string | null
+          last_message_at?: string | null
+          phone?: string
+          related_lead_id?: string | null
+          related_user_id?: string | null
+          status?: string
+          unread_count?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -793,6 +1129,16 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "client"
+      lead_stage:
+        | "new"
+        | "contacted"
+        | "interested"
+        | "followup"
+        | "converted"
+        | "closed"
+        | "rejected"
+      task_priority: "low" | "medium" | "high" | "urgent"
+      task_status: "todo" | "in_progress" | "done" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -921,6 +1267,17 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "client"],
+      lead_stage: [
+        "new",
+        "contacted",
+        "interested",
+        "followup",
+        "converted",
+        "closed",
+        "rejected",
+      ],
+      task_priority: ["low", "medium", "high", "urgent"],
+      task_status: ["todo", "in_progress", "done", "cancelled"],
     },
   },
 } as const
