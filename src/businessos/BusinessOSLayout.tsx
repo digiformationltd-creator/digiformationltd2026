@@ -23,6 +23,11 @@ export default function BusinessOSLayout() {
         return;
       }
 
+      if ("reason" in result && (result.reason === "refresh_failed" || result.reason === "role_check_failed")) {
+        setReady(true);
+        return;
+      }
+
       setAllowed(false);
       setReady(true);
       navigate("reason" in result && result.reason === "not_admin" ? "/dashboard" : "/auth", { replace: true });
