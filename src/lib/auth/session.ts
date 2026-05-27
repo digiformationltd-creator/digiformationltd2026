@@ -1,11 +1,12 @@
 import { supabase } from "@/integrations/supabase/client";
-import type { User } from "@supabase/supabase-js";
+import type { AuthError, Session, User } from "@supabase/supabase-js";
 
 export type AdminSessionResult =
   | { ok: true; user: User; isAdmin: true }
   | { ok: false; reason: "signed_out" | "not_admin" | "refresh_failed" | "role_check_failed" };
 
 const OWNER_EMAIL = "info@digiformation.uk";
+let refreshInFlight: Promise<{ session: Session | null; error: AuthError | null }> | null = null;
 
 export const isOwnerEmail = (email?: string | null) =>
   email?.toLowerCase() === OWNER_EMAIL;
@@ -32,11 +33,17 @@ export const recoverSession = async () => {
   const expiresAt = session.expires_at ? session.expires_at * 1000 : 0;
   // Only refresh if actually expired — autoRefreshToken handles the rest.
   if (expiresAt > 0 && expiresAt <= Date.now()) {
-    const refreshed = await supabase.auth.refreshSession();
-    if (!refreshed.error && refreshed.data.session) {
-      return { session: refreshed.data.session, error: null };
+    if (!refreshInFlight) {
+      refreshInFlight = supabase.auth.refreshSession()
+        .then((refreshed) => ({
+          session: refreshed.data.session ?? null,
+          error: refreshed.error,
+        }))
+        .finally(() => {
+          refreshInFlight = null;
+        });
     }
-    return { session: null, error: refreshed.error };
+    return refreshInFlight;
   }
 
   return { session, error: null };
