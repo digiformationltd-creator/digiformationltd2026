@@ -303,19 +303,8 @@ const Admin = () => {
           </DialogContent>
         </Dialog>
 
-        <div className="flex gap-2 mb-4">
-          <Button variant={view === "clients" ? "default" : "outline"} size="sm" onClick={() => setView("clients")}>
-            <Users className="w-4 h-4" /> Clients
-          </Button>
-          <Button variant={view === "affiliates" ? "default" : "outline"} size="sm" onClick={() => setView("affiliates")}>
-            <ShieldCheck className="w-4 h-4" /> Affiliate Partners
-          </Button>
-        </div>
+        <>
 
-        {view === "affiliates" ? (
-          <AffiliatesPanel />
-        ) : (
-          <>
         <div className="glass rounded-2xl p-4 mb-4 flex items-center gap-3">
           <Search className="w-5 h-5 text-muted-foreground" />
           <Input placeholder="Search by name, email, or company…" value={search} onChange={(e) => setSearch(e.target.value)} className="border-0 focus-visible:ring-0" />
