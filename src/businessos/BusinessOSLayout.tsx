@@ -6,16 +6,33 @@ import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import "./styles.css";
 
+/**
+ * Re-verification policy (stability-critical):
+ *
+ * - Verify ONCE on mount.
+ * - Listen to onAuthStateChange but ONLY act on SIGNED_OUT. Reacting to
+ *   TOKEN_REFRESHED / USER_UPDATED / SIGNED_IN here used to call verify()
+ *   which called recoverSession() which called refreshSession() — the
+ *   resulting feedback loop hit the auth /token endpoint until it 429'd
+ *   and the user was forcibly logged out.
+ * - Re-verify on visibilitychange (tab/app returning to foreground), but
+ *   throttled to once every 60s so a quick blur/focus cycle on mobile
+ *   cannot stampede the auth server.
+ * - No "focus" listener — mobile browsers fire it constantly and it
+ *   overlaps with visibilitychange.
+ */
 export default function BusinessOSLayout() {
   const [ready, setReady] = useState(false);
   const [allowed, setAllowed] = useState(false);
   const wasAllowedRef = useRef(false);
+  const lastCheckRef = useRef(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     let mounted = true;
 
     const verify = async () => {
+      lastCheckRef.current = Date.now();
       const result = await checkAdminSession();
       if (!mounted) return;
       if (result.ok) {
@@ -25,41 +42,48 @@ export default function BusinessOSLayout() {
         return;
       }
 
-      if ("reason" in result && wasAllowedRef.current && (result.reason === "refresh_failed" || result.reason === "role_check_failed")) {
+      // Transient failures (network/refresh) should NOT log out a user who
+      // was previously authorized. Keep them on the page; the next interaction
+      // will retry. Only redirect on explicit signed_out / not_admin.
+      if (
+        wasAllowedRef.current &&
+        (result.reason === "refresh_failed" || result.reason === "role_check_failed")
+      ) {
         setReady(true);
         return;
       }
 
       setAllowed(false);
       setReady(true);
-      navigate("reason" in result && result.reason === "not_admin" ? "/dashboard" : "/auth", { replace: true });
+      navigate(result.reason === "not_admin" ? "/dashboard" : "/auth", { replace: true });
     };
 
     verify();
 
     const { data: authSub } = supabase.auth.onAuthStateChange((event) => {
+      // ONLY react to explicit sign-outs. Do NOT re-run verify on
+      // TOKEN_REFRESHED / SIGNED_IN / USER_UPDATED — those create loops
+      // and the autoRefreshToken mechanism keeps the session valid for us.
       if (event === "SIGNED_OUT") {
-        window.setTimeout(verify, 0);
-        return;
-      }
-      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED" || event === "USER_UPDATED") {
-        window.setTimeout(verify, 0);
+        wasAllowedRef.current = false;
+        setAllowed(false);
+        navigate("/auth", { replace: true });
       }
     });
 
-    const onForeground = () => {
-      if (document.visibilityState === "visible") verify();
+    const onVisibility = () => {
+      if (document.visibilityState !== "visible") return;
+      // Throttle: at most one re-verify per minute.
+      if (Date.now() - lastCheckRef.current < 60_000) return;
+      verify();
     };
 
-    const onFocus = () => verify();
-    document.addEventListener("visibilitychange", onForeground);
-    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
       mounted = false;
       authSub.subscription.unsubscribe();
-      document.removeEventListener("visibilitychange", onForeground);
-      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [navigate]);
 
