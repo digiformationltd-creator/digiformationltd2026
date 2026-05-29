@@ -6,6 +6,7 @@ import {
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
 } from "recharts";
+import { KpiGridSkeleton, ChartSkeleton, DonutSkeleton, ListSkeleton } from "../components/Skeletons";
 
 type Glow = "blue"|"purple"|"green"|"amber"|"red"|"cyan"|"pink"|"lime";
 type Kpi = { label: string; value: string; sub?: string; icon: any; glow: Glow };
