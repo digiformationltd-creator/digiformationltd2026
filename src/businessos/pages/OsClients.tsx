@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { TableSkeleton } from "../components/Skeletons";
 import {
   Search, RefreshCw, Loader2, Mail, Phone, Building2,
   ChevronRight, Users, ExternalLink, Calendar,
