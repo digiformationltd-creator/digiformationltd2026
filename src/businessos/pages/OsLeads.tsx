@@ -8,6 +8,7 @@ import {
 import { useDraggable } from "@dnd-kit/core";
 import { toast } from "sonner";
 import { Plus, X } from "lucide-react";
+import { PipelineSkeleton } from "../components/Skeletons";
 
 type Stage = "new"|"contacted"|"interested"|"followup"|"converted"|"closed"|"rejected";
 type Lead = {
