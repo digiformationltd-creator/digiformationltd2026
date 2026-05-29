@@ -71,6 +71,7 @@ function Column({ stage, leads }: { stage: typeof STAGES[number]; leads: Lead[] 
 
 export default function OsLeads() {
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeId, setActiveId] = useState<string|null>(null);
   const [params, setParams] = useSearchParams();
   const [showNew, setShowNew] = useState(params.get("new") === "1");
@@ -78,8 +79,9 @@ export default function OsLeads() {
 
   const load = async () => {
     const { data, error } = await supabase.from("leads").select("*").order("created_at",{ascending:false});
-    if (error) { toast.error(error.message); return; }
+    if (error) { toast.error(error.message); setLoading(false); return; }
     setLeads((data || []) as Lead[]);
+    setLoading(false);
   };
   useEffect(() => { load(); }, []);
 
