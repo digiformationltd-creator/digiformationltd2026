@@ -30,6 +30,7 @@ function KpiCard({ k }: { k: Kpi }) {
 const PIE_COLORS = ["#7a8aa3","#5b6b85","#6c8a7b","#a89770","#8a7d9b","#728da0"];
 
 export default function OsDashboard() {
+  const [loading, setLoading] = useState(true);
   const [kpi, setKpi] = useState<Kpi[]>([]);
   const [revenue, setRevenue] = useState<{m:string;v:number}[]>([]);
   const [sources, setSources] = useState<{name:string;value:number}[]>([]);
