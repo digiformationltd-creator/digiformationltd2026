@@ -172,7 +172,7 @@ const DigiNav = () => {
             <div className="relative group">
               <Link
                 to="/pricing"
-                className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full bg-muted/60 hover:bg-muted text-foreground/80 hover:text-foreground border border-border/60 transition"
+                className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full bg-muted hover:bg-muted/80 text-black transition"
               >
                 Packages
                 <ChevronDown className="w-3 h-3 transition-transform group-hover:rotate-180" />
