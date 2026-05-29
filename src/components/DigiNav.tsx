@@ -174,9 +174,9 @@ const DigiNav = () => {
             <button
               aria-label="Toggle menu"
               onClick={() => setOpen(!open)}
-              className="xl:hidden h-10 w-10 sm:h-11 sm:w-11 rounded-lg grid place-items-center hover:bg-primary/10 transition shrink-0"
+              className="xl:hidden h-11 w-11 sm:h-12 sm:w-12 xl:h-14 xl:w-14 rounded-lg grid place-items-center hover:bg-primary/10 transition shrink-0"
             >
-              {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </nav>
