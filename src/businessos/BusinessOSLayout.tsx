@@ -66,13 +66,22 @@ export default function BusinessOSLayout() {
     verify();
 
     const { data: authSub } = supabase.auth.onAuthStateChange((event) => {
-      // ONLY react to explicit sign-outs. Do NOT re-run verify on
-      // TOKEN_REFRESHED / SIGNED_IN / USER_UPDATED — those create loops
-      // and the autoRefreshToken mechanism keeps the session valid for us.
+      // SIGNED_OUT can fire spuriously when the refresh-token endpoint is
+      // rate-limited (429) or when a cross-tab storage event races a refresh.
+      // Verify the session is REALLY gone (with a brief retry) before kicking
+      // the user out — prevents desktop forced-logout during refresh storms.
       if (event === "SIGNED_OUT") {
-        wasAllowedRef.current = false;
-        setAllowed(false);
-        navigate("/auth", { replace: true });
+        setTimeout(async () => {
+          const { data } = await supabase.auth.getSession();
+          if (data.session) return; // false alarm — session restored
+          setTimeout(async () => {
+            const { data: data2 } = await supabase.auth.getSession();
+            if (data2.session) return;
+            wasAllowedRef.current = false;
+            setAllowed(false);
+            navigate("/auth", { replace: true });
+          }, 1500);
+        }, 400);
       }
     });
 
