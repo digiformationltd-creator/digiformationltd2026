@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { checkAdminSession } from "@/lib/auth/session";
 import Sidebar from "./Sidebar";
@@ -27,6 +27,7 @@ export default function BusinessOSLayout() {
   const wasAllowedRef = useRef(false);
   const lastCheckRef = useRef(0);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     let mounted = true;
