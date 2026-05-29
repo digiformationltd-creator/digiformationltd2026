@@ -132,8 +132,18 @@ const Dashboard = () => {
         return;
       }
       if (event === "SIGNED_OUT") {
-        setUser(null);
-        navigate("/auth", { replace: true });
+        // Refresh-storms / 429 / cross-tab races can fire spurious SIGNED_OUT
+        // events on desktop. Verify session truly gone before redirecting.
+        setTimeout(async () => {
+          const { data } = await supabase.auth.getSession();
+          if (data.session) return;
+          setTimeout(async () => {
+            const { data: data2 } = await supabase.auth.getSession();
+            if (data2.session) return;
+            setUser(null);
+            navigate("/auth", { replace: true });
+          }, 1500);
+        }, 400);
         return;
       }
       // Handle initial session + sign in. INITIAL_SESSION always fires once on mount,
