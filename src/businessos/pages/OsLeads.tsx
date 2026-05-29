@@ -123,14 +123,18 @@ export default function OsLeads() {
         </button>
       </div>
 
-      <DndContext sensors={sensors} collisionDetection={closestCorners}
-        onDragStart={(e: DragStartEvent)=>setActiveId(String(e.active.id))}
-        onDragEnd={onDragEnd}>
-        <div className="flex gap-4 overflow-x-auto pb-4">
-          {STAGES.map(s => <Column key={s.id} stage={s} leads={byStage[s.id]} />)}
-        </div>
-        <DragOverlay>{active ? <div className="w-[256px]"><LeadCard lead={active} /></div> : null}</DragOverlay>
-      </DndContext>
+      {loading && leads.length === 0 ? (
+        <div className="os-fade-in"><PipelineSkeleton columns={STAGES.length} /></div>
+      ) : (
+        <DndContext sensors={sensors} collisionDetection={closestCorners}
+          onDragStart={(e: DragStartEvent)=>setActiveId(String(e.active.id))}
+          onDragEnd={onDragEnd}>
+          <div className="flex gap-4 overflow-x-auto pb-4 os-fade-in">
+            {STAGES.map(s => <Column key={s.id} stage={s} leads={byStage[s.id]} />)}
+          </div>
+          <DragOverlay>{active ? <div className="w-[256px]"><LeadCard lead={active} /></div> : null}</DragOverlay>
+        </DndContext>
+      )}
 
       {showNew && <NewLeadModal onClose={() => { setShowNew(false); params.delete("new"); setParams(params); }} onCreated={load} />}
     </div>
