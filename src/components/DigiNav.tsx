@@ -116,7 +116,7 @@ const DigiNav = () => {
         <nav className="flex items-center justify-between gap-2 pl-1 sm:pl-2 pr-2 sm:pr-3 py-1.5 sm:py-2 xl:py-2.5">
           {/* Logo */}
           <Link to="/" className="flex items-center shrink-0" aria-label="Digiformation home">
-            <img src={logo} alt="Digiformation Ltd logo — UK & US company formation, banking and payment gateway specialists" className="h-10 sm:h-11 xl:h-12 w-auto object-contain" />
+            <img src={logo} alt="Digiformation Ltd logo — UK & US company formation, banking and payment gateway specialists" className="h-11 sm:h-12 xl:h-14 w-auto object-contain" />
           </Link>
 
           {/* Desktop links */}
@@ -174,9 +174,9 @@ const DigiNav = () => {
             <button
               aria-label="Toggle menu"
               onClick={() => setOpen(!open)}
-              className="xl:hidden h-10 w-10 sm:h-11 sm:w-11 rounded-lg grid place-items-center hover:bg-primary/10 transition shrink-0"
+              className="xl:hidden h-11 w-11 sm:h-12 sm:w-12 xl:h-14 xl:w-14 rounded-lg grid place-items-center hover:bg-primary/10 transition shrink-0"
             >
-              {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </nav>
