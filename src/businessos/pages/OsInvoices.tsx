@@ -287,8 +287,8 @@ export default function OsInvoices() {
 
       {/* Loading */}
       {loading && invoices.length === 0 && (
-        <div className="os-glass p-12 grid place-items-center">
-          <Loader2 className="w-6 h-6 animate-spin text-white/50" />
+        <div className="os-fade-in">
+          <TableSkeleton columns={8} rows={8} />
         </div>
       )}
 
