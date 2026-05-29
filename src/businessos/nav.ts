@@ -28,5 +28,6 @@ export const NAV: NavItem[] = [
   { label: "Support",         to: "/admin/support",         icon: LifeBuoy,        glow: "red" },
   { label: "Documents",       to: "/admin/documents",       icon: FolderOpen,      glow: "cyan" },
   { label: "Automation",      to: "/admin/automation",      icon: Zap,             glow: "lime" },
+  { label: "Email Test",      to: "/admin/email-test",      icon: Mail,            glow: "cyan" },
   { label: "Settings",        to: "/admin/settings",        icon: Settings,        glow: "blue" },
 ];
