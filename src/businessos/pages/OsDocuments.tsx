@@ -287,9 +287,7 @@ export default function OsDocuments() {
 
       {/* Results */}
       {loading ? (
-        <div className="os-glass p-12 grid place-items-center">
-          <Loader2 className="w-6 h-6 animate-spin text-white/60" />
-        </div>
+        <div className="os-fade-in"><TableSkeleton columns={6} rows={7} /></div>
       ) : filtered.length === 0 ? (
         <div className="os-glass p-12 text-center text-white/50">
           <FileIcon className="w-8 h-8 mx-auto mb-3 opacity-50" />
