@@ -932,7 +932,8 @@ export const Pricing = () => {
         .map((s, gi) => (
           <section
             key={s.title}
-            className={`py-10 ${gi % 2 === 1 ? "bg-muted/20" : ""} border-t border-border/60`}
+            id={s.tag.toLowerCase().replace(/\s*&\s*/g, "-").replace(/\s+/g, "-")}
+            className={`py-10 ${gi % 2 === 1 ? "bg-muted/20" : ""} border-t border-border/60 scroll-mt-28`}
           >
             <div className="container mx-auto px-4 max-w-7xl">
               <div className="flex items-center gap-3 mb-3">

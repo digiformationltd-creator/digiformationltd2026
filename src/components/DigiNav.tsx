@@ -167,6 +167,36 @@ const DigiNav = () => {
                 </div>
               </div>
             </div>
+
+            {/* Packages quick-access pill */}
+            <div className="relative group">
+              <Link
+                to="/pricing"
+                className="flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full bg-muted/60 hover:bg-muted text-foreground/80 hover:text-foreground border border-border/60 transition"
+              >
+                Packages
+                <ChevronDown className="w-3 h-3 transition-transform group-hover:rotate-180" />
+              </Link>
+              <div className="absolute top-full right-0 pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                <div className="min-w-[260px] glass rounded-xl p-2">
+                  <Link to="/pricing" className="block px-4 py-2 text-sm font-semibold rounded-md hover:bg-primary/10 transition border-b border-border/40 mb-1">
+                    All Packages →
+                  </Link>
+                  {[
+                    { name: "UK Company Formation", hash: "uk-formation" },
+                    { name: "UK Address Services", hash: "uk-address" },
+                    { name: "USA LLC Formation", hash: "usa-formation" },
+                    { name: "USA Add-on Services", hash: "usa-services" },
+                    { name: "UK Compliance Services", hash: "uk-compliance" },
+                    { name: "Banking & Payments", hash: "banking-payments" },
+                  ].map((l) => (
+                    <Link key={l.hash} to={`/pricing#${l.hash}`} className="block px-4 py-2 text-sm rounded-md hover:bg-primary/10 transition">
+                      {l.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* CTA */}
