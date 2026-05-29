@@ -10,17 +10,15 @@
   --os-text: 220 14% 96%;
   --os-muted: 220 12% 64%;
 
-  /* DigiFormation slate-aligned accent palette.
-     Non-semantic glows collapse to tonal slate; semantic ones (green/amber/red)
-     stay distinguishable but muted so KPIs and status remain readable. */
-  --glow-blue:   215 22% 60%;   /* slate-blue */
-  --glow-purple: 222 14% 62%;   /* warm slate */
-  --glow-green:  152 32% 48%;   /* muted emerald (success) */
-  --glow-amber:  36 55% 55%;    /* muted gold (warn) */
-  --glow-red:    4 55% 56%;     /* muted clay (danger) */
-  --glow-cyan:   205 22% 58%;   /* steel */
-  --glow-pink:   228 12% 65%;   /* cool slate */
-  --glow-lime:   168 22% 52%;   /* muted sage */
+  /* Original vibrant per-card hover glow palette. */
+  --glow-blue:   217 91% 60%;
+  --glow-purple: 270 91% 65%;
+  --glow-green:  142 71% 45%;
+  --glow-amber:  38 92% 50%;
+  --glow-red:    0 84% 60%;
+  --glow-cyan:   189 94% 55%;
+  --glow-pink:   330 81% 60%;
+  --glow-lime:   84 81% 55%;
 
   background: hsl(var(--os-bg));
   color: hsl(var(--os-text));
