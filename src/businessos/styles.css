@@ -72,9 +72,9 @@
 }
 .businessos .os-nav-item:hover { background: hsla(0,0%,100%,.04); color: hsl(var(--os-text)); }
 .businessos .os-nav-item.active {
-  background: hsla(217,91%,60%,.12);
+  background: hsla(var(--glow-blue),.14);
   color: hsl(var(--os-text));
-  border-color: hsla(217,91%,60%,.25);
+  border-color: hsla(var(--glow-blue),.28);
 }
 
 .businessos input, .businessos textarea, .businessos select {
@@ -83,9 +83,42 @@
   color: hsl(var(--os-text));
 }
 .businessos input:focus, .businessos textarea:focus, .businessos select:focus {
-  outline: none; border-color: hsla(217,91%,60%,.5);
+  outline: none; border-color: hsla(var(--glow-blue),.55);
 }
 
 .businessos ::-webkit-scrollbar { width: 8px; height: 8px; }
 .businessos ::-webkit-scrollbar-thumb { background: hsla(0,0%,100%,.08); border-radius: 4px; }
 .businessos ::-webkit-scrollbar-track { background: transparent; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Scoped Tailwind palette remap.
+   Business OS pages use raw Tailwind classes (e.g. from-blue-500,
+   to-purple-600). Inside the .businessos scope we re-tone those utilities
+   to the DigiFormation slate palette without touching component code,
+   preserving all hover/elevation/transition behavior.
+   ────────────────────────────────────────────────────────────────────────── */
+.businessos .from-blue-500     { --tw-gradient-from: hsl(215 22% 50%) var(--tw-gradient-from-position); --tw-gradient-to: hsl(215 22% 50% / 0) var(--tw-gradient-to-position); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.businessos .from-blue-500\/20 { --tw-gradient-from: hsl(215 22% 50% / .20) var(--tw-gradient-from-position); --tw-gradient-to: hsl(215 22% 50% / 0) var(--tw-gradient-to-position); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.businessos .from-blue-500\/30 { --tw-gradient-from: hsl(215 22% 50% / .30) var(--tw-gradient-from-position); --tw-gradient-to: hsl(215 22% 50% / 0) var(--tw-gradient-to-position); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.businessos .from-blue-500\/40 { --tw-gradient-from: hsl(215 22% 50% / .40) var(--tw-gradient-from-position); --tw-gradient-to: hsl(215 22% 50% / 0) var(--tw-gradient-to-position); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.businessos .from-violet-500\/20 { --tw-gradient-from: hsl(222 14% 55% / .20) var(--tw-gradient-from-position); --tw-gradient-to: hsl(222 14% 55% / 0) var(--tw-gradient-to-position); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.businessos .from-amber-500    { --tw-gradient-from: hsl(36 50% 50%) var(--tw-gradient-from-position); --tw-gradient-to: hsl(36 50% 50% / 0) var(--tw-gradient-to-position); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+
+.businessos .to-purple-600     { --tw-gradient-to: hsl(222 18% 32%) var(--tw-gradient-to-position); }
+.businessos .to-purple-500\/20 { --tw-gradient-to: hsl(222 14% 55% / .20) var(--tw-gradient-to-position); }
+.businessos .to-purple-500\/10 { --tw-gradient-to: hsl(222 14% 55% / .10) var(--tw-gradient-to-position); }
+.businessos .to-purple-600\/40 { --tw-gradient-to: hsl(222 18% 38% / .40) var(--tw-gradient-to-position); }
+.businessos .to-indigo-500     { --tw-gradient-to: hsl(220 18% 38%) var(--tw-gradient-to-position); }
+.businessos .to-indigo-500\/10 { --tw-gradient-to: hsl(220 18% 38% / .10) var(--tw-gradient-to-position); }
+.businessos .to-cyan-500\/10   { --tw-gradient-to: hsl(205 22% 50% / .10) var(--tw-gradient-to-position); }
+.businessos .to-pink-500       { --tw-gradient-to: hsl(228 14% 50%) var(--tw-gradient-to-position); }
+
+/* Flat text/bg accents in tables, badges, dots */
+.businessos .text-blue-400   { color: hsl(215 30% 72%); }
+.businessos .text-purple-400 { color: hsl(222 18% 74%); }
+.businessos .text-cyan-400   { color: hsl(205 28% 72%); }
+.businessos .text-pink-400   { color: hsl(228 18% 74%); }
+.businessos .text-indigo-400 { color: hsl(220 22% 72%); }
+.businessos .text-violet-400 { color: hsl(222 18% 74%); }
+.businessos .bg-purple-400   { background-color: hsl(222 18% 65%); }
+.businessos .bg-blue-400     { background-color: hsl(215 28% 65%); }
