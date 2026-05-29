@@ -167,22 +167,8 @@ const DigiNav = () => {
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* CTA */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <button
-              aria-label="Toggle menu"
-              onClick={() => setOpen(!open)}
-              className="xl:hidden h-11 w-11 sm:h-12 sm:w-12 xl:h-14 xl:w-14 rounded-lg grid place-items-center hover:bg-primary/10 transition shrink-0"
-            >
-              {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </nav>
-            </div>
-
-            {/* Packages quick-access dropdown */}
+            {/* Packages quick-access pill */}
             <div className="relative group">
               <Link
                 to="/pricing"
@@ -192,7 +178,7 @@ const DigiNav = () => {
                 <ChevronDown className="w-3 h-3 transition-transform group-hover:rotate-180" />
               </Link>
               <div className="absolute top-full right-0 pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                <div className="min-w-[240px] glass rounded-xl p-2">
+                <div className="min-w-[260px] glass rounded-xl p-2">
                   <Link to="/pricing" className="block px-4 py-2 text-sm font-semibold rounded-md hover:bg-primary/10 transition border-b border-border/40 mb-1">
                     All Packages →
                   </Link>
@@ -211,6 +197,20 @@ const DigiNav = () => {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* CTA */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <button
+              aria-label="Toggle menu"
+              onClick={() => setOpen(!open)}
+              className="xl:hidden h-11 w-11 sm:h-12 sm:w-12 xl:h-14 xl:w-14 rounded-lg grid place-items-center hover:bg-primary/10 transition shrink-0"
+            >
+              {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+        </nav>
+      </div>
 
       {/* Mobile drawer */}
       {open && (
