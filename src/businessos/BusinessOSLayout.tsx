@@ -116,7 +116,9 @@ export default function BusinessOSLayout() {
       <div className="flex-1 min-w-0 flex flex-col">
         <Topbar />
         <main key={location.pathname} className="p-4 sm:p-6 flex-1 min-w-0 os-fade-in">
-          <Outlet />
+          <OsErrorBoundary routeKey={location.pathname}>
+            <Outlet />
+          </OsErrorBoundary>
         </main>
       </div>
     </div>
