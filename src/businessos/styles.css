@@ -160,3 +160,17 @@
   .businessos .os-skel::after { animation: none; }
   .businessos .os-fade-in { animation: none; }
 }
+
+/* ── Mobile polish ───────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .businessos main { padding-bottom: 5rem; }
+  /* Tables: allow horizontal scroll instead of breaking layout */
+  .businessos table { display: block; max-width: 100%; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+  /* Make any wide content scrollable cleanly */
+  .businessos .os-glass { border-radius: 14px; }
+  /* Comfortable tap targets */
+  .businessos button, .businessos a, .businessos [role="button"] { min-height: 40px; }
+  /* Prevent any nested element from forcing horizontal scroll */
+  .businessos * { max-width: 100%; }
+}
+
