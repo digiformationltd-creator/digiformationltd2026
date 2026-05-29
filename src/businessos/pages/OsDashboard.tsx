@@ -119,8 +119,9 @@ export default function OsDashboard() {
                 <Bar dataKey="v" fill="url(#g1)" radius={[8,8,0,0]} />
                 <defs>
                   <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#3b82f6" />
-                    <stop offset="100%" stopColor="#a855f7" />
+                    <stop offset="0%" stopColor="hsl(215 22% 60%)" />
+                    <stop offset="100%" stopColor="hsl(222 18% 38%)" />
+
                   </linearGradient>
                 </defs>
               </BarChart>
