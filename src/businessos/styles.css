@@ -10,14 +10,17 @@
   --os-text: 220 14% 96%;
   --os-muted: 220 12% 64%;
 
-  --glow-blue:   217 91% 60%;
-  --glow-purple: 270 91% 65%;
-  --glow-green:  142 71% 45%;
-  --glow-amber:  38 92% 55%;
-  --glow-red:    0 84% 60%;
-  --glow-cyan:   189 94% 55%;
-  --glow-pink:   330 85% 65%;
-  --glow-lime:   84 81% 55%;
+  /* DigiFormation slate-aligned accent palette.
+     Non-semantic glows collapse to tonal slate; semantic ones (green/amber/red)
+     stay distinguishable but muted so KPIs and status remain readable. */
+  --glow-blue:   215 22% 60%;   /* slate-blue */
+  --glow-purple: 222 14% 62%;   /* warm slate */
+  --glow-green:  152 32% 48%;   /* muted emerald (success) */
+  --glow-amber:  36 55% 55%;    /* muted gold (warn) */
+  --glow-red:    4 55% 56%;     /* muted clay (danger) */
+  --glow-cyan:   205 22% 58%;   /* steel */
+  --glow-pink:   228 12% 65%;   /* cool slate */
+  --glow-lime:   168 22% 52%;   /* muted sage */
 
   background: hsl(var(--os-bg));
   color: hsl(var(--os-text));
@@ -47,14 +50,14 @@
 }
 
 /* per-card glow on hover */
-.businessos .os-glow-blue:hover   { border-color: hsla(217,91%,60%,.45); box-shadow: 0 0 0 1px hsla(217,91%,60%,.25), 0 12px 40px -8px hsla(217,91%,60%,.35); }
-.businessos .os-glow-purple:hover { border-color: hsla(270,91%,65%,.45); box-shadow: 0 0 0 1px hsla(270,91%,65%,.25), 0 12px 40px -8px hsla(270,91%,65%,.35); }
-.businessos .os-glow-green:hover  { border-color: hsla(142,71%,45%,.45); box-shadow: 0 0 0 1px hsla(142,71%,45%,.25), 0 12px 40px -8px hsla(142,71%,45%,.35); }
-.businessos .os-glow-amber:hover  { border-color: hsla(38,92%,55%,.45);  box-shadow: 0 0 0 1px hsla(38,92%,55%,.25),  0 12px 40px -8px hsla(38,92%,55%,.35); }
-.businessos .os-glow-red:hover    { border-color: hsla(0,84%,60%,.45);   box-shadow: 0 0 0 1px hsla(0,84%,60%,.25),   0 12px 40px -8px hsla(0,84%,60%,.35); }
-.businessos .os-glow-cyan:hover   { border-color: hsla(189,94%,55%,.45); box-shadow: 0 0 0 1px hsla(189,94%,55%,.25), 0 12px 40px -8px hsla(189,94%,55%,.35); }
-.businessos .os-glow-pink:hover   { border-color: hsla(330,85%,65%,.45); box-shadow: 0 0 0 1px hsla(330,85%,65%,.25), 0 12px 40px -8px hsla(330,85%,65%,.35); }
-.businessos .os-glow-lime:hover   { border-color: hsla(84,81%,55%,.45);  box-shadow: 0 0 0 1px hsla(84,81%,55%,.25),  0 12px 40px -8px hsla(84,81%,55%,.35); }
+.businessos .os-glow-blue:hover   { border-color: hsla(var(--glow-blue),.45);   box-shadow: 0 0 0 1px hsla(var(--glow-blue),.22),   0 12px 40px -8px hsla(var(--glow-blue),.32); }
+.businessos .os-glow-purple:hover { border-color: hsla(var(--glow-purple),.45); box-shadow: 0 0 0 1px hsla(var(--glow-purple),.22), 0 12px 40px -8px hsla(var(--glow-purple),.32); }
+.businessos .os-glow-green:hover  { border-color: hsla(var(--glow-green),.45);  box-shadow: 0 0 0 1px hsla(var(--glow-green),.22),  0 12px 40px -8px hsla(var(--glow-green),.32); }
+.businessos .os-glow-amber:hover  { border-color: hsla(var(--glow-amber),.45);  box-shadow: 0 0 0 1px hsla(var(--glow-amber),.22),  0 12px 40px -8px hsla(var(--glow-amber),.32); }
+.businessos .os-glow-red:hover    { border-color: hsla(var(--glow-red),.45);    box-shadow: 0 0 0 1px hsla(var(--glow-red),.22),    0 12px 40px -8px hsla(var(--glow-red),.32); }
+.businessos .os-glow-cyan:hover   { border-color: hsla(var(--glow-cyan),.45);   box-shadow: 0 0 0 1px hsla(var(--glow-cyan),.22),   0 12px 40px -8px hsla(var(--glow-cyan),.32); }
+.businessos .os-glow-pink:hover   { border-color: hsla(var(--glow-pink),.45);   box-shadow: 0 0 0 1px hsla(var(--glow-pink),.22),   0 12px 40px -8px hsla(var(--glow-pink),.32); }
+.businessos .os-glow-lime:hover   { border-color: hsla(var(--glow-lime),.45);   box-shadow: 0 0 0 1px hsla(var(--glow-lime),.22),   0 12px 40px -8px hsla(var(--glow-lime),.32); }
 
 .businessos .os-sidebar-bg { background: hsl(var(--os-sidebar)); }
 
@@ -69,9 +72,9 @@
 }
 .businessos .os-nav-item:hover { background: hsla(0,0%,100%,.04); color: hsl(var(--os-text)); }
 .businessos .os-nav-item.active {
-  background: hsla(217,91%,60%,.12);
+  background: hsla(var(--glow-blue),.14);
   color: hsl(var(--os-text));
-  border-color: hsla(217,91%,60%,.25);
+  border-color: hsla(var(--glow-blue),.28);
 }
 
 .businessos input, .businessos textarea, .businessos select {
@@ -80,9 +83,42 @@
   color: hsl(var(--os-text));
 }
 .businessos input:focus, .businessos textarea:focus, .businessos select:focus {
-  outline: none; border-color: hsla(217,91%,60%,.5);
+  outline: none; border-color: hsla(var(--glow-blue),.55);
 }
 
 .businessos ::-webkit-scrollbar { width: 8px; height: 8px; }
 .businessos ::-webkit-scrollbar-thumb { background: hsla(0,0%,100%,.08); border-radius: 4px; }
 .businessos ::-webkit-scrollbar-track { background: transparent; }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Scoped Tailwind palette remap.
+   Business OS pages use raw Tailwind classes (e.g. from-blue-500,
+   to-purple-600). Inside the .businessos scope we re-tone those utilities
+   to the DigiFormation slate palette without touching component code,
+   preserving all hover/elevation/transition behavior.
+   ────────────────────────────────────────────────────────────────────────── */
+.businessos .from-blue-500     { --tw-gradient-from: hsl(215 22% 50%) var(--tw-gradient-from-position); --tw-gradient-to: hsl(215 22% 50% / 0) var(--tw-gradient-to-position); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.businessos .from-blue-500\/20 { --tw-gradient-from: hsl(215 22% 50% / .20) var(--tw-gradient-from-position); --tw-gradient-to: hsl(215 22% 50% / 0) var(--tw-gradient-to-position); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.businessos .from-blue-500\/30 { --tw-gradient-from: hsl(215 22% 50% / .30) var(--tw-gradient-from-position); --tw-gradient-to: hsl(215 22% 50% / 0) var(--tw-gradient-to-position); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.businessos .from-blue-500\/40 { --tw-gradient-from: hsl(215 22% 50% / .40) var(--tw-gradient-from-position); --tw-gradient-to: hsl(215 22% 50% / 0) var(--tw-gradient-to-position); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.businessos .from-violet-500\/20 { --tw-gradient-from: hsl(222 14% 55% / .20) var(--tw-gradient-from-position); --tw-gradient-to: hsl(222 14% 55% / 0) var(--tw-gradient-to-position); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+.businessos .from-amber-500    { --tw-gradient-from: hsl(36 50% 50%) var(--tw-gradient-from-position); --tw-gradient-to: hsl(36 50% 50% / 0) var(--tw-gradient-to-position); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+
+.businessos .to-purple-600     { --tw-gradient-to: hsl(222 18% 32%) var(--tw-gradient-to-position); }
+.businessos .to-purple-500\/20 { --tw-gradient-to: hsl(222 14% 55% / .20) var(--tw-gradient-to-position); }
+.businessos .to-purple-500\/10 { --tw-gradient-to: hsl(222 14% 55% / .10) var(--tw-gradient-to-position); }
+.businessos .to-purple-600\/40 { --tw-gradient-to: hsl(222 18% 38% / .40) var(--tw-gradient-to-position); }
+.businessos .to-indigo-500     { --tw-gradient-to: hsl(220 18% 38%) var(--tw-gradient-to-position); }
+.businessos .to-indigo-500\/10 { --tw-gradient-to: hsl(220 18% 38% / .10) var(--tw-gradient-to-position); }
+.businessos .to-cyan-500\/10   { --tw-gradient-to: hsl(205 22% 50% / .10) var(--tw-gradient-to-position); }
+.businessos .to-pink-500       { --tw-gradient-to: hsl(228 14% 50%) var(--tw-gradient-to-position); }
+
+/* Flat text/bg accents in tables, badges, dots */
+.businessos .text-blue-400   { color: hsl(215 30% 72%); }
+.businessos .text-purple-400 { color: hsl(222 18% 74%); }
+.businessos .text-cyan-400   { color: hsl(205 28% 72%); }
+.businessos .text-pink-400   { color: hsl(228 18% 74%); }
+.businessos .text-indigo-400 { color: hsl(220 22% 72%); }
+.businessos .text-violet-400 { color: hsl(222 18% 74%); }
+.businessos .bg-purple-400   { background-color: hsl(222 18% 65%); }
+.businessos .bg-blue-400     { background-color: hsl(215 28% 65%); }

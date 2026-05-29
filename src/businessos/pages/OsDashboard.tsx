@@ -26,7 +26,7 @@ function KpiCard({ k }: { k: Kpi }) {
   );
 }
 
-const PIE_COLORS = ["#3b82f6","#a855f7","#22c55e","#f59e0b","#ec4899","#06b6d4"];
+const PIE_COLORS = ["#7a8aa3","#5b6b85","#6c8a7b","#a89770","#8a7d9b","#728da0"];
 
 export default function OsDashboard() {
   const [kpi, setKpi] = useState<Kpi[]>([]);
@@ -119,8 +119,9 @@ export default function OsDashboard() {
                 <Bar dataKey="v" fill="url(#g1)" radius={[8,8,0,0]} />
                 <defs>
                   <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#3b82f6" />
-                    <stop offset="100%" stopColor="#a855f7" />
+                    <stop offset="0%" stopColor="hsl(215 22% 60%)" />
+                    <stop offset="100%" stopColor="hsl(222 18% 38%)" />
+
                   </linearGradient>
                 </defs>
               </BarChart>
