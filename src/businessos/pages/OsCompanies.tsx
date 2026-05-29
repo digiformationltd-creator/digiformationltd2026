@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { TableSkeleton } from "../components/Skeletons";
 import {
   Search, RefreshCw, Loader2, ExternalLink, Filter, Building2, MapPin,
   Calendar, AlertTriangle, CheckCircle2, Clock, User, FileText, Hash, XCircle,
@@ -271,7 +272,7 @@ export default function OsCompanies() {
 
       {/* Content */}
       {loading ? (
-        <div className="os-glass p-12 grid place-items-center"><Loader2 className="w-6 h-6 animate-spin text-white/60" /></div>
+        <div className="os-fade-in"><TableSkeleton columns={5} rows={6} /></div>
       ) : tab === "companies" ? (
         filteredCompanies.length === 0 ? (
           <div className="os-glass p-12 text-center text-white/50">

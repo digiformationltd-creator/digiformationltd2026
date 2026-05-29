@@ -6,6 +6,7 @@ import {
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
 } from "recharts";
+import { KpiGridSkeleton, ChartSkeleton, DonutSkeleton, ListSkeleton } from "../components/Skeletons";
 
 type Glow = "blue"|"purple"|"green"|"amber"|"red"|"cyan"|"pink"|"lime";
 type Kpi = { label: string; value: string; sub?: string; icon: any; glow: Glow };
@@ -29,6 +30,7 @@ function KpiCard({ k }: { k: Kpi }) {
 const PIE_COLORS = ["#7a8aa3","#5b6b85","#6c8a7b","#a89770","#8a7d9b","#728da0"];
 
 export default function OsDashboard() {
+  const [loading, setLoading] = useState(true);
   const [kpi, setKpi] = useState<Kpi[]>([]);
   const [revenue, setRevenue] = useState<{m:string;v:number}[]>([]);
   const [sources, setSources] = useState<{name:string;value:number}[]>([]);
@@ -95,14 +97,33 @@ export default function OsDashboard() {
         ...o.slice(0,4).map(x=>({type:"order",text:`New order ${x.order_ref} — ${x.service}`,at:x.created_at})),
         ...l.slice(0,4).map(x=>({type:"lead",text:`Lead: ${x.name} interested in ${x.service||"a service"}`,at:x.created_at})),
       ].sort((a,b)=> (b.at||"").localeCompare(a.at||"")).slice(0,8));
+      setLoading(false);
     })();
   }, []);
 
+  if (loading) {
+    return (
+      <div className="space-y-6 os-fade-in">
+        <KpiGridSkeleton />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <ChartSkeleton className="lg:col-span-2" />
+          <DonutSkeleton />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <ListSkeleton rows={5} />
+          <ListSkeleton rows={6} />
+          <ListSkeleton rows={4} />
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 os-fade-in">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {kpi.map((k,i) => <KpiCard key={i} k={k} />)}
       </div>
+
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="os-glass os-glow-blue p-5 lg:col-span-2">

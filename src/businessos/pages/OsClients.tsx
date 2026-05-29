@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { TableSkeleton } from "../components/Skeletons";
 import {
   Search, RefreshCw, Loader2, Mail, Phone, Building2,
   ChevronRight, Users, ExternalLink, Calendar,
@@ -110,8 +111,8 @@ export default function OsClients() {
 
       {/* Loading */}
       {loading && clients.length === 0 && (
-        <div className="os-glass p-12 grid place-items-center">
-          <Loader2 className="w-6 h-6 animate-spin text-white/50" />
+        <div className="os-fade-in">
+          <TableSkeleton columns={6} rows={8} />
         </div>
       )}
 

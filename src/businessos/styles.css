@@ -120,3 +120,43 @@
 .businessos .text-violet-400 { color: hsl(222 18% 74%); }
 .businessos .bg-purple-400   { background-color: hsl(222 18% 65%); }
 .businessos .bg-blue-400     { background-color: hsl(215 28% 65%); }
+
+/* --- Premium grayscale shimmer (Linear/Stripe-style) --- */
+.businessos .os-skel {
+  position: relative;
+  overflow: hidden;
+  background: hsla(0, 0%, 100%, 0.05);
+  isolation: isolate;
+}
+.businessos .os-skel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    transparent 0,
+    hsla(0, 0%, 100%, 0.045) 20%,
+    hsla(0, 0%, 100%, 0.09) 50%,
+    hsla(0, 0%, 100%, 0.045) 80%,
+    transparent 100%
+  );
+  animation: osShimmer 1.6s ease-in-out infinite;
+}
+@keyframes osShimmer {
+  100% { transform: translateX(100%); }
+}
+
+/* Subtle route/content fade-in (no layout shift) */
+.businessos .os-fade-in {
+  animation: osFadeIn 260ms ease-out both;
+}
+@keyframes osFadeIn {
+  from { opacity: 0; transform: translateY(2px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .businessos .os-skel::after { animation: none; }
+  .businessos .os-fade-in { animation: none; }
+}

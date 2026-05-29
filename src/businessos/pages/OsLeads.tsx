@@ -8,6 +8,7 @@ import {
 import { useDraggable } from "@dnd-kit/core";
 import { toast } from "sonner";
 import { Plus, X } from "lucide-react";
+import { PipelineSkeleton } from "../components/Skeletons";
 
 type Stage = "new"|"contacted"|"interested"|"followup"|"converted"|"closed"|"rejected";
 type Lead = {
@@ -70,6 +71,7 @@ function Column({ stage, leads }: { stage: typeof STAGES[number]; leads: Lead[] 
 
 export default function OsLeads() {
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeId, setActiveId] = useState<string|null>(null);
   const [params, setParams] = useSearchParams();
   const [showNew, setShowNew] = useState(params.get("new") === "1");
@@ -77,8 +79,9 @@ export default function OsLeads() {
 
   const load = async () => {
     const { data, error } = await supabase.from("leads").select("*").order("created_at",{ascending:false});
-    if (error) { toast.error(error.message); return; }
+    if (error) { toast.error(error.message); setLoading(false); return; }
     setLeads((data || []) as Lead[]);
+    setLoading(false);
   };
   useEffect(() => { load(); }, []);
 
@@ -120,14 +123,18 @@ export default function OsLeads() {
         </button>
       </div>
 
-      <DndContext sensors={sensors} collisionDetection={closestCorners}
-        onDragStart={(e: DragStartEvent)=>setActiveId(String(e.active.id))}
-        onDragEnd={onDragEnd}>
-        <div className="flex gap-4 overflow-x-auto pb-4">
-          {STAGES.map(s => <Column key={s.id} stage={s} leads={byStage[s.id]} />)}
-        </div>
-        <DragOverlay>{active ? <div className="w-[256px]"><LeadCard lead={active} /></div> : null}</DragOverlay>
-      </DndContext>
+      {loading && leads.length === 0 ? (
+        <div className="os-fade-in"><PipelineSkeleton columns={STAGES.length} /></div>
+      ) : (
+        <DndContext sensors={sensors} collisionDetection={closestCorners}
+          onDragStart={(e: DragStartEvent)=>setActiveId(String(e.active.id))}
+          onDragEnd={onDragEnd}>
+          <div className="flex gap-4 overflow-x-auto pb-4 os-fade-in">
+            {STAGES.map(s => <Column key={s.id} stage={s} leads={byStage[s.id]} />)}
+          </div>
+          <DragOverlay>{active ? <div className="w-[256px]"><LeadCard lead={active} /></div> : null}</DragOverlay>
+        </DndContext>
+      )}
 
       {showNew && <NewLeadModal onClose={() => { setShowNew(false); params.delete("new"); setParams(params); }} onCreated={load} />}
     </div>

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { TableSkeleton } from "../components/Skeletons";
 import {
   Search, RefreshCw, Loader2, ExternalLink, Filter, Upload, Download,
   Trash2, FileText, FileImage, FileArchive, File as FileIcon, User, Calendar,
@@ -286,9 +287,7 @@ export default function OsDocuments() {
 
       {/* Results */}
       {loading ? (
-        <div className="os-glass p-12 grid place-items-center">
-          <Loader2 className="w-6 h-6 animate-spin text-white/60" />
-        </div>
+        <div className="os-fade-in"><TableSkeleton columns={6} rows={7} /></div>
       ) : filtered.length === 0 ? (
         <div className="os-glass p-12 text-center text-white/50">
           <FileIcon className="w-8 h-8 mx-auto mb-3 opacity-50" />
