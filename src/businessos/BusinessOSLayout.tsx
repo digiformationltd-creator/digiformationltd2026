@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { checkAdminSession } from "@/lib/auth/session";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
+import OsErrorBoundary from "./ErrorBoundary";
 import "./styles.css";
 
 /**
