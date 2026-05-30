@@ -342,9 +342,46 @@ export default function OsOrders() {
                     <td className="py-3 px-4 text-right font-semibold whitespace-nowrap">{fmtGBP(Number(o.amount_gbp))}</td>
                     <td className="py-3 px-4 text-white/50 text-xs whitespace-nowrap">{fmtDate(o.order_date)}</td>
                     <td className="py-3 px-4 text-right">
-                      <div className="inline-flex items-center gap-1">
+                      <div
+                        className="inline-flex items-center gap-1 flex-wrap justify-end"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {o.status === "Pending" && (
+                          <button
+                            disabled={pendingId === o.id}
+                            onClick={() => updateStatus(o, "In Progress", "In Progress")}
+                            className="px-2 py-1 rounded-lg bg-blue-500/15 hover:bg-blue-500/25 text-[11px] text-blue-200 ring-1 ring-blue-400/30 inline-flex items-center gap-1 disabled:opacity-50"
+                            title="Mark as In Progress (sends client email)"
+                          >
+                            {pendingId === o.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Play className="w-3 h-3" />}
+                            Start
+                          </button>
+                        )}
+                        {(o.status === "In Progress" || o.status === "Delivered" || o.status === "Revision") && (
+                          <button
+                            disabled={pendingId === o.id}
+                            onClick={() => updateStatus(o, "Completed", "Completed")}
+                            className="px-2 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-[11px] text-emerald-200 ring-1 ring-emerald-400/30 inline-flex items-center gap-1 disabled:opacity-50"
+                            title="Mark as Completed (sends client email)"
+                          >
+                            {pendingId === o.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle2 className="w-3 h-3" />}
+                            Complete
+                          </button>
+                        )}
+                        {o.status !== "Completed" && o.status !== "Cancelled" && (
+                          <button
+                            disabled={pendingId === o.id}
+                            onClick={() => {
+                              if (confirm(`Cancel order ${o.order_ref}?`)) updateStatus(o, "Cancelled", "Cancelled");
+                            }}
+                            className="px-2 py-1 rounded-lg bg-white/[0.04] hover:bg-rose-500/15 hover:text-rose-200 text-[11px] text-white/60 inline-flex items-center gap-1 disabled:opacity-50"
+                            title="Cancel order"
+                          >
+                            <Ban className="w-3 h-3" />
+                          </button>
+                        )}
                         <button
-                          onClick={(e) => { e.stopPropagation(); openInvoiceInLegacy(o); }}
+                          onClick={() => openInvoiceInLegacy(o)}
                           className="px-2 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-[11px] text-white/70 inline-flex items-center gap-1"
                           title="Open invoices tab"
                         >
@@ -353,6 +390,7 @@ export default function OsOrders() {
                         <ChevronRight className="w-3.5 h-3.5 text-white/40" />
                       </div>
                     </td>
+
                   </tr>
                 ))}
               </tbody>
