@@ -485,12 +485,31 @@ export default function OsOrders() {
                             <Ban className="w-3 h-3" />
                           </button>
                         )}
+                        {!o.invoice_number ? (
+                          <button
+                            disabled={pendingId === o.id}
+                            onClick={() => generateInvoiceForOrder(o, true)}
+                            className="px-2 py-1 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 text-[11px] text-purple-200 ring-1 ring-purple-400/30 inline-flex items-center gap-1 disabled:opacity-50"
+                            title="Generate invoice + email client"
+                          >
+                            {pendingId === o.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <FilePlus className="w-3 h-3" />} Generate
+                          </button>
+                        ) : (
+                          <button
+                            disabled={pendingId === o.id}
+                            onClick={() => generateInvoiceForOrder(o, true)}
+                            className="px-2 py-1 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 text-[11px] text-purple-200 ring-1 ring-purple-400/30 inline-flex items-center gap-1 disabled:opacity-50"
+                            title="Resend invoice to client"
+                          >
+                            {pendingId === o.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />} Send
+                          </button>
+                        )}
                         <button
                           onClick={() => openInvoiceInLegacy(o)}
                           className="px-2 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-[11px] text-white/70 inline-flex items-center gap-1"
                           title="Open invoices tab"
                         >
-                          <FileText className="w-3 h-3" /> Invoice
+                          <FileText className="w-3 h-3" /> {o.invoice_number || "Invoice"}
                         </button>
                         <ChevronRight className="w-3.5 h-3.5 text-white/40" />
                       </div>
