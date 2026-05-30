@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { TableSkeleton } from "../components/Skeletons";
+import { generateInvoiceNumber, SERVICE_CODES } from "@/lib/invoice";
 import {
   Search, RefreshCw, Loader2, ChevronRight, ShoppingBag,
   ExternalLink, Filter, CheckCircle2, Clock, Truck, RotateCcw, XCircle, Hourglass,
-  FileText, Mail, User, PoundSterling, Play, Ban,
+  FileText, Mail, User, PoundSterling, Play, Ban, Send, FilePlus,
 } from "lucide-react";
 
 interface OrderRow {
@@ -80,10 +81,10 @@ export default function OsOrders() {
   const [pendingId, setPendingId] = useState<string | null>(null);
 
   /**
-   * Inline status mutation. Preserves the existing Legacy Admin flow:
-   * a single UPDATE on client_orders.status — the same DB triggers + email
-   * automations fire (order-in-progress, order-completed). Optimistic UI,
-   * rollback on error, no new edge functions.
+   * Inline status mutation. Mirrors Legacy Admin: update client_orders.status,
+   * then fire the matching transactional email (order-in-progress / order-completed)
+   * via the existing send-transactional-email edge function. Optimistic UI,
+   * rollback on error, no new infrastructure.
    */
   const updateStatus = async (o: OrderRow, status: string, label: string) => {
     if (o.status === status) return;
@@ -100,8 +101,112 @@ export default function OsOrders() {
       toast.error(error.message || "Update failed");
       return;
     }
-    toast.success(`${o.order_ref} → ${label}`);
+
+    // Fire client notification email (fire-and-forget, matches Legacy behaviour)
+    const email = o.customer_email;
+    if (email) {
+      let templateName: string | null = null;
+      let idemKey = "";
+      if (/progress/i.test(status))  { templateName = "order-in-progress"; idemKey = `order-in-progress-${o.id}`; }
+      else if (/complete/i.test(status)) { templateName = "order-completed";  idemKey = `order-completed-${o.id}`; }
+      if (templateName) {
+        supabase.functions.invoke("send-transactional-email", {
+          body: {
+            templateName,
+            recipientEmail: email,
+            idempotencyKey: idemKey,
+            templateData: {
+              customerName: o.customer_name || "",
+              orderRef: o.order_ref,
+              service: o.service,
+            },
+          },
+        }).catch(console.error);
+      }
+    }
+    toast.success(`${o.order_ref} → ${label}${email ? " · client notified" : ""}`);
   };
+
+  /**
+   * Generate an invoice row for an order if none exists, then optionally
+   * email it. Mirrors Legacy Admin's addOrder→invoice insert pattern using
+   * the same invoice numbering helper. No PDF generation here (that's the
+   * checkout/edge-function flow); the row is created as Unpaid so the
+   * client can see it in their portal and Legacy Admin can attach a PDF.
+   */
+  const generateInvoiceForOrder = async (o: OrderRow, alsoSend: boolean) => {
+    setPendingId(o.id);
+    try {
+      // Idempotency: re-use existing invoice if one is already linked
+      let { data: existing } = await supabase
+        .from("invoices")
+        .select("id, invoice_number, bill_to_email, bill_to_name, total_gbp, service_description, status, currency")
+        .eq("order_id", o.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      let invoice = existing;
+      if (!invoice) {
+        const code = "O";
+        const number = await generateInvoiceNumber(code);
+        const amount = Number(o.amount_gbp) || 0;
+        const { data: inserted, error: insErr } = await supabase
+          .from("invoices")
+          .insert({
+            user_id: o.user_id,
+            order_id: o.id,
+            invoice_number: number,
+            service_code: code,
+            service_description: o.service || SERVICE_CODES[code] || "Service",
+            bill_to_name: o.customer_name || null,
+            bill_to_email: o.customer_email || null,
+            amount_gbp: amount,
+            vat_rate: 0,
+            vat_gbp: 0,
+            total_gbp: amount,
+            status: "Unpaid",
+          })
+          .select("id, invoice_number, bill_to_email, bill_to_name, total_gbp, service_description, status, currency")
+          .single();
+        if (insErr) throw insErr;
+        invoice = inserted;
+        toast.success(`Invoice ${invoice!.invoice_number} created`);
+      }
+
+      if (alsoSend) {
+        const to = invoice!.bill_to_email || o.customer_email;
+        if (!to) {
+          toast.error("Invoice created but no client email on file");
+        } else {
+          const { error } = await supabase.functions.invoke("send-transactional-email", {
+            body: {
+              templateName: "invoice-issued",
+              recipientEmail: to,
+              idempotencyKey: `invoice-issued-${invoice!.invoice_number}`,
+              templateData: {
+                customerName: invoice!.bill_to_name || o.customer_name || "",
+                invoiceNumber: invoice!.invoice_number,
+                amount: fmtGBP(Number(invoice!.total_gbp)),
+                service: invoice!.service_description,
+              },
+            },
+          });
+          if (error) throw error;
+          if (invoice!.status === "Unpaid") {
+            await supabase.from("invoices").update({ status: "Sent" }).eq("id", invoice!.id);
+          }
+          toast.success(`Invoice ${invoice!.invoice_number} emailed to ${to}`);
+        }
+      }
+      await load();
+    } catch (e: any) {
+      toast.error(e?.message || "Invoice action failed");
+    } finally {
+      setPendingId(null);
+    }
+  };
+
 
 
   const load = async () => {
@@ -380,12 +485,31 @@ export default function OsOrders() {
                             <Ban className="w-3 h-3" />
                           </button>
                         )}
+                        {!o.invoice_number ? (
+                          <button
+                            disabled={pendingId === o.id}
+                            onClick={() => generateInvoiceForOrder(o, true)}
+                            className="px-2 py-1 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 text-[11px] text-purple-200 ring-1 ring-purple-400/30 inline-flex items-center gap-1 disabled:opacity-50"
+                            title="Generate invoice + email client"
+                          >
+                            {pendingId === o.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <FilePlus className="w-3 h-3" />} Generate
+                          </button>
+                        ) : (
+                          <button
+                            disabled={pendingId === o.id}
+                            onClick={() => generateInvoiceForOrder(o, true)}
+                            className="px-2 py-1 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 text-[11px] text-purple-200 ring-1 ring-purple-400/30 inline-flex items-center gap-1 disabled:opacity-50"
+                            title="Resend invoice to client"
+                          >
+                            {pendingId === o.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />} Send
+                          </button>
+                        )}
                         <button
                           onClick={() => openInvoiceInLegacy(o)}
                           className="px-2 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-[11px] text-white/70 inline-flex items-center gap-1"
                           title="Open invoices tab"
                         >
-                          <FileText className="w-3 h-3" /> Invoice
+                          <FileText className="w-3 h-3" /> {o.invoice_number || "Invoice"}
                         </button>
                         <ChevronRight className="w-3.5 h-3.5 text-white/40" />
                       </div>
@@ -457,11 +581,12 @@ export default function OsOrders() {
                   </button>
                 )}
                 <button
-                  onClick={() => openInvoiceInLegacy(o)}
-                  className="flex-1 min-w-[110px] text-[11px] font-medium rounded-lg py-2 text-center bg-white/[0.04] hover:bg-white/[0.08] text-white/70 inline-flex items-center justify-center gap-1"
+                  disabled={pendingId === o.id}
+                  onClick={() => generateInvoiceForOrder(o, true)}
+                  className="flex-1 min-w-[110px] text-[11px] font-semibold rounded-lg py-2 text-center bg-purple-500/15 ring-1 ring-purple-400/30 text-purple-200 inline-flex items-center justify-center gap-1 disabled:opacity-50"
                 >
-                  <FileText className="w-3 h-3" />
-                  {o.invoice_number ? `${o.invoice_number}` : "Invoice"}
+                  {pendingId === o.id ? <Loader2 className="w-3 h-3 animate-spin" /> : (o.invoice_number ? <Send className="w-3 h-3" /> : <FilePlus className="w-3 h-3" />)}
+                  {o.invoice_number ? `Send ${o.invoice_number}` : "Generate Invoice"}
                 </button>
                 <button
                   onClick={() => openOrderInLegacy(o)}
