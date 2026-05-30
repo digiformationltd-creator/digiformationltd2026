@@ -77,6 +77,32 @@ export default function OsOrders() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [dateRange, setDateRange] = useState<string>("all");
+  const [pendingId, setPendingId] = useState<string | null>(null);
+
+  /**
+   * Inline status mutation. Preserves the existing Legacy Admin flow:
+   * a single UPDATE on client_orders.status — the same DB triggers + email
+   * automations fire (order-in-progress, order-completed). Optimistic UI,
+   * rollback on error, no new edge functions.
+   */
+  const updateStatus = async (o: OrderRow, status: string, label: string) => {
+    if (o.status === status) return;
+    setPendingId(o.id);
+    const prev = orders;
+    setOrders((rows) => rows.map((r) => (r.id === o.id ? { ...r, status } : r)));
+    const { error } = await supabase
+      .from("client_orders")
+      .update({ status })
+      .eq("id", o.id);
+    setPendingId(null);
+    if (error) {
+      setOrders(prev);
+      toast.error(error.message || "Update failed");
+      return;
+    }
+    toast.success(`${o.order_ref} → ${label}`);
+  };
+
 
   const load = async () => {
     setLoading(true);
