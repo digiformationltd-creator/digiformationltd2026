@@ -6,7 +6,7 @@ import { TableSkeleton } from "../components/Skeletons";
 import {
   Search, RefreshCw, Loader2, ChevronRight, ShoppingBag,
   ExternalLink, Filter, CheckCircle2, Clock, Truck, RotateCcw, XCircle, Hourglass,
-  FileText, Mail, User, PoundSterling,
+  FileText, Mail, User, PoundSterling, Play, Ban,
 } from "lucide-react";
 
 interface OrderRow {
