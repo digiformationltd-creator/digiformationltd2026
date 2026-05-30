@@ -72,17 +72,20 @@ export default function BusinessOSLayout() {
       // Verify the session is REALLY gone (with a brief retry) before kicking
       // the user out — prevents desktop forced-logout during refresh storms.
       if (event === "SIGNED_OUT") {
-        setTimeout(async () => {
-          const { data } = await supabase.auth.getSession();
-          if (data.session) return; // false alarm — session restored
-          setTimeout(async () => {
-            const { data: data2 } = await supabase.auth.getSession();
-            if (data2.session) return;
-            wasAllowedRef.current = false;
-            setAllowed(false);
-            navigate("/auth", { replace: true });
-          }, 1500);
-        }, 400);
+        // 3-stage debounce across ~6s — autoRefreshToken often restores the
+        // session after a transient refresh-storm / 429. Only redirect if the
+        // session is still gone at the end of the window.
+        const delays = [500, 2000, 4000];
+        (async () => {
+          for (const d of delays) {
+            await new Promise((r) => setTimeout(r, d));
+            const { data } = await supabase.auth.getSession();
+            if (data.session) return;
+          }
+          wasAllowedRef.current = false;
+          setAllowed(false);
+          navigate("/auth", { replace: true });
+        })();
       }
     });
 
