@@ -81,10 +81,10 @@ export default function OsOrders() {
   const [pendingId, setPendingId] = useState<string | null>(null);
 
   /**
-   * Inline status mutation. Preserves the existing Legacy Admin flow:
-   * a single UPDATE on client_orders.status — the same DB triggers + email
-   * automations fire (order-in-progress, order-completed). Optimistic UI,
-   * rollback on error, no new edge functions.
+   * Inline status mutation. Mirrors Legacy Admin: update client_orders.status,
+   * then fire the matching transactional email (order-in-progress / order-completed)
+   * via the existing send-transactional-email edge function. Optimistic UI,
+   * rollback on error, no new infrastructure.
    */
   const updateStatus = async (o: OrderRow, status: string, label: string) => {
     if (o.status === status) return;
@@ -101,8 +101,112 @@ export default function OsOrders() {
       toast.error(error.message || "Update failed");
       return;
     }
-    toast.success(`${o.order_ref} → ${label}`);
+
+    // Fire client notification email (fire-and-forget, matches Legacy behaviour)
+    const email = o.customer_email;
+    if (email) {
+      let templateName: string | null = null;
+      let idemKey = "";
+      if (/progress/i.test(status))  { templateName = "order-in-progress"; idemKey = `order-in-progress-${o.id}`; }
+      else if (/complete/i.test(status)) { templateName = "order-completed";  idemKey = `order-completed-${o.id}`; }
+      if (templateName) {
+        supabase.functions.invoke("send-transactional-email", {
+          body: {
+            templateName,
+            recipientEmail: email,
+            idempotencyKey: idemKey,
+            templateData: {
+              customerName: o.customer_name || "",
+              orderRef: o.order_ref,
+              service: o.service,
+            },
+          },
+        }).catch(console.error);
+      }
+    }
+    toast.success(`${o.order_ref} → ${label}${email ? " · client notified" : ""}`);
   };
+
+  /**
+   * Generate an invoice row for an order if none exists, then optionally
+   * email it. Mirrors Legacy Admin's addOrder→invoice insert pattern using
+   * the same invoice numbering helper. No PDF generation here (that's the
+   * checkout/edge-function flow); the row is created as Unpaid so the
+   * client can see it in their portal and Legacy Admin can attach a PDF.
+   */
+  const generateInvoiceForOrder = async (o: OrderRow, alsoSend: boolean) => {
+    setPendingId(o.id);
+    try {
+      // Idempotency: re-use existing invoice if one is already linked
+      let { data: existing } = await supabase
+        .from("invoices")
+        .select("id, invoice_number, bill_to_email, bill_to_name, total_gbp, service_description, status, currency")
+        .eq("order_id", o.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      let invoice = existing;
+      if (!invoice) {
+        const code = "O";
+        const number = await generateInvoiceNumber(code);
+        const amount = Number(o.amount_gbp) || 0;
+        const { data: inserted, error: insErr } = await supabase
+          .from("invoices")
+          .insert({
+            user_id: o.user_id,
+            order_id: o.id,
+            invoice_number: number,
+            service_code: code,
+            service_description: o.service || SERVICE_CODES[code] || "Service",
+            bill_to_name: o.customer_name || null,
+            bill_to_email: o.customer_email || null,
+            amount_gbp: amount,
+            vat_rate: 0,
+            vat_gbp: 0,
+            total_gbp: amount,
+            status: "Unpaid",
+          })
+          .select("id, invoice_number, bill_to_email, bill_to_name, total_gbp, service_description, status, currency")
+          .single();
+        if (insErr) throw insErr;
+        invoice = inserted;
+        toast.success(`Invoice ${invoice!.invoice_number} created`);
+      }
+
+      if (alsoSend) {
+        const to = invoice!.bill_to_email || o.customer_email;
+        if (!to) {
+          toast.error("Invoice created but no client email on file");
+        } else {
+          const { error } = await supabase.functions.invoke("send-transactional-email", {
+            body: {
+              templateName: "invoice-issued",
+              recipientEmail: to,
+              idempotencyKey: `invoice-issued-${invoice!.invoice_number}`,
+              templateData: {
+                customerName: invoice!.bill_to_name || o.customer_name || "",
+                invoiceNumber: invoice!.invoice_number,
+                amount: fmtGBP(Number(invoice!.total_gbp)),
+                service: invoice!.service_description,
+              },
+            },
+          });
+          if (error) throw error;
+          if (invoice!.status === "Unpaid") {
+            await supabase.from("invoices").update({ status: "Sent" }).eq("id", invoice!.id);
+          }
+          toast.success(`Invoice ${invoice!.invoice_number} emailed to ${to}`);
+        }
+      }
+      await load();
+    } catch (e: any) {
+      toast.error(e?.message || "Invoice action failed");
+    } finally {
+      setPendingId(null);
+    }
+  };
+
 
 
   const load = async () => {
