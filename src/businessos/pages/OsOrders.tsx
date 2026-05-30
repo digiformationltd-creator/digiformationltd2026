@@ -403,10 +403,12 @@ export default function OsOrders() {
       {filtered.length > 0 && (
         <div className="md:hidden space-y-3">
           {filtered.map((o) => (
-            <button
+            <div
               key={o.id}
               onClick={() => openOrderInLegacy(o)}
-              className="os-glass p-4 w-full text-left active:scale-[0.99] transition"
+              role="button"
+              tabIndex={0}
+              className="os-glass p-4 w-full text-left active:scale-[0.99] transition cursor-pointer"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
