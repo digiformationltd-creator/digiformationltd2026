@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { TableSkeleton } from "../components/Skeletons";
+import { generateInvoiceNumber, SERVICE_CODES } from "@/lib/invoice";
 import {
   Search, RefreshCw, Loader2, ChevronRight, ShoppingBag,
   ExternalLink, Filter, CheckCircle2, Clock, Truck, RotateCcw, XCircle, Hourglass,
-  FileText, Mail, User, PoundSterling, Play, Ban,
+  FileText, Mail, User, PoundSterling, Play, Ban, Send, FilePlus,
 } from "lucide-react";
 
 interface OrderRow {
