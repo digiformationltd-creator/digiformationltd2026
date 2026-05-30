@@ -6,7 +6,7 @@ import { TableSkeleton } from "../components/Skeletons";
 import {
   Search, RefreshCw, Loader2, ChevronRight, ShoppingBag,
   ExternalLink, Filter, CheckCircle2, Clock, Truck, RotateCcw, XCircle, Hourglass,
-  FileText, Mail, User, PoundSterling,
+  FileText, Mail, User, PoundSterling, Play, Ban,
 } from "lucide-react";
 
 interface OrderRow {
@@ -77,6 +77,32 @@ export default function OsOrders() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [dateRange, setDateRange] = useState<string>("all");
+  const [pendingId, setPendingId] = useState<string | null>(null);
+
+  /**
+   * Inline status mutation. Preserves the existing Legacy Admin flow:
+   * a single UPDATE on client_orders.status — the same DB triggers + email
+   * automations fire (order-in-progress, order-completed). Optimistic UI,
+   * rollback on error, no new edge functions.
+   */
+  const updateStatus = async (o: OrderRow, status: string, label: string) => {
+    if (o.status === status) return;
+    setPendingId(o.id);
+    const prev = orders;
+    setOrders((rows) => rows.map((r) => (r.id === o.id ? { ...r, status } : r)));
+    const { error } = await supabase
+      .from("client_orders")
+      .update({ status })
+      .eq("id", o.id);
+    setPendingId(null);
+    if (error) {
+      setOrders(prev);
+      toast.error(error.message || "Update failed");
+      return;
+    }
+    toast.success(`${o.order_ref} → ${label}`);
+  };
+
 
   const load = async () => {
     setLoading(true);
@@ -316,9 +342,46 @@ export default function OsOrders() {
                     <td className="py-3 px-4 text-right font-semibold whitespace-nowrap">{fmtGBP(Number(o.amount_gbp))}</td>
                     <td className="py-3 px-4 text-white/50 text-xs whitespace-nowrap">{fmtDate(o.order_date)}</td>
                     <td className="py-3 px-4 text-right">
-                      <div className="inline-flex items-center gap-1">
+                      <div
+                        className="inline-flex items-center gap-1 flex-wrap justify-end"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {o.status === "Pending" && (
+                          <button
+                            disabled={pendingId === o.id}
+                            onClick={() => updateStatus(o, "In Progress", "In Progress")}
+                            className="px-2 py-1 rounded-lg bg-blue-500/15 hover:bg-blue-500/25 text-[11px] text-blue-200 ring-1 ring-blue-400/30 inline-flex items-center gap-1 disabled:opacity-50"
+                            title="Mark as In Progress (sends client email)"
+                          >
+                            {pendingId === o.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Play className="w-3 h-3" />}
+                            Start
+                          </button>
+                        )}
+                        {(o.status === "In Progress" || o.status === "Delivered" || o.status === "Revision") && (
+                          <button
+                            disabled={pendingId === o.id}
+                            onClick={() => updateStatus(o, "Completed", "Completed")}
+                            className="px-2 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-[11px] text-emerald-200 ring-1 ring-emerald-400/30 inline-flex items-center gap-1 disabled:opacity-50"
+                            title="Mark as Completed (sends client email)"
+                          >
+                            {pendingId === o.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle2 className="w-3 h-3" />}
+                            Complete
+                          </button>
+                        )}
+                        {o.status !== "Completed" && o.status !== "Cancelled" && (
+                          <button
+                            disabled={pendingId === o.id}
+                            onClick={() => {
+                              if (confirm(`Cancel order ${o.order_ref}?`)) updateStatus(o, "Cancelled", "Cancelled");
+                            }}
+                            className="px-2 py-1 rounded-lg bg-white/[0.04] hover:bg-rose-500/15 hover:text-rose-200 text-[11px] text-white/60 inline-flex items-center gap-1 disabled:opacity-50"
+                            title="Cancel order"
+                          >
+                            <Ban className="w-3 h-3" />
+                          </button>
+                        )}
                         <button
-                          onClick={(e) => { e.stopPropagation(); openInvoiceInLegacy(o); }}
+                          onClick={() => openInvoiceInLegacy(o)}
                           className="px-2 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-[11px] text-white/70 inline-flex items-center gap-1"
                           title="Open invoices tab"
                         >
@@ -327,6 +390,7 @@ export default function OsOrders() {
                         <ChevronRight className="w-3.5 h-3.5 text-white/40" />
                       </div>
                     </td>
+
                   </tr>
                 ))}
               </tbody>
@@ -339,10 +403,12 @@ export default function OsOrders() {
       {filtered.length > 0 && (
         <div className="md:hidden space-y-3">
           {filtered.map((o) => (
-            <button
+            <div
               key={o.id}
               onClick={() => openOrderInLegacy(o)}
-              className="os-glass p-4 w-full text-left active:scale-[0.99] transition"
+              role="button"
+              tabIndex={0}
+              className="os-glass p-4 w-full text-left active:scale-[0.99] transition cursor-pointer"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
@@ -368,22 +434,44 @@ export default function OsOrders() {
                   <div className="text-[10px] text-white/40 mt-0.5">{fmtDate(o.order_date)}</div>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-white/5">
-                <span
-                  onClick={(e) => { e.stopPropagation(); openOrderInLegacy(o); }}
-                  className="text-[11px] font-medium rounded-lg py-1.5 text-center bg-white/[0.04] hover:bg-white/[0.08] text-white/70 inline-flex items-center justify-center gap-1"
-                >
-                  <ShoppingBag className="w-3 h-3" /> Manage Order
-                </span>
-                <span
-                  onClick={(e) => { e.stopPropagation(); openInvoiceInLegacy(o); }}
-                  className="text-[11px] font-medium rounded-lg py-1.5 text-center bg-white/[0.04] hover:bg-white/[0.08] text-white/70 inline-flex items-center justify-center gap-1"
+              <div
+                className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-white/5"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {o.status === "Pending" && (
+                  <button
+                    disabled={pendingId === o.id}
+                    onClick={() => updateStatus(o, "In Progress", "In Progress")}
+                    className="flex-1 min-w-[110px] text-[11px] font-semibold rounded-lg py-2 text-center bg-blue-500/15 ring-1 ring-blue-400/30 text-blue-200 inline-flex items-center justify-center gap-1 disabled:opacity-50"
+                  >
+                    {pendingId === o.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Play className="w-3 h-3" />} Start
+                  </button>
+                )}
+                {(o.status === "In Progress" || o.status === "Delivered" || o.status === "Revision") && (
+                  <button
+                    disabled={pendingId === o.id}
+                    onClick={() => updateStatus(o, "Completed", "Completed")}
+                    className="flex-1 min-w-[110px] text-[11px] font-semibold rounded-lg py-2 text-center bg-emerald-500/15 ring-1 ring-emerald-400/30 text-emerald-200 inline-flex items-center justify-center gap-1 disabled:opacity-50"
+                  >
+                    {pendingId === o.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle2 className="w-3 h-3" />} Complete
+                  </button>
+                )}
+                <button
+                  onClick={() => openInvoiceInLegacy(o)}
+                  className="flex-1 min-w-[110px] text-[11px] font-medium rounded-lg py-2 text-center bg-white/[0.04] hover:bg-white/[0.08] text-white/70 inline-flex items-center justify-center gap-1"
                 >
                   <FileText className="w-3 h-3" />
                   {o.invoice_number ? `${o.invoice_number}` : "Invoice"}
-                </span>
+                </button>
+                <button
+                  onClick={() => openOrderInLegacy(o)}
+                  className="flex-1 min-w-[110px] text-[11px] font-medium rounded-lg py-2 text-center bg-white/[0.04] hover:bg-white/[0.08] text-white/70 inline-flex items-center justify-center gap-1"
+                >
+                  <ShoppingBag className="w-3 h-3" /> Manage
+                </button>
               </div>
-            </button>
+
+            </div>
           ))}
         </div>
       )}
