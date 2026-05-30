@@ -432,21 +432,43 @@ export default function OsOrders() {
                   <div className="text-[10px] text-white/40 mt-0.5">{fmtDate(o.order_date)}</div>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-white/5">
-                <span
-                  onClick={(e) => { e.stopPropagation(); openOrderInLegacy(o); }}
-                  className="text-[11px] font-medium rounded-lg py-1.5 text-center bg-white/[0.04] hover:bg-white/[0.08] text-white/70 inline-flex items-center justify-center gap-1"
-                >
-                  <ShoppingBag className="w-3 h-3" /> Manage Order
-                </span>
-                <span
-                  onClick={(e) => { e.stopPropagation(); openInvoiceInLegacy(o); }}
-                  className="text-[11px] font-medium rounded-lg py-1.5 text-center bg-white/[0.04] hover:bg-white/[0.08] text-white/70 inline-flex items-center justify-center gap-1"
+              <div
+                className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-white/5"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {o.status === "Pending" && (
+                  <button
+                    disabled={pendingId === o.id}
+                    onClick={() => updateStatus(o, "In Progress", "In Progress")}
+                    className="flex-1 min-w-[110px] text-[11px] font-semibold rounded-lg py-2 text-center bg-blue-500/15 ring-1 ring-blue-400/30 text-blue-200 inline-flex items-center justify-center gap-1 disabled:opacity-50"
+                  >
+                    {pendingId === o.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Play className="w-3 h-3" />} Start
+                  </button>
+                )}
+                {(o.status === "In Progress" || o.status === "Delivered" || o.status === "Revision") && (
+                  <button
+                    disabled={pendingId === o.id}
+                    onClick={() => updateStatus(o, "Completed", "Completed")}
+                    className="flex-1 min-w-[110px] text-[11px] font-semibold rounded-lg py-2 text-center bg-emerald-500/15 ring-1 ring-emerald-400/30 text-emerald-200 inline-flex items-center justify-center gap-1 disabled:opacity-50"
+                  >
+                    {pendingId === o.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle2 className="w-3 h-3" />} Complete
+                  </button>
+                )}
+                <button
+                  onClick={() => openInvoiceInLegacy(o)}
+                  className="flex-1 min-w-[110px] text-[11px] font-medium rounded-lg py-2 text-center bg-white/[0.04] hover:bg-white/[0.08] text-white/70 inline-flex items-center justify-center gap-1"
                 >
                   <FileText className="w-3 h-3" />
                   {o.invoice_number ? `${o.invoice_number}` : "Invoice"}
-                </span>
+                </button>
+                <button
+                  onClick={() => openOrderInLegacy(o)}
+                  className="flex-1 min-w-[110px] text-[11px] font-medium rounded-lg py-2 text-center bg-white/[0.04] hover:bg-white/[0.08] text-white/70 inline-flex items-center justify-center gap-1"
+                >
+                  <ShoppingBag className="w-3 h-3" /> Manage
+                </button>
               </div>
+
             </button>
           ))}
         </div>
