@@ -581,11 +581,12 @@ export default function OsOrders() {
                   </button>
                 )}
                 <button
-                  onClick={() => openInvoiceInLegacy(o)}
-                  className="flex-1 min-w-[110px] text-[11px] font-medium rounded-lg py-2 text-center bg-white/[0.04] hover:bg-white/[0.08] text-white/70 inline-flex items-center justify-center gap-1"
+                  disabled={pendingId === o.id}
+                  onClick={() => generateInvoiceForOrder(o, true)}
+                  className="flex-1 min-w-[110px] text-[11px] font-semibold rounded-lg py-2 text-center bg-purple-500/15 ring-1 ring-purple-400/30 text-purple-200 inline-flex items-center justify-center gap-1 disabled:opacity-50"
                 >
-                  <FileText className="w-3 h-3" />
-                  {o.invoice_number ? `${o.invoice_number}` : "Invoice"}
+                  {pendingId === o.id ? <Loader2 className="w-3 h-3 animate-spin" /> : (o.invoice_number ? <Send className="w-3 h-3" /> : <FilePlus className="w-3 h-3" />)}
+                  {o.invoice_number ? `Send ${o.invoice_number}` : "Generate Invoice"}
                 </button>
                 <button
                   onClick={() => openOrderInLegacy(o)}
