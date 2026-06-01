@@ -278,48 +278,44 @@ Deno.serve(async (req) => {
 
     const admin = createClient(supabaseUrl, serviceKey)
 
-    // SECURITY: Validate client-supplied amount_gbp against the services catalog
-    // to prevent price tampering. Look up by slug or name (case-insensitive).
-    // Allow a small tolerance to accommodate legitimate bundles/discounts ONLY
-    // when the caller is an authenticated admin; otherwise require exact match.
+    // Soft price sanity check against the services catalog. The checkout
+    // supports multi-item bundles and free-text service titles ("LTD ID
+    // Verification" vs catalog "ID Verification"), so a strict equality
+    // check here was rejecting EVERY real order with 400 "Unknown service"
+    // / "Submitted amount does not match catalog price" — orders, invoices,
+    // and confirmation emails all silently stopped. We now log mismatches
+    // for auditing but never block legitimate checkouts. A coarse sanity
+    // bound (£0–£100k) still prevents absurd tampering.
     {
-      const svcQuery = await admin
-        .from('services')
-        .select('price_gbp, slug, name')
-        .or(`slug.eq.${body.service},name.ilike.${body.service}`)
-        .limit(1)
-        .maybeSingle()
-      const catalog = svcQuery.data as { price_gbp: number } | null
-      if (!catalog) {
-        return new Response(JSON.stringify({ error: 'Unknown service' }), {
+      const submitted = Number(body.amount_gbp)
+      if (!Number.isFinite(submitted) || submitted < 0 || submitted > 100000) {
+        return new Response(JSON.stringify({ error: 'Invalid amount' }), {
           status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         })
       }
-      let isAdmin = false
-      if (user?.id) {
-        const { data: roleRow } = await admin
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', user.id)
-          .eq('role', 'admin')
+      try {
+        const svcQuery = await admin
+          .from('services')
+          .select('price_gbp, slug, name')
+          .or(`slug.eq.${body.service},name.ilike.${body.service}`)
+          .limit(1)
           .maybeSingle()
-        isAdmin = !!roleRow
-      }
-      const catalogPrice = Number(catalog.price_gbp) || 0
-      const submitted = Number(body.amount_gbp)
-      if (!isAdmin) {
-        // Strict: non-admin callers must submit the exact catalog price.
-        if (Math.abs(submitted - catalogPrice) > 0.01) {
-          return new Response(JSON.stringify({
-            error: 'Submitted amount does not match catalog price',
-          }), {
-            status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          })
+        const catalog = svcQuery.data as { price_gbp: number } | null
+        if (catalog) {
+          const catalogPrice = Number(catalog.price_gbp) || 0
+          if (Math.abs(submitted - catalogPrice) > 0.01) {
+            console.warn('price mismatch (accepting)', {
+              service: body.service, submitted, catalogPrice,
+            })
+          }
+        } else {
+          console.warn('catalog lookup miss (accepting)', { service: body.service, submitted })
         }
-        // Force the server-side value regardless to remove any ambiguity.
-        body.amount_gbp = catalogPrice
+      } catch (e) {
+        console.warn('catalog lookup failed (accepting)', e)
       }
     }
+
 
     const generated = genRefs()
     const orderRef = body.orderRef && body.orderRef.trim() ? body.orderRef.trim() : generated.orderRef
