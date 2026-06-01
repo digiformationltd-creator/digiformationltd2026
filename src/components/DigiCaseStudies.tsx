@@ -1,82 +1,100 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, ShieldCheck, Clock, BadgeCheck, UserCheck } from "lucide-react";
 
-const cases = [
-  {
-    tag: "LTD Formation",
-    title: "Full LTD setup in 3 to 5 days",
-    points: [
-      "ID Verification",
-      "Company Formation",
-      "Banks",
-    ],
-    href: "/uk-services/uk-ltd-formation/choose-jurisdiction",
-  },
-  {
-    tag: "We launch your US business end-to-end",
-    title: "LLC Formation",
-    points: [
-      "LLC Formation",
-      "EIN",
-      "Banks",
-    ],
-    href: "/usa-services/us-llc-formation/choose-state",
-  },
-  {
-    tag: "UK Compliance",
-    title: "Annual filing handled end-to-end",
-    points: [
-      "Confirmation statement filed on time",
-      "Annual accounts prepared and submitted",
-      "Director and PSC records kept fully compliant",
-    ],
-    href: "/uk-compliance",
-  },
-];
-
+/**
+ * "Verify Your Identity for Your UK Ltd" section.
+ * Replaces the previous Case Studies block — keeps the same file name so the
+ * existing import slot in Index.tsx continues to work.
+ */
 const DigiCaseStudies = () => (
-  <section className="py-14 md:py-10 relative overflow-hidden border-y border-border/40">
+  <section className="py-14 md:py-20 relative overflow-hidden border-y border-border/40">
     <div className="absolute inset-0 grid-pattern opacity-15 pointer-events-none" />
     <div className="container mx-auto px-4 relative z-10">
-      <div className="text-center max-w-3xl mx-auto mb-16">
-        <div className="mb-5 text-sm md:text-base uppercase tracking-[0.18em] font-semibold text-primary">Case Studies</div>
-        <h2 data-reveal="rise" className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
-          Real founders. <em className="not-italic text-gradient">Real results.</em>
-        </h2>
-      </div>
+      <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        {/* Copy */}
+        <div data-reveal="rise">
+          <div className="mb-4 text-sm md:text-base uppercase tracking-[0.18em] font-semibold text-primary">
+            Identity Verification
+          </div>
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
+            Verify Your Identity for Your{" "}
+            <em className="not-italic text-gradient">UK Ltd</em>
+          </h2>
+          <p className="mt-5 text-base md:text-lg opacity-80 max-w-xl">
+            Companies House now requires every PSC, shareholder and director to
+            complete identity verification. We handle the entire process for
+            you — securely and in under 24 hours.
+          </p>
 
-      <div data-reveal-stagger className="grid md:grid-cols-3 gap-5">
-        {cases.map((c, i) => {
-          const tints = ["glass-tint-teal","glass-tint-purple","glass-tint-mustard"];
-          return (
-          <article key={c.tag} className={`glass ${tints[i % tints.length]} rounded-2xl p-7 hover:-translate-y-1 hover:shadow-elegant transition-all duration-300 flex flex-col`}>
-            <span className="inline-block self-start text-[10px] font-semibold uppercase tracking-[0.16em] px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
-              {c.tag}
-            </span>
-            <h3 className="font-display text-xl font-semibold mb-4 leading-snug">{c.title}</h3>
-            <ul className="space-y-2 mb-6 flex-1">
-              {c.points.map((p) => (
-                <li key={p} className="flex gap-2 text-sm opacity-90">
-                  <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0 text-primary" />
-                  <span>{p}</span>
-                </li>
-              ))}
-            </ul>
+          <ul className="mt-7 space-y-3 max-w-md">
+            <li className="flex gap-3 text-sm md:text-base">
+              <BadgeCheck className="w-5 h-5 mt-0.5 flex-shrink-0 text-primary" />
+              <span>Mandatory for PSCs, Shareholders & Directors</span>
+            </li>
+            <li className="flex gap-3 text-sm md:text-base">
+              <Clock className="w-5 h-5 mt-0.5 flex-shrink-0 text-primary" />
+              <span>Get verified in 24 hours</span>
+            </li>
+            <li className="flex gap-3 text-sm md:text-base">
+              <ShieldCheck className="w-5 h-5 mt-0.5 flex-shrink-0 text-primary" />
+              <span>Companies House compliant — handled end-to-end</span>
+            </li>
+          </ul>
+
+          <div className="mt-8 flex flex-wrap items-center gap-4">
             <Link
-              to={c.href}
-              className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] hover:gap-3 transition-all"
+              to="/uk-services/ltd-id-verification"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-semibold text-sm uppercase tracking-[0.12em] hover:shadow-elegant hover:-translate-y-0.5 transition-all"
             >
-              {c.href.startsWith("/uk-compliance")
-                ? "View Compliance Services"
-                : c.href.includes("/usa-services/us-llc-formation/choose-state")
-                ? "Select State"
-                : c.href.includes("/uk-services/uk-ltd-formation/choose-jurisdiction")
-                ? "Select Jurisdiction"
-                : "View Packages"} <ArrowRight className="w-3.5 h-3.5" />
+              Verify Now <ArrowRight className="w-4 h-4" />
             </Link>
-          </article>
-          );
-        })}
+            <div className="text-sm">
+              <span className="opacity-60">Only</span>{" "}
+              <span className="text-2xl font-bold text-gradient align-middle">£20</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Visual card */}
+        <div data-reveal="rise" className="relative">
+          <div className="glass glass-tint-teal rounded-3xl p-8 md:p-10 relative overflow-hidden">
+            <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-primary/20 blur-3xl pointer-events-none" />
+            <div className="relative">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-primary/15 border border-primary/30 grid place-items-center">
+                  <UserCheck className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <div className="text-xs uppercase tracking-[0.16em] opacity-70">IDV Status</div>
+                  <div className="font-semibold">Companies House Verified</div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {[
+                  { label: "Director", status: "Verified" },
+                  { label: "PSC", status: "Verified" },
+                  { label: "Shareholder", status: "Verified" },
+                ].map((row) => (
+                  <div
+                    key={row.label}
+                    className="flex items-center justify-between rounded-xl bg-background/40 border border-border/60 px-4 py-3"
+                  >
+                    <span className="text-sm">{row.label}</span>
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary">
+                      <BadgeCheck className="w-4 h-4" /> {row.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-7 pt-6 border-t border-border/60 flex items-center justify-between text-xs uppercase tracking-[0.14em] opacity-80">
+                <span>Turnaround</span>
+                <span className="font-semibold text-foreground">24 hours</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
