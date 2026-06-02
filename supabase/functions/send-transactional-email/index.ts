@@ -82,8 +82,8 @@ Deno.serve(async (req) => {
     const body = await req.json()
     templateName = body.templateName || body.template_name
     recipientEmail = body.recipientEmail || body.recipient_email
-    messageId = crypto.randomUUID()
     idempotencyKey = body.idempotencyKey || body.idempotency_key || messageId
+    messageId = body.idempotencyKey || body.idempotency_key || crypto.randomUUID()
     if (body.templateData && typeof body.templateData === 'object') {
       templateData = body.templateData
     }
@@ -195,6 +195,32 @@ Deno.serve(async (req) => {
 
   // Create Supabase client with service role (bypasses RLS)
   const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
+  // Idempotency guard: each logical app email should enqueue once only.
+  // The message_id is intentionally the stable idempotency key when supplied,
+  // so repeated clicks/retries do not re-send order confirmations or status emails.
+  const { data: latestAttempt } = await supabase
+    .from('email_send_log')
+    .select('status, created_at')
+    .eq('message_id', messageId)
+    .eq('template_name', templateName)
+    .eq('recipient_email', effectiveRecipient)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (latestAttempt && ['pending', 'sent'].includes(latestAttempt.status)) {
+    console.warn('Skipping duplicate app email request', {
+      templateName,
+      effectiveRecipient,
+      messageId,
+      status: latestAttempt.status,
+    })
+    return new Response(
+      JSON.stringify({ success: true, queued: false, duplicate: true, status: latestAttempt.status }),
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    )
+  }
 
   // 2. Check suppression list (fail-closed: if we can't verify, don't send)
   const { data: suppressed, error: suppressionError } = await supabase
