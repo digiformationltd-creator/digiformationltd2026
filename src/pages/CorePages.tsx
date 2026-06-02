@@ -212,12 +212,12 @@ export const Contact = () => {
     if (form.email) {
       supabase.functions.invoke("send-transactional-email", {
         body: {
-          templateName: "order-confirmation",
+          templateName: "ticket-received",
           recipientEmail: form.email,
-          idempotencyKey: `order-confirm-${orderRef}`,
-          templateData: { customerName: form.fullName, service: form.service || "Inquiry", orderRef, notes: form.message },
+          idempotencyKey: `contact-received-${orderRef}`,
+          templateData: { customerName: form.fullName, ticketRef: orderRef, subject: form.service || "Inquiry", message: form.message },
         },
-      }).catch((err) => console.error("order-confirmation failed", err));
+      }).catch((err) => console.error("ticket-received failed", err));
     }
     supabase.functions.invoke("send-transactional-email", {
       body: {
