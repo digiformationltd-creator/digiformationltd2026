@@ -433,7 +433,7 @@ export default function OsOrders() {
                 {filtered.map((o) => (
                   <tr
                     key={o.id}
-                    onClick={() => openOrderInLegacy(o)}
+                    onClick={() => openOrder(o)}
                     className="border-b border-white/5 last:border-0 hover:bg-white/[0.03] transition cursor-pointer"
                   >
                     <td className="py-3 px-4">
@@ -522,7 +522,7 @@ export default function OsOrders() {
                           </button>
                         )}
                         <button
-                          onClick={() => openInvoiceInLegacy(o)}
+                          onClick={() => openInvoiceForOrder(o)}
                           className="px-2 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-[11px] text-white/70 inline-flex items-center gap-1"
                           title="Open invoices tab"
                         >
@@ -546,7 +546,7 @@ export default function OsOrders() {
           {filtered.map((o) => (
             <div
               key={o.id}
-              onClick={() => openOrderInLegacy(o)}
+              onClick={() => openOrder(o)}
               role="button"
               tabIndex={0}
               className="os-glass p-4 w-full text-left active:scale-[0.99] transition cursor-pointer"
@@ -606,7 +606,7 @@ export default function OsOrders() {
                   {o.invoice_number ? `Send ${o.invoice_number}` : "Generate Invoice"}
                 </button>
                 <button
-                  onClick={() => openOrderInLegacy(o)}
+                  onClick={() => openOrder(o)}
                   className="flex-1 min-w-[110px] text-[11px] font-medium rounded-lg py-2 text-center bg-white/[0.04] hover:bg-white/[0.08] text-white/70 inline-flex items-center justify-center gap-1"
                 >
                   <ShoppingBag className="w-3 h-3" /> Manage
