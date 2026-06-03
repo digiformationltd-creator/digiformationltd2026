@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { ArrowRight, Home, MessageCircle, Mail, Search } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
+import { useSeo } from "@/lib/seo";
 
 const popularLinks = [
   { label: "UK LTD Formation", href: "/uk-services/uk-ltd-formation" },
@@ -16,8 +17,13 @@ const popularLinks = [
 const NotFound = () => {
   const location = useLocation();
 
+  useSeo({
+    title: "Page Not Found (404) — Digiformation Ltd",
+    description: "The page you're looking for doesn't exist. Browse our UK LTD, US LLC, banking, and compliance services instead.",
+    noindex: true,
+  });
+
   useEffect(() => {
-    document.title = "Page Not Found (404) — Digiformation Ltd";
     console.error("404 — User attempted to access non-existent route:", location.pathname);
   }, [location.pathname]);
 

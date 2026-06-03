@@ -1,3 +1,4 @@
+import { useSeo } from "@/lib/seo";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
@@ -16,8 +17,13 @@ const Unsubscribe = () => {
   const [state, setState] = useState<State>("validating");
   const [errorMsg, setErrorMsg] = useState("");
 
+  useSeo({
+    title: "Unsubscribe | Digiformation Ltd",
+    description: "Unsubscribe from Digiformation email communications.",
+    noindex: true,
+  });
+
   useEffect(() => {
-    document.title = "Unsubscribe | Digiformation Ltd";
     if (!token) {
       setState("invalid");
       return;

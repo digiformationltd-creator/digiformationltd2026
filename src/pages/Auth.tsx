@@ -1,3 +1,4 @@
+import { useSeo } from "@/lib/seo";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,8 +34,13 @@ const Auth = () => {
   const [showSignUpPassword, setShowSignUpPassword] = useState(false);
 
   // Redirect if already logged in (but NOT during password recovery)
+  useSeo({
+    title: "Client Dashboard Login | Digiformation Ltd",
+    description: "Sign in to your Digiformation client dashboard to manage your UK LTD, US LLC, banking and compliance services.",
+    noindex: true,
+  });
+
   useEffect(() => {
-    document.title = "Client Dashboard Login | DigiFormation Ltd";
     const isRecovery = /[#&?]type=recovery(&|$)/.test(window.location.hash || "");
     if (isRecovery) return; // let RecoveryRedirect handle it
     let redirected = false;

@@ -1,3 +1,4 @@
+import { useSeo } from "@/lib/seo";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,9 +34,13 @@ const ResetPassword = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
-  useEffect(() => {
-    document.title = "Reset Password | DigiFormation Ltd";
+  useSeo({
+    title: "Reset Password | Digiformation Ltd",
+    description: "Set a new password for your Digiformation client account.",
+    noindex: true,
+  });
 
+  useEffect(() => {
     let mounted = true;
     let timeoutId: number | undefined;
 

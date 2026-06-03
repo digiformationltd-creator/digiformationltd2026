@@ -104,20 +104,25 @@ const RotatingCta = () => {
 };
 
 const UtrCodes = () => {
-  useEffect(() => {
-    document.title = "UTR, HMRC Authentication & Company Activation Codes | Digiformation LTD";
-    const meta = (name: string, content: string) => {
-      let el = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null;
-      if (!el) { el = document.createElement("meta"); el.setAttribute("name", name); document.head.appendChild(el); }
-      el.setAttribute("content", content);
-    };
-    meta("description", "Get or recover your UTR, HMRC Authentication Code, and Company Activation Code. Stay fully compliant with HMRC and Companies House.");
-    meta("keywords", "UTR registration, HMRC authentication code, company activation code, HMRC corporation tax, UK tax compliance");
-
-    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
-    if (!canonical) { canonical = document.createElement("link"); canonical.rel = "canonical"; document.head.appendChild(canonical); }
-    canonical.href = window.location.href;
-  }, []);
+  useSeo({
+    title: "UTR, HMRC Auth & Company Activation Codes | Digiformation",
+    description: "Get or recover your UTR, HMRC Authentication Code, and Company Activation Code. Stay fully compliant with HMRC and Companies House for your UK Limited Company.",
+    keywords: "UTR registration, HMRC authentication code, company activation code, HMRC corporation tax, UK tax compliance 2026, UTR for non resident UK company",
+    type: "website",
+    breadcrumbs: [
+      { name: "Home", path: "/" },
+      { name: "UK Services", path: "/uk-services" },
+      { name: "UTR & Auth Codes", path: "/uk-services/utr-codes" },
+    ],
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      name: "UTR, HMRC & Companies House Code Services",
+      provider: { "@type": "Organization", name: "Digiformation Ltd" },
+      areaServed: "United Kingdom",
+      description: "Apply for or recover your UTR, HMRC Authentication Code, and Companies House Activation Code.",
+    },
+  });
 
   return (
     <Layout>

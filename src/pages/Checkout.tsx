@@ -1,3 +1,4 @@
+import { useSeo } from "@/lib/seo";
 import { useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
@@ -67,9 +68,11 @@ const CATALOG_GROUPS: CatalogGroup[] = [
 const Checkout = () => {
   const [params] = useSearchParams();
 
-  useEffect(() => {
-    document.title = "Checkout | Digiformation Ltd";
-  }, []);
+  useSeo({
+    title: "Checkout | Digiformation Ltd",
+    description: "Secure checkout for Digiformation services — UK LTD, US LLC, banking, payments and compliance.",
+    noindex: true,
+  });
 
   const preselected = useMemo(() => {
     const raw = params.get("items") || "";

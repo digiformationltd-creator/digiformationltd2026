@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSeo } from "@/lib/seo";
 import { Navigate, useSearchParams, Link } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
@@ -32,9 +33,11 @@ const UsaLlcCheckout = () => {
   const [pricing, setPricing] = useState<StatePricing | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    document.title = "Checkout — U.S. LLC Formation | Digiformation Ltd";
-  }, []);
+  useSeo({
+    title: "Checkout — U.S. LLC Formation | Digiformation Ltd",
+    description: "Secure checkout for your U.S. LLC formation with Digiformation Ltd.",
+    noindex: true,
+  });
 
   useEffect(() => {
     if (!stateCode) {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
@@ -114,20 +114,24 @@ const UKChangeServices = () => {
   const [submitted, setSubmitted] = useState(false);
   const [submittedName, setSubmittedName] = useState("");
 
-  useEffect(() => {
-    document.title = "UK Company Services – Director, Name & Address Change | DiGiFormation LTD";
-    const meta = (name: string, content: string) => {
-      let el = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null;
-      if (!el) { el = document.createElement("meta"); el.setAttribute("name", name); document.head.appendChild(el); }
-      el.setAttribute("content", content);
-    };
-    meta("description", "Update your UK company details quickly with Digiformation LTD. Director Change, Company Name Change, Address Change, and optional ID verification.");
-    meta("keywords", "UK Company Services, Director Change UK, Company Address Change UK, Company Name Change UK, Registered Office Address UK");
-
-    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
-    if (!canonical) { canonical = document.createElement("link"); canonical.rel = "canonical"; document.head.appendChild(canonical); }
-    canonical.href = window.location.href;
-  }, []);
+  useSeo({
+    title: "UK Company Changes — Director, Name & Address Change | Digiformation",
+    description: "Update your UK company details quickly with Digiformation. Director Change, Company Name Change, Address Change, and optional ID verification — Companies House approved.",
+    keywords: "UK Company Services, Director Change UK, Company Address Change UK, Company Name Change UK, Registered Office Address UK, Companies House filing",
+    type: "website",
+    breadcrumbs: [
+      { name: "Home", path: "/" },
+      { name: "UK Company Services", path: "/uk-company-services/change-services" },
+    ],
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      name: "UK Company Change Services",
+      provider: { "@type": "Organization", name: "Digiformation Ltd" },
+      areaServed: "United Kingdom",
+      description: "Director, name, and registered office address changes filed with Companies House.",
+    },
+  });
 
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 

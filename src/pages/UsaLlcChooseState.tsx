@@ -67,16 +67,18 @@ const UsaLlcChooseState = () => {
   const [searchParams] = useSearchParams();
   const [selectedCode, setSelectedCode] = useState<string | null>(null);
 
-  useEffect(() => {
-    document.title = "Choose Your State — U.S. LLC Formation | Digiformation Ltd";
-    const meta = (n: string, c: string) => {
-      let el = document.querySelector(`meta[name="${n}"]`) as HTMLMetaElement | null;
-      if (!el) { el = document.createElement("meta"); el.setAttribute("name", n); document.head.appendChild(el); }
-      el.setAttribute("content", c);
-    };
-    meta("description", "Select the U.S. state where you want to register your LLC. Pricing for Starter, Silver, and Gold packages updates automatically based on your chosen state.");
-    meta("keywords", "US LLC state, LLC formation pricing, Wyoming LLC, Delaware LLC, Florida LLC, Texas LLC");
-  }, []);
+  useSeo({
+    title: "Choose Your State — U.S. LLC Formation | Digiformation",
+    description: "Select the U.S. state for your LLC. Compare Wyoming, Delaware, Florida and Texas pricing for Starter, Silver, and Gold packages — non-resident friendly.",
+    keywords: "US LLC state, LLC formation pricing, Wyoming LLC, Delaware LLC, Florida LLC, Texas LLC, non resident LLC formation",
+    type: "website",
+    breadcrumbs: [
+      { name: "Home", path: "/" },
+      { name: "USA Services", path: "/usa-services" },
+      { name: "US LLC Formation", path: "/usa-services/us-llc-formation" },
+      { name: "Choose State", path: "/usa-services/us-llc-formation/choose-state" },
+    ],
+  });
 
   useEffect(() => {
     (async () => {

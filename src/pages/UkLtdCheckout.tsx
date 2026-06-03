@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useSeo } from "@/lib/seo";
 import { Navigate, useSearchParams } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import CheckoutFlow, { CheckoutItem } from "@/components/checkout/CheckoutFlow";
@@ -33,9 +33,11 @@ const UkLtdCheckout = () => {
   const pkgParam = params.get("package") as PackageName | null;
   const packageName: PackageName = PACKAGES.includes(pkgParam as PackageName) ? (pkgParam as PackageName) : "Silver";
 
-  useEffect(() => {
-    document.title = "Checkout — UK LTD Formation | Digiformation Ltd";
-  }, []);
+  useSeo({
+    title: "Checkout — UK LTD Formation | Digiformation Ltd",
+    description: "Secure checkout for your UK Limited Company formation with Digiformation Ltd.",
+    noindex: true,
+  });
 
   const jurName = JURISDICTIONS[jurCode];
   if (!jurCode || !jurName) return <Navigate to="/uk-services/uk-ltd-formation/choose-jurisdiction" replace />;
