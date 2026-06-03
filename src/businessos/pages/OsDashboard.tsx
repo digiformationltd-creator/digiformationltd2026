@@ -39,7 +39,8 @@ export default function OsDashboard() {
   const [activity, setActivity] = useState<any[]>([]);
 
   useEffect(() => {
-    (async () => {
+    let cancelled = false;
+    const loadAll = async () => {
       const now = new Date();
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
       const yearStart = new Date(now.getFullYear(), 0, 1).toISOString();
@@ -49,6 +50,7 @@ export default function OsDashboard() {
         supabase.from("leads").select("source,stage,follow_up_date,name,whatsapp,service,created_at").order("created_at",{ascending:false}).limit(500),
         supabase.from("invoices").select("total_gbp,status,issue_date,created_at,bill_to_name,invoice_number").order("created_at",{ascending:false}).limit(500),
       ]);
+      if (cancelled) return;
 
       const o = orders.data || [];
       const l = leads.data || [];
@@ -75,7 +77,6 @@ export default function OsDashboard() {
         { label:"Annual Revenue", value:`£${yearRev.toLocaleString()}`, icon:BadgePoundSterling, glow:"lime" },
       ]);
 
-      // revenue by month (last 8 months)
       const months: {m:string;v:number}[] = [];
       for (let i=7;i>=0;i--){
         const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
@@ -86,7 +87,6 @@ export default function OsDashboard() {
       }
       setRevenue(months);
 
-      // lead sources pie
       const sourceMap: Record<string,number> = {};
       l.forEach(x => { const k = x.source || "Direct"; sourceMap[k] = (sourceMap[k]||0)+1; });
       setSources(Object.entries(sourceMap).map(([name,value])=>({name,value:value as number})));
@@ -98,7 +98,25 @@ export default function OsDashboard() {
         ...l.slice(0,4).map(x=>({type:"lead",text:`Lead: ${x.name} interested in ${x.service||"a service"}`,at:x.created_at})),
       ].sort((a,b)=> (b.at||"").localeCompare(a.at||"")).slice(0,8));
       setLoading(false);
-    })();
+    };
+
+    loadAll();
+    let debounce: number | undefined;
+    const refresh = () => {
+      if (debounce) window.clearTimeout(debounce);
+      debounce = window.setTimeout(() => loadAll(), 400);
+    };
+    const channel = supabase
+      .channel("os-dashboard-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "client_orders" }, refresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "invoices" }, refresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "leads" }, refresh)
+      .subscribe();
+    return () => {
+      cancelled = true;
+      if (debounce) window.clearTimeout(debounce);
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   if (loading) {

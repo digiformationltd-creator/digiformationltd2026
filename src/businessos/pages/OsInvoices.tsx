@@ -83,7 +83,15 @@ export default function OsInvoices() {
     setInvoices((data || []) as InvoiceRow[]);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+    const channel = supabase
+      .channel("os-invoices-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "invoices" }, () => { load(); })
+      .on("postgres_changes", { event: "*", schema: "public", table: "client_orders" }, () => { load(); })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   // Need related order_ref for search; pull once
   const [orderRefs, setOrderRefs] = useState<Map<string, string>>(new Map());

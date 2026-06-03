@@ -423,6 +423,39 @@ Deno.serve(async (req) => {
       .createSignedUrl(path, 60 * 60 * 24 * 7)
     if (sErr) throw sErr
 
+    // 6. Auto-send the `invoice-issued` transactional email to the customer.
+    //    Fire-and-forget: a delivery failure must NEVER break the checkout
+    //    response, the order row, the invoice row, or the order-confirmation
+    //    email that the caller still triggers separately.
+    try {
+      const resp = await fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${serviceKey}`,
+          apikey: serviceKey,
+        },
+        body: JSON.stringify({
+          templateName: 'invoice-issued',
+          recipientEmail: body.customer.email,
+          idempotencyKey: `invoice-issued:${invoiceNumber}`,
+          templateData: {
+            customerName: body.customer.full_name,
+            invoiceNumber,
+            orderRef,
+            service: body.packageName ? `${body.service} — ${body.packageName}` : body.service,
+            amount: `${currency === 'USD' ? '$' : '£'}${Number(body.amount_gbp).toFixed(2)}`,
+            invoiceUrl: signed.signedUrl,
+          },
+        }),
+      })
+      if (!resp.ok) {
+        console.warn('invoice-issued email enqueue failed', resp.status, await resp.text())
+      }
+    } catch (e) {
+      console.warn('invoice-issued email enqueue threw', e)
+    }
+
     return new Response(JSON.stringify({
       orderRef,
       invoiceNumber,
