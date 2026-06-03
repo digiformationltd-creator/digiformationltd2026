@@ -62,6 +62,7 @@ const UsaServicePage = () => {
   }
 
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const HeroAnim = HERO_BY_SLUG[page.slug];
 
   return (
     <Layout>
