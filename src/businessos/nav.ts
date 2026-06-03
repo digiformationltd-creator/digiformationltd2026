@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, Users, UserCheck, ShoppingBag, Package, FileText,
   Wallet, MessageCircle, Mail, BarChart3, CheckSquare, UsersRound,
-  LifeBuoy, FolderOpen, Zap, Settings, Building2,
+  LifeBuoy, FolderOpen, Zap, Settings, Building2, CalendarClock, Inbox,
 } from "lucide-react";
 
 export type NavItem = {
@@ -27,6 +27,8 @@ export const NAV: NavItem[] = [
   { label: "Team",            to: "/admin/team",            icon: UsersRound,      glow: "purple" },
   { label: "Support",         to: "/admin/support",         icon: LifeBuoy,        glow: "red" },
   { label: "Documents",       to: "/admin/documents",       icon: FolderOpen,      glow: "cyan" },
+  { label: "Compliance",      to: "/admin/compliance",      icon: CalendarClock,   glow: "amber" },
+  { label: "Email Ops",       to: "/admin/email-ops",       icon: Inbox,           glow: "pink" },
   { label: "Automation",      to: "/admin/automation",      icon: Zap,             glow: "lime" },
   { label: "Email Test",      to: "/admin/email-test",      icon: Mail,            glow: "cyan" },
   { label: "Settings",        to: "/admin/settings",        icon: Settings,        glow: "blue" },
