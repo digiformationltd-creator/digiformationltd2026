@@ -1279,7 +1279,8 @@ const CheckoutFlow = ({
                   <dl className="grid sm:grid-cols-2 gap-2 text-sm">
                     <ReviewLine label="Name" value={`${form.first_name} ${form.last_name}`.trim()} />
                     <ReviewLine label="Email" value={form.email} />
-                    <ReviewLine label="WhatsApp" value={form.whatsapp} />
+                    <ReviewLine label={whatsappLabel} value={form.whatsapp} />
+                    {showSeparateWhatsapp && <ReviewLine label={whatsappContactLabel} value={form.whatsapp_contact} />}
                     <ReviewLine label="Country of residence" value={form.country} />
                     <ReviewLine label="Nationality" value={form.nationality} />
                   </dl>
