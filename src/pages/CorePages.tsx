@@ -1280,8 +1280,8 @@ const blogSections = [
 export const Blog = () => {
   useEffect(() => {
     setMeta(
-      "Digiformation Blog 2026 — UK LTD, US LLC, Stripe, PayPal & Banking Guides Worldwide",
-      "Expert 2026 guides for non-resident founders: UK LTD & US LLC formation, Stripe, PayPal, Payoneer, Wise, WorldFirst, Tide, Amazon FBA, eBay, Shopify and compliance — written for entrepreneurs in Pakistan, India, UAE, Bangladesh, Morocco & worldwide.",
+      "Digiformation Blog 2026 — UK LTD & US LLC Guides",
+      "Expert 2026 guides for non-resident founders: UK LTD & US LLC formation, Stripe, PayPal, Wise, Tide, Amazon FBA, Shopify and compliance.",
       "UK LTD blog 2026, US LLC guide, Stripe non resident, PayPal worldwide, Payoneer Wise WorldFirst, Amazon FBA UK, Shopify worldwide, ecommerce formation blog"
     );
     return injectJsonLd("blog-jsonld", {
