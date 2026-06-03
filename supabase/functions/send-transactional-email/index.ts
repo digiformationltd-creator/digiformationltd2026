@@ -119,30 +119,31 @@ Deno.serve(async (req) => {
   if (authHeader.startsWith('Bearer ')) {
     const token = authHeader.replace('Bearer ', '')
     try {
-      const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!
-      const userClient = createClient(supabaseUrl, anonKey, {
-        global: { headers: { Authorization: authHeader } },
-      })
-      const { data } = await userClient.auth.getUser()
-      isAuthenticated = !!data?.user
-      // Detect service-role JWT (used by cron / edge-to-edge invokes)
+      // SECURITY: service-role status is granted ONLY when the bearer token
+      // matches the SUPABASE_SERVICE_ROLE_KEY byte-for-byte. Never trust
+      // role claims decoded from an unverified JWT payload — with
+      // verify_jwt=false the gateway does not validate signatures, so any
+      // attacker could forge `{"role":"service_role"}` and bypass the
+      // admin-template guard.
       if (token === supabaseServiceKey) {
         isServiceRole = true
       } else {
-        try {
-          const payload = JSON.parse(atob(token.split('.')[1] || ''))
-          if (payload?.role === 'service_role') isServiceRole = true
-        } catch { /* ignore */ }
-      }
-      if (isAuthenticated && data?.user?.id) {
-        const adminClient = createClient(supabaseUrl, supabaseServiceKey)
-        const { data: roleRow } = await adminClient
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', data.user.id)
-          .eq('role', 'admin')
-          .maybeSingle()
-        isAdmin = !!roleRow
+        const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!
+        const userClient = createClient(supabaseUrl, anonKey, {
+          global: { headers: { Authorization: authHeader } },
+        })
+        const { data } = await userClient.auth.getUser()
+        isAuthenticated = !!data?.user
+        if (isAuthenticated && data?.user?.id) {
+          const adminClient = createClient(supabaseUrl, supabaseServiceKey)
+          const { data: roleRow } = await adminClient
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', data.user.id)
+            .eq('role', 'admin')
+            .maybeSingle()
+          isAdmin = !!roleRow
+        }
       }
     } catch {
       isAuthenticated = false
