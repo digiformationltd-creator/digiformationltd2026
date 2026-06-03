@@ -618,6 +618,36 @@ export const blogPosts: BlogPost[] = [
     metaTitle: "Open a Tide Business Account 2026 — UK LTD Guide for Non-Residents",
     metaDescription: "Step-by-step 2026 guide to open a Tide business account for UK LTD owners including non-resident directors from Pakistan, India, UAE and worldwide.",
     keywords: "Tide business account non resident, Tide UK LTD, open Tide account, Tide bank Pakistan India UAE worldwide",
+    content: [
+      {
+        h: "Why Tide Is the Default Challenger Bank for UK LTDs",
+        body: "<p>Tide is a UK-based business banking platform built specifically for small businesses, freelancers and limited companies. With over 650,000 SME members, it has become the default first-choice account for newly incorporated UK LTDs in 2026 — particularly for non-resident directors who cannot easily walk into a Barclays or HSBC branch.</p><p>Unlike traditional banks that demand UK residency, two years of trading history and a personal banking relationship, Tide opens most UK LTD accounts within 24–48 hours through a fully digital onboarding process. It is regulated as an Electronic Money Institution in partnership with ClearBank, meaning your money sits in a UK clearing bank with FSCS-equivalent safeguarding.</p>",
+      },
+      {
+        h: "What Tide Business Actually Includes",
+        body: "<ul><li><strong>Free UK business current account</strong> with a real UK sort code and account number</li><li><strong>Tide Mastercard debit card</strong> shipped to a UK address (member cards also available)</li><li><strong>Faster Payments, BACS, CHAPS</strong> and Direct Debit support</li><li><strong>Invoicing tools, expense categorisation and accounting integrations</strong> (Xero, QuickBooks, FreeAgent, Sage)</li><li><strong>Multi-user access</strong> with permission controls on paid plans</li><li><strong>Cashback and credit-building options</strong> on higher tiers</li></ul><p>Pricing in 2026 starts at £0 per month for the Free plan, with Plus (£9.99), Pro (£18.99) and Cashback (£49.99) tiers adding features such as priority transfers, more free transactions and cashback on card spend.</p>",
+      },
+      {
+        h: "Can Non-Resident Directors Actually Open a Tide Account?",
+        body: "<p>Yes — but with a critical caveat. Tide accepts UK LTDs with non-resident directors, but every director and Person with Significant Control (PSC) must individually pass UK-standard KYC. In practice this means:</p><ul><li>Valid <strong>biometric passport</strong> (most international passports are accepted)</li><li>A clear <strong>selfie liveness check</strong> through the Tide app</li><li>A working <strong>UK mobile number</strong> (or a director's mobile that can receive SMS reliably)</li><li>A genuine <strong>UK registered office</strong> for the company (not a virtual mailbox flagged as a mass-formation address)</li></ul><p>Where applications fail it is almost always for one of three reasons: low-quality registered office address, mismatched director details between passport and Companies House, or a phone number Tide cannot verify.</p>",
+      },
+      {
+        h: "Step-by-Step: How to Open a Tide Account in 2026",
+        body: "<h3>Step 1 — Form Your UK LTD Properly</h3><p>Tide will pull your company data directly from Companies House. Make sure the registered office, director names, dates of birth and PSC details are entirely accurate before applying.</p><h3>Step 2 — Download the Tide App</h3><p>Available on iOS and Android. Always apply via the app, not the website — onboarding speed is materially faster.</p><h3>Step 3 — Verify Your Identity</h3><p>Scan your passport's biometric chip and complete the liveness selfie. Lighting matters — natural daylight passes far more often than indoor lighting.</p><h3>Step 4 — Confirm Company Details</h3><p>Tide auto-fills your company information. Confirm SIC codes, expected monthly turnover and source of funds. Be realistic — wildly inflated numbers slow down approval.</p><h3>Step 5 — Add Other Directors and PSCs</h3><p>Each individual receives an invitation to complete their own identity verification through the Tide app.</p><h3>Step 6 — Wait for Approval</h3><p>Most accounts are approved within 24–48 hours. If Tide requests additional documents, respond within the app the same day.</p>",
+      },
+      {
+        h: "Tips That Materially Improve Your Approval Odds",
+        body: "<ul><li>Use a <strong>premium registered office address</strong> — not a £12/year mass-formation address with thousands of other companies on it</li><li>Apply <strong>within 30 days of incorporation</strong> while company data is fresh</li><li>Have a <strong>basic business website</strong> live with a UK address, contact details and clear service description</li><li>Use a <strong>business email on your own domain</strong>, not Gmail or Hotmail</li><li>Make sure your <strong>SIC codes match what your website says</strong></li></ul>",
+      },
+      {
+        h: "What to Do If Tide Rejects You",
+        body: "<p>Tide rejections are common but rarely permanent. Typical reasons include unverifiable address, unclear business activity or a director from a higher-risk jurisdiction. Practical next steps:</p><ul><li>Upgrade your registered office to a credible UK address</li><li>Apply to <strong>Wise Business</strong> or <strong>Revolut Business</strong> in parallel — both are EMI accounts and cover most Tide use cases</li><li>For card-acquiring needs, layer Stripe on top of any of the above</li><li>Re-apply to Tide after 90 days with strengthened documentation</li></ul>",
+      },
+      {
+        h: "Get Expert Help",
+        body: "<p>Opening a UK business account as a non-resident is largely a paperwork-and-presentation problem. Most rejections come from fixable issues — not from the bank refusing your nationality.</p><p><strong>Digiformation Ltd</strong> helps non-resident founders form a UK LTD, secure a credible registered office and prepare clean Tide, Wise and Revolut applications that pass first time.</p><p>👉 <a href=\"/banks-payment-solutions\">See banking services</a> or <a href=\"/contact\">book a free consultation</a>.</p>",
+      },
+    ],
   },
   {
     slug: "wise-business-account-non-residents-2026",
