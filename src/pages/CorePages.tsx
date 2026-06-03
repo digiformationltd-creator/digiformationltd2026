@@ -236,6 +236,7 @@ export const Contact = () => {
     <Layout>
       <section className="py-10">
         <div className="container mx-auto px-4 max-w-3xl">
+          <h1 className="sr-only">Contact Digiformation Ltd</h1>
           {/* Form */}
           {submitted ? (
             <div className="glass rounded-2xl p-10 flex flex-col items-center justify-center text-center space-y-4 min-h-[420px]">
