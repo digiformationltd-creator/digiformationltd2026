@@ -224,42 +224,51 @@ export type Database = {
       client_orders: {
         Row: {
           amount_gbp: number
+          country_code: string | null
           created_at: string
           customer_email: string | null
           customer_name: string | null
+          customer_phone_e164: string | null
           customer_whatsapp: string | null
           id: string
           notes: string | null
           order_date: string
           order_ref: string
+          preferred_contact_method: string | null
           service: string
           status: string
           user_id: string | null
         }
         Insert: {
           amount_gbp?: number
+          country_code?: string | null
           created_at?: string
           customer_email?: string | null
           customer_name?: string | null
+          customer_phone_e164?: string | null
           customer_whatsapp?: string | null
           id?: string
           notes?: string | null
           order_date?: string
           order_ref: string
+          preferred_contact_method?: string | null
           service: string
           status?: string
           user_id?: string | null
         }
         Update: {
           amount_gbp?: number
+          country_code?: string | null
           created_at?: string
           customer_email?: string | null
           customer_name?: string | null
+          customer_phone_e164?: string | null
           customer_whatsapp?: string | null
           id?: string
           notes?: string | null
           order_date?: string
           order_ref?: string
+          preferred_contact_method?: string | null
           service?: string
           status?: string
           user_id?: string | null
@@ -693,6 +702,7 @@ export type Database = {
         Row: {
           assigned_to: string | null
           country: string | null
+          country_code: string | null
           created_at: string
           created_by: string | null
           email: string | null
@@ -700,7 +710,9 @@ export type Database = {
           id: string
           name: string
           notes: string | null
+          phone_e164: string | null
           position: number
+          preferred_contact_method: string | null
           service: string | null
           source: string | null
           stage: Database["public"]["Enums"]["lead_stage"]
@@ -711,6 +723,7 @@ export type Database = {
         Insert: {
           assigned_to?: string | null
           country?: string | null
+          country_code?: string | null
           created_at?: string
           created_by?: string | null
           email?: string | null
@@ -718,7 +731,9 @@ export type Database = {
           id?: string
           name: string
           notes?: string | null
+          phone_e164?: string | null
           position?: number
+          preferred_contact_method?: string | null
           service?: string | null
           source?: string | null
           stage?: Database["public"]["Enums"]["lead_stage"]
@@ -729,6 +744,7 @@ export type Database = {
         Update: {
           assigned_to?: string | null
           country?: string | null
+          country_code?: string | null
           created_at?: string
           created_by?: string | null
           email?: string | null
@@ -736,7 +752,9 @@ export type Database = {
           id?: string
           name?: string
           notes?: string | null
+          phone_e164?: string | null
           position?: number
+          preferred_contact_method?: string | null
           service?: string | null
           source?: string | null
           stage?: Database["public"]["Enums"]["lead_stage"]
@@ -774,33 +792,42 @@ export type Database = {
         Row: {
           avatar_initials: string | null
           company_name: string | null
+          country_code: string | null
           created_at: string
           email: string | null
           full_name: string | null
           id: string
           phone: string | null
+          phone_e164: string | null
+          preferred_contact_method: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           avatar_initials?: string | null
           company_name?: string | null
+          country_code?: string | null
           created_at?: string
           email?: string | null
           full_name?: string | null
           id?: string
           phone?: string | null
+          phone_e164?: string | null
+          preferred_contact_method?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           avatar_initials?: string | null
           company_name?: string | null
+          country_code?: string | null
           created_at?: string
           email?: string | null
           full_name?: string | null
           id?: string
           phone?: string | null
+          phone_e164?: string | null
+          preferred_contact_method?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -1043,6 +1070,60 @@ export type Database = {
           referrer?: string | null
           source?: string | null
           user_agent?: string | null
+        }
+        Relationships: []
+      }
+      whatsapp_message_log: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          message_id: string | null
+          metadata: Json | null
+          payload: Json | null
+          provider: string
+          provider_response: Json | null
+          recipient_phone: string
+          recipient_user_id: string | null
+          related_entity_id: string | null
+          related_entity_type: string | null
+          sent_at: string | null
+          status: string
+          template_name: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          message_id?: string | null
+          metadata?: Json | null
+          payload?: Json | null
+          provider?: string
+          provider_response?: Json | null
+          recipient_phone: string
+          recipient_user_id?: string | null
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          sent_at?: string | null
+          status?: string
+          template_name: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          message_id?: string | null
+          metadata?: Json | null
+          payload?: Json | null
+          provider?: string
+          provider_response?: Json | null
+          recipient_phone?: string
+          recipient_user_id?: string | null
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          sent_at?: string | null
+          status?: string
+          template_name?: string
         }
         Relationships: []
       }
