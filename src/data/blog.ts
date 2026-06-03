@@ -618,6 +618,36 @@ export const blogPosts: BlogPost[] = [
     metaTitle: "Open a Tide Business Account 2026 — UK LTD Guide for Non-Residents",
     metaDescription: "Step-by-step 2026 guide to open a Tide business account for UK LTD owners including non-resident directors from Pakistan, India, UAE and worldwide.",
     keywords: "Tide business account non resident, Tide UK LTD, open Tide account, Tide bank Pakistan India UAE worldwide",
+    content: [
+      {
+        h: "Why Tide Is the Default Challenger Bank for UK LTDs",
+        body: "<p>Tide is a UK-based business banking platform built specifically for small businesses, freelancers and limited companies. With over 650,000 SME members, it has become the default first-choice account for newly incorporated UK LTDs in 2026 — particularly for non-resident directors who cannot easily walk into a Barclays or HSBC branch.</p><p>Unlike traditional banks that demand UK residency, two years of trading history and a personal banking relationship, Tide opens most UK LTD accounts within 24–48 hours through a fully digital onboarding process. It is regulated as an Electronic Money Institution in partnership with ClearBank, meaning your money sits in a UK clearing bank with FSCS-equivalent safeguarding.</p>",
+      },
+      {
+        h: "What Tide Business Actually Includes",
+        body: "<ul><li><strong>Free UK business current account</strong> with a real UK sort code and account number</li><li><strong>Tide Mastercard debit card</strong> shipped to a UK address (member cards also available)</li><li><strong>Faster Payments, BACS, CHAPS</strong> and Direct Debit support</li><li><strong>Invoicing tools, expense categorisation and accounting integrations</strong> (Xero, QuickBooks, FreeAgent, Sage)</li><li><strong>Multi-user access</strong> with permission controls on paid plans</li><li><strong>Cashback and credit-building options</strong> on higher tiers</li></ul><p>Pricing in 2026 starts at £0 per month for the Free plan, with Plus (£9.99), Pro (£18.99) and Cashback (£49.99) tiers adding features such as priority transfers, more free transactions and cashback on card spend.</p>",
+      },
+      {
+        h: "Can Non-Resident Directors Actually Open a Tide Account?",
+        body: "<p>Yes — but with a critical caveat. Tide accepts UK LTDs with non-resident directors, but every director and Person with Significant Control (PSC) must individually pass UK-standard KYC. In practice this means:</p><ul><li>Valid <strong>biometric passport</strong> (most international passports are accepted)</li><li>A clear <strong>selfie liveness check</strong> through the Tide app</li><li>A working <strong>UK mobile number</strong> (or a director's mobile that can receive SMS reliably)</li><li>A genuine <strong>UK registered office</strong> for the company (not a virtual mailbox flagged as a mass-formation address)</li></ul><p>Where applications fail it is almost always for one of three reasons: low-quality registered office address, mismatched director details between passport and Companies House, or a phone number Tide cannot verify.</p>",
+      },
+      {
+        h: "Step-by-Step: How to Open a Tide Account in 2026",
+        body: "<h3>Step 1 — Form Your UK LTD Properly</h3><p>Tide will pull your company data directly from Companies House. Make sure the registered office, director names, dates of birth and PSC details are entirely accurate before applying.</p><h3>Step 2 — Download the Tide App</h3><p>Available on iOS and Android. Always apply via the app, not the website — onboarding speed is materially faster.</p><h3>Step 3 — Verify Your Identity</h3><p>Scan your passport's biometric chip and complete the liveness selfie. Lighting matters — natural daylight passes far more often than indoor lighting.</p><h3>Step 4 — Confirm Company Details</h3><p>Tide auto-fills your company information. Confirm SIC codes, expected monthly turnover and source of funds. Be realistic — wildly inflated numbers slow down approval.</p><h3>Step 5 — Add Other Directors and PSCs</h3><p>Each individual receives an invitation to complete their own identity verification through the Tide app.</p><h3>Step 6 — Wait for Approval</h3><p>Most accounts are approved within 24–48 hours. If Tide requests additional documents, respond within the app the same day.</p>",
+      },
+      {
+        h: "Tips That Materially Improve Your Approval Odds",
+        body: "<ul><li>Use a <strong>premium registered office address</strong> — not a £12/year mass-formation address with thousands of other companies on it</li><li>Apply <strong>within 30 days of incorporation</strong> while company data is fresh</li><li>Have a <strong>basic business website</strong> live with a UK address, contact details and clear service description</li><li>Use a <strong>business email on your own domain</strong>, not Gmail or Hotmail</li><li>Make sure your <strong>SIC codes match what your website says</strong></li></ul>",
+      },
+      {
+        h: "What to Do If Tide Rejects You",
+        body: "<p>Tide rejections are common but rarely permanent. Typical reasons include unverifiable address, unclear business activity or a director from a higher-risk jurisdiction. Practical next steps:</p><ul><li>Upgrade your registered office to a credible UK address</li><li>Apply to <strong>Wise Business</strong> or <strong>Revolut Business</strong> in parallel — both are EMI accounts and cover most Tide use cases</li><li>For card-acquiring needs, layer Stripe on top of any of the above</li><li>Re-apply to Tide after 90 days with strengthened documentation</li></ul>",
+      },
+      {
+        h: "Get Expert Help",
+        body: "<p>Opening a UK business account as a non-resident is largely a paperwork-and-presentation problem. Most rejections come from fixable issues — not from the bank refusing your nationality.</p><p><strong>Digiformation Ltd</strong> helps non-resident founders form a UK LTD, secure a credible registered office and prepare clean Tide, Wise and Revolut applications that pass first time.</p><p>👉 <a href=\"/banks-payment-solutions\">See banking services</a> or <a href=\"/contact\">book a free consultation</a>.</p>",
+      },
+    ],
   },
   {
     slug: "wise-business-account-non-residents-2026",
@@ -825,6 +855,40 @@ export const blogPosts: BlogPost[] = [
     metaTitle: "Mollie Payment Gateway 2026 — Best Stripe Alternative Worldwide",
     metaDescription: "Detailed Mollie review for 2026 — payment methods, fees, Shopify and WooCommerce integration. Best Stripe alternative for Europe and global e-commerce stores.",
     keywords: "Mollie payment gateway 2026, Mollie vs Stripe, Mollie Shopify, Mollie WooCommerce, Stripe alternative worldwide",
+    content: [
+      {
+        h: "What Mollie Is and Why It Matters in 2026",
+        body: "<p>Mollie is a Dutch-founded payment service provider, now operating across the UK and most of the European Union, that has quietly become the most credible Stripe alternative for European-facing e-commerce businesses. Founded in 2004 and licensed as a Payment Institution by the Dutch Central Bank (DNB), Mollie processes payments for more than 200,000 merchants — from solo Shopify stores to listed enterprises.</p><p>For non-resident founders running a UK LTD or EU entity, Mollie often outperforms Stripe in one specific scenario: when your buyers are European and expect to pay with iDEAL, Bancontact, SOFORT, SEPA Direct Debit, Klarna or local card schemes rather than international Visa or Mastercard alone.</p>",
+      },
+      {
+        h: "Payment Methods Mollie Supports",
+        body: "<ul><li><strong>Credit and debit cards</strong> — Visa, Mastercard, American Express, Maestro, Cartes Bancaires</li><li><strong>iDEAL</strong> — dominant Dutch bank transfer method (~70% of NL checkouts)</li><li><strong>Bancontact</strong> — Belgian equivalent</li><li><strong>SOFORT / Klarna Pay Now</strong> — Germany, Austria</li><li><strong>SEPA Direct Debit and SEPA Bank Transfer</strong></li><li><strong>Klarna Pay Later / Pay in 3</strong> — buy-now-pay-later across EU</li><li><strong>Apple Pay, Google Pay, PayPal</strong></li><li><strong>Gift cards, Przelewy24 (Poland), EPS (Austria), Trustly</strong> and more</li></ul><p>That breadth is the headline feature. A UK store selling into the Netherlands without iDEAL is leaving a meaningful percentage of revenue on the table.</p>",
+      },
+      {
+        h: "Mollie Fees in 2026",
+        body: "<p>Mollie uses a transparent per-transaction pricing model with no monthly fees:</p><ul><li><strong>European cards:</strong> ~1.8% + €0.25</li><li><strong>iDEAL:</strong> €0.29 flat per transaction</li><li><strong>Bancontact:</strong> €0.39 flat</li><li><strong>SEPA Direct Debit:</strong> €0.25 flat</li><li><strong>Klarna:</strong> ~2.99% + €0.35</li><li><strong>PayPal via Mollie:</strong> standard PayPal pricing applies</li><li><strong>International cards:</strong> ~2.9% + €0.25</li></ul><p>Pricing drops with volume. For high-ticket European stores the flat-fee local methods can reduce blended payment costs significantly below Stripe.</p>",
+      },
+      {
+        h: "Mollie vs Stripe — When to Choose Which",
+        body: "<ul><li><strong>Choose Stripe when:</strong> you are global-first, subscription-based, developer-heavy, or your buyers are predominantly UK / US / international card users</li><li><strong>Choose Mollie when:</strong> your buyers are in NL, BE, DE, AT, FR, IT, ES or PL and you need iDEAL, Bancontact, SOFORT or local consumer-credit options like Klarna</li><li><strong>Use both when:</strong> you have meaningful EU traffic but also global card buyers — Stripe handles cards globally, Mollie handles EU local methods</li></ul>",
+      },
+      {
+        h: "Integration With Shopify, WooCommerce and Magento",
+        body: "<h3>Shopify</h3><p>Mollie is an official Shopify payment provider in most EU/UK regions. Install the Mollie app from the Shopify App Store, connect your Mollie account and enable the payment methods you want shown at checkout. No code required.</p><h3>WooCommerce</h3><p>The free <em>Mollie Payments for WooCommerce</em> plugin is one of the highest-rated payment plugins on WordPress. Install, activate, paste your live API key and select payment methods.</p><h3>Magento, PrestaShop, OpenCart</h3><p>Mollie maintains official extensions for every major European e-commerce platform. For custom builds, Mollie's REST API and SDKs (PHP, Node.js, Python, Ruby, .NET) are well-documented and stable.</p>",
+      },
+      {
+        h: "Step-by-Step: Opening a Mollie Account",
+        body: "<h3>Step 1 — Have a Qualifying Entity</h3><p>Mollie requires a registered business in an eligible country (UK, NL, BE, DE, FR, AT, IT, ES, etc.). Sole traders are accepted; UK LTDs and EU GmbHs/BVs are preferred.</p><h3>Step 2 — Sign Up at mollie.com</h3><p>Create an account using a business email on your own domain.</p><h3>Step 3 — Provide Company Information</h3><p>Legal name, registration number, registered office, IBAN, expected monthly volume, business description and URL of a live website with full legal pages.</p><h3>Step 4 — Verify Beneficial Owners</h3><p>Every UBO with 25%+ ownership must verify identity through Mollie's KYC flow.</p><h3>Step 5 — Activate Payment Methods</h3><p>Each method (cards, iDEAL, Klarna, etc.) is activated individually. Approval typically completes within 3–10 business days.</p>",
+      },
+      {
+        h: "Common Mistakes and How to Avoid Them",
+        body: "<ul><li>Applying without a live website featuring T&Cs, privacy policy, refund policy and contact details</li><li>Using a personal Gmail rather than a business domain email</li><li>Mismatched company address between Mollie and Companies House / KvK</li><li>Activating Klarna without enabling fraud and risk controls in your store</li><li>Ignoring SEPA Direct Debit reversibility — buyers can recall up to 8 weeks after payment</li></ul>",
+      },
+      {
+        h: "Get Expert Help",
+        body: "<p>If Europe is a core market, Mollie is almost certainly worth adding alongside Stripe. The local-method coverage simply converts buyers Stripe cannot.</p><p><strong>Digiformation Ltd</strong> helps founders set up the full payment stack — UK LTD or EU entity, banking, Stripe, Mollie and PayPal — tuned for the markets you actually sell to.</p><p>👉 <a href=\"/banks-payment-solutions\">See payment solutions</a> or <a href=\"/contact\">book a free consultation</a>.</p>",
+      },
+    ],
   },
   {
     slug: "wallester-visa-cards-business-spending-2026",
@@ -836,6 +900,44 @@ export const blogPosts: BlogPost[] = [
     metaTitle: "Wallester Visa Cards for Business 2026 — Worldwide Review",
     metaDescription: "Wallester virtual and physical Visa card review for businesses in 2026. Issuing, controls, pricing and use cases for non-resident founders worldwide.",
     keywords: "Wallester Visa cards, Wallester business non resident, virtual Visa card business, Wallester review worldwide",
+    content: [
+      {
+        h: "What Wallester Is and Who It's For",
+        body: "<p>Wallester is an Estonian fintech and a principal-member <strong>Visa</strong> issuer regulated by the Estonian Financial Supervisory Authority. It issues virtual and physical Visa cards to businesses across the EU, UK and a growing list of international markets — and has become a go-to provider for non-resident founders whose home-country banks will not issue cards in their UK LTD or US LLC name.</p><p>For online businesses spending heavily on Google Ads, Facebook Ads, SaaS subscriptions, hosting, AI APIs and supplier payments, Wallester solves a very specific problem: getting real, high-quality Visa BIN cards in the company's name, with proper spending controls, when traditional banks have rejected you.</p>",
+      },
+      {
+        h: "Wallester Business — What You Get",
+        body: "<ul><li><strong>Up to 300 free virtual Visa cards</strong> on the Free plan (yes, free)</li><li><strong>Physical Visa cards</strong> available on paid plans, shipped to most countries</li><li><strong>Premium Visa BINs</strong> — typically accepted by Google, Meta, Microsoft, Amazon AWS, Apple, Stripe and other strict merchants</li><li><strong>Real-time spending controls</strong> — per-card limits, merchant category restrictions, freeze/unfreeze instantly</li><li><strong>Multi-currency support</strong> — EUR, USD, GBP and more</li><li><strong>Team access</strong> with role-based permissions</li><li><strong>API access</strong> for programmatic card issuance and reconciliation</li><li><strong>Apple Pay and Google Pay</strong> support</li></ul>",
+      },
+      {
+        h: "Wallester Pricing in 2026",
+        body: "<ul><li><strong>Free plan:</strong> Up to 300 virtual cards, no monthly fee, standard FX margin</li><li><strong>Smart plan:</strong> ~€199/month — more cards, lower FX, priority support</li><li><strong>Enterprise plan:</strong> Custom — unlimited cards, dedicated account manager, advanced API limits</li></ul><p>Card top-ups are done by SEPA, SWIFT or card payment from a connected business account. Typical FX margin is ~1–2% on conversions; per-transaction card fees apply on the Free tier and reduce on paid tiers.</p>",
+      },
+      {
+        h: "Who Wallester Is Best For",
+        body: "<ul><li><strong>Digital marketing agencies</strong> managing dozens of ad accounts across clients — one card per ad account, clean reconciliation</li><li><strong>Dropshippers and e-commerce sellers</strong> paying suppliers and software bills in multiple currencies</li><li><strong>SaaS businesses</strong> spending on cloud infrastructure, AI APIs and developer tools</li><li><strong>Non-resident UK LTD and US LLC owners</strong> whose local banks won't issue international-friendly business cards</li><li><strong>Founders rejected by Stripe Issuing, Revolut Business or Wise debit cards</strong> — Wallester often approves where others decline</li></ul>",
+      },
+      {
+        h: "BIN Quality — Why It Matters",
+        body: "<p>Not all Visa cards are treated equally. Google Ads, Meta Ads and Apple have well-documented histories of declining cards issued by low-tier EMIs or prepaid programs. Wallester's BINs are principal-member Visa BINs — meaning they look and behave like cards from a real bank issuer.</p><p>In practical 2026 testing, Wallester cards pass on Google Ads, Meta Business, Microsoft Azure, AWS, Apple Developer, OpenAI, Anthropic, Shopify, Stripe Atlas, Cloudflare and most major SaaS platforms. They occasionally fail on consumer-only services (some streaming subscriptions) — but for B2B spend, the acceptance rate is excellent.</p>",
+      },
+      {
+        h: "Step-by-Step: Opening a Wallester Business Account",
+        body: "<h3>Step 1 — Prepare Your Entity</h3><p>A registered company (UK LTD, US LLC, EU entity) with a Certificate of Incorporation, registered address, director ID and a business bank or EMI account to fund cards.</p><h3>Step 2 — Apply at wallester.com/business</h3><p>Use a business email on your own domain. Sloppy applications get delayed.</p><h3>Step 3 — Provide KYC and KYB Documents</h3><p>Director passport, proof of address, company incorporation certificate, shareholder structure, expected monthly card spend and source of funds.</p><h3>Step 4 — Verification Call (Sometimes)</h3><p>For higher-volume applicants Wallester may request a short video verification call.</p><h3>Step 5 — Activation and First Top-Up</h3><p>Once approved (typically 3–10 business days), fund the account by SEPA or SWIFT and issue your first virtual card instantly.</p>",
+      },
+      {
+        h: "Spending Controls That Save You Money",
+        body: "<ul><li>Set a <strong>per-card monthly cap</strong> — protects you if a card is compromised</li><li><strong>Lock cards to specific merchants</strong> (e.g. Google Ads only)</li><li><strong>Freeze instantly</strong> from the dashboard or via API</li><li><strong>Generate single-use virtual cards</strong> for one-off vendor payments</li><li>Real-time webhook notifications on every transaction for accounting automation</li></ul>",
+      },
+      {
+        h: "Common Mistakes",
+        body: "<ul><li>Funding cards from a high-risk EMI that Wallester restricts (always check supported funding sources)</li><li>Issuing one card and trying to run all marketing spend through it — defeats the entire reconciliation benefit</li><li>Ignoring the FX margin when topping up in a currency different from your card's currency</li><li>Forgetting that Wallester is a card-issuing platform, not a full business bank — you still need Tide, Wise, Mercury or similar for receiving payments</li></ul>",
+      },
+      {
+        h: "Get Expert Help",
+        body: "<p>For non-resident founders running ad-heavy or SaaS-heavy operations, Wallester is one of the most practical card-issuing options available in 2026 — particularly when paired with a UK LTD or US LLC and a multi-currency account like Wise.</p><p><strong>Digiformation Ltd</strong> helps founders build the full stack — entity, banking, payment gateways and business card issuing — so your operations actually run smoothly across borders.</p><p>👉 <a href=\"/banks-payment-solutions\">Explore card and banking options</a> or <a href=\"/contact\">book a free consultation</a>.</p>",
+      },
+    ],
   },
   {
     slug: "stripe-vs-paypal-vs-mollie-which-gateway-best",
@@ -945,6 +1047,40 @@ export const blogPosts: BlogPost[] = [
     metaTitle: "Change UK Company Name 2026 — Complete Step-by-Step Guide (NM01)",
     metaDescription: "Step-by-step 2026 guide to change a UK company name. Special resolution, NM01 Companies House filing, fees and certificate explained for non-residents worldwide.",
     keywords: "change UK company name 2026, NM01 filing, Companies House name change, rename UK LTD non resident",
+    content: [
+      {
+        h: "When and Why You Might Change Your UK Company Name",
+        body: "<p>Changing a UK Limited Company's name is a routine Companies House procedure — but one that has serious consequences if handled badly. Common reasons founders rename a company include rebranding to match a new product, separating from a previous business partner, removing trademark conflicts after a legal demand, or simply outgrowing a placeholder name chosen at incorporation.</p><p>The good news: a UK company name change does <strong>not</strong> dissolve the company. Your company number, incorporation date, trading history, bank accounts, contracts, VAT registration and tax records all stay with the company — only the name on the surface changes. Done correctly, you keep your full legal and operational history intact.</p>",
+      },
+      {
+        h: "The Two Legal Routes to Change a UK Company Name",
+        body: "<p>UK company law gives you two routes under the Companies Act 2006:</p><ol><li><strong>By Special Resolution of the shareholders</strong> — the standard route, used by 99% of companies. Requires at least 75% of voting shareholders to approve.</li><li><strong>By means provided for in the Articles of Association</strong> — only available if your Articles contain a specific clause permitting directors to change the name without a shareholder vote. The default Model Articles do <em>not</em> include this.</li></ol><p>For almost every founder, the Special Resolution route is the correct path.</p>",
+      },
+      {
+        h: "Step-by-Step: Change a UK Company Name Using NM01",
+        body: "<h3>Step 1 — Check the Proposed Name Is Available</h3><p>Use the free <a href=\"https://find-and-update.company-information.service.gov.uk/\" target=\"_blank\" rel=\"noopener noreferrer\">Companies House name availability checker</a>. The new name must not be identical or 'too like' an existing registered name, must not contain sensitive words without permission, and must end with <em>Limited</em> or <em>Ltd</em>.</p><h3>Step 2 — Check Trademark Conflicts</h3><p>Search the <a href=\"https://www.gov.uk/search-for-trademark\" target=\"_blank\" rel=\"noopener noreferrer\">UK IPO trademark register</a> and ideally WIPO and USPTO if you sell internationally. Companies House approval does not protect you from a trademark infringement claim.</p><h3>Step 3 — Pass a Special Resolution</h3><p>Hold a general meeting (or use written resolution for small companies) where shareholders holding at least 75% of the voting rights approve the name change. Record the resolution in writing.</p><h3>Step 4 — File Form NM01 With Companies House</h3><p>Submit form <strong>NM01 – Notice of change of name by resolution</strong> via Companies House WebFiling. You will need your authentication code. Attach the signed Special Resolution.</p><h3>Step 5 — Pay the Fee</h3><p>£20 for standard online filing (typically processed within 1–2 business days) or £83 for same-day service. Paper filings are slower and more expensive.</p><h3>Step 6 — Receive the Certificate of Incorporation on Change of Name</h3><p>Companies House issues a new certificate showing the new name and the date of change. The change becomes legally effective from the date on this certificate.</p>",
+      },
+      {
+        h: "What Changes — and What Doesn't",
+        body: "<p><strong>Does not change:</strong></p><ul><li>Company registration number</li><li>Incorporation date</li><li>Tax references (UTR, VAT number, PAYE)</li><li>Trading history, credit file, bank accounts, contracts, leases</li><li>Intellectual property owned by the company</li></ul><p><strong>Does change:</strong></p><ul><li>The name on Companies House records and the public register</li><li>The name you must use on all stationery, invoices, websites, contracts and email footers going forward</li><li>Your domain, branding and marketing assets (these you update yourself)</li></ul>",
+      },
+      {
+        h: "What to Update Immediately After the Name Change",
+        body: "<ol><li><strong>HMRC</strong> — corporation tax, VAT and PAYE records (HMRC is usually notified automatically by Companies House, but confirm in your HMRC online account)</li><li><strong>Business bank accounts</strong> — submit the new Certificate of Incorporation on Change of Name to Tide, Wise, Revolut, Mercury or your bank</li><li><strong>Payment gateways</strong> — Stripe, PayPal, Mollie all require an updated company name and certificate</li><li><strong>Invoices, contracts, T&Cs, privacy policy, website footer, email signatures</strong></li><li><strong>Domain ownership and Google Business Profile</strong></li><li><strong>Insurance policies, leases and supplier contracts</strong></li><li><strong>Trademark applications</strong> — refile under the new name if needed</li></ol>",
+      },
+      {
+        h: "For Non-Resident Directors",
+        body: "<p>The entire process can be completed from anywhere in the world. You will need:</p><ul><li>Your Companies House <strong>6-digit authentication code</strong></li><li>A signed Special Resolution (electronic signatures are accepted)</li><li>A debit or credit card to pay the £20 fee</li></ul><p>If you have lost your authentication code, request a replacement through Companies House first — it is posted to the registered office address, so make sure your registered office mail is actually reachable. See our companion guide on <em>Recovering a Lost Companies House Auth Code</em>.</p>",
+      },
+      {
+        h: "Common Mistakes to Avoid",
+        body: "<ul><li>Skipping the trademark search and getting a cease-and-desist letter weeks after rebranding</li><li>Choosing a name 'too like' an existing one — Companies House will reject it</li><li>Forgetting to update bank accounts and payment gateways — invoices in the old name can cause payment failures</li><li>Continuing to trade under the old name informally — invoices and contracts must use the new legal name immediately</li><li>Not keeping the original Certificate of Incorporation alongside the Change of Name certificate (banks and KYC reviewers often ask for both)</li></ul>",
+      },
+      {
+        h: "Get Expert Help",
+        body: "<p>A UK company name change is a 48-hour administrative task when done correctly — and a multi-month headache when done badly. Special Resolution drafting, NM01 filing, trademark checks and downstream notifications all need to line up.</p><p><strong>Digiformation Ltd</strong> handles end-to-end UK company name changes for non-resident directors worldwide — including Special Resolution drafting, NM01 submission, certificate delivery and downstream bank, gateway and HMRC updates.</p><p>👉 <a href=\"/uk-compliance\">See UK compliance services</a> or <a href=\"/contact\">book a free consultation</a>.</p>",
+      },
+    ],
   },
   {
     slug: "best-banks-for-uk-ltd-non-resident-directors-2026",
