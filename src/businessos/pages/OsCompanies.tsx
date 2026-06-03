@@ -197,7 +197,7 @@ export default function OsCompanies() {
   }, [companies]);
 
   const openInLegacy = (userId: string, sub: "companies" | "addresses" = "companies") =>
-    navigate(`/admin/legacy?client=${userId}&tab=${sub}`);
+    navigate(`/admin/clients/${userId}?tab=${sub === "addresses" ? "addresses" : "company"}`);
 
   return (
     <div className="space-y-6">

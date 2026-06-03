@@ -56,7 +56,7 @@ export default function OsClients() {
   }, [clients, search]);
 
   const openClient = (id: string, tab: string = "company") => {
-    navigate(`/admin/legacy?client=${id}&tab=${tab}`);
+    navigate(`/admin/clients/${id}?tab=${tab}`);
   };
 
   const total = clients.length;
@@ -95,13 +95,7 @@ export default function OsClients() {
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
           Refresh
         </button>
-        <button
-          onClick={() => navigate("/admin/legacy")}
-          className="h-11 px-4 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:opacity-90"
-          title="Open full legacy admin (clients + email tools + create client)"
-        >
-          <ExternalLink className="w-4 h-4" /> Full Admin
-        </button>
+        {/* Legacy fallback removed — client management is now native at /admin/clients/:id */}
       </div>
 
       {/* Results count */}
