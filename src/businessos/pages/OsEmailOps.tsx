@@ -1,0 +1,293 @@
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { Mail, AlertTriangle, CheckCircle2, Clock, Ban, RefreshCw } from "lucide-react";
+
+type LogRow = {
+  id: string;
+  message_id: string | null;
+  template_name: string;
+  recipient_email: string;
+  status: string;
+  error_message: string | null;
+  created_at: string;
+  metadata: any;
+};
+
+type Suppressed = { id: string; email: string; reason: string; created_at: string };
+
+const RANGES = [
+  { id: "24h",  label: "Last 24h",  hours: 24 },
+  { id: "7d",   label: "Last 7d",   hours: 24 * 7 },
+  { id: "30d",  label: "Last 30d",  hours: 24 * 30 },
+];
+
+const STATUS_FILTERS = ["all", "sent", "pending", "dlq", "failed", "suppressed", "bounced"];
+
+const STATUS_COLORS: Record<string, string> = {
+  sent:       "bg-green-500/15 text-green-300 border-green-500/30",
+  pending:    "bg-amber-500/15 text-amber-300 border-amber-500/30",
+  dlq:        "bg-red-500/15 text-red-300 border-red-500/30",
+  failed:     "bg-red-500/15 text-red-300 border-red-500/30",
+  suppressed: "bg-zinc-500/15 text-zinc-300 border-zinc-500/30",
+  bounced:    "bg-orange-500/15 text-orange-300 border-orange-500/30",
+  complained: "bg-pink-500/15 text-pink-300 border-pink-500/30",
+};
+
+export default function OsEmailOps() {
+  const [logs, setLogs] = useState<LogRow[]>([]);
+  const [suppressed, setSuppressed] = useState<Suppressed[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [range, setRange] = useState("7d");
+  const [template, setTemplate] = useState<string>("all");
+  const [status, setStatus] = useState<string>("all");
+  const [search, setSearch] = useState("");
+  const [retrying, setRetrying] = useState<string | null>(null);
+
+  const load = async () => {
+    setLoading(true);
+    const hours = RANGES.find(r => r.id === range)?.hours || 168;
+    const since = new Date(Date.now() - hours * 3600 * 1000).toISOString();
+    const [logRes, supRes] = await Promise.all([
+      supabase.from("email_send_log")
+        .select("*")
+        .gte("created_at", since)
+        .order("created_at", { ascending: false })
+        .limit(500),
+      supabase.from("suppressed_emails")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(200),
+    ]);
+    if (logRes.error) toast.error(logRes.error.message);
+    if (supRes.error) toast.error(supRes.error.message);
+    setLogs((logRes.data || []) as LogRow[]);
+    setSuppressed((supRes.data || []) as Suppressed[]);
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, [range]);
+
+  // Realtime
+  useEffect(() => {
+    const ch = supabase
+      .channel("email-ops")
+      .on("postgres_changes", { event: "*", schema: "public", table: "email_send_log" }, () => load())
+      .on("postgres_changes", { event: "*", schema: "public", table: "suppressed_emails" }, () => load())
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [range]);
+
+  // Deduplicate by message_id — latest row per email
+  const deduped = useMemo(() => {
+    const map = new Map<string, LogRow>();
+    for (const row of logs) {
+      const key = row.message_id || row.id;
+      const existing = map.get(key);
+      if (!existing || new Date(row.created_at) > new Date(existing.created_at)) {
+        map.set(key, row);
+      }
+    }
+    return Array.from(map.values()).sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+  }, [logs]);
+
+  const templates = useMemo(() => {
+    const set = new Set<string>();
+    deduped.forEach(r => set.add(r.template_name));
+    return ["all", ...Array.from(set).sort()];
+  }, [deduped]);
+
+  const filtered = useMemo(() => {
+    return deduped.filter(r => {
+      if (template !== "all" && r.template_name !== template) return false;
+      if (status !== "all" && r.status !== status) return false;
+      if (search && !r.recipient_email.toLowerCase().includes(search.toLowerCase())) return false;
+      return true;
+    });
+  }, [deduped, template, status, search]);
+
+  const stats = useMemo(() => {
+    const s = { total: deduped.length, sent: 0, pending: 0, dlq: 0, failed: 0, suppressed: 0 };
+    deduped.forEach(r => {
+      if (r.status === "sent") s.sent++;
+      else if (r.status === "pending") s.pending++;
+      else if (r.status === "dlq") s.dlq++;
+      else if (r.status === "failed") s.failed++;
+      else if (r.status === "suppressed") s.suppressed++;
+    });
+    return s;
+  }, [deduped]);
+
+  const retry = async (row: LogRow) => {
+    setRetrying(row.id);
+    try {
+      // Re-enqueue by invoking send-transactional-email with the same payload
+      const meta = row.metadata || {};
+      const { error } = await supabase.functions.invoke("send-transactional-email", {
+        body: {
+          template: row.template_name,
+          to: row.recipient_email,
+          data: meta.data || {},
+          idempotency_key: `retry-${row.id}-${Date.now()}`,
+          purpose: "transactional",
+        },
+      });
+      if (error) throw error;
+      toast.success("Re-queued");
+      load();
+    } catch (e: any) {
+      toast.error(e.message || "Retry failed");
+    } finally {
+      setRetrying(null);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-bold flex items-center gap-2"><Mail className="w-5 h-5" /> Email Operations</h2>
+          <p className="text-sm text-white/50">Queue health · DLQ · suppression list · retries</p>
+        </div>
+        <button onClick={load} className="h-9 px-3 rounded-lg border border-white/10 hover:bg-white/5 text-sm flex items-center gap-2">
+          <RefreshCw className="w-3.5 h-3.5" /> Refresh
+        </button>
+      </div>
+
+      {/* Stat cards */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <StatCard icon={<Mail className="w-4 h-4" />} label="Total" value={stats.total} tone="blue" />
+        <StatCard icon={<CheckCircle2 className="w-4 h-4" />} label="Sent" value={stats.sent} tone="green" />
+        <StatCard icon={<Clock className="w-4 h-4" />} label="Pending" value={stats.pending} tone="amber" />
+        <StatCard icon={<AlertTriangle className="w-4 h-4" />} label="DLQ" value={stats.dlq} tone="red" />
+        <StatCard icon={<Ban className="w-4 h-4" />} label="Suppressed" value={suppressed.length} tone="zinc" />
+      </div>
+
+      {/* Filters */}
+      <div className="os-glass p-3 flex flex-wrap gap-2 items-center">
+        <div className="flex gap-1">
+          {RANGES.map(r => (
+            <button key={r.id} onClick={() => setRange(r.id)}
+              className={`h-8 px-3 rounded-lg text-xs ${range === r.id ? "bg-blue-500/25 text-blue-200 border border-blue-500/40" : "border border-white/10 hover:bg-white/5"}`}>
+              {r.label}
+            </button>
+          ))}
+        </div>
+        <select value={template} onChange={e => setTemplate(e.target.value)}
+          className="h-8 px-2 rounded-lg bg-white/5 border border-white/10 text-xs">
+          {templates.map(t => <option key={t} value={t}>{t === "all" ? "All templates" : t}</option>)}
+        </select>
+        <select value={status} onChange={e => setStatus(e.target.value)}
+          className="h-8 px-2 rounded-lg bg-white/5 border border-white/10 text-xs">
+          {STATUS_FILTERS.map(s => <option key={s} value={s}>{s === "all" ? "All statuses" : s}</option>)}
+        </select>
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search recipient…"
+          className="h-8 px-3 rounded-lg bg-white/5 border border-white/10 text-xs flex-1 min-w-[180px]" />
+      </div>
+
+      {/* Log table */}
+      <div className="os-glass overflow-hidden">
+        <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between">
+          <div className="text-sm font-semibold">Email log ({filtered.length})</div>
+          <div className="text-[11px] text-white/40">Deduplicated by message_id</div>
+        </div>
+        <div className="overflow-x-auto max-h-[520px] overflow-y-auto">
+          <table className="w-full text-sm">
+            <thead className="text-xs text-white/50 bg-white/[0.02] sticky top-0">
+              <tr>
+                <th className="text-left px-4 py-2 font-medium">Template</th>
+                <th className="text-left px-4 py-2 font-medium">Recipient</th>
+                <th className="text-left px-4 py-2 font-medium">Status</th>
+                <th className="text-left px-4 py-2 font-medium">When</th>
+                <th className="text-left px-4 py-2 font-medium">Error</th>
+                <th className="text-right px-4 py-2 font-medium">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading && (
+                <tr><td colSpan={6} className="text-center py-8 text-white/40 text-xs">Loading…</td></tr>
+              )}
+              {!loading && filtered.length === 0 && (
+                <tr><td colSpan={6} className="text-center py-8 text-white/40 text-xs">No emails match the filter</td></tr>
+              )}
+              {filtered.map(r => (
+                <tr key={r.id} className="border-t border-white/5 hover:bg-white/[0.02]">
+                  <td className="px-4 py-2 text-xs">{r.template_name}</td>
+                  <td className="px-4 py-2 text-xs">{r.recipient_email}</td>
+                  <td className="px-4 py-2">
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full border ${STATUS_COLORS[r.status] || "bg-white/5 text-white/60 border-white/10"}`}>
+                      {r.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-2 text-xs text-white/50 mono">
+                    {new Date(r.created_at).toLocaleString()}
+                  </td>
+                  <td className="px-4 py-2 text-xs text-red-300/80 max-w-[280px] truncate" title={r.error_message || ""}>
+                    {r.error_message || "—"}
+                  </td>
+                  <td className="px-4 py-2 text-right">
+                    {(r.status === "dlq" || r.status === "failed") && (
+                      <button disabled={retrying === r.id} onClick={() => retry(r)}
+                        className="h-7 px-2 rounded-md text-[11px] border border-white/10 hover:bg-white/5 disabled:opacity-50">
+                        {retrying === r.id ? "…" : "Retry"}
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Suppression list */}
+      <div className="os-glass overflow-hidden">
+        <div className="px-4 py-3 border-b border-white/5 text-sm font-semibold flex items-center gap-2">
+          <Ban className="w-4 h-4" /> Suppression list ({suppressed.length})
+        </div>
+        <div className="overflow-x-auto max-h-[280px] overflow-y-auto">
+          <table className="w-full text-sm">
+            <thead className="text-xs text-white/50 bg-white/[0.02] sticky top-0">
+              <tr>
+                <th className="text-left px-4 py-2 font-medium">Email</th>
+                <th className="text-left px-4 py-2 font-medium">Reason</th>
+                <th className="text-left px-4 py-2 font-medium">Added</th>
+              </tr>
+            </thead>
+            <tbody>
+              {suppressed.length === 0 && (
+                <tr><td colSpan={3} className="text-center py-6 text-white/40 text-xs">No suppressed emails</td></tr>
+              )}
+              {suppressed.map(s => (
+                <tr key={s.id} className="border-t border-white/5">
+                  <td className="px-4 py-2 text-xs">{s.email}</td>
+                  <td className="px-4 py-2 text-xs text-white/60">{s.reason}</td>
+                  <td className="px-4 py-2 text-xs text-white/50 mono">{new Date(s.created_at).toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({ icon, label, value, tone }: { icon: React.ReactNode; label: string; value: number; tone: string }) {
+  const toneClasses: Record<string, string> = {
+    blue:  "from-blue-500/10 to-blue-500/0 border-blue-500/20 text-blue-300",
+    green: "from-green-500/10 to-green-500/0 border-green-500/20 text-green-300",
+    amber: "from-amber-500/10 to-amber-500/0 border-amber-500/20 text-amber-300",
+    red:   "from-red-500/10 to-red-500/0 border-red-500/20 text-red-300",
+    zinc:  "from-zinc-500/10 to-zinc-500/0 border-zinc-500/20 text-zinc-300",
+  };
+  return (
+    <div className={`os-glass p-4 bg-gradient-to-br ${toneClasses[tone]} border`}>
+      <div className="flex items-center gap-2 text-xs opacity-80">{icon}{label}</div>
+      <div className="text-2xl font-bold mono mt-1">{value}</div>
+    </div>
+  );
+}
