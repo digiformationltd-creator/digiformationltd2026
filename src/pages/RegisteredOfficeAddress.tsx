@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+
 import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2, Building2, Briefcase, UserCircle2, Sparkles } from "lucide-react";
 import Layout from "@/components/layout/Layout";
