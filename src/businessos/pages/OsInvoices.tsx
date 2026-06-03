@@ -146,13 +146,11 @@ export default function OsInvoices() {
     () => invoices.filter(i => isOverdue(i)).reduce((a, i) => a + (Number(i.total_gbp) || 0), 0), [invoices]
   );
 
-  const openInLegacy = (i: InvoiceRow) => {
-    if (i.user_id) navigate(`/admin/legacy?client=${i.user_id}&tab=invoices`);
-    else toast.info("No linked client — use Full Admin");
-  };
+  // Native drawers — guest-safe (keyed by id, not user_id).
+  const openInLegacy = (i: InvoiceRow) => setOpenInvoiceId(i.id);
   const openOrderInLegacy = (i: InvoiceRow) => {
-    if (i.user_id) navigate(`/admin/legacy?client=${i.user_id}&tab=orders`);
-    else toast.info("No linked client — use Full Admin");
+    if (i.order_id) setOpenOrderId(i.order_id);
+    else toast.info("No linked order");
   };
 
   // QUICK ACTIONS — reuse existing production flows
