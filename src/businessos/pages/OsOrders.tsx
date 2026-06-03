@@ -356,13 +356,9 @@ export default function OsOrders() {
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
             Refresh
           </button>
-          <button
-            onClick={() => navigate("/admin/legacy")}
-            className="h-11 px-4 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:opacity-90"
-            title="Open full legacy admin"
-          >
-            <ExternalLink className="w-4 h-4" /> Full Admin
-          </button>
+          {/* Legacy fallback button intentionally removed in Wave 1 — order
+              management is now native via OsOrderDrawer. Route /admin/legacy
+              remains mounted as a hidden rollback path. */}
         </div>
 
         {/* Status pills */}
