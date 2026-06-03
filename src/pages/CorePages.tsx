@@ -1046,8 +1046,8 @@ const faqList: FaqItem[] = [
   },
   {
     category: "ID Verification",
-    q: "Can ID verification be done using a Pakistani ID card, or is a passport required?",
-    a: "Yes, ID verification can be completed using a Pakistani ID card. However, for bank account creation, a passport or driving license is required.",
+    q: "Can ID verification be completed using a Pakistani ID card, or is a passport required?",
+    a: "Yes, ID verification for UK company formation can be completed using any of the following government-issued documents:\n\n1. Pakistani National ID Card (CNIC)\n2. Passport\n3. Driving License\n\nPlease note: For UK business bank account opening, a Passport or Driving License is mandatory — a CNIC alone is not accepted by most banks.",
   },
 
   // 📍 Banking & Accounts
