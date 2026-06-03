@@ -141,8 +141,8 @@ export const Contact = () => {
 
   useEffect(() => {
     setMeta(
-      "Contact Digiformation Ltd — UK LTD & US LLC Formation Support (Worldwide)",
-      "Contact Digiformation Ltd for UK Limited Company & US LLC formation, registered office address, Companies House ID verification and annual compliance. WhatsApp, email or inquiry form — for clients in Pakistan, India, UAE, UK, USA & worldwide.",
+      "Contact Digiformation Ltd — UK LTD & US LLC Support",
+      "Contact Digiformation Ltd for UK LTD & US LLC formation, registered office, ID verification and compliance. WhatsApp, email or inquiry form.",
       "contact Digiformation, UK company formation contact, US LLC formation help, Companies House support, registered office contact, ID verification help worldwide"
     );
     const cleanup = injectJsonLd("contact-page-schema", {
