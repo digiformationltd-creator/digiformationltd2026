@@ -43,6 +43,9 @@ export default function OsEmailOps() {
   const [status, setStatus] = useState<string>("all");
   const [search, setSearch] = useState("");
   const [retrying, setRetrying] = useState<string | null>(null);
+  const [bulkRetrying, setBulkRetrying] = useState(false);
+  const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number; skipped: number; failed: number } | null>(null);
+
 
   const load = async () => {
     setLoading(true);
