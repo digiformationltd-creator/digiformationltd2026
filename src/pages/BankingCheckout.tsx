@@ -68,6 +68,9 @@ const BankingCheckout = () => {
         whatsappPlaceholder={
           region === "usa" ? "+1 ..." : region === "both" ? "+44 ... or +1 ..." : "+44 ..."
         }
+        showSeparateWhatsapp
+        whatsappContactLabel="WhatsApp contact number"
+        whatsappContactPlaceholder="+44 ... or +1 ..."
       />
     </Layout>
   );
