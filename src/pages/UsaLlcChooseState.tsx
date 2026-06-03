@@ -13,6 +13,9 @@ import {
 } from "@/components/ui/select";
 import heroImg from "@/assets/card-hero-us-llc.jpg";
 import { supabase } from "@/integrations/supabase/client";
+import ServiceFAQ from "@/components/seo/ServiceFAQ";
+import RelatedServices from "@/components/seo/RelatedServices";
+import RecommendedGuides from "@/components/seo/RecommendedGuides";
 
 type StatePricing = {
   id: string;
