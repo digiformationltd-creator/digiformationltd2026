@@ -305,13 +305,18 @@ export default function OsOrders() {
     [orders]
   );
 
-  const openOrderInLegacy = (o: OrderRow) => {
-    if (o.user_id) navigate(`/admin/legacy?client=${o.user_id}&tab=orders`);
-    else toast.info("Guest order — open Full Admin for advanced actions");
-  };
-  const openInvoiceInLegacy = (o: OrderRow) => {
-    if (o.user_id) navigate(`/admin/legacy?client=${o.user_id}&tab=invoices`);
-    else toast.info("Guest order — open Full Admin for advanced actions");
+  // Native drawers — guest-safe (keyed by order/invoice id, not user_id).
+  const openOrder = (o: OrderRow) => setOpenOrderId(o.id);
+  const openInvoiceForOrder = async (o: OrderRow) => {
+    const { data } = await supabase
+      .from("invoices")
+      .select("id")
+      .eq("order_id", o.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (data?.id) setOpenInvoiceId(data.id);
+    else toast.info("No invoice generated for this order yet");
   };
 
   return (
