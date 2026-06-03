@@ -113,9 +113,15 @@ Deno.serve(async (req) => {
   // Admin-only templates require the caller to have the `admin` role,
   // OR for the call to come from a service-role context (cron, edge-to-edge).
   const authHeader = req.headers.get('Authorization') || ''
+  const clientIp =
+    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    req.headers.get('cf-connecting-ip') ||
+    req.headers.get('x-real-ip') ||
+    null
   let isAuthenticated = false
   let isAdmin = false
   let isServiceRole = false
+  let authUserId: string | null = null
   if (authHeader.startsWith('Bearer ')) {
     const token = authHeader.replace('Bearer ', '')
     try {
@@ -132,14 +138,17 @@ Deno.serve(async (req) => {
         const userClient = createClient(supabaseUrl, anonKey, {
           global: { headers: { Authorization: authHeader } },
         })
-        const { data } = await userClient.auth.getUser()
-        isAuthenticated = !!data?.user
-        if (isAuthenticated && data?.user?.id) {
+        // getUser() validates the JWT signature server-side. Forged, expired,
+        // or tampered tokens return user: null.
+        const { data, error: authError } = await userClient.auth.getUser()
+        if (!authError && data?.user?.id) {
+          isAuthenticated = true
+          authUserId = data.user.id
           const adminClient = createClient(supabaseUrl, supabaseServiceKey)
           const { data: roleRow } = await adminClient
             .from('user_roles')
             .select('role')
-            .eq('user_id', data.user.id)
+            .eq('user_id', authUserId)
             .eq('role', 'admin')
             .maybeSingle()
           isAdmin = !!roleRow
@@ -160,6 +169,70 @@ Deno.serve(async (req) => {
       JSON.stringify({ error: 'Admin privileges required for this template' }),
       { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     )
+  }
+
+  // Request-payload binding: an authenticated non-admin caller cannot supply
+  // a templateData.user_id for someone else.
+  if (
+    isAuthenticated && !isAdmin && !isServiceRole &&
+    typeof templateData?.user_id === 'string' &&
+    templateData.user_id !== authUserId
+  ) {
+    return new Response(
+      JSON.stringify({ error: 'templateData.user_id does not match authenticated user' }),
+      { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    )
+  }
+
+  // Rate limiting (ad-hoc — backend has no shared limiter primitive).
+  // Service role bypasses (cron, edge-to-edge). Admins get a higher ceiling.
+  // Anonymous callers are throttled per source IP. A global cap protects cost.
+  const rlClient = createClient(supabaseUrl, supabaseServiceKey)
+  if (!isServiceRole) {
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+    const PER_USER_LIMIT = isAdmin ? 200 : 10
+    const PER_IP_ANON_LIMIT = 20
+    const GLOBAL_LIMIT = 1000
+
+    if (authUserId) {
+      const { count } = await rlClient
+        .from('email_send_log')
+        .select('id', { count: 'exact', head: true })
+        .eq('triggered_by_user_id', authUserId)
+        .gte('created_at', oneHourAgo)
+      if ((count ?? 0) >= PER_USER_LIMIT) {
+        console.warn('Rate limit hit (per-user)', { authUserId, count })
+        return new Response(
+          JSON.stringify({ error: 'Rate limit exceeded. Try again later.' }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '3600' } },
+        )
+      }
+    } else if (clientIp) {
+      const { count } = await rlClient
+        .from('email_send_log')
+        .select('id', { count: 'exact', head: true })
+        .eq('triggered_by_ip', clientIp)
+        .gte('created_at', oneHourAgo)
+      if ((count ?? 0) >= PER_IP_ANON_LIMIT) {
+        console.warn('Rate limit hit (per-IP anon)', { clientIp, count })
+        return new Response(
+          JSON.stringify({ error: 'Rate limit exceeded. Try again later.' }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '3600' } },
+        )
+      }
+    }
+
+    const { count: globalCount } = await rlClient
+      .from('email_send_log')
+      .select('id', { count: 'exact', head: true })
+      .gte('created_at', oneHourAgo)
+    if ((globalCount ?? 0) >= GLOBAL_LIMIT) {
+      console.error('Global rate limit hit', { globalCount })
+      return new Response(
+        JSON.stringify({ error: 'Service temporarily unavailable. Try again later.' }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '3600' } },
+      )
+    }
   }
 
   // 1. Look up template from registry (early — needed to resolve recipient)
@@ -249,6 +322,8 @@ Deno.serve(async (req) => {
     // Log the suppressed attempt
     await supabase.from('email_send_log').insert({
       message_id: messageId,
+      triggered_by_user_id: authUserId,
+      triggered_by_ip: clientIp,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'suppressed',
@@ -282,6 +357,8 @@ Deno.serve(async (req) => {
     })
     await supabase.from('email_send_log').insert({
       message_id: messageId,
+      triggered_by_user_id: authUserId,
+      triggered_by_ip: clientIp,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'failed',
@@ -315,6 +392,8 @@ Deno.serve(async (req) => {
       })
       await supabase.from('email_send_log').insert({
         message_id: messageId,
+      triggered_by_user_id: authUserId,
+      triggered_by_ip: clientIp,
         template_name: templateName,
         recipient_email: effectiveRecipient,
         status: 'failed',
@@ -344,6 +423,8 @@ Deno.serve(async (req) => {
       })
       await supabase.from('email_send_log').insert({
         message_id: messageId,
+      triggered_by_user_id: authUserId,
+      triggered_by_ip: clientIp,
         template_name: templateName,
         recipient_email: effectiveRecipient,
         status: 'failed',
@@ -366,6 +447,8 @@ Deno.serve(async (req) => {
     })
     await supabase.from('email_send_log').insert({
       message_id: messageId,
+      triggered_by_user_id: authUserId,
+      triggered_by_ip: clientIp,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'suppressed',
@@ -402,6 +485,8 @@ Deno.serve(async (req) => {
   // Log pending BEFORE enqueue so we have a record even if enqueue crashes
   await supabase.from('email_send_log').insert({
     message_id: messageId,
+      triggered_by_user_id: authUserId,
+      triggered_by_ip: clientIp,
     template_name: templateName,
     recipient_email: effectiveRecipient,
     status: 'pending',
@@ -434,6 +519,8 @@ Deno.serve(async (req) => {
 
     await supabase.from('email_send_log').insert({
       message_id: messageId,
+      triggered_by_user_id: authUserId,
+      triggered_by_ip: clientIp,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'failed',
