@@ -240,8 +240,9 @@ const DigiNav = () => {
                       </Link>
                     )}
                     {g.items.map((it) => (
-                      <Link key={it.path} to={it.path} onClick={() => setOpen(false)} className="block px-4 py-2 text-sm rounded-md hover:bg-primary/10 opacity-80">
-                        {it.name}
+                      <Link key={it.path} to={it.path} onClick={() => setOpen(false)} className="flex items-center justify-between px-4 py-2 text-sm rounded-md hover:bg-primary/10 opacity-80">
+                        <span>{it.name}</span>
+                        {it.price && <span className="text-xs font-semibold text-primary ml-3 shrink-0">{it.price}</span>}
                       </Link>
                     ))}
                   </div>
