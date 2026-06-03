@@ -255,3 +255,142 @@ function StatCard({ label, value, icon: Icon, glow }: { label: string; value: nu
     </div>
   );
 }
+
+function CreateClientDialog({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }) {
+  const [submitting, setSubmitting] = useState(false);
+  const [showPw, setShowPw] = useState(false);
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    full_name: "",
+    phone: "",
+    company_name: "",
+  });
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.email.trim() || !form.password.trim()) {
+      toast.error("Email and password are required");
+      return;
+    }
+    if (form.password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+    setSubmitting(true);
+    const { data, error } = await supabase.functions.invoke("admin-clients", {
+      method: "POST",
+      body: form,
+    });
+    setSubmitting(false);
+    if (error || data?.error) {
+      toast.error(data?.error || error?.message || "Failed to create client");
+      return;
+    }
+    toast.success(`Client created — ${form.email} can log in now`);
+    onCreated();
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4"
+      onClick={onClose}
+    >
+      <div
+        className="os-glass w-full sm:max-w-md p-5 sm:p-6 rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-lg font-bold">Create Client Account</h2>
+            <p className="text-xs text-white/50 mt-0.5">No confirmation email — client can sign in immediately</p>
+          </div>
+          <button onClick={onClose} className="w-8 h-8 rounded-lg os-glass grid place-items-center">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <form onSubmit={submit} className="space-y-3">
+          <Field label="Email *">
+            <input
+              type="email"
+              required
+              autoComplete="off"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              className="w-full h-11 rounded-xl px-3 text-sm"
+              placeholder="client@example.com"
+            />
+          </Field>
+
+          <Field label="Password *">
+            <div className="relative">
+              <input
+                type={showPw ? "text" : "password"}
+                required
+                autoComplete="new-password"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                className="w-full h-11 rounded-xl pl-3 pr-11 text-sm"
+                placeholder="Min 6 characters"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPw((v) => !v)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 grid place-items-center rounded-md bg-white/10 hover:bg-white/20"
+              >
+                {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </Field>
+
+          <Field label="Full Name">
+            <input
+              value={form.full_name}
+              onChange={(e) => setForm({ ...form, full_name: e.target.value })}
+              className="w-full h-11 rounded-xl px-3 text-sm"
+              placeholder="Optional"
+            />
+          </Field>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Phone">
+              <input
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                className="w-full h-11 rounded-xl px-3 text-sm"
+                placeholder="Optional"
+              />
+            </Field>
+            <Field label="Company">
+              <input
+                value={form.company_name}
+                onChange={(e) => setForm({ ...form, company_name: e.target.value })}
+                className="w-full h-11 rounded-xl px-3 text-sm"
+                placeholder="Optional"
+              />
+            </Field>
+          </div>
+
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full h-11 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
+          >
+            {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
+            {submitting ? "Creating…" : "Create Client"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <div className="text-[11px] uppercase tracking-widest text-white/50 mb-1">{label}</div>
+      {children}
+    </label>
+  );
+}
