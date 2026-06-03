@@ -135,6 +135,12 @@ export type CheckoutFlowProps = {
   whatsappLabel?: string;
   /** Placeholder hint for the WhatsApp/phone field */
   whatsappPlaceholder?: string;
+  /** Show a separate WhatsApp contact number field in addition to the main phone field. */
+  showSeparateWhatsapp?: boolean;
+  /** Label for the separate WhatsApp contact field. Defaults to "WhatsApp contact number". */
+  whatsappContactLabel?: string;
+  /** Placeholder for the separate WhatsApp contact field. */
+  whatsappContactPlaceholder?: string;
   /** Optional extra add-on services grouped by category. */
   extras?: { categoryLabel: string; description?: string; items: CheckoutItem[] }[];
   /** Per-item dynamic field sections rendered in the details step when the
@@ -186,6 +192,9 @@ const CheckoutFlow = ({
   showWebsite = false,
   whatsappLabel = "WhatsApp",
   whatsappPlaceholder,
+  showSeparateWhatsapp = false,
+  whatsappContactLabel = "WhatsApp contact number",
+  whatsappContactPlaceholder = "+44 ... or +1 ...",
   extras,
   extraSections,
 }: CheckoutFlowProps) => {
@@ -242,6 +251,7 @@ const CheckoutFlow = ({
     full_name: "",
     email: "",
     whatsapp: "",
+    whatsapp_contact: "",
     country: "",
     nationality: "",
     address_line1: "",
@@ -368,6 +378,7 @@ const CheckoutFlow = ({
         form.last_name.trim().length >= 2 &&
         /\S+@\S+\.\S+/.test(form.email) &&
         form.whatsapp.trim().length >= 5 &&
+        (!showSeparateWhatsapp || form.whatsapp_contact.trim().length >= 5) &&
         form.country.trim().length >= 2 &&
         form.nationality.trim().length >= 2 &&
         form.address_line1.trim().length >= 3 &&
@@ -468,6 +479,7 @@ const CheckoutFlow = ({
       (showRole && form.role ? `Applicant role: ${form.role}\n` : "") +
       (showDateOfBirth && form.date_of_birth ? `Date of birth: ${form.date_of_birth}\n` : "") +
       (showWebsite && form.website ? `Website: ${form.website}\n` : "") +
+      (showSeparateWhatsapp && form.whatsapp_contact ? `${whatsappContactLabel}: ${form.whatsapp_contact}\n` : "") +
       `Items:\n${lines}\n` +
       `Subtotal: ${formatMoney(subtotal, currency)}\n` +
       (vat ? `VAT (${(vatRate * 100).toFixed(0)}%): ${formatMoney(vat, currency)}\n` : "") +
@@ -973,6 +985,9 @@ const CheckoutFlow = ({
                   <Field label="Last name" value={form.last_name} onChange={(v) => setForm({ ...form, last_name: v, full_name: `${form.first_name} ${v}`.trim() })} required minLength={2} />
                   <Field label="Email" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
                   <Field label={whatsappLabel} value={form.whatsapp} onChange={(v) => setForm({ ...form, whatsapp: v })} required minLength={5} placeholder={whatsappPlaceholder} />
+                  {showSeparateWhatsapp && (
+                    <Field label={whatsappContactLabel} value={form.whatsapp_contact} onChange={(v) => setForm({ ...form, whatsapp_contact: v })} required minLength={5} placeholder={whatsappContactPlaceholder} />
+                  )}
                   {showDateOfBirth && (
                     <Field label="Date of birth" type="date" value={form.date_of_birth} onChange={(v) => setForm({ ...form, date_of_birth: v })} required />
                   )}
@@ -1265,7 +1280,8 @@ const CheckoutFlow = ({
                   <dl className="grid sm:grid-cols-2 gap-2 text-sm">
                     <ReviewLine label="Name" value={`${form.first_name} ${form.last_name}`.trim()} />
                     <ReviewLine label="Email" value={form.email} />
-                    <ReviewLine label="WhatsApp" value={form.whatsapp} />
+                    <ReviewLine label={whatsappLabel} value={form.whatsapp} />
+                    {showSeparateWhatsapp && <ReviewLine label={whatsappContactLabel} value={form.whatsapp_contact} />}
                     <ReviewLine label="Country of residence" value={form.country} />
                     <ReviewLine label="Nationality" value={form.nationality} />
                   </dl>

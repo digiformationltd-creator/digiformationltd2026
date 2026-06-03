@@ -12,7 +12,7 @@ const deriveRegion = (requirements: string[]): "uk" | "usa" | "both" => {
 };
 
 const phoneLabelFor = (region: "uk" | "usa" | "both") =>
-  region === "usa" ? "USA Number (WhatsApp)" : region === "both" ? "UK / USA Number (WhatsApp)" : "UK Number (WhatsApp)";
+  region === "usa" ? "USA Number (for bank OTP)" : region === "both" ? "UK / USA Number (for bank OTP)" : "UK Number (for bank OTP)";
 
 const BankingCheckout = () => {
   const { slug } = useParams();
@@ -68,6 +68,9 @@ const BankingCheckout = () => {
         whatsappPlaceholder={
           region === "usa" ? "+1 ..." : region === "both" ? "+44 ... or +1 ..." : "+44 ..."
         }
+        showSeparateWhatsapp
+        whatsappContactLabel="WhatsApp contact number"
+        whatsappContactPlaceholder="+44 ... or +1 ..."
       />
     </Layout>
   );
