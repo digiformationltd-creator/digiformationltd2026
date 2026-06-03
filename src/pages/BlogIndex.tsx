@@ -18,10 +18,10 @@ const setMeta = (name: string, content: string) => {
 const BlogIndex = () => {
   useEffect(() => {
     document.title =
-      "Digiformation Blog 2026 — UK LTD, US LLC, Stripe, PayPal, Banking & E-commerce Guides Worldwide";
+      "Digiformation Blog 2026 — UK LTD & US LLC Guides";
     setMeta(
       "description",
-      "Expert 2026 guides for non-resident founders worldwide — UK Limited Company & US LLC formation, Stripe, PayPal, Payoneer, Wise, WorldFirst, Tide, Amazon FBA, eBay, Shopify, BOI, EIN, ITIN, VAT and Companies House compliance."
+      "Expert 2026 guides for non-resident founders: UK LTD & US LLC formation, Stripe, PayPal, Wise, Tide, Amazon FBA, Shopify and compliance."
     );
     setMeta(
       "keywords",
