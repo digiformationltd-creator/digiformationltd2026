@@ -479,6 +479,7 @@ const CheckoutFlow = ({
       (showRole && form.role ? `Applicant role: ${form.role}\n` : "") +
       (showDateOfBirth && form.date_of_birth ? `Date of birth: ${form.date_of_birth}\n` : "") +
       (showWebsite && form.website ? `Website: ${form.website}\n` : "") +
+      (showSeparateWhatsapp && form.whatsapp_contact ? `${whatsappContactLabel}: ${form.whatsapp_contact}\n` : "") +
       `Items:\n${lines}\n` +
       `Subtotal: ${formatMoney(subtotal, currency)}\n` +
       (vat ? `VAT (${(vatRate * 100).toFixed(0)}%): ${formatMoney(vat, currency)}\n` : "") +
