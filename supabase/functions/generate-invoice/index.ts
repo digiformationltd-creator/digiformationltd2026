@@ -417,6 +417,7 @@ Deno.serve(async (req) => {
         customer_email: body.customer.email ?? null,
         customer_whatsapp: body.customer.whatsapp ?? null,
         notes: body.notes ?? null,
+        amount_mismatch: amountMismatch,
       })
       .select('id')
       .single()
@@ -439,6 +440,7 @@ Deno.serve(async (req) => {
       bill_to_address: body.customer.address ?? null,
       pdf_url: path,
       notes: body.notes ?? null,
+      amount_mismatch: amountMismatch,
     })
     if (invErr) throw invErr
 
