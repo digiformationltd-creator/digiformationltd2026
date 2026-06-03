@@ -277,6 +277,19 @@ Deno.serve(async (req) => {
     }
 
     const admin = createClient(supabaseUrl, serviceKey)
+    const customerEmail = body.customer.email.trim().toLowerCase()
+    let orderUserId: string | null = null
+    const { data: matchedProfile } = await admin
+      .from('profiles')
+      .select('user_id')
+      .ilike('email', customerEmail)
+      .limit(1)
+      .maybeSingle()
+    if (matchedProfile?.user_id) {
+      orderUserId = matchedProfile.user_id
+    } else if (user?.id && user.email?.toLowerCase() === customerEmail) {
+      orderUserId = user.id
+    }
 
     // Soft price sanity check against the services catalog. The checkout
     // supports multi-item bundles and free-text service titles ("LTD ID
@@ -393,7 +406,7 @@ Deno.serve(async (req) => {
     })
 
     // 2. Upload to storage (under user folder if authed, else `guest/`)
-    const folder = user ? user.id : 'guest'
+    const folder = orderUserId ?? 'guest'
     const path = `${folder}/${invoiceNumber}.pdf`
     const { error: upErr } = await admin.storage.from('invoices').upload(
       path,
@@ -408,7 +421,7 @@ Deno.serve(async (req) => {
     const { data: order, error: orderErr } = await admin
       .from('client_orders')
       .insert({
-        user_id: user?.id ?? null,
+        user_id: orderUserId,
         order_ref: orderRef,
         service: body.packageName ? `${body.service} — ${body.packageName}` : body.service,
         amount_gbp: body.amount_gbp,
@@ -424,7 +437,7 @@ Deno.serve(async (req) => {
     if (orderErr) throw orderErr
 
     const { error: invErr } = await admin.from('invoices').insert({
-      user_id: user?.id ?? null,
+      user_id: orderUserId,
       order_id: order.id,
       invoice_number: invoiceNumber,
       service_description: body.packageName ? `${body.service} — ${body.packageName}` : body.service,

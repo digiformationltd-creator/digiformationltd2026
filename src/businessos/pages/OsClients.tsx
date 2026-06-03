@@ -15,6 +15,7 @@ interface ClientRow {
   phone: string | null;
   company_name: string | null;
   created_at: string;
+  order_count?: number;
 }
 
 const initialsOf = (c: ClientRow) => {
@@ -39,7 +40,20 @@ export default function OsClients() {
     setLoading(false);
     if (error) { toast.error(error.message || "Unable to load clients"); return; }
     if (data?.error) { toast.error(data.error); return; }
-    setClients(data?.clients || []);
+    const baseClients: ClientRow[] = data?.clients || [];
+    const { data: orders } = await supabase
+      .from("client_orders")
+      .select("user_id, customer_email");
+    const counts = new Map<string, number>();
+    const emailToClient = new Map<string, string>();
+    for (const client of baseClients) {
+      if (client.email) emailToClient.set(client.email.toLowerCase(), client.user_id);
+    }
+    for (const order of orders || []) {
+      const clientId = order.user_id || (order.customer_email ? emailToClient.get(order.customer_email.toLowerCase()) : null);
+      if (clientId) counts.set(clientId, (counts.get(clientId) || 0) + 1);
+    }
+    setClients(baseClients.map((client) => ({ ...client, order_count: counts.get(client.user_id) || 0 })));
   };
 
   useEffect(() => { load(); }, []);
@@ -61,6 +75,7 @@ export default function OsClients() {
 
   const total = clients.length;
   const withCompany = clients.filter(c => c.company_name).length;
+  const totalOrders = clients.reduce((sum, client) => sum + (client.order_count || 0), 0);
   const newThisMonth = clients.filter(c => {
     const d = new Date(c.created_at);
     const n = new Date();
@@ -70,8 +85,9 @@ export default function OsClients() {
   return (
     <div className="space-y-5">
       {/* Stats row */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard label="Total Clients" value={total} icon={Users} glow="blue" />
+        <StatCard label="Client Orders" value={totalOrders} icon={ChevronRight} glow="cyan" />
         <StatCard label="With Companies" value={withCompany} icon={Building2} glow="purple" />
         <StatCard label="New This Month" value={newThisMonth} icon={Calendar} glow="green" />
       </div>
@@ -130,6 +146,7 @@ export default function OsClients() {
                   <th className="py-3 px-4 font-semibold">Client</th>
                   <th className="py-3 px-4 font-semibold">Email</th>
                   <th className="py-3 px-4 font-semibold">Company</th>
+                  <th className="py-3 px-4 font-semibold">Orders</th>
                   <th className="py-3 px-4 font-semibold">Phone</th>
                   <th className="py-3 px-4 font-semibold">Joined</th>
                   <th className="py-3 px-4 font-semibold text-right">Actions</th>
@@ -154,6 +171,11 @@ export default function OsClients() {
                     </td>
                     <td className="py-3 px-4 text-white/70">{c.email || "—"}</td>
                     <td className="py-3 px-4 text-white/70">{c.company_name || "—"}</td>
+                    <td className="py-3 px-4">
+                      <button onClick={(e) => { e.stopPropagation(); openClient(c.user_id, "orders"); }} className="px-2.5 py-1 rounded-full bg-white/[0.06] hover:bg-white/[0.10] text-xs font-semibold text-white/80">
+                        {c.order_count || 0} orders
+                      </button>
+                    </td>
                     <td className="py-3 px-4 text-white/70">{c.phone || "—"}</td>
                     <td className="py-3 px-4 text-white/50 text-xs whitespace-nowrap">{fmtDate(c.created_at)}</td>
                     <td className="py-3 px-4 text-right">
@@ -200,7 +222,7 @@ export default function OsClients() {
                     </div>
                   )}
                   <div className="text-[10px] text-white/40 mt-1.5 uppercase tracking-wider">
-                    Joined {fmtDate(c.created_at)}
+                    Joined {fmtDate(c.created_at)} · {c.order_count || 0} orders
                   </div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-white/40 mt-1 shrink-0" />

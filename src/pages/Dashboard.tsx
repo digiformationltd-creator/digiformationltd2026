@@ -186,19 +186,25 @@ const Dashboard = () => {
     if (!user) return;
     let cancelled = false;
     (async () => {
-      const [{ data: prof }, { data: comps }, { data: role }, { data: orderRows }, { data: subRows }, { data: walletData }, { data: ticketRows }] = await Promise.all([
+      const [{ data: prof }, { data: comps }, { data: role }, { data: orderRows }, { data: guestOrderRows }, { data: subRows }, { data: walletData }, { data: ticketRows }] = await Promise.all([
         supabase.from("profiles").select("full_name,email,phone,company_name,avatar_initials").eq("user_id", user.id).maybeSingle(),
         supabase.from("client_company_details").select("*").eq("user_id", user.id).order("created_at", { ascending: true }),
         supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle(),
         supabase.from("client_orders").select("*").eq("user_id", user.id).order("order_date", { ascending: false }),
+        supabase.from("client_orders").select("*").is("user_id", null).ilike("customer_email", user.email || "").order("order_date", { ascending: false }),
         supabase.from("client_subscriptions").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
         supabase.from("client_wallet_transactions").select("*").eq("user_id", user.id).order("txn_date", { ascending: false }),
         supabase.from("client_tickets").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
       ]);
       if (cancelled) return;
+      const combinedOrders = [...(orderRows || [])];
+      for (const row of guestOrderRows || []) {
+        if (!combinedOrders.some((order) => order.id === row.id)) combinedOrders.push(row);
+      }
+      combinedOrders.sort((a, b) => new Date(b.order_date || b.created_at).getTime() - new Date(a.order_date || a.created_at).getTime());
       setProfile(prof as Profile);
       setCompanies((comps as CompanyDetails[]) || []);
-      setOrders(orderRows || []);
+      setOrders(combinedOrders);
       setSubscriptions(subRows || []);
       setWalletRows(walletData || []);
       setTickets(ticketRows || []);
@@ -914,7 +920,7 @@ const AddressField = ({ label, value, onChange, type = "text" }: { label: string
 const ClientOrdersSection = ({ rows, onBrowse }: { rows: any[]; onBrowse: () => void }) => {
   const fmt = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n || 0);
   if (rows.length === 0) return <EmptyState icon={ShoppingBag} title="No orders yet" description="Your service orders will appear here automatically once placed." action={<Button variant="hero" className="rounded-full" onClick={onBrowse}>Place First Order</Button>} />;
-  return <div className="space-y-3"><p className="text-sm opacity-70">Your orders are generated automatically from service requests.</p>{rows.map((o) => <div key={o.id} className="glass rounded-xl p-4 flex items-center justify-between gap-3 flex-wrap"><div><div className="font-mono font-semibold text-primary">{o.order_ref}</div><div className="text-sm">{o.service}</div><div className="text-xs opacity-60">{o.order_date} • {fmt(Number(o.amount_gbp))}</div></div><StatusBadge status={o.status} /></div>)}</div>;
+  return <div className="space-y-3"><p className="text-sm opacity-70">Your orders are generated automatically from service requests.</p>{rows.map((o) => <div key={o.id} className="glass rounded-xl p-4 flex items-center justify-between gap-3 flex-wrap"><div><div className="text-[10px] uppercase tracking-wider opacity-50 mb-0.5">Order #</div><div className="font-mono font-semibold text-primary">{o.order_ref || "Reference pending"}</div><div className="text-sm">{o.service}</div><div className="text-xs opacity-60">{o.order_date} • {fmt(Number(o.amount_gbp))}</div></div><StatusBadge status={o.status} /></div>)}</div>;
 };
 
 const ClientSubscriptionsSection = ({ rows, onBrowse }: { rows: any[]; onBrowse: () => void }) => {

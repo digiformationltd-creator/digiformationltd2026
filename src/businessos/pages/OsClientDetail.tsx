@@ -107,7 +107,7 @@ export default function OsClientDetail() {
 
       {tab === "company"       && <CompanyTab userId={userId} />}
       {tab === "addresses"     && <AddressesTab userId={userId} />}
-      {tab === "orders"        && <OrdersTab userId={userId} />}
+      {tab === "orders"        && <OrdersTab userId={userId} email={profile?.email} />}
       {tab === "invoices"      && <InvoicesTab userId={userId} />}
       {tab === "documents"     && <DocumentsTab userId={userId} email={profile?.email} name={profile?.full_name} />}
       {tab === "wallet"        && <WalletTab userId={userId} />}
@@ -291,15 +291,25 @@ function AddressesTab({ userId }: { userId: string }) {
 }
 
 // ─────────────────────────── ORDERS ───────────────────────────
-function OrdersTab({ userId }: { userId: string }) {
+function OrdersTab({ userId, email }: { userId: string; email?: string | null }) {
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase.from("client_orders").select("*").eq("user_id", userId).order("order_date", { ascending: false });
-    setRows(data || []);
+    const [{ data: linked }, { data: guest }] = await Promise.all([
+      supabase.from("client_orders").select("*").eq("user_id", userId).order("order_date", { ascending: false }),
+      email
+        ? supabase.from("client_orders").select("*").is("user_id", null).ilike("customer_email", email).order("order_date", { ascending: false })
+        : Promise.resolve({ data: [] as any[] }),
+    ]);
+    const merged = [...(linked || [])];
+    for (const row of guest || []) {
+      if (!merged.some((order) => order.id === row.id)) merged.push(row);
+    }
+    merged.sort((a, b) => new Date(b.order_date || b.created_at).getTime() - new Date(a.order_date || a.created_at).getTime());
+    setRows(merged);
     setLoading(false);
   };
   useEffect(() => {
@@ -308,7 +318,7 @@ function OrdersTab({ userId }: { userId: string }) {
       .on("postgres_changes", { event: "*", schema: "public", table: "client_orders", filter: `user_id=eq.${userId}` }, load)
       .subscribe();
     return () => { supabase.removeChannel(ch); };
-  }, [userId]);
+  }, [userId, email]);
 
   if (loading) return <div className="os-glass p-8 text-center"><Loader2 className="w-5 h-5 animate-spin mx-auto text-white/40" /></div>;
   if (!rows.length) return <div className="os-glass p-8 text-center text-sm text-white/50">No orders for this client.</div>;
@@ -318,7 +328,8 @@ function OrdersTab({ userId }: { userId: string }) {
       {rows.map((o) => (
         <button key={o.id} onClick={() => setOpenId(o.id)} className="os-glass p-3 w-full text-left flex items-center justify-between gap-3 hover:bg-white/[0.04]">
           <div className="min-w-0">
-            <div className="font-mono text-xs text-white/80">{o.order_ref}</div>
+            <div className="text-[10px] uppercase tracking-wider text-white/40">Order #</div>
+            <div className="font-mono text-xs text-white/80">{o.order_ref || "Reference pending"}</div>
             <div className="text-sm font-semibold truncate">{o.service}</div>
             <div className="text-[11px] text-white/40">{fmtDate(o.order_date)}</div>
           </div>
