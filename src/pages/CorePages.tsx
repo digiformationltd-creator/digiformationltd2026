@@ -1096,8 +1096,8 @@ export const FAQ = () => {
 
   useEffect(() => {
     setMeta(
-      "UK & US Company Formation FAQ 2026 — Companies House, EIN, ITIN, BOI | Digiformation",
-      "Answers to the most-asked 2026 questions on UK Limited Company registration, US LLC formation, Companies House ID verification, EIN, ITIN, BOI report, VAT and business banking — for non-resident founders worldwide.",
+      "UK & US Company Formation FAQ 2026 | Digiformation",
+      "Top 2026 answers on UK LTD & US LLC formation, Companies House ID verification, EIN, ITIN, BOI report, VAT and business banking.",
       "UK company formation FAQ 2026, US LLC FAQ, Companies House ID verification FAQ, EIN ITIN BOI FAQ, non resident formation questions worldwide, UK registered office address FAQ, SIC codes FAQ"
     );
     return injectJsonLd("faq-jsonld", {
