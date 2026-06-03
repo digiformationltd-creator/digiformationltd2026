@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { TableSkeleton } from "../components/Skeletons";
+import OsInvoiceDrawer from "../components/OsInvoiceDrawer";
+import OsOrderDrawer from "../components/OsOrderDrawer";
 import {
   Search, RefreshCw, Loader2, ChevronRight, ExternalLink, Filter,
   FileText, Download, Mail, CheckCircle2, RotateCcw, PoundSterling,
