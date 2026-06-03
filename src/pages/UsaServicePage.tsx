@@ -6,6 +6,32 @@ import { usaServicePages } from "@/data/usaServices";
 import { useSeo } from "@/lib/seo";
 import EinHero from "@/components/hero-animations/EinHero";
 import ItinHero from "@/components/hero-animations/ItinHero";
+import ServiceFAQ, { FAQ } from "@/components/seo/ServiceFAQ";
+import RelatedServices from "@/components/seo/RelatedServices";
+import RecommendedGuides from "@/components/seo/RecommendedGuides";
+
+const FAQS_BY_SLUG: Record<string, FAQ[]> = {
+  "ein-number": [
+    { q: "What is an EIN and why do I need one?", a: "An Employer Identification Number (EIN) is a 9-digit federal tax ID issued by the IRS. You need it to open a US bank account, register for Stripe or PayPal, hire employees, and file federal taxes for your LLC or corporation." },
+    { q: "Can non-US residents get an EIN without an SSN or ITIN?", a: "Yes. We file IRS Form SS-4 by fax on your behalf as a third-party designee — no SSN or ITIN required. You only need a passport and a registered US business entity." },
+    { q: "How long does EIN approval take?", a: "Standard processing is 4–6 weeks by IRS fax. Our expedited service typically returns your EIN confirmation letter (CP 575) within 7–15 business days." },
+    { q: "Do I need a US LLC before applying for an EIN?", a: "Yes — the IRS requires a registered US entity (LLC, C-Corp, or sole-proprietorship). If you haven't formed your LLC yet, bundle EIN with our US LLC Formation service." },
+    { q: "Is the EIN permanent?", a: "Yes. An EIN is permanent and never expires, even if you don't use it for years. It only changes if you change the legal structure of your business." },
+  ],
+  "itin-number": [
+    { q: "What is an ITIN and who needs one?", a: "An Individual Taxpayer Identification Number (ITIN) is a 9-digit IRS tax processing number issued to non-residents who need to file US taxes but are not eligible for an SSN. It's required for multi-member LLC owners, US property investors, and dependents on US tax returns." },
+    { q: "Do I need to visit the US to apply for an ITIN?", a: "No. As an IRS Certified Acceptance Agent partner, we process your application remotely — your passport is verified without sending the original to the IRS." },
+    { q: "How long does ITIN approval take?", a: "IRS processing takes 8–12 weeks. We track the application and notify you the moment your ITIN is issued." },
+    { q: "Can I use my ITIN to open a US bank account?", a: "Yes — many US fintech banks (Mercury, Wise, Relay) accept ITIN as a tax ID alongside your EIN for personal verification." },
+    { q: "Will my ITIN expire?", a: "ITINs expire if not used on a federal tax return for three consecutive years. We can help you renew it before expiry." },
+  ],
+  "boi-report": [
+    { q: "What is a BOI report?", a: "Under the US Corporate Transparency Act, most US LLCs and corporations must file a Beneficial Ownership Information (BOI) report with FinCEN disclosing each owner with 25%+ stake or substantial control." },
+    { q: "When is the BOI report due?", a: "New entities formed in 2024+ must file within 90 days of formation. Existing entities had until 1 January 2025. Updates must be filed within 30 days of any ownership change." },
+    { q: "What are the penalties for not filing?", a: "Civil penalties of up to $591/day and criminal penalties of up to $10,000 and 2 years imprisonment for willful failure to file." },
+    { q: "Is the BOI report public?", a: "No. BOI data is held in a secure FinCEN database accessible only to authorized federal, state and law enforcement agencies." },
+  ],
+};
 
 const HERO_BY_SLUG: Record<string, React.ComponentType> = {
   "ein-number": EinHero,
