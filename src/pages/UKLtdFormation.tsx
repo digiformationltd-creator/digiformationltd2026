@@ -4,6 +4,9 @@ import { ArrowRight, CheckCircle2, ShieldCheck, Building2, FileCheck, Lock, User
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import UKLtdHero from "@/components/hero-animations/UKLtdHero";
+import ServiceFAQ from "@/components/seo/ServiceFAQ";
+import RelatedServices from "@/components/seo/RelatedServices";
+import RecommendedGuides from "@/components/seo/RecommendedGuides";
 
 const rotatingHeadlines = [
   { lead: "Register Your UK Limited Company in", accent: "Days" },
@@ -338,6 +341,33 @@ const UKLtdFormation = () => {
         </div>
       </section>
 
+      <RelatedServices
+        eyebrow="Bundle With"
+        title="Complete Your UK Setup"
+        items={[
+          { name: "Registered Office Address", path: "/uk-services/registered-office-address", description: "Official UK address for Companies House correspondence and director records.", icon: "registered-office" },
+          { name: "UTR Number Registration", path: "/uk-services/utr-codes", description: "Get your HMRC Unique Taxpayer Reference for Corporation Tax filings.", icon: "utr" },
+          { name: "LTD ID Verification", path: "/uk-services/ltd-id-verification", description: "Mandatory Companies House identity verification for directors and PSCs.", icon: "id-verify" },
+          { name: "Business Bank Account", path: "/banks-payment-solutions", description: "Open Tide, Wise or Airwallex accounts paired with your new UK LTD.", icon: "banking" },
+          { name: "Stripe & PayPal Setup", path: "/banks-payment-solutions", description: "Connect global payment gateways to your UK company in days.", icon: "payments" },
+          { name: "Change of Company Details", path: "/uk-compliance/change-of-company-name", description: "Update name, address, or directors at Companies House.", icon: "change-service" },
+        ]}
+      />
+      <RecommendedGuides
+        title="Guides for UK LTD Founders"
+        categories={["UK Formation", "UK Compliance"]}
+      />
+      <ServiceFAQ
+        id="uk-ltd-formation"
+        faqs={[
+          { q: "How long does UK LTD formation take?", a: "Most companies are incorporated by Companies House within 3–5 business days. With the Gold and Platinum packages, we expedite the filing so most incorporations complete inside 24 hours once documents are received." },
+          { q: "Can non-UK residents register a UK Limited Company?", a: "Yes. There is no residency requirement to own or direct a UK Limited Company. We routinely form companies for founders in 80+ countries, including Pakistan, India, the UAE, Nigeria, and the US." },
+          { q: "Do I need a UK address to register?", a: "Yes — Companies House requires a UK Registered Office Address. Our Silver, Gold and Platinum packages include a London Registered Office and Director Service Address." },
+          { q: "What is included in the Companies House filing fee?", a: "All packages include the official Companies House incorporation fee, your Certificate of Incorporation, Memorandum & Articles of Association, and digital share certificates." },
+          { q: "Will I get a UTR for my company?", a: "Yes. HMRC issues a Corporation Tax UTR by post to your registered office within 10–14 days of incorporation. Silver, Gold and Platinum packages include UTR support." },
+          { q: "Can I open a UK business bank account afterwards?", a: "Yes. After incorporation we'll help you apply with Tide, Wise, Airwallex or traditional UK banks — most non-resident applications are approved within 7–14 days." },
+        ]}
+      />
     </Layout>
   );
 };
