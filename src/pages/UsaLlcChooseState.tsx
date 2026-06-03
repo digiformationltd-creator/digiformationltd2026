@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useSeo } from "@/lib/seo";
 import { Link, useSearchParams } from "react-router-dom";
 import { ArrowRight, MapPin, CheckCircle2, Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";

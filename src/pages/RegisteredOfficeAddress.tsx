@@ -1,5 +1,6 @@
 
 import { Link } from "react-router-dom";
+import { useSeo } from "@/lib/seo";
 import { ArrowRight, CheckCircle2, Building2, Briefcase, UserCircle2, Sparkles } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
