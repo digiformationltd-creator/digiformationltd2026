@@ -6,6 +6,8 @@ import { bankingProviders } from "@/data/banking";
 import heroBanking from "@/assets/card-hero-banking.jpg";
 import heroPayments from "@/assets/card-hero-payments.jpg";
 import { useSeo } from "@/lib/seo";
+import ServiceFAQ from "@/components/seo/ServiceFAQ";
+import RecommendedGuides from "@/components/seo/RecommendedGuides";
 
 // Pure-banking accounts vs. payment gateways — drives the hero image.
 const BANKING_SLUGS = new Set(["tide", "wise", "payoneer", "worldfirst", "airwallex", "sunrate", "zionpe", "wallester"]);
@@ -140,6 +142,23 @@ const BankingProviderPage = () => {
           </div>
         </div>
       </section>
+
+      <RecommendedGuides
+        title="Banking & Payments Guides"
+        categories={["Banking", "Stripe", "PayPal"]}
+      />
+      <ServiceFAQ
+        id={`banking-${provider.slug}`}
+        title={`${provider.name} — Frequently Asked Questions`}
+        faqs={[
+          { q: `Who can apply for a ${provider.name} account through Digiformation?`, a: `${provider.name} accounts are available to UK Limited Companies, US LLCs, and sole traders globally. We help non-residents from 80+ countries complete the application end-to-end.` },
+          { q: `How long does ${provider.name} approval take?`, a: `Most ${provider.name} applications are approved within 5–14 business days once all KYC documents are submitted. We pre-screen your documents to reduce rejections.` },
+          { q: "What documents do I need to apply?", a: "Typically: passport, proof of address (utility bill or bank statement), Certificate of Incorporation, and a brief business description. Some providers also require expected monthly turnover." },
+          { q: "Can I use this account to receive Stripe or PayPal payouts?", a: `Yes. ${provider.name} provides account details (sort code, IBAN, or US routing/ACH) compatible with Stripe, PayPal, Wise, Amazon, eBay and most major payout platforms.` },
+          { q: "What is the setup fee for?", a: `The setup fee of ${provider.setupPrice} covers document preparation, application submission, KYC liaison, and follow-up with ${provider.name} until your account is live. We do not charge for the account itself — ${provider.name}'s own pricing applies after activation.` },
+          { q: "What happens if my application is rejected?", a: "We re-submit with adjusted documentation at no extra cost, or recommend an alternative provider that matches your business profile." },
+        ]}
+      />
     </Layout>
   );
 };

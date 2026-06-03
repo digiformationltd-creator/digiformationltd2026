@@ -1,9 +1,12 @@
 
 import { Link } from "react-router-dom";
+import { useSeo } from "@/lib/seo";
 import { ArrowRight, CheckCircle2, Building2, Briefcase, UserCircle2, Sparkles } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import ServiceFAQ from "@/components/seo/ServiceFAQ";
+import RelatedServices from "@/components/seo/RelatedServices";
+import RecommendedGuides from "@/components/seo/RecommendedGuides";
 
 type Pkg = {
   id: string;
@@ -112,9 +115,9 @@ const whoNeeds = [
 ];
 
 const related = [
-  { name: "Company Name & Address Change", path: "/uk-compliance/change-of-company-name" },
-  { name: "LTD ID Verification", path: "/uk-services/ltd-id-verification" },
-  { name: "UTR Registration", path: "/uk-services/utr-codes" },
+  { name: "Company Name & Address Change", path: "/uk-compliance/change-of-company-name", description: "Update your registered name, office, or director details with Companies House.", icon: "change-service" as const },
+  { name: "LTD ID Verification", path: "/uk-services/ltd-id-verification", description: "Mandatory identity verification for directors and persons with significant control.", icon: "id-verify" as const },
+  { name: "UTR Registration", path: "/uk-services/utr-codes", description: "Get your Unique Taxpayer Reference for HMRC tax filings.", icon: "utr" as const },
 ];
 
 const faqs = [
@@ -134,21 +137,14 @@ const RegisteredOfficeAddress = () => {
       { name: "UK Services", path: "/uk-services" },
       { name: "Registered Office Address", path: "/uk-services/registered-office-address" },
     ],
-    jsonLd: [
-      {
-        "@context": "https://schema.org",
-        "@type": "Service",
-        name: "UK Registered Office Address",
-        provider: { "@type": "Organization", name: "Digiformation Ltd" },
-        areaServed: "Worldwide",
-        description: "Official UK addresses for Registered Office, Business Service, and Director Service use.",
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
-      },
-    ],
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      name: "UK Registered Office Address",
+      provider: { "@type": "Organization", name: "Digiformation Ltd" },
+      areaServed: "Worldwide",
+      description: "Official UK addresses for Registered Office, Business Service, and Director Service use.",
+    },
   });
 
   const scrollTo = (id: string) => {
@@ -255,35 +251,10 @@ const RegisteredOfficeAddress = () => {
         </div>
       </section>
 
-      {/* Related */}
-      <section className="py-10 border-t border-border/60">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <h2 className="text-3xl md:text-4xl font-bold mb-10">Related Services</h2>
-          <div className="grid sm:grid-cols-3 gap-5">
-            {related.map((r) => (
-              <Link key={r.path} to={r.path} className="glass rounded-2xl p-6 hover:-translate-y-1 hover:shadow-elegant transition-all group">
-                <h3 className="font-semibold text-lg group-hover:text-gradient">{r.name}</h3>
-                <div className="mt-3 text-[11px] uppercase tracking-[0.14em]">Explore →</div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+      <RelatedServices items={related} />
+      <RecommendedGuides categories={["UK Compliance", "UK Formation"]} />
+      <ServiceFAQ id="registered-office" faqs={faqs} />
 
-      {/* FAQ */}
-      <section className="py-10 bg-muted/20 border-t border-border/60">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
-          <Accordion type="single" collapsible className="glass rounded-2xl px-6">
-            {faqs.map((f, i) => (
-              <AccordionItem key={i} value={`item-${i}`} className="border-border/40">
-                <AccordionTrigger className="text-left font-medium">{f.q}</AccordionTrigger>
-                <AccordionContent className="opacity-90">{f.a}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
-      </section>
     </Layout>
   );
 };

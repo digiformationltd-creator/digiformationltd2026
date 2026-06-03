@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useSeo } from "@/lib/seo";
 import { Link, useSearchParams } from "react-router-dom";
 import { ArrowRight, MapPin, CheckCircle2, Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
@@ -12,6 +13,9 @@ import {
 } from "@/components/ui/select";
 import heroImg from "@/assets/card-hero-us-llc.jpg";
 import { supabase } from "@/integrations/supabase/client";
+import ServiceFAQ from "@/components/seo/ServiceFAQ";
+import RelatedServices from "@/components/seo/RelatedServices";
+import RecommendedGuides from "@/components/seo/RecommendedGuides";
 
 type StatePricing = {
   id: string;
@@ -257,9 +261,38 @@ const UsaLlcChooseState = () => {
           </div>
         </section>
       )}
+
+      <RelatedServices
+        eyebrow="Bundle With"
+        title="Complete Your US Business Stack"
+        items={[
+          { name: "EIN Number", path: "/usa-services/ein-number", description: "Federal Employer Identification Number — required for US banking, Stripe and tax filings.", icon: "ein" },
+          { name: "ITIN Application", path: "/usa-services/itin-number", description: "Individual Taxpayer Identification Number for non-resident owners and shareholders.", icon: "itin" },
+          { name: "BOI Report Filing", path: "/usa-services/boi-report", description: "Mandatory Beneficial Ownership Information report under the Corporate Transparency Act.", icon: "boi" },
+          { name: "US Business Banking", path: "/banks-payment-solutions", description: "Open Mercury, Wise or Payoneer accounts for your new LLC.", icon: "banking" },
+          { name: "Stripe & PayPal Setup", path: "/banks-payment-solutions", description: "Activate global payment gateways on your LLC in days.", icon: "payments" },
+          { name: "Annual Tax Filings", path: "/usa-services", description: "Form 5472, 1120, and state reports prepared and filed for you.", icon: "compliance" },
+        ]}
+      />
+      <RecommendedGuides
+        title="Guides for US LLC Founders"
+        categories={["USA Formation", "Stripe", "PayPal"]}
+      />
+      <ServiceFAQ
+        id="us-llc-choose-state"
+        faqs={[
+          { q: "Which state is best for a non-resident US LLC?", a: "Wyoming and Delaware are the most popular for non-residents — Wyoming for low fees and strong privacy, Delaware for credibility with US investors. Florida and Texas are common when you have a physical or e-commerce presence in those markets." },
+          { q: "Do I need a US address or SSN to form an LLC?", a: "No. You do not need US residency, a US address, or an SSN. We provide the registered agent and business address; an EIN is then obtained from the IRS using your foreign passport." },
+          { q: "How long does formation take?", a: "Most states approve LLC filings within 1–5 business days. Your EIN is typically issued within 7–10 business days after formation." },
+          { q: "Will I be taxed in the US as a non-resident?", a: "A single-member non-resident LLC with no US-source effectively connected income is generally not subject to US federal income tax, but it must file Form 5472 + 1120 annually. We handle this for you." },
+          { q: "Can I open a US bank account remotely?", a: "Yes. Mercury, Wise Business, Payoneer and Relay accept most non-resident LLCs once you have your EIN and formation documents." },
+          { q: "Are state filing fees included in the price?", a: "Yes — every package includes the state filing fee for the state you choose. The displayed price is the all-in one-time formation cost." },
+        ]}
+      />
     </Layout>
   );
 };
+
 
 const PackageCard = ({
   name,
