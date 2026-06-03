@@ -192,6 +192,9 @@ const CheckoutFlow = ({
   showWebsite = false,
   whatsappLabel = "WhatsApp",
   whatsappPlaceholder,
+  showSeparateWhatsapp = false,
+  whatsappContactLabel = "WhatsApp contact number",
+  whatsappContactPlaceholder = "+44 ... or +1 ...",
   extras,
   extraSections,
 }: CheckoutFlowProps) => {
