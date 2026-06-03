@@ -224,6 +224,7 @@ export type Database = {
       client_orders: {
         Row: {
           amount_gbp: number
+          amount_mismatch: boolean
           country_code: string | null
           created_at: string
           customer_email: string | null
@@ -241,6 +242,7 @@ export type Database = {
         }
         Insert: {
           amount_gbp?: number
+          amount_mismatch?: boolean
           country_code?: string | null
           created_at?: string
           customer_email?: string | null
@@ -258,6 +260,7 @@ export type Database = {
         }
         Update: {
           amount_gbp?: number
+          amount_mismatch?: boolean
           country_code?: string | null
           created_at?: string
           customer_email?: string | null
@@ -602,6 +605,7 @@ export type Database = {
       invoices: {
         Row: {
           amount_gbp: number
+          amount_mismatch: boolean
           bill_to_address: string | null
           bill_to_email: string | null
           bill_to_name: string | null
@@ -625,6 +629,7 @@ export type Database = {
         }
         Insert: {
           amount_gbp?: number
+          amount_mismatch?: boolean
           bill_to_address?: string | null
           bill_to_email?: string | null
           bill_to_name?: string | null
@@ -648,6 +653,7 @@ export type Database = {
         }
         Update: {
           amount_gbp?: number
+          amount_mismatch?: boolean
           bill_to_address?: string | null
           bill_to_email?: string | null
           bill_to_name?: string | null
