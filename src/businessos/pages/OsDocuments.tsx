@@ -187,7 +187,7 @@ export default function OsDocuments() {
     }
   };
 
-  const openInLegacy = (userId: string) => navigate(`/admin/legacy?client=${userId}&tab=documents`);
+  const openInLegacy = (userId: string) => navigate(`/admin/clients/${userId}?tab=documents`);
 
   return (
     <div className="space-y-6">
