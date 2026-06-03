@@ -246,7 +246,15 @@ export default function OsOrders() {
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+    const channel = supabase
+      .channel("os-orders-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "client_orders" }, () => { load(); })
+      .on("postgres_changes", { event: "*", schema: "public", table: "invoices" }, () => { load(); })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
