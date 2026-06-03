@@ -1,9 +1,9 @@
-import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowRight, CheckCircle2, ShieldCheck, Building2, Clock, FileCheck } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { findCompliancePage } from "@/data/compliance";
+import { useSeo } from "@/lib/seo";
 import NotFound from "./NotFound";
 
 const trust = [
@@ -17,46 +17,31 @@ const CompliancePage = () => {
   const { slug } = useParams();
   const page = findCompliancePage(slug);
 
-  useEffect(() => {
-    if (!page) return;
-    document.title = page.metaTitle;
-    const meta = (name: string, content: string) => {
-      let el = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null;
-      if (!el) { el = document.createElement("meta"); el.setAttribute("name", name); document.head.appendChild(el); }
-      el.setAttribute("content", content);
-    };
-    meta("description", page.metaDescription);
-    meta("keywords", page.keywords);
-
-    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
-    if (!canonical) { canonical = document.createElement("link"); canonical.rel = "canonical"; document.head.appendChild(canonical); }
-    canonical.href = window.location.href;
-
-    const schema = {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "Service",
-          name: page.title,
-          provider: { "@type": "Organization", name: "Digiformation Ltd" },
-          areaServed: "United Kingdom",
-          description: page.description,
-          offers: { "@type": "Offer", price: page.price.replace(/[^0-9.]/g, ""), priceCurrency: "GBP" },
-        },
-        {
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: window.location.origin + "/" },
-            { "@type": "ListItem", position: 2, name: "UK Compliance", item: window.location.origin + "/uk-compliance" },
-            { "@type": "ListItem", position: 3, name: page.title, item: window.location.href },
+  useSeo(
+    page
+      ? {
+          title: page.metaTitle,
+          description: page.metaDescription,
+          keywords: page.keywords,
+          type: "website",
+          breadcrumbs: [
+            { name: "Home", path: "/" },
+            { name: "UK Compliance", path: "/uk-compliance" },
+            { name: page.title, path: `/uk-compliance/${page.slug}` },
           ],
-        },
-      ],
-    };
-    let s = document.getElementById("ldjson-compliance") as HTMLScriptElement | null;
-    if (!s) { s = document.createElement("script"); s.type = "application/ld+json"; s.id = "ldjson-compliance"; document.head.appendChild(s); }
-    s.text = JSON.stringify(schema);
-  }, [page]);
+          jsonLd: {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            name: page.title,
+            description: page.description,
+            provider: { "@type": "Organization", name: "Digiformation Ltd" },
+            areaServed: "United Kingdom",
+            offers: { "@type": "Offer", price: page.price.replace(/[^0-9.]/g, ""), priceCurrency: "GBP" },
+          },
+        }
+      : { title: "Compliance Service Not Found | Digiformation", description: "Compliance page not found.", noindex: true },
+    [page?.slug],
+  );
 
   if (!page) return <NotFound />;
 

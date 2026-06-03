@@ -122,16 +122,18 @@ const UkLtdChooseJurisdiction = () => {
   const [searchParams] = useSearchParams();
   const [selectedCode, setSelectedCode] = useState<string | null>(null);
 
-  useEffect(() => {
-    document.title = "Choose Your Jurisdiction — UK LTD Formation | Digiformation Ltd";
-    const meta = (n: string, c: string) => {
-      let el = document.querySelector(`meta[name="${n}"]`) as HTMLMetaElement | null;
-      if (!el) { el = document.createElement("meta"); el.setAttribute("name", n); document.head.appendChild(el); }
-      el.setAttribute("content", c);
-    };
-    meta("description", "Choose your UK Companies House jurisdiction — England & Wales, Scotland, or Northern Ireland — and pick a UK LTD formation package.");
-    meta("keywords", "UK LTD jurisdiction, England Wales LTD, Scotland LTD, Northern Ireland LTD, Companies House");
-  }, []);
+  useSeo({
+    title: "Choose UK Jurisdiction — UK LTD Formation | Digiformation",
+    description: "Choose your UK Companies House jurisdiction — England & Wales, Scotland, or Northern Ireland — and pick a UK LTD formation package that fits your business.",
+    keywords: "UK LTD jurisdiction, England Wales LTD formation, Scotland LTD, Northern Ireland LTD, Companies House jurisdiction 2026",
+    type: "website",
+    breadcrumbs: [
+      { name: "Home", path: "/" },
+      { name: "UK Services", path: "/uk-services" },
+      { name: "UK LTD Formation", path: "/uk-services/uk-ltd-formation" },
+      { name: "Choose Jurisdiction", path: "/uk-services/uk-ltd-formation/choose-jurisdiction" },
+    ],
+  });
 
   // Pre-select jurisdiction from ?jurisdiction= query (homepage Quick Start widget)
   useEffect(() => {

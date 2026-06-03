@@ -34,45 +34,26 @@ const verificationRequirements = [
 ];
 
 const LtdIdVerification = () => {
-  useEffect(() => {
-    document.title = "UK LTD ID Verification | Companies House Identity Check";
-    const meta = (name: string, content: string, attr: "name" | "property" = "name") => {
-      let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
-      if (!el) { el = document.createElement("meta"); el.setAttribute(attr, name); document.head.appendChild(el); }
-      el.setAttribute("content", content);
-    };
-    meta("description", "Fast and secure UK LTD identity verification for directors, PSCs, shareholders, and company officers worldwide.");
-    meta("keywords", "UK LTD ID verification, Companies House verification, director verification UK, PSC verification UK");
-
-    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
-    if (!canonical) { canonical = document.createElement("link"); canonical.rel = "canonical"; document.head.appendChild(canonical); }
-    canonical.href = window.location.href;
-
-    const schema = {
+  useSeo({
+    title: "UK LTD ID Verification | Companies House Identity Check 2026",
+    description: "Fast and secure UK LTD identity verification for directors, PSCs, shareholders, and company officers worldwide. Companies House compliant.",
+    keywords: "UK LTD ID verification, Companies House verification 2026, director verification UK, PSC verification UK, non resident director ID check",
+    type: "website",
+    breadcrumbs: [
+      { name: "Home", path: "/" },
+      { name: "UK Services", path: "/uk-services" },
+      { name: "LTD ID Verification", path: "/uk-services/ltd-id-verification" },
+    ],
+    jsonLd: {
       "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "Service",
-          name: "UK LTD ID Verification",
-          provider: { "@type": "Organization", name: "Digiformation Ltd" },
-          areaServed: "Worldwide",
-          description: "Companies House identity verification for directors, PSCs, secretaries and shareholders.",
-          offers: { "@type": "Offer", price: "20", priceCurrency: "GBP" },
-        },
-        {
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: window.location.origin + "/" },
-            { "@type": "ListItem", position: 2, name: "UK Services", item: window.location.origin + "/uk-services" },
-            { "@type": "ListItem", position: 3, name: "LTD ID Verification", item: window.location.href },
-          ],
-        },
-      ],
-    };
-    let s = document.getElementById("ldjson-ltd-id") as HTMLScriptElement | null;
-    if (!s) { s = document.createElement("script"); s.type = "application/ld+json"; s.id = "ldjson-ltd-id"; document.head.appendChild(s); }
-    s.text = JSON.stringify(schema);
-  }, []);
+      "@type": "Service",
+      name: "UK LTD ID Verification",
+      provider: { "@type": "Organization", name: "Digiformation Ltd" },
+      areaServed: "Worldwide",
+      description: "Companies House identity verification for directors, PSCs, secretaries and shareholders.",
+      offers: { "@type": "Offer", price: "20", priceCurrency: "GBP" },
+    },
+  });
 
   return (
     <Layout>

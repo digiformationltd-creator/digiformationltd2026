@@ -124,48 +124,32 @@ const faqs = [
 ];
 
 const RegisteredOfficeAddress = () => {
-  useEffect(() => {
-    document.title = "UK Registered Office Address Services | Business & Director Solutions | Digiformation LTD";
-    const meta = (name: string, content: string, attr: "name" | "property" = "name") => {
-      let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
-      if (!el) { el = document.createElement("meta"); el.setAttribute(attr, name); document.head.appendChild(el); }
-      el.setAttribute("content", content);
-    };
-    meta("description", "Secure your official UK company address with Digiformation LTD. Choose from Registered Office, Business Service, or Director Service Addresses.");
-    meta("keywords", "UK registered office address, UK business service address, director service address, official UK company address");
-
-    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
-    if (!canonical) { canonical = document.createElement("link"); canonical.rel = "canonical"; document.head.appendChild(canonical); }
-    canonical.href = window.location.href;
-
-    const schema = {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "Service",
-          name: "UK Registered Office Address",
-          provider: { "@type": "Organization", name: "Digiformation Ltd" },
-          areaServed: "Worldwide",
-          description: "Official UK addresses for Registered Office, Business Service, and Director Service use.",
-        },
-        {
-          "@type": "FAQPage",
-          mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
-        },
-        {
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: window.location.origin + "/" },
-            { "@type": "ListItem", position: 2, name: "UK Services", item: window.location.origin + "/uk-services" },
-            { "@type": "ListItem", position: 3, name: "Registered Office Address", item: window.location.href },
-          ],
-        },
-      ],
-    };
-    let s = document.getElementById("ldjson-roa") as HTMLScriptElement | null;
-    if (!s) { s = document.createElement("script"); s.type = "application/ld+json"; s.id = "ldjson-roa"; document.head.appendChild(s); }
-    s.text = JSON.stringify(schema);
-  }, []);
+  useSeo({
+    title: "UK Registered Office Address Services | Business & Director | Digiformation",
+    description: "Secure your official UK company address with Digiformation Ltd. Registered Office, Business Service, and Director Service Addresses for non-residents worldwide.",
+    keywords: "UK registered office address, UK business service address, director service address, official UK company address, non resident UK address",
+    type: "website",
+    breadcrumbs: [
+      { name: "Home", path: "/" },
+      { name: "UK Services", path: "/uk-services" },
+      { name: "Registered Office Address", path: "/uk-services/registered-office-address" },
+    ],
+    jsonLd: [
+      {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        name: "UK Registered Office Address",
+        provider: { "@type": "Organization", name: "Digiformation Ltd" },
+        areaServed: "Worldwide",
+        description: "Official UK addresses for Registered Office, Business Service, and Director Service use.",
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+      },
+    ],
+  });
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
