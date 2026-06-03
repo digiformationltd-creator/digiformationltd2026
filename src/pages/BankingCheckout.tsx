@@ -1,8 +1,8 @@
-import { useEffect } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import CheckoutFlow, { CheckoutItem } from "@/components/checkout/CheckoutFlow";
 import { bankingProviders } from "@/data/banking";
+import { useSeo } from "@/lib/seo";
 
 const deriveRegion = (requirements: string[]): "uk" | "usa" | "both" => {
   const line = requirements.find((r) => /Number$/.test(r)) || "";
@@ -18,9 +18,16 @@ const BankingCheckout = () => {
   const { slug } = useParams();
   const provider = bankingProviders.find((p) => p.slug === slug);
 
-  useEffect(() => {
-    if (provider) document.title = `Checkout — ${provider.name} | Digiformation Ltd`;
-  }, [provider]);
+  useSeo(
+    {
+      title: provider ? `Checkout — ${provider.name} | Digiformation Ltd` : "Checkout | Digiformation Ltd",
+      description: provider
+        ? `Complete your ${provider.name} account setup with Digiformation. Secure checkout for business banking and payment gateway services.`
+        : "Secure checkout for banking and payment gateway services.",
+      noindex: true,
+    },
+    [slug],
+  );
 
   if (!provider) return <Navigate to="/banks-payment-solutions" replace />;
 

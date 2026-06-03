@@ -122,8 +122,13 @@ const Dashboard = () => {
     if (s && menu.some(m => m.id === s)) setActive(s);
   }, [location.search]);
 
+  useSeo({
+    title: "Client Dashboard | Digiformation Ltd",
+    description: "Manage your Digiformation orders, services, documents, and billing in one place.",
+    noindex: true,
+  });
+
   useEffect(() => {
-    document.title = "Client Dashboard | DigiFormation Ltd";
     let authenticatedOnce = false;
 
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {

@@ -1,11 +1,13 @@
-import { useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import CheckoutFlow, { CheckoutItem } from "@/components/checkout/CheckoutFlow";
+import { useSeo } from "@/lib/seo";
 
 const LtdIdVerificationCheckout = () => {
-  useEffect(() => {
-    document.title = "Checkout — LTD ID Verification | Digiformation Ltd";
-  }, []);
+  useSeo({
+    title: "Checkout — LTD ID Verification | Digiformation Ltd",
+    description: "Complete your Companies House LTD identity verification checkout.",
+    noindex: true,
+  });
 
   const items: CheckoutItem[] = [
     {

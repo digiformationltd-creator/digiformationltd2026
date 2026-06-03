@@ -33,9 +33,13 @@ const ResetPassword = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
-  useEffect(() => {
-    document.title = "Reset Password | DigiFormation Ltd";
+  useSeo({
+    title: "Reset Password | Digiformation Ltd",
+    description: "Set a new password for your Digiformation client account.",
+    noindex: true,
+  });
 
+  useEffect(() => {
     let mounted = true;
     let timeoutId: number | undefined;
 
