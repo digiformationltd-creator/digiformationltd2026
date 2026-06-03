@@ -12,7 +12,7 @@ const items = [
     tag: "UK",
     title: "UK LTD Formation",
     desc: "Establish your UK Limited Company with Companies House, including UTR, Registered Office, and full compliance support.",
-    cta: "Learn more",
+    cta: "View UK LTD formation details",
     href: "/uk-services/uk-ltd-formation",
     image: heroUkLtd,
   },
@@ -20,7 +20,7 @@ const items = [
     tag: "USA",
     title: "US LLC Formation",
     desc: "Start a compliant US LLC in any state, complete with EIN, ITIN (if applicable), registered agent, and BOI report.",
-    cta: "Learn more",
+    cta: "Explore US LLC formation",
     href: "/usa-services/us-llc-formation",
     image: heroUsLlc,
   },
@@ -28,7 +28,7 @@ const items = [
     tag: "TAX",
     title: "Tax & Compliance",
     desc: "UTR, EIN, ITIN, VAT registration, BOI reports and annual filings — all handled by our specialists.",
-    cta: "Learn more",
+    cta: "See tax & compliance services",
     href: "/uk-services/utr-codes",
     image: heroTax,
   },
@@ -36,7 +36,7 @@ const items = [
     tag: "BANK",
     title: "Business Banking",
     desc: "Activate multi-currency business accounts with Tide, Sunrate, WorldFirst, Wise, and more — fast and fully verified.",
-    cta: "Learn more",
+    cta: "Explore business banking options",
     href: "/banks-payment-solutions/tide",
     image: heroBanking,
   },
@@ -44,7 +44,7 @@ const items = [
     tag: "PAY",
     title: "Payment Gateway Setup",
     desc: "Start accepting payments worldwide using Stripe, PayPal, and Mollie. Verified merchant accounts ready for your business.",
-    cta: "Learn more",
+    cta: "View payment gateway setup",
     href: "/banks-payment-solutions/stripe",
     image: heroPayments,
   },
@@ -52,11 +52,12 @@ const items = [
     tag: "WEB",
     title: "Web Development",
     desc: "Establish your online presence with custom websites and landing pages, fully SEO-ready and business-ready.",
-    cta: "Learn more",
+    cta: "Discover web development services",
     href: "/web-development",
     image: heroWeb,
   },
 ];
+
 
 const DigiServices = () => (
   <section className="py-14 md:py-10 relative overflow-hidden">
