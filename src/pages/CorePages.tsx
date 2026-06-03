@@ -815,7 +815,29 @@ const webDevPackages: DetailPkg[] = [
       "Performance optimization + 60 days post-launch support",
     ],
   },
+  {
+    name: "Basic E-Commerce React",
+    price: "£90",
+    note: "E-Commerce Website Package",
+    tone: "from-fuchsia-500/25 to-fuchsia-500/5",
+    ring: "ring-fuchsia-400/60",
+    features: [
+      "Multi-page React website (Home, Shop, About, Services, Contact)",
+      "Product catalog (image, title, price, short description)",
+      "Basic product detail page (no complex variants)",
+      "Category & keyword search/filter",
+      "Mobile-first responsive UI",
+      "Custom brand-aligned e-commerce theme",
+      "Basic logo design with 1 revision",
+      "Inquiry-based contact form (no checkout)",
+      "Instagram, Facebook & WhatsApp integration",
+      "Basic SEO (meta tags, titles, Open Graph)",
+      "Free deployment (Netlify/Vercel)",
+      "14 days post-launch support",
+    ],
+  },
 ];
+
 
 const pricingSections: PricingSection[] = [
   {
