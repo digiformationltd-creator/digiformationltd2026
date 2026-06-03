@@ -196,7 +196,7 @@ export default function OsCompanies() {
     return { total, ...counts };
   }, [companies]);
 
-  const openInLegacy = (userId: string, sub: "companies" | "addresses" = "company") =>
+  const openInLegacy = (userId: string, sub: "companies" | "addresses" = "companies") =>
     navigate(`/admin/clients/${userId}?tab=${sub === "addresses" ? "addresses" : "company"}`);
 
   return (
