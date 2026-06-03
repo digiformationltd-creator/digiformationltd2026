@@ -448,6 +448,19 @@ export default function OsInvoices() {
           })}
         </div>
       )}
+
+      <OsInvoiceDrawer
+        invoiceId={openInvoiceId}
+        open={!!openInvoiceId}
+        onClose={() => setOpenInvoiceId(null)}
+        onChanged={load}
+      />
+      <OsOrderDrawer
+        orderId={openOrderId}
+        open={!!openOrderId}
+        onClose={() => setOpenOrderId(null)}
+        onChanged={load}
+      />
     </div>
   );
 }
