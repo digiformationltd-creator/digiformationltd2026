@@ -43,6 +43,9 @@ export default function OsEmailOps() {
   const [status, setStatus] = useState<string>("all");
   const [search, setSearch] = useState("");
   const [retrying, setRetrying] = useState<string | null>(null);
+  const [bulkRetrying, setBulkRetrying] = useState(false);
+  const [bulkProgress, setBulkProgress] = useState<{ done: number; total: number; skipped: number; failed: number } | null>(null);
+
 
   const load = async () => {
     setLoading(true);
@@ -121,22 +124,41 @@ export default function OsEmailOps() {
     return s;
   }, [deduped]);
 
+  // Retry guard: skip if a later "sent" row already exists for same recipient+template
+  const isAlreadyDelivered = (row: LogRow) =>
+    logs.some(
+      (l) =>
+        l.recipient_email === row.recipient_email &&
+        l.template_name === row.template_name &&
+        l.status === "sent" &&
+        new Date(l.created_at) >= new Date(row.created_at)
+    );
+
+  const retryOne = async (row: LogRow) => {
+    if (isAlreadyDelivered(row)) {
+      toast.message("Skipped — already delivered");
+      return { ok: true, skipped: true };
+    }
+    const meta = row.metadata || {};
+    const { error } = await supabase.functions.invoke("send-transactional-email", {
+      body: {
+        template: row.template_name,
+        to: row.recipient_email,
+        data: meta.data || {},
+        idempotency_key: `dlq-retry-${row.id}`,
+        purpose: "transactional",
+        metadata: { retry_of: row.id, original_message_id: row.message_id, retried_at: new Date().toISOString() },
+      },
+    });
+    if (error) throw error;
+    return { ok: true, skipped: false };
+  };
+
   const retry = async (row: LogRow) => {
     setRetrying(row.id);
     try {
-      // Re-enqueue by invoking send-transactional-email with the same payload
-      const meta = row.metadata || {};
-      const { error } = await supabase.functions.invoke("send-transactional-email", {
-        body: {
-          template: row.template_name,
-          to: row.recipient_email,
-          data: meta.data || {},
-          idempotency_key: `retry-${row.id}-${Date.now()}`,
-          purpose: "transactional",
-        },
-      });
-      if (error) throw error;
-      toast.success("Re-queued");
+      const r = await retryOne(row);
+      if (!r.skipped) toast.success("Re-queued");
       load();
     } catch (e: any) {
       toast.error(e.message || "Retry failed");
@@ -144,6 +166,33 @@ export default function OsEmailOps() {
       setRetrying(null);
     }
   };
+
+  const bulkRetry = async () => {
+    const targets = filtered.filter((r) => r.status === "dlq" || r.status === "failed");
+    if (targets.length === 0) {
+      toast.message("No DLQ rows in current filter");
+      return;
+    }
+    if (!confirm(`Re-queue ${targets.length} failed email${targets.length === 1 ? "" : "s"}? Already-delivered duplicates will be skipped.`)) return;
+    setBulkRetrying(true);
+    setBulkProgress({ done: 0, total: targets.length, skipped: 0, failed: 0 });
+    let skipped = 0, failed = 0;
+    // Throttle to ~5/sec to respect queue dispatcher pacing
+    for (let i = 0; i < targets.length; i++) {
+      try {
+        const r = await retryOne(targets[i]);
+        if (r.skipped) skipped++;
+      } catch {
+        failed++;
+      }
+      setBulkProgress({ done: i + 1, total: targets.length, skipped, failed });
+      await new Promise((res) => setTimeout(res, 200));
+    }
+    setBulkRetrying(false);
+    toast.success(`Bulk retry done · ${targets.length - skipped - failed} queued · ${skipped} skipped · ${failed} failed`);
+    load();
+  };
+
 
   return (
     <div className="space-y-4">
@@ -190,10 +239,27 @@ export default function OsEmailOps() {
 
       {/* Log table */}
       <div className="os-glass overflow-hidden">
-        <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between">
+        <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between gap-3 flex-wrap">
           <div className="text-sm font-semibold">Email log ({filtered.length})</div>
-          <div className="text-[11px] text-white/40">Deduplicated by message_id</div>
+          <div className="flex items-center gap-3">
+            {bulkProgress && (
+              <span className="text-[11px] text-white/60 mono">
+                {bulkProgress.done}/{bulkProgress.total} · skipped {bulkProgress.skipped} · failed {bulkProgress.failed}
+              </span>
+            )}
+            <button
+              onClick={bulkRetry}
+              disabled={bulkRetrying || filtered.filter(r => r.status === "dlq" || r.status === "failed").length === 0}
+              className="h-8 px-3 rounded-lg text-xs border border-red-500/30 bg-red-500/10 text-red-200 hover:bg-red-500/20 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5"
+              title="Re-queue all failed/DLQ emails in current filter. Already-delivered duplicates are skipped."
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${bulkRetrying ? "animate-spin" : ""}`} />
+              {bulkRetrying ? "Retrying…" : `Retry all DLQ (${filtered.filter(r => r.status === "dlq" || r.status === "failed").length})`}
+            </button>
+            <div className="text-[11px] text-white/40">Deduplicated by message_id</div>
+          </div>
         </div>
+
         <div className="overflow-x-auto max-h-[520px] overflow-y-auto">
           <table className="w-full text-sm">
             <thead className="text-xs text-white/50 bg-white/[0.02] sticky top-0">
