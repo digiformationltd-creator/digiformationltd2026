@@ -251,6 +251,7 @@ const CheckoutFlow = ({
     full_name: "",
     email: "",
     whatsapp: "",
+    whatsapp_contact: "",
     country: "",
     nationality: "",
     address_line1: "",
