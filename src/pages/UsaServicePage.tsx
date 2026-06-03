@@ -195,6 +195,14 @@ const UsaServicePage = () => {
           </div>
         </div>
       </section>
+
+      <RecommendedGuides
+        title="Guides for US Founders"
+        categories={["USA Formation", "Compliance"]}
+      />
+      {FAQS_BY_SLUG[page.slug] && (
+        <ServiceFAQ id={`usa-${page.slug}`} faqs={FAQS_BY_SLUG[page.slug]} />
+      )}
     </Layout>
   );
 };

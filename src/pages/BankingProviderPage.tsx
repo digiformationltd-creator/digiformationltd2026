@@ -6,6 +6,8 @@ import { bankingProviders } from "@/data/banking";
 import heroBanking from "@/assets/card-hero-banking.jpg";
 import heroPayments from "@/assets/card-hero-payments.jpg";
 import { useSeo } from "@/lib/seo";
+import ServiceFAQ from "@/components/seo/ServiceFAQ";
+import RecommendedGuides from "@/components/seo/RecommendedGuides";
 
 // Pure-banking accounts vs. payment gateways — drives the hero image.
 const BANKING_SLUGS = new Set(["tide", "wise", "payoneer", "worldfirst", "airwallex", "sunrate", "zionpe", "wallester"]);
