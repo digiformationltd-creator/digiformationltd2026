@@ -322,6 +322,8 @@ Deno.serve(async (req) => {
     // Log the suppressed attempt
     await supabase.from('email_send_log').insert({
       message_id: messageId,
+      triggered_by_user_id: authUserId,
+      triggered_by_ip: clientIp,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'suppressed',
@@ -355,6 +357,8 @@ Deno.serve(async (req) => {
     })
     await supabase.from('email_send_log').insert({
       message_id: messageId,
+      triggered_by_user_id: authUserId,
+      triggered_by_ip: clientIp,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'failed',
@@ -388,6 +392,8 @@ Deno.serve(async (req) => {
       })
       await supabase.from('email_send_log').insert({
         message_id: messageId,
+      triggered_by_user_id: authUserId,
+      triggered_by_ip: clientIp,
         template_name: templateName,
         recipient_email: effectiveRecipient,
         status: 'failed',
@@ -417,6 +423,8 @@ Deno.serve(async (req) => {
       })
       await supabase.from('email_send_log').insert({
         message_id: messageId,
+      triggered_by_user_id: authUserId,
+      triggered_by_ip: clientIp,
         template_name: templateName,
         recipient_email: effectiveRecipient,
         status: 'failed',
@@ -439,6 +447,8 @@ Deno.serve(async (req) => {
     })
     await supabase.from('email_send_log').insert({
       message_id: messageId,
+      triggered_by_user_id: authUserId,
+      triggered_by_ip: clientIp,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'suppressed',
@@ -475,6 +485,8 @@ Deno.serve(async (req) => {
   // Log pending BEFORE enqueue so we have a record even if enqueue crashes
   await supabase.from('email_send_log').insert({
     message_id: messageId,
+      triggered_by_user_id: authUserId,
+      triggered_by_ip: clientIp,
     template_name: templateName,
     recipient_email: effectiveRecipient,
     status: 'pending',
@@ -507,6 +519,8 @@ Deno.serve(async (req) => {
 
     await supabase.from('email_send_log').insert({
       message_id: messageId,
+      triggered_by_user_id: authUserId,
+      triggered_by_ip: clientIp,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'failed',
