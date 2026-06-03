@@ -34,7 +34,7 @@ const Index = () => {
     };
 
     const description =
-      "Digiformation Ltd — fast UK LTD & US LLC company formation with business banking and payment gateways: PayPal, Stripe, Payoneer, Wise, WorldFirst, Tide, Airwallex, PingPong, Mollie, Wallester. Trusted by 300+ entrepreneurs worldwide.";
+      "Fast UK LTD & US LLC formation with business banking and payment gateways — Stripe, PayPal, Wise, Tide. Trusted by 300+ founders.";
 
     setMeta("description", description);
     setMeta(
