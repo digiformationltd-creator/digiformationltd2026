@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { TableSkeleton } from "../components/Skeletons";
 import {
   Search, RefreshCw, Loader2, Mail, Phone, Building2,
-  ChevronRight, Users, ExternalLink, Calendar,
+  ChevronRight, Users, ExternalLink, Calendar, UserPlus, X, Eye, EyeOff,
 } from "lucide-react";
 
 interface ClientRow {
