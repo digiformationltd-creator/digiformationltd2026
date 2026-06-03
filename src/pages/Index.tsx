@@ -117,10 +117,10 @@ const Index = () => {
         <div id="stats"><DigiStats /></div>
         <div id="services-overview"><DigiServicesSlider /></div>
         <div id="services"><DigiServices /></div>
+        <div id="case-studies"><DigiCaseStudies /></div>
         <div id="why-choose"><DigiWhyChoose /></div>
         <div id="trust"><DigiTrustBar /></div>
         <div id="about"><DigiAbout /></div>
-        <div id="case-studies"><DigiCaseStudies /></div>
         <div id="testimonials"><DigiTestimonials /></div>
         <DigiCTA />
       </main>
