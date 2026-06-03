@@ -12,6 +12,8 @@ import OsSupport from "@/businessos/pages/OsSupport";
 import OsCompanies from "@/businessos/pages/OsCompanies";
 import Placeholder from "@/businessos/pages/Placeholder";
 import OsEmailTest from "@/businessos/pages/OsEmailTest";
+import OsEmailOps from "@/businessos/pages/OsEmailOps";
+import OsCompliance from "@/businessos/pages/OsCompliance";
 import LegacyAdmin from "@/pages/LegacyAdmin";
 
 export default function Admin() {
@@ -37,6 +39,8 @@ export default function Admin() {
         <Route path="documents" element={<OsDocuments />} />
         <Route path="automation" element={<Placeholder title="Automation" description="Event-based rules that fire the legacy email engine. No new sender." />} />
         <Route path="email-test" element={<OsEmailTest />} />
+        <Route path="email-ops" element={<OsEmailOps />} />
+        <Route path="compliance" element={<OsCompliance />} />
         <Route path="settings" element={<Placeholder title="Settings" />} />
       </Route>
     </Routes>
