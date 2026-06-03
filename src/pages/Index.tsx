@@ -21,7 +21,7 @@ const Index = () => {
 
   useEffect(() => {
     document.title =
-      "Digiformation Ltd | UK LTD & US LLC Formation • PayPal, Stripe, Payoneer, Wise, WorldFirst, Tide";
+      "Digiformation Ltd | UK LTD & US LLC Formation";
 
     const setMeta = (name: string, content: string, attr: "name" | "property" = "name") => {
       let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
