@@ -251,35 +251,10 @@ const RegisteredOfficeAddress = () => {
         </div>
       </section>
 
-      {/* Related */}
-      <section className="py-10 border-t border-border/60">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <h2 className="text-3xl md:text-4xl font-bold mb-10">Related Services</h2>
-          <div className="grid sm:grid-cols-3 gap-5">
-            {related.map((r) => (
-              <Link key={r.path} to={r.path} className="glass rounded-2xl p-6 hover:-translate-y-1 hover:shadow-elegant transition-all group">
-                <h3 className="font-semibold text-lg group-hover:text-gradient">{r.name}</h3>
-                <div className="mt-3 text-[11px] uppercase tracking-[0.14em]">Explore →</div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+      <RelatedServices items={related} />
+      <RecommendedGuides categories={["UK Compliance", "UK Formation"]} />
+      <ServiceFAQ id="registered-office" faqs={faqs} />
 
-      {/* FAQ */}
-      <section className="py-10 bg-muted/20 border-t border-border/60">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
-          <Accordion type="single" collapsible className="glass rounded-2xl px-6">
-            {faqs.map((f, i) => (
-              <AccordionItem key={i} value={`item-${i}`} className="border-border/40">
-                <AccordionTrigger className="text-left font-medium">{f.q}</AccordionTrigger>
-                <AccordionContent className="opacity-90">{f.a}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
-      </section>
     </Layout>
   );
 };
