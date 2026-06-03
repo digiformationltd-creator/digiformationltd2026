@@ -1047,6 +1047,40 @@ export const blogPosts: BlogPost[] = [
     metaTitle: "Change UK Company Name 2026 — Complete Step-by-Step Guide (NM01)",
     metaDescription: "Step-by-step 2026 guide to change a UK company name. Special resolution, NM01 Companies House filing, fees and certificate explained for non-residents worldwide.",
     keywords: "change UK company name 2026, NM01 filing, Companies House name change, rename UK LTD non resident",
+    content: [
+      {
+        h: "When and Why You Might Change Your UK Company Name",
+        body: "<p>Changing a UK Limited Company's name is a routine Companies House procedure — but one that has serious consequences if handled badly. Common reasons founders rename a company include rebranding to match a new product, separating from a previous business partner, removing trademark conflicts after a legal demand, or simply outgrowing a placeholder name chosen at incorporation.</p><p>The good news: a UK company name change does <strong>not</strong> dissolve the company. Your company number, incorporation date, trading history, bank accounts, contracts, VAT registration and tax records all stay with the company — only the name on the surface changes. Done correctly, you keep your full legal and operational history intact.</p>",
+      },
+      {
+        h: "The Two Legal Routes to Change a UK Company Name",
+        body: "<p>UK company law gives you two routes under the Companies Act 2006:</p><ol><li><strong>By Special Resolution of the shareholders</strong> — the standard route, used by 99% of companies. Requires at least 75% of voting shareholders to approve.</li><li><strong>By means provided for in the Articles of Association</strong> — only available if your Articles contain a specific clause permitting directors to change the name without a shareholder vote. The default Model Articles do <em>not</em> include this.</li></ol><p>For almost every founder, the Special Resolution route is the correct path.</p>",
+      },
+      {
+        h: "Step-by-Step: Change a UK Company Name Using NM01",
+        body: "<h3>Step 1 — Check the Proposed Name Is Available</h3><p>Use the free <a href=\"https://find-and-update.company-information.service.gov.uk/\" target=\"_blank\" rel=\"noopener noreferrer\">Companies House name availability checker</a>. The new name must not be identical or 'too like' an existing registered name, must not contain sensitive words without permission, and must end with <em>Limited</em> or <em>Ltd</em>.</p><h3>Step 2 — Check Trademark Conflicts</h3><p>Search the <a href=\"https://www.gov.uk/search-for-trademark\" target=\"_blank\" rel=\"noopener noreferrer\">UK IPO trademark register</a> and ideally WIPO and USPTO if you sell internationally. Companies House approval does not protect you from a trademark infringement claim.</p><h3>Step 3 — Pass a Special Resolution</h3><p>Hold a general meeting (or use written resolution for small companies) where shareholders holding at least 75% of the voting rights approve the name change. Record the resolution in writing.</p><h3>Step 4 — File Form NM01 With Companies House</h3><p>Submit form <strong>NM01 – Notice of change of name by resolution</strong> via Companies House WebFiling. You will need your authentication code. Attach the signed Special Resolution.</p><h3>Step 5 — Pay the Fee</h3><p>£20 for standard online filing (typically processed within 1–2 business days) or £83 for same-day service. Paper filings are slower and more expensive.</p><h3>Step 6 — Receive the Certificate of Incorporation on Change of Name</h3><p>Companies House issues a new certificate showing the new name and the date of change. The change becomes legally effective from the date on this certificate.</p>",
+      },
+      {
+        h: "What Changes — and What Doesn't",
+        body: "<p><strong>Does not change:</strong></p><ul><li>Company registration number</li><li>Incorporation date</li><li>Tax references (UTR, VAT number, PAYE)</li><li>Trading history, credit file, bank accounts, contracts, leases</li><li>Intellectual property owned by the company</li></ul><p><strong>Does change:</strong></p><ul><li>The name on Companies House records and the public register</li><li>The name you must use on all stationery, invoices, websites, contracts and email footers going forward</li><li>Your domain, branding and marketing assets (these you update yourself)</li></ul>",
+      },
+      {
+        h: "What to Update Immediately After the Name Change",
+        body: "<ol><li><strong>HMRC</strong> — corporation tax, VAT and PAYE records (HMRC is usually notified automatically by Companies House, but confirm in your HMRC online account)</li><li><strong>Business bank accounts</strong> — submit the new Certificate of Incorporation on Change of Name to Tide, Wise, Revolut, Mercury or your bank</li><li><strong>Payment gateways</strong> — Stripe, PayPal, Mollie all require an updated company name and certificate</li><li><strong>Invoices, contracts, T&Cs, privacy policy, website footer, email signatures</strong></li><li><strong>Domain ownership and Google Business Profile</strong></li><li><strong>Insurance policies, leases and supplier contracts</strong></li><li><strong>Trademark applications</strong> — refile under the new name if needed</li></ol>",
+      },
+      {
+        h: "For Non-Resident Directors",
+        body: "<p>The entire process can be completed from anywhere in the world. You will need:</p><ul><li>Your Companies House <strong>6-digit authentication code</strong></li><li>A signed Special Resolution (electronic signatures are accepted)</li><li>A debit or credit card to pay the £20 fee</li></ul><p>If you have lost your authentication code, request a replacement through Companies House first — it is posted to the registered office address, so make sure your registered office mail is actually reachable. See our companion guide on <em>Recovering a Lost Companies House Auth Code</em>.</p>",
+      },
+      {
+        h: "Common Mistakes to Avoid",
+        body: "<ul><li>Skipping the trademark search and getting a cease-and-desist letter weeks after rebranding</li><li>Choosing a name 'too like' an existing one — Companies House will reject it</li><li>Forgetting to update bank accounts and payment gateways — invoices in the old name can cause payment failures</li><li>Continuing to trade under the old name informally — invoices and contracts must use the new legal name immediately</li><li>Not keeping the original Certificate of Incorporation alongside the Change of Name certificate (banks and KYC reviewers often ask for both)</li></ul>",
+      },
+      {
+        h: "Get Expert Help",
+        body: "<p>A UK company name change is a 48-hour administrative task when done correctly — and a multi-month headache when done badly. Special Resolution drafting, NM01 filing, trademark checks and downstream notifications all need to line up.</p><p><strong>Digiformation Ltd</strong> handles end-to-end UK company name changes for non-resident directors worldwide — including Special Resolution drafting, NM01 submission, certificate delivery and downstream bank, gateway and HMRC updates.</p><p>👉 <a href=\"/uk-compliance\">See UK compliance services</a> or <a href=\"/contact\">book a free consultation</a>.</p>",
+      },
+    ],
   },
   {
     slug: "best-banks-for-uk-ltd-non-resident-directors-2026",
