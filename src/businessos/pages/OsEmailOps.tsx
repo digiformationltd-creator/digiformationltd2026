@@ -124,22 +124,41 @@ export default function OsEmailOps() {
     return s;
   }, [deduped]);
 
+  // Retry guard: skip if a later "sent" row already exists for same recipient+template
+  const isAlreadyDelivered = (row: LogRow) =>
+    logs.some(
+      (l) =>
+        l.recipient_email === row.recipient_email &&
+        l.template_name === row.template_name &&
+        l.status === "sent" &&
+        new Date(l.created_at) >= new Date(row.created_at)
+    );
+
+  const retryOne = async (row: LogRow) => {
+    if (isAlreadyDelivered(row)) {
+      toast.message("Skipped — already delivered");
+      return { ok: true, skipped: true };
+    }
+    const meta = row.metadata || {};
+    const { error } = await supabase.functions.invoke("send-transactional-email", {
+      body: {
+        template: row.template_name,
+        to: row.recipient_email,
+        data: meta.data || {},
+        idempotency_key: `dlq-retry-${row.id}`,
+        purpose: "transactional",
+        metadata: { retry_of: row.id, original_message_id: row.message_id, retried_at: new Date().toISOString() },
+      },
+    });
+    if (error) throw error;
+    return { ok: true, skipped: false };
+  };
+
   const retry = async (row: LogRow) => {
     setRetrying(row.id);
     try {
-      // Re-enqueue by invoking send-transactional-email with the same payload
-      const meta = row.metadata || {};
-      const { error } = await supabase.functions.invoke("send-transactional-email", {
-        body: {
-          template: row.template_name,
-          to: row.recipient_email,
-          data: meta.data || {},
-          idempotency_key: `retry-${row.id}-${Date.now()}`,
-          purpose: "transactional",
-        },
-      });
-      if (error) throw error;
-      toast.success("Re-queued");
+      const r = await retryOne(row);
+      if (!r.skipped) toast.success("Re-queued");
       load();
     } catch (e: any) {
       toast.error(e.message || "Retry failed");
@@ -147,6 +166,33 @@ export default function OsEmailOps() {
       setRetrying(null);
     }
   };
+
+  const bulkRetry = async () => {
+    const targets = filtered.filter((r) => r.status === "dlq" || r.status === "failed");
+    if (targets.length === 0) {
+      toast.message("No DLQ rows in current filter");
+      return;
+    }
+    if (!confirm(`Re-queue ${targets.length} failed email${targets.length === 1 ? "" : "s"}? Already-delivered duplicates will be skipped.`)) return;
+    setBulkRetrying(true);
+    setBulkProgress({ done: 0, total: targets.length, skipped: 0, failed: 0 });
+    let skipped = 0, failed = 0;
+    // Throttle to ~5/sec to respect queue dispatcher pacing
+    for (let i = 0; i < targets.length; i++) {
+      try {
+        const r = await retryOne(targets[i]);
+        if (r.skipped) skipped++;
+      } catch {
+        failed++;
+      }
+      setBulkProgress({ done: i + 1, total: targets.length, skipped, failed });
+      await new Promise((res) => setTimeout(res, 200));
+    }
+    setBulkRetrying(false);
+    toast.success(`Bulk retry done · ${targets.length - skipped - failed} queued · ${skipped} skipped · ${failed} failed`);
+    load();
+  };
+
 
   return (
     <div className="space-y-4">
