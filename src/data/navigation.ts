@@ -1,4 +1,4 @@
-export type NavItem = { name: string; path: string };
+export type NavItem = { name: string; path: string; price?: string };
 export type NavGroup = { label: string; basePath?: string; items: NavItem[] };
 
 export const ukServices: NavItem[] = [
