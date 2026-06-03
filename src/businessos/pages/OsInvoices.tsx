@@ -72,6 +72,8 @@ export default function OsInvoices() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [openInvoiceId, setOpenInvoiceId] = useState<string | null>(null);
+  const [openOrderId, setOpenOrderId] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
