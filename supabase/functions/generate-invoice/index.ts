@@ -286,6 +286,12 @@ Deno.serve(async (req) => {
     // and confirmation emails all silently stopped. We now log mismatches
     // for auditing but never block legitimate checkouts. A coarse sanity
     // bound (£0–£100k) still prevents absurd tampering.
+    // Server-side price validation against the services catalog.
+    // SECURITY: never trust the client-submitted amount. Resolve the
+    // catalog price by slug or name and reject hard mismatches; flag
+    // soft mismatches (bundles / free-text titles) for admin review
+    // via the `amount_mismatch` audit column.
+    let amountMismatch = false
     {
       const submitted = Number(body.amount_gbp)
       if (!Number.isFinite(submitted) || submitted < 0 || submitted > 100000) {
@@ -300,21 +306,40 @@ Deno.serve(async (req) => {
           .or(`slug.eq.${body.service},name.ilike.${body.service}`)
           .limit(1)
           .maybeSingle()
-        const catalog = svcQuery.data as { price_gbp: number } | null
+        const catalog = svcQuery.data as { price_gbp: number; slug: string } | null
         if (catalog) {
           const catalogPrice = Number(catalog.price_gbp) || 0
-          if (Math.abs(submitted - catalogPrice) > 0.01) {
-            console.warn('price mismatch (accepting)', {
+          const delta = Math.abs(submitted - catalogPrice)
+          // Reject blatant tampering on a known single-service catalog hit
+          // (>50% deviation or zero amount on a paid service).
+          if (catalogPrice > 0 && (submitted === 0 || delta / catalogPrice > 0.5)) {
+            console.error('price tampering blocked', {
+              service: body.service, submitted, catalogPrice,
+            })
+            return new Response(JSON.stringify({ error: 'Price validation failed' }), {
+              status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            })
+          }
+          if (delta > 0.01) {
+            amountMismatch = true
+            console.warn('price mismatch flagged for admin review', {
               service: body.service, submitted, catalogPrice,
             })
           }
         } else {
-          console.warn('catalog lookup miss (accepting)', { service: body.service, submitted })
+          // Unknown service title (likely a multi-item bundle). Flag
+          // for admin review but accept so legitimate checkouts succeed.
+          amountMismatch = true
+          console.warn('catalog miss — flagged for admin review', {
+            service: body.service, submitted,
+          })
         }
       } catch (e) {
-        console.warn('catalog lookup failed (accepting)', e)
+        amountMismatch = true
+        console.warn('catalog lookup failed — flagged', e)
       }
     }
+
 
 
     const generated = genRefs()
@@ -392,6 +417,7 @@ Deno.serve(async (req) => {
         customer_email: body.customer.email ?? null,
         customer_whatsapp: body.customer.whatsapp ?? null,
         notes: body.notes ?? null,
+        amount_mismatch: amountMismatch,
       })
       .select('id')
       .single()
@@ -414,6 +440,7 @@ Deno.serve(async (req) => {
       bill_to_address: body.customer.address ?? null,
       pdf_url: path,
       notes: body.notes ?? null,
+      amount_mismatch: amountMismatch,
     })
     if (invErr) throw invErr
 
