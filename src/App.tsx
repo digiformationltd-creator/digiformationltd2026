@@ -10,6 +10,7 @@ import { UKServicesHub, UKComplianceHub, USAServicesHub, BankingHub } from "./pa
 import { About, Contact, Pricing, FAQ, ClientArea, WebDevelopment, Privacy, Terms } from "./pages/CorePages";
 import BlogIndex from "./pages/BlogIndex";
 import BlogPost from "./pages/BlogPost";
+import { InsightPage, InsightsIndex } from "./pages/InsightPage";
 import UKLtdFormation from "./pages/UKLtdFormation";
 import UkLtdChooseJurisdiction from "./pages/UkLtdChooseJurisdiction";
 import UkLtdCheckout from "./pages/UkLtdCheckout";
@@ -112,6 +113,8 @@ const App = () => (
           <Route path="/faq" element={<FAQ />} />
           <Route path="/blog" element={<BlogIndex />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
+          <Route path="/insights" element={<InsightsIndex />} />
+          <Route path="/insights/:slug" element={<InsightPage />} />
           <Route path="/privacy-policy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
 
