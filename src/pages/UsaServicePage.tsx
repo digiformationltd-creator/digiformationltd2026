@@ -4,6 +4,13 @@ import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { usaServicePages } from "@/data/usaServices";
 import { useSeo } from "@/lib/seo";
+import EinHero from "@/components/hero-animations/EinHero";
+import ItinHero from "@/components/hero-animations/ItinHero";
+
+const HERO_BY_SLUG: Record<string, React.ComponentType> = {
+  "ein-number": EinHero,
+  "itin-number": ItinHero,
+};
 
 const UsaServicePage = () => {
   const params = useParams();
@@ -55,6 +62,7 @@ const UsaServicePage = () => {
   }
 
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const HeroAnim = HERO_BY_SLUG[page.slug];
 
   return (
     <Layout>
@@ -62,24 +70,31 @@ const UsaServicePage = () => {
         <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl animate-pulse-glow" />
         <div className="container mx-auto px-4 py-12 md:py-14 relative">
-          <div className="max-w-4xl">
-            <div className="inline-flex items-center gap-3 mb-6">
-              <span className="text-xs uppercase tracking-[0.18em] font-semibold">USA Services</span>
-            </div>
-            <h1 className="text-5xl md:text-7xl font-bold leading-[1.02] tracking-tight">{page.hero}</h1>
-            <p className="mt-8 text-lg md:text-xl leading-relaxed max-w-2xl opacity-90">{page.description}</p>
-            <div className="mt-10 flex flex-wrap gap-4 items-center">
-              <Button variant="hero" size="lg" className="rounded-full" onClick={() => scrollTo("apply")}>
-                Apply Now <ArrowRight className="w-4 h-4" />
-              </Button>
-              <div className="glass rounded-full px-5 py-2 text-sm flex items-center gap-2">
-                <Wallet className="w-4 h-4" />
-                Service fee: <span className="font-bold text-gradient">${page.price} {page.currency}</span>
+          <div className="grid lg:grid-cols-[1.2fr_1fr] gap-10 items-center">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-3 mb-6">
+                <span className="text-xs uppercase tracking-[0.18em] font-semibold">USA Services</span>
               </div>
-              <div className="glass rounded-full px-5 py-2 text-sm">
-                Turnaround: <span className="font-semibold">{page.turnaround}</span>
+              <h1 className="text-5xl md:text-7xl font-bold leading-[1.02] tracking-tight">{page.hero}</h1>
+              <p className="mt-8 text-lg md:text-xl leading-relaxed max-w-2xl opacity-90">{page.description}</p>
+              <div className="mt-10 flex flex-wrap gap-4 items-center">
+                <Button variant="hero" size="lg" className="rounded-full" onClick={() => scrollTo("apply")}>
+                  Apply Now <ArrowRight className="w-4 h-4" />
+                </Button>
+                <div className="glass rounded-full px-5 py-2 text-sm flex items-center gap-2">
+                  <Wallet className="w-4 h-4" />
+                  Service fee: <span className="font-bold text-gradient">${page.price} {page.currency}</span>
+                </div>
+                <div className="glass rounded-full px-5 py-2 text-sm">
+                  Turnaround: <span className="font-semibold">{page.turnaround}</span>
+                </div>
               </div>
             </div>
+            {HeroAnim && (
+              <div className="relative hidden lg:block">
+                <HeroAnim />
+              </div>
+            )}
           </div>
         </div>
       </section>
