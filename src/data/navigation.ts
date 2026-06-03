@@ -1,4 +1,4 @@
-export type NavItem = { name: string; path: string };
+export type NavItem = { name: string; path: string; price?: string };
 export type NavGroup = { label: string; basePath?: string; items: NavItem[] };
 
 export const ukServices: NavItem[] = [
@@ -33,19 +33,19 @@ export const usaServices: NavItem[] = [
 ];
 
 export const banking: NavItem[] = [
-  { name: "PayPal", path: "/banks-payment-solutions/paypal" },
-  { name: "Payoneer", path: "/banks-payment-solutions/payoneer" },
-  { name: "WorldFirst", path: "/banks-payment-solutions/worldfirst" },
-  { name: "Stripe", path: "/banks-payment-solutions/stripe" },
-  { name: "Tide", path: "/banks-payment-solutions/tide" },
-  { name: "Sunrate", path: "/banks-payment-solutions/sunrate" },
-  { name: "Wise", path: "/banks-payment-solutions/wise" },
-  { name: "Zyla", path: "/banks-payment-solutions/zyla" },
-  { name: "Airwallex", path: "/banks-payment-solutions/airwallex" },
-  { name: "Mollie", path: "/banks-payment-solutions/mollie" },
-  { name: "ZionPe", path: "/banks-payment-solutions/zionpe" },
-  { name: "Wallester", path: "/banks-payment-solutions/wallester" },
-  { name: "PingPong", path: "/banks-payment-solutions/pingpong" },
+  { name: "PayPal", path: "/banks-payment-solutions/paypal", price: "£20" },
+  { name: "Payoneer", path: "/banks-payment-solutions/payoneer", price: "£20" },
+  { name: "WorldFirst", path: "/banks-payment-solutions/worldfirst", price: "£20" },
+  { name: "Stripe", path: "/banks-payment-solutions/stripe", price: "£20" },
+  { name: "Tide", path: "/banks-payment-solutions/tide", price: "£50" },
+  { name: "Sunrate", path: "/banks-payment-solutions/sunrate", price: "£50" },
+  { name: "Wise", path: "/banks-payment-solutions/wise", price: "£70" },
+  { name: "Zyla", path: "/banks-payment-solutions/zyla", price: "£50" },
+  { name: "Airwallex", path: "/banks-payment-solutions/airwallex", price: "£50" },
+  { name: "Mollie", path: "/banks-payment-solutions/mollie", price: "£50" },
+  { name: "ZionPe", path: "/banks-payment-solutions/zionpe", price: "£50" },
+  { name: "Wallester", path: "/banks-payment-solutions/wallester", price: "£50" },
+  { name: "PingPong", path: "/banks-payment-solutions/pingpong", price: "£50" },
 ];
 
 export const navGroups: NavGroup[] = [
