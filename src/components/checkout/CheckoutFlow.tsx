@@ -135,6 +135,12 @@ export type CheckoutFlowProps = {
   whatsappLabel?: string;
   /** Placeholder hint for the WhatsApp/phone field */
   whatsappPlaceholder?: string;
+  /** Show a separate WhatsApp contact number field in addition to the main phone field. */
+  showSeparateWhatsapp?: boolean;
+  /** Label for the separate WhatsApp contact field. Defaults to "WhatsApp contact number". */
+  whatsappContactLabel?: string;
+  /** Placeholder for the separate WhatsApp contact field. */
+  whatsappContactPlaceholder?: string;
   /** Optional extra add-on services grouped by category. */
   extras?: { categoryLabel: string; description?: string; items: CheckoutItem[] }[];
   /** Per-item dynamic field sections rendered in the details step when the
