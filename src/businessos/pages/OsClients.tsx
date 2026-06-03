@@ -89,6 +89,13 @@ export default function OsClients() {
           />
         </div>
         <button
+          onClick={() => setCreateOpen(true)}
+          className="h-11 px-4 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition"
+        >
+          <UserPlus className="w-4 h-4" />
+          New Client
+        </button>
+        <button
           onClick={load}
           disabled={loading}
           className="h-11 px-4 rounded-xl os-glass text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
@@ -98,6 +105,13 @@ export default function OsClients() {
         </button>
         {/* Legacy fallback removed — client management is now native at /admin/clients/:id */}
       </div>
+
+      {createOpen && (
+        <CreateClientDialog
+          onClose={() => setCreateOpen(false)}
+          onCreated={() => { setCreateOpen(false); load(); }}
+        />
+      )}
 
       {/* Results count */}
       <div className="text-xs text-white/50 px-1">
