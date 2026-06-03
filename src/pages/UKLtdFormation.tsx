@@ -143,7 +143,7 @@ const UKLtdFormation = () => {
   }, []);
 
   useEffect(() => {
-    document.title = "UK LTD Formation Services | Register Your Company with Companies House";
+    document.title = "UK LTD Formation — Register with Companies House";
 
     const setMeta = (name: string, content: string, attr: "name" | "property" = "name") => {
       let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
