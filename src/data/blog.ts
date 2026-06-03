@@ -107,6 +107,44 @@ export const blogPosts: BlogPost[] = [
     metaTitle: "Delaware vs Wyoming LLC 2026 — Best State for Non-Residents (Pakistan, India, UK, UAE)",
     metaDescription: "Detailed Delaware vs Wyoming LLC comparison for non-resident founders worldwide in 2026. Costs, taxes, EIN, ITIN, Stripe, Mercury and PayPal approval compared.",
     keywords: "Delaware vs Wyoming LLC, US LLC for non residents, best state US LLC non resident, Delaware LLC Pakistan India UAE, Wyoming LLC worldwide, Stripe LLC, Mercury bank LLC",
+    content: [
+      {
+        h: "Delaware vs Wyoming LLC — Why This Decision Matters",
+        body: "<p>If you are a non-resident founder in Pakistan, India, the UK, UAE, Canada, Australia or anywhere outside the United States, the first big decision when forming a US LLC is choosing the <strong>state of incorporation</strong>. The two most popular states for non-resident founders are <strong>Delaware</strong> and <strong>Wyoming</strong>, and the difference between them can affect your <strong>annual cost, privacy, tax exposure, banking approval and Stripe/PayPal acceptance</strong> for years to come.</p><p>This is not a small administrative choice. Picking the wrong state often results in higher annual franchise fees, rejected bank applications, slower Stripe onboarding and unnecessary tax filings. In this guide we compare Delaware and Wyoming side by side for non-resident founders in 2026, using only the public rules published by the <a href=\"https://corp.delaware.gov/\" target=\"_blank\" rel=\"noopener noreferrer\">Delaware Division of Corporations</a> and the <a href=\"https://sos.wyo.gov/Business/\" target=\"_blank\" rel=\"noopener noreferrer\">Wyoming Secretary of State</a>.</p>",
+      },
+      {
+        h: "Quick Comparison: Delaware vs Wyoming LLC (2026)",
+        body: "<p>Here is the side-by-side at a glance:</p><ul><li><strong>State filing fee:</strong> Delaware ~$110 / Wyoming ~$100</li><li><strong>Annual fee:</strong> Delaware $300 franchise tax / Wyoming $60 annual report (min)</li><li><strong>Registered agent (required):</strong> Both states require a US-based registered agent</li><li><strong>Privacy of owners:</strong> Wyoming offers stronger anonymity; Delaware does not publish members but court system is more public</li><li><strong>Court system:</strong> Delaware has the famous Court of Chancery (best for VC-backed startups)</li><li><strong>State income tax:</strong> Neither state taxes LLCs that earn no income from in-state sources</li><li><strong>Bank & Stripe perception:</strong> Both are widely accepted; Delaware has slightly stronger global recognition</li></ul><p>For most non-resident founders running an e-commerce, SaaS, agency or freelance business, <strong>Wyoming is cheaper and simpler</strong>. For founders planning to raise venture capital, <strong>Delaware is the industry standard</strong>.</p>",
+      },
+      {
+        h: "Delaware LLC — Pros and Cons for Non-Residents",
+        body: "<h3>Why Founders Choose Delaware</h3><p>Delaware is the legal home of more than 65% of Fortune 500 companies. Its body of corporate law is the most tested in the world, and the Court of Chancery resolves business disputes quickly and predictably. If you ever plan to raise institutional investment, a Delaware C-Corp (or a Delaware LLC that can convert) is what investors expect.</p><h3>The Trade-Offs</h3><p>Delaware charges a flat <strong>$300 annual franchise tax</strong> regardless of revenue, plus the registered agent fee (~$50–$150/year). Total annual cost is typically $350–$450. Delaware also requires you to file a franchise tax report each year — miss it and the state will eventually mark your LLC inactive.</p><p>For a non-resident running a small e-commerce store or freelance practice with no plans to raise capital, that $300/year is overhead you can avoid by choosing Wyoming.</p>",
+      },
+      {
+        h: "Wyoming LLC — Pros and Cons for Non-Residents",
+        body: "<h3>Why Founders Choose Wyoming</h3><p>Wyoming was the first US state to recognise the LLC structure in 1977, and it still has some of the most founder-friendly rules. Annual fees are low (typically $60 if your assets in Wyoming are under $300,000), there is <strong>no state income tax</strong>, and the state does not publish member names on the public register — only the registered agent. This privacy is genuinely useful for non-resident founders who do not want their home address exposed online.</p><h3>The Trade-Offs</h3><p>Wyoming has less brand recognition than Delaware. A small number of overseas banks or partners may ask follow-up questions if they have only heard of Delaware. In practice, Stripe, Mercury, Relay, Wise and PayPal all accept Wyoming LLCs without issue.</p>",
+      },
+      {
+        h: "Stripe, Mercury & PayPal Approval — Does the State Matter?",
+        body: "<p>Stripe and Mercury approve both Delaware and Wyoming LLCs. What actually matters for approval is:</p><ol><li>A real <strong>EIN</strong> from the IRS (not a stand-in number)</li><li>A clean, professional <strong>business website</strong> with clear pricing and policy pages</li><li>A <strong>US business bank account</strong> in the same legal name as the LLC</li><li>A <strong>verifiable director identity</strong> with passport plus selfie</li><li>A <strong>lawful business model</strong> within Stripe's accepted categories</li></ol><p>If those five elements are in place, both Delaware and Wyoming LLCs are approved at similar rates. Most rejections come from weak websites, mismatched names or unsupported business categories — not from the state.</p>",
+      },
+      {
+        h: "Costs Over 3 Years: Delaware vs Wyoming",
+        body: "<p>Here is a realistic 3-year cost comparison for a single-member LLC owned by a non-resident:</p><ul><li><strong>Delaware:</strong> $110 setup + ($300 franchise tax + $100 agent) x 3 = ~$1,310 over 3 years</li><li><strong>Wyoming:</strong> $100 setup + ($60 annual + $100 agent) x 3 = ~$580 over 3 years</li></ul><p>That is a difference of roughly <strong>$730 over three years</strong> for an identical legal entity. For most non-resident founders, that money is better spent on a better website, paid ads, or a second payment processor.</p>",
+      },
+      {
+        h: "Which Should You Pick? A Practical Decision Framework",
+        body: "<p>Use this simple framework:</p><ul><li><strong>Pick Delaware if:</strong> You plan to raise venture capital within 24 months, you want C-Corp conversion later, or your investors specifically ask for it.</li><li><strong>Pick Wyoming if:</strong> You are bootstrapping an e-commerce store, SaaS, agency, freelance practice or content business — and you want the lowest annual maintenance with strong privacy.</li><li><strong>Avoid:</strong> Forming in a state where you do not actually live or do business just because someone on YouTube said it was \"tax-free\". All US LLCs owned by non-residents face the same federal IRS rules (Form 5472 + 1120 each year) regardless of state.</li></ul>",
+      },
+      {
+        h: "Compliance That Applies to Both States",
+        body: "<p>Whichever state you choose, every non-resident LLC owner must:</p><ol><li>File <strong>IRS Form 5472 + 1120</strong> annually (foreign-owned single-member LLC reporting)</li><li>Maintain a <strong>US registered agent</strong> in the state of formation</li><li>Keep the LLC in good standing with the state (annual report / franchise tax)</li><li>Comply with <strong>FinCEN BOI requirements</strong> where applicable to foreign-owned entities</li><li>Hold a real <strong>US bank account</strong> in the LLC's legal name</li></ol><p>Missing any of these can trigger fines from $10,000+ for late Form 5472 filings, so do not treat US LLC compliance as optional.</p>",
+      },
+      {
+        h: "Get Expert Help — US LLC Formation Done Right",
+        body: "<p>Choosing between Delaware and Wyoming is only the first step. The real work is getting the <strong>EIN, registered agent, banking, Stripe, BOI and Form 5472</strong> right — and most non-resident founders only get one chance to do it cleanly.</p><p><strong>Digiformation Ltd</strong> sets up US LLCs for non-resident founders worldwide with full EIN, registered agent, banking guidance (Mercury, Relay, Wise) and ongoing compliance support.</p><p>👉 <a href=\"/usa-services/us-llc-formation\">See our US LLC formation packages</a> or <a href=\"/contact\">speak to a consultant</a> for a free 15-minute call. We will recommend Delaware or Wyoming based on your actual business — not a generic answer.</p>",
+      },
+    ],
   },
   {
     slug: "how-to-open-stripe-account-pakistan-2026",
@@ -163,6 +201,40 @@ export const blogPosts: BlogPost[] = [
     metaTitle: "PayPal Business Account in Restricted Countries 2026 — Pakistan, Bangladesh, Morocco Guide",
     metaDescription: "How to get a verified PayPal Business account in 2026 from Pakistan, Bangladesh, Morocco, Egypt or any restricted country using a UK LTD. Verification & withdrawal step-by-step.",
     keywords: "PayPal restricted country, PayPal Pakistan business, PayPal Bangladesh, PayPal Morocco, PayPal Egypt, PayPal business UK LTD, receive PayPal worldwide",
+    content: [
+      {
+        h: "Why PayPal Restricts So Many Countries in 2026",
+        body: "<p>PayPal is still the most recognised online payment brand in the world, with over 430 million active accounts across 200+ markets. Yet for founders in Pakistan, Bangladesh, Morocco, Egypt, Nigeria and several other regions, PayPal Business is either <strong>completely unavailable</strong> or available with severe limits — you can send money but cannot receive, or your account is permanently capped.</p><p>This is not arbitrary. PayPal operates under strict <strong>banking, anti-money-laundering (AML) and KYC regulations</strong> in every country it serves. To launch a fully functional PayPal Business product in a country, PayPal needs local banking partners, regulator approval and a sanctions/risk model it can defend. Many regions simply do not yet meet those requirements.</p><p>The good news: if you are a legitimate entrepreneur in a restricted country, there is a <strong>fully compliant, legal route</strong> to get a verified PayPal Business account that accepts payments from customers worldwide. That route is <strong>registering a real business in a PayPal-supported country</strong> — most commonly a <strong>UK Limited Company</strong>.</p>",
+      },
+      {
+        h: "Important: The Only Compliant Method",
+        body: "<p>Before going further, a clear warning. The internet is full of methods that involve borrowed identities, fake addresses, friends' bank accounts or aged accounts. These are not loopholes — they are <strong>fraud under PayPal's User Agreement</strong> and under the law of the country where the account is registered. PayPal routinely freezes funds for 180 days, terminates accounts and shares fraud data with banks globally.</p><p>This guide only covers the <strong>compliant route</strong>: a genuine business that you own, registered in a PayPal-supported jurisdiction, with your real identity verified, your real bank account linked and your real website operating.</p>",
+      },
+      {
+        h: "The UK LTD Route — The Cleanest Path for Non-Residents",
+        body: "<p>A <strong>UK Limited Company</strong> registered at <a href=\"https://www.gov.uk/government/organisations/companies-house\" target=\"_blank\" rel=\"noopener noreferrer\">Companies House</a> is the most popular legitimate path for non-resident founders. Why?</p><ul><li>The UK is a fully PayPal-supported market with no restrictions.</li><li>UK LTDs are publicly verifiable on the official government register, which speeds up PayPal due diligence.</li><li>A UK LTD can be 100% owned and directed by a non-resident — you do not need to live in the UK.</li><li>UK business banking (Wise, Tide, Airwallex, Revolut Business) accepts non-resident directors.</li><li>The UK fully implemented the <strong>Companies House ID Verification</strong> rules under the ECCT Act 2023 — and PayPal recognises this as strong KYC.</li></ul><p>For founders targeting the US market, a <strong>US LLC with EIN</strong> is the alternative, but UK is usually faster and cheaper for non-residents to set up and maintain.</p>",
+      },
+      {
+        h: "What PayPal Will Ask For During Verification",
+        body: "<p>PayPal Business verification in 2026 typically requires:</p><ol><li>A <strong>registered business entity</strong> (UK LTD, US LLC or similar) with a valid registration number.</li><li>A <strong>registered business address</strong> in the country of incorporation (no PO boxes).</li><li>A <strong>business website</strong> describing your product/service, with pricing, refund, terms and privacy pages.</li><li>A <strong>business email</strong> on your own domain (yourname@yourbusiness.com).</li><li>A <strong>business bank account</strong> in the same country as the entity, in the company's legal name.</li><li>Director <strong>passport + live selfie verification</strong>.</li><li>A clear, <strong>permitted business model</strong> — PayPal prohibits adult, gambling, certain crypto activities, IP-infringing goods and several other categories.</li></ol><p>Approval is at PayPal's discretion. Anyone who guarantees approval is misleading you. What you can guarantee is the <strong>quality of the application</strong>.</p>",
+      },
+      {
+        h: "Step-by-Step: Get a Verified PayPal Business Account",
+        body: "<h3>Step 1 — Register Your UK LTD</h3><p>Form a UK Limited Company through Companies House. Complete the new mandatory <strong>ID verification</strong> under the ECCT Act 2023, ideally through an ACSP-aligned formation provider.</p><h3>Step 2 — Set Up Registered Office and UTR</h3><p>Use a real UK registered office (not the formation agent's default address — that is a major mail-delivery risk). HMRC will post your UTR to this address within 2–6 weeks.</p><h3>Step 3 — Open UK Business Banking</h3><p>Open Wise Business, Tide or Airwallex in the company's name. This is where PayPal will pay out your earnings.</p><h3>Step 4 — Build a Real Website + Domain Email</h3><p>Buy a domain, build a clean website with full legal pages (Terms, Privacy, Refunds, Contact), and set up email on your own domain. Vague websites are the #1 cause of PayPal rejection.</p><h3>Step 5 — Apply for PayPal Business at paypal.com (UK)</h3><p>Apply directly at the UK PayPal portal. Submit your Companies House number, registered address, director ID, website and bank details. Verification typically takes 1–10 business days.</p><h3>Step 6 — Lift Limits and Stay Compliant</h3><p>Once verified, link your bank, confirm your email and complete any \"unlock limits\" steps PayPal requests. Always invoice through your registered entity and keep clean books.</p>",
+      },
+      {
+        h: "Withdrawing Funds Back to Your Home Country",
+        body: "<p>Once PayPal Business is active in your UK LTD's name, you can withdraw to:</p><ul><li>Your <strong>UK business bank account</strong> (Wise, Tide, Airwallex) — usually 1 business day.</li><li>From there, your UK bank can send funds to your home-country account in your <strong>personal name</strong> as a legitimate salary or director's drawing, provided you record it in your company books and comply with your home-country foreign-income rules.</li></ul><p>Always pay yourself transparently and keep the paper trail clean. Tax authorities increasingly share data globally, and clean records are your best protection.</p>",
+      },
+      {
+        h: "Common Reasons PayPal Verification Fails",
+        body: "<ul><li>Website missing legal pages or with broken links</li><li>Generic Gmail/Hotmail business email</li><li>Bank account name does not exactly match the company name</li><li>Director address country mismatched with PayPal account country without explanation</li><li>Business category is on PayPal's restricted list (e.g., crypto trading)</li><li>Same device or IP previously linked to a banned PayPal account</li></ul><p>Fix these <strong>before</strong> you apply — re-applications after rejection are much harder.</p>",
+      },
+      {
+        h: "Get Expert Help — PayPal-Ready UK LTD Setup",
+        body: "<p>If PayPal is essential for your business, get the foundations right the first time: a real UK LTD with ID verification, a real UK registered office, real business banking, and a professional website that meets PayPal's review criteria.</p><p><strong>Digiformation Ltd</strong> handles the complete PayPal-ready setup for non-resident founders worldwide — formation, ID verification, registered office, banking guidance and a PayPal-ready website.</p><p>👉 <a href=\"/uk-services/uk-ltd-formation\">See our UK LTD formation packages</a> or <a href=\"/contact\">book a free consultation</a>. We never sell aged accounts, fake identities or guaranteed approvals — only proper, compliant setups that pass PayPal review.</p>",
+      },
+    ],
   },
   {
     slug: "payoneer-vs-wise-vs-worldfirst-comparison-2026",
@@ -185,6 +257,44 @@ export const blogPosts: BlogPost[] = [
     metaTitle: "Amazon FBA 2026: UK LTD vs US LLC for Non-Resident Sellers | Pakistan, India, UAE",
     metaDescription: "Should non-resident Amazon FBA sellers form a UK LTD or US LLC in 2026? Compare taxes, VAT, customs and banking for sellers in Pakistan, India, UAE, Bangladesh and worldwide.",
     keywords: "Amazon FBA UK LTD, Amazon FBA LLC non resident, Amazon seller Pakistan India UAE, VAT Amazon UK, Seller Central verification non resident",
+    content: [
+      {
+        h: "UK LTD vs US LLC for Amazon FBA — Why the Choice Matters",
+        body: "<p>Picking the wrong legal entity is the most expensive mistake non-resident Amazon FBA sellers make in 2026. It can mean thousands of pounds in unnecessary VAT, blocked Seller Central accounts, frozen payouts and rejected business bank applications. Yet most YouTube tutorials reduce the decision to a slogan: \"UK is cheaper\" or \"US is bigger\". Reality is more nuanced.</p><p>This guide compares <strong>UK Limited Company</strong> and <strong>US LLC</strong> structures specifically for non-resident Amazon FBA sellers based in Pakistan, India, the UAE, Bangladesh, Morocco, Canada, Australia and beyond — covering taxes, VAT, customs, banking and Amazon's Seller Central verification.</p>",
+      },
+      {
+        h: "Which Amazon Marketplace Are You Actually Targeting?",
+        body: "<p>The first question is not \"UK or US?\" — it is <strong>\"which Amazon marketplace are my customers on?\"</strong></p><ul><li><strong>Amazon.com (USA):</strong> Largest single marketplace. Best paired with a <strong>US LLC</strong> for sales-tax handling, USD payouts and Mercury/Relay banking.</li><li><strong>Amazon.co.uk + EU marketplaces:</strong> Best paired with a <strong>UK LTD</strong> for VAT registration, OSS/IOSS and UK business banking.</li><li><strong>Selling globally from day one:</strong> Many established sellers run <strong>both</strong> a UK LTD (for UK/EU) and a US LLC (for US) — but for first-time founders this is overkill and expensive.</li></ul><p>Pick the marketplace where you will earn 70%+ of your revenue in year one, and form the entity that matches it.</p>",
+      },
+      {
+        h: "Tax Comparison (2026)",
+        body: "<p><strong>UK LTD:</strong> Pays UK Corporation Tax — 19% small profits rate (under £50,000 profit) up to 25% main rate. UK has tax treaties with most countries that protect non-resident directors from double taxation. Salaries and dividends to non-resident directors are normally outside UK PAYE if no UK work is performed.</p><p><strong>US LLC:</strong> A single-member LLC is by default a \"disregarded entity\" for IRS purposes. If you are non-US, have no US office or staff and no \"engaged in US trade or business\" (ETBUS) presence, your LLC may owe <strong>zero US federal income tax</strong> — but you must still file <strong>Form 5472 + 1120</strong> every year (penalties start at $25,000 for late filing). State franchise tax also applies (Wyoming ~$60/yr, Delaware $300/yr).</p><p>Both routes have legal tax-efficient structures — but neither is \"tax-free\". You will still owe tax in your country of residence on profits paid to you personally.</p>",
+      },
+      {
+        h: "VAT, Customs and Sales Tax",
+        body: "<h3>UK LTD selling on Amazon.co.uk</h3><p>If you store inventory in the UK (Amazon FBA warehouses), you are required to register for <strong>UK VAT immediately</strong> as a non-established taxable person (NETP) — the £85,000 threshold does <strong>not</strong> apply. You will charge 20% VAT and file quarterly via Making Tax Digital (MTD). Amazon also collects VAT on your behalf for some B2C sales under marketplace facilitator rules.</p><h3>US LLC selling on Amazon.com</h3><p>The US has no federal VAT. Instead, each state has its own <strong>sales tax</strong> rules. Amazon collects and remits sales tax in all 45+ states with sales tax laws under marketplace facilitator legislation, so most non-resident sellers do not file state sales-tax returns directly. Customs duties apply when importing inventory into the US — typically 0–25% depending on HS code and country of origin.</p>",
+      },
+      {
+        h: "Banking — Which Is Easier to Open?",
+        body: "<p><strong>UK LTD:</strong> Wise Business, Tide and Airwallex all accept non-resident directors with reasonable documentation. Approval rates are high if the company is recently formed, ID-verified at Companies House and has a real registered office.</p><p><strong>US LLC:</strong> Mercury and Relay are the leading options for non-resident LLC owners. Mercury approval has tightened in 2024–2026 and now requires a clean business model, a US-formed LLC with EIN, and verifiable directors. Some founders use Wise USD accounts as a backup.</p><p>In our experience, <strong>UK business banking is currently easier and faster</strong> to open for first-time non-resident founders.</p>",
+      },
+      {
+        h: "Amazon Seller Central Verification",
+        body: "<p>Amazon's Seller Identity Verification (SIV) is the gateway to selling on FBA. Whichever entity you pick, Amazon will ask for:</p><ol><li>Government-issued passport of the beneficial owner</li><li>Business registration document (Certificate of Incorporation for UK LTD, Articles of Organization + EIN letter for US LLC)</li><li>Utility bill or bank statement showing the business address (issued in the last 90 days)</li><li>Business bank account in the company's exact legal name</li><li>Credit/debit card in the director's name (international card OK)</li></ol><p>The <strong>#1 cause of Seller Central rejection</strong> for non-residents is a mismatch between the address on Amazon, on Companies House/State filings, and on the utility bill. Keep all three identical.</p>",
+      },
+      {
+        h: "Decision Framework: UK LTD vs US LLC for FBA",
+        body: "<p>Use this short decision matrix:</p><ul><li><strong>Choose a UK LTD if:</strong> you are targeting UK + EU customers, you want easier banking, you prefer lower annual maintenance (no Form 5472), and you want a publicly verifiable Companies House register entry.</li><li><strong>Choose a US LLC if:</strong> 70%+ of your sales will be on Amazon.com, you need USD payouts, you want Mercury/Relay banking and you accept the Form 5472 compliance burden.</li><li><strong>Do both only when:</strong> annual revenue exceeds ~$250,000 and the compliance cost is a small % of profit.</li></ul>",
+      },
+      {
+        h: "Common Mistakes Non-Resident FBA Sellers Make",
+        body: "<ul><li>Forming in the wrong country for their main marketplace</li><li>Ignoring UK VAT registration despite holding UK FBA inventory</li><li>Forgetting Form 5472 (US LLC) — leading to $25,000+ IRS penalties</li><li>Using a formation agent's default address on Amazon — leading to mail-loss and Seller Central deactivation</li><li>Mixing personal PayPal/Stripe with business operations</li></ul>",
+      },
+      {
+        h: "Get Expert Help — FBA-Ready Formation Done Properly",
+        body: "<p>Your legal entity is the foundation of every Amazon payout, every VAT return and every Seller Central verification you will ever do. Get it right the first time.</p><p><strong>Digiformation Ltd</strong> sets up FBA-ready UK LTDs and US LLCs for non-resident sellers worldwide — including Companies House ID verification, registered office, EIN, banking guidance, VAT registration and Seller Central document preparation.</p><p>👉 <a href=\"/uk-services\">See UK LTD packages</a> · <a href=\"/usa-services\">See US LLC packages</a> · <a href=\"/contact\">Book a free consultation</a>. We will recommend the right structure based on your actual product, marketplace and target customer.</p>",
+      },
+    ],
   },
   {
     slug: "ebay-uk-account-from-pakistan-complete-guide",
@@ -218,6 +328,36 @@ export const blogPosts: BlogPost[] = [
     metaTitle: "How to Get an EIN Without SSN 2026 — Fast IRS EIN for Non-Residents Worldwide",
     metaDescription: "Get your IRS EIN number quickly as a non-US resident in 2026 without an SSN. Why your LLC needs an EIN and how to file from Pakistan, India, UAE, Bangladesh and worldwide.",
     keywords: "EIN without SSN, EIN non resident, IRS EIN application, US LLC EIN, EIN Pakistan India UAE worldwide",
+    content: [
+      {
+        h: "What Is an EIN — and Why Every US LLC Needs One",
+        body: "<p>An <strong>EIN (Employer Identification Number)</strong> is the federal tax ID the United States Internal Revenue Service (IRS) issues to a business. It is the business equivalent of a social security number — a unique 9-digit identifier (format: 12-3456789) used on tax filings, bank applications, payment-processor signups and almost every official US business transaction.</p><p>If you have formed a US LLC, you cannot realistically operate without an EIN. You will need it to:</p><ul><li>Open a US business bank account (Mercury, Relay, Wise USD, Bank of America, Chase)</li><li>Apply for Stripe, PayPal Business, Amazon Seller Central and most US payment processors</li><li>File mandatory IRS forms (Form 5472 + 1120 for foreign-owned single-member LLCs)</li><li>Hire US contractors and issue 1099 forms</li><li>Sign service contracts that require a US tax ID</li></ul><p>The good news for non-residents: <strong>you do not need a US Social Security Number (SSN) or ITIN to get an EIN</strong>. The IRS has a specific process for international applicants.</p>",
+      },
+      {
+        h: "Can You Get an EIN Without an SSN? Yes — Here's How",
+        body: "<p>The IRS issues EINs to non-US persons every day. There is a dedicated method on <a href=\"https://www.irs.gov/businesses/small-businesses-self-employed/how-to-apply-for-an-ein\" target=\"_blank\" rel=\"noopener noreferrer\">irs.gov</a> for applicants without an SSN or ITIN.</p><p>The online EIN application at <a href=\"https://www.irs.gov\" target=\"_blank\" rel=\"noopener noreferrer\">irs.gov</a> is only available to applicants who already have an SSN or ITIN. Non-resident founders without those numbers must use <strong>Form SS-4</strong> and submit it by <strong>fax or post</strong>. This is the official IRS-approved path — not a workaround.</p>",
+      },
+      {
+        h: "Step-by-Step: EIN Application for Non-US Residents (Form SS-4)",
+        body: "<h3>Step 1 — Form Your LLC First</h3><p>You must have an LLC formed and approved by the state Secretary of State (Wyoming, Delaware, New Mexico, etc.) before applying for an EIN. The state will issue a Certificate of Formation / Articles of Organization. You will need this on hand.</p><h3>Step 2 — Download and Complete Form SS-4</h3><p>Download the latest Form SS-4 from the IRS website. Key fields for non-residents:</p><ul><li><strong>Line 7a:</strong> Name of responsible party — your full legal name as on your passport.</li><li><strong>Line 7b:</strong> Write <strong>\"Foreign\"</strong> instead of an SSN/ITIN.</li><li><strong>Line 9a:</strong> Tick \"Other\" and write \"Foreign-owned U.S. Disregarded Entity\" for a single-member LLC.</li><li><strong>Line 10:</strong> Reason for applying — usually \"Banking purpose (specify)\" or \"Started new business\".</li></ul><h3>Step 3 — Submit by Fax (Fastest) or Post</h3><p>Fax the completed SS-4 to the IRS international fax number listed on the form. The IRS typically issues the EIN by return fax within <strong>4–8 weeks</strong> in 2026 (timelines have lengthened post-pandemic). Submitting by post can take 12+ weeks.</p><h3>Step 4 — Receive Your EIN Letter (CP 575)</h3><p>The IRS will send your <strong>CP 575 EIN confirmation letter</strong>. This is the official document Mercury, Stripe and most banks require during onboarding. Save the PDF — re-issuing it later as a 147C letter takes weeks.</p>",
+      },
+      {
+        h: "Realistic Timelines in 2026",
+        body: "<ul><li><strong>Phone EIN (US residents with SSN only):</strong> Same day — not available to non-residents</li><li><strong>Online EIN (US residents):</strong> Instant — not available to non-residents without SSN/ITIN</li><li><strong>Fax SS-4 (non-residents):</strong> 4–8 weeks in 2026 (was 4 days pre-2020)</li><li><strong>Postal SS-4 (non-residents):</strong> 8–14 weeks</li></ul><p>If a provider promises an EIN in \"24 hours\" without an SSN, ask exactly how — there is no IRS mechanism for this in 2026.</p>",
+      },
+      {
+        h: "Common Reasons EIN Applications Are Rejected or Delayed",
+        body: "<ul><li>Submitting SS-4 before the LLC is formally registered with the state</li><li>Mismatched LLC name between SS-4 and the state's Articles of Organization</li><li>Leaving Line 7b blank instead of writing \"Foreign\"</li><li>Missing signature on Form SS-4</li><li>Wrong international fax number (the IRS rotates fax lines occasionally)</li><li>Submitting multiple duplicate applications — this creates IRS holds</li></ul><p>Submit it correctly once. Resubmitting only adds weeks.</p>",
+      },
+      {
+        h: "What to Do With Your EIN After You Receive It",
+        body: "<ol><li>Apply for <strong>US business banking</strong> — Mercury, Relay or Wise USD account.</li><li>Apply for <strong>Stripe</strong> and/or <strong>PayPal Business</strong> using the EIN and your LLC's legal name.</li><li>File <strong>FinCEN BOI report</strong> if your entity falls within current reporting requirements.</li><li>Set up annual reminders for <strong>Form 5472 + 1120</strong> (due 15 April each year for the previous calendar year).</li><li>Maintain the LLC in good standing with the state (Wyoming annual report / Delaware franchise tax).</li></ol>",
+      },
+      {
+        h: "Get Expert Help — Fast, IRS-Compliant EIN for Non-Residents",
+        body: "<p>The EIN process is not technically difficult, but small errors on Form SS-4 can delay your account by months — and during that time you cannot open Mercury, Stripe or PayPal.</p><p><strong>Digiformation Ltd</strong> manages end-to-end US LLC + EIN setup for non-resident founders worldwide. We prepare and submit Form SS-4 correctly the first time, follow up with the IRS international desk and deliver your CP 575 confirmation directly to you.</p><p>👉 <a href=\"/usa-services/us-llc-formation\">See US LLC + EIN packages</a> or <a href=\"/contact\">book a free consultation</a>. No SSN, no ITIN, no problem — just a properly filed federal application.</p>",
+      },
+    ],
   },
   {
     slug: "itin-application-guide-non-us-residents-2026",
@@ -240,6 +380,44 @@ export const blogPosts: BlogPost[] = [
     metaTitle: "BOI Report Filing 2026 — FinCEN Beneficial Ownership Guide for US LLC Owners",
     metaDescription: "Complete 2026 guide to BOI (Beneficial Ownership Information) report filing for US LLC owners worldwide. Deadlines, penalties and step-by-step FinCEN submission.",
     keywords: "BOI report 2026, FinCEN BOI filing, beneficial ownership information, US LLC BOI non resident, BOIR penalty",
+    content: [
+      {
+        h: "What Is the BOI Report and Why It Was Created",
+        body: "<p>The <strong>Beneficial Ownership Information (BOI) report</strong> is a filing requirement introduced by the US <strong>Corporate Transparency Act (CTA)</strong>, administered by the Financial Crimes Enforcement Network (<a href=\"https://www.fincen.gov/boi\" target=\"_blank\" rel=\"noopener noreferrer\">FinCEN</a>). It was designed to combat money laundering, shell-company abuse and sanctions evasion by requiring companies to disclose who actually owns or controls them.</p><p>Under the CTA, certain US-registered companies (and foreign companies registered to do business in any US state) must report identifying information about their <strong>beneficial owners</strong> — the real human beings behind the entity — directly to FinCEN through a secure online portal.</p>",
+      },
+      {
+        h: "Important 2025–2026 Status Update",
+        body: "<p>The BOI rule has had a turbulent legal history. In <strong>March 2025</strong>, FinCEN issued an Interim Final Rule that <strong>removed BOI reporting requirements for US domestic reporting companies and for US persons</strong>. As of 2026, BOI reporting primarily applies to <strong>foreign reporting companies</strong> — that is, non-US entities registered to do business in a US state.</p><p>The legal landscape is still evolving, and Congress or the courts may modify the rule again. Because penalties for non-compliance are severe, every US LLC owner — domestic or foreign — should check the current FinCEN guidance at <a href=\"https://www.fincen.gov/boi\" target=\"_blank\" rel=\"noopener noreferrer\">fincen.gov/boi</a> before assuming they are exempt.</p><p>This article reflects the framework as it generally applies. <strong>Do not rely on this article alone</strong> — confirm with FinCEN or a qualified advisor before filing or skipping a filing.</p>",
+      },
+      {
+        h: "Who Must File a BOI Report (General Framework)",
+        body: "<p>A \"reporting company\" generally includes:</p><ul><li>Corporations, LLCs and similar entities created by filing a document with a US state Secretary of State</li><li>Foreign entities registered to do business in a US state by similar filing</li></ul><p>Common exemptions include large operating companies (20+ US employees + $5M+ US revenue + physical US office), publicly listed companies, regulated banks and insurance companies, and tax-exempt entities. Most non-resident-owned US LLCs do <strong>not</strong> qualify for any exemption and must file when the rule applies to them.</p>",
+      },
+      {
+        h: "What Information Goes Into a BOI Report",
+        body: "<p>For each <strong>beneficial owner</strong> (anyone who owns 25%+ of the company OR exercises substantial control), you must report:</p><ol><li>Full legal name</li><li>Date of birth</li><li>Current residential address</li><li>Unique identifying number from an acceptable ID (passport, US driver's license, state ID)</li><li>A clear image of that ID document</li></ol><p>For each <strong>company applicant</strong> (the individual who actually filed the formation documents) similar information is required for companies formed after 1 January 2024.</p>",
+      },
+      {
+        h: "Deadlines (Where BOI Reporting Still Applies)",
+        body: "<ul><li><strong>Companies formed before 1 January 2024:</strong> originally had until 1 January 2025 to file the initial BOI report.</li><li><strong>Companies formed during 2024:</strong> originally had 90 days from formation.</li><li><strong>Companies formed on or after 1 January 2025:</strong> originally had 30 days from formation.</li><li><strong>Any change in reported information</strong> (new owner, new address, expired ID): a <strong>30-day update window</strong> applies.</li></ul><p>Several deadlines were extended or paused during 2024–2025 legal challenges. Always confirm the current deadline on the FinCEN site before filing.</p>",
+      },
+      {
+        h: "How to File the BOI Report (Step by Step)",
+        body: "<h3>Step 1 — Gather Information</h3><p>Collect passport scans, residential addresses and dates of birth for every beneficial owner and (if applicable) company applicant.</p><h3>Step 2 — Visit the FinCEN BOI E-Filing Portal</h3><p>Go to <a href=\"https://boiefiling.fincen.gov\" target=\"_blank\" rel=\"noopener noreferrer\">boiefiling.fincen.gov</a>. There is no cost to file directly with FinCEN.</p><h3>Step 3 — Select Report Type</h3><p>Initial report, correction, update, or newly exempt. First-time filers select \"Initial report\".</p><h3>Step 4 — Enter Company Information</h3><p>Legal name, any DBAs, EIN, state of formation, principal US business address.</p><h3>Step 5 — Enter Beneficial Owner Information</h3><p>Upload a clear, in-date ID for each owner. Make sure the ID image is legible — FinCEN will reject unclear uploads.</p><h3>Step 6 — Submit and Save Confirmation</h3><p>FinCEN issues a BOI Submission Tracking ID. Save it for your records and your accountant.</p>",
+      },
+      {
+        h: "Penalties for Failing to File",
+        body: "<p>Penalties under the CTA are serious:</p><ul><li><strong>Civil penalties:</strong> up to $591 per day of continued violation (the statutory figure was originally $500/day and is adjusted annually for inflation)</li><li><strong>Criminal penalties:</strong> up to $10,000 and/or 2 years imprisonment for willful violations or willful provision of false information</li></ul><p>Even if you believe you are exempt under the 2025 changes, document your reasoning in writing so you can defend the position if FinCEN asks.</p>",
+      },
+      {
+        h: "Common Mistakes Non-Resident LLC Owners Make",
+        body: "<ul><li>Assuming the \"single-member LLC\" structure exempts them from BOI — it does not</li><li>Using expired passports for the ID upload</li><li>Listing only one beneficial owner when multiple individuals hold 25%+ or substantial control</li><li>Forgetting the 30-day update window after address or ownership changes</li><li>Confusing BOI with Form 5472 — these are <strong>two separate</strong> filings with different deadlines and different agencies</li></ul>",
+      },
+      {
+        h: "Get Expert Help — BOI and Annual US Compliance",
+        body: "<p>BOI is one piece of a wider US compliance picture that also includes Form 5472 + 1120, state annual reports and registered agent renewals. Missing any one of these can put your LLC into bad standing and freeze your bank account.</p><p><strong>Digiformation Ltd</strong> supports non-resident US LLC owners with end-to-end US compliance — formation, EIN, BOI filing (where required), Form 5472 preparation and state annual reports.</p><p>👉 <a href=\"/usa-services\">See our US compliance packages</a> or <a href=\"/contact\">book a free call</a>. We will check whether BOI currently applies to your structure and file correctly with FinCEN.</p>",
+      },
+    ],
   },
   {
     slug: "uk-vat-registration-guide-2026",
@@ -372,6 +550,44 @@ export const blogPosts: BlogPost[] = [
     metaTitle: "Best UK Banks for Non-Resident Directors 2026 — Ranked List Worldwide",
     metaDescription: "Ranked list of UK business banks accepting non-resident directors in 2026. Tide, Wise, Revolut Business, Airwallex compared for founders in Pakistan, India, UAE and worldwide.",
     keywords: "UK bank non resident director 2026, Tide non resident, Wise UK bank, Revolut Business non resident, Airwallex UK LTD worldwide",
+    content: [
+      {
+        h: "Why High Street Banks Reject Non-Resident UK LTD Directors",
+        body: "<p>The number-one frustration for non-resident UK LTD owners in 2026 is the same as it was five years ago: <strong>HSBC, Barclays, Lloyds, NatWest and Santander rarely approve business accounts for directors who do not live in the UK</strong>. The reason is regulatory, not personal. Under UK AML rules, banks must verify the director's identity, residential address and source of funds to a very high standard. Doing that remotely for a director in Pakistan, India, Bangladesh, Morocco, the UAE, Nigeria, Australia or Canada is expensive and risky for a high-street bank — so they default to \"no\".</p><p>The good news: the <strong>UK fintech ecosystem</strong> has built a parallel banking infrastructure specifically designed for international founders. Wise Business, Tide, Revolut Business and Airwallex now serve hundreds of thousands of non-resident-directed UK LTDs. This is the real list that actually works in 2026.</p>",
+      },
+      {
+        h: "The Ranking Criteria We Used",
+        body: "<p>We ranked each provider on five criteria that matter to non-resident directors:</p><ol><li><strong>Approval rate</strong> for well-prepared non-resident applications</li><li><strong>Speed of opening</strong> (days from application to live account)</li><li><strong>Multi-currency support</strong> (GBP, USD, EUR, AED, INR receiving accounts)</li><li><strong>Payment-processor compatibility</strong> (Stripe, PayPal, Amazon, Shopify payouts)</li><li><strong>Ongoing reliability</strong> (frozen-account incidents, customer support quality)</li></ol>",
+      },
+      {
+        h: "1. Wise Business — Best All-Round for Non-Residents",
+        body: "<p><strong>Why it wins:</strong> Wise Business is the most globally accessible UK business account for non-residents. It accepts directors from 175+ countries, opens in 3–7 business days, and provides genuine UK GBP, USD, EUR, AED and 10+ other local-receiving account numbers in the company's name.</p><p><strong>Strengths:</strong> Real local bank details in each currency (UK sort code + account number, US ACH + routing, EU IBAN), mid-market FX rates, Stripe and PayPal payouts accepted, integration with QuickBooks and Xero.</p><p><strong>Limits:</strong> No physical UK debit cards posted to non-UK addresses in all cases (varies by country), no traditional overdraft, customer support is mostly chat-based.</p><p><strong>Best for:</strong> First UK business account for any non-resident director.</p>",
+      },
+      {
+        h: "2. Tide — Best for UK-Focused Operations",
+        body: "<p><strong>Why it places second:</strong> Tide is one of the largest UK SME challenger banks and offers full UK GBP banking, debit cards, expense management and invoicing. Tide has tightened its non-resident director rules in 2024–2026, so approval is no longer guaranteed — but it remains accessible when the director can demonstrate genuine UK business activity and a real UK registered office.</p><p><strong>Strengths:</strong> Native UK sort code + account number, integrated invoicing and bookkeeping, Faster Payments support, growing acceptance by HMRC and accountants.</p><p><strong>Limits:</strong> Multi-currency support is more limited than Wise, non-resident approval can be inconsistent.</p><p><strong>Best for:</strong> Non-resident directors with a real UK-based registered office and clear UK trading activity.</p>",
+      },
+      {
+        h: "3. Airwallex — Best for E-commerce and Multi-Currency Volume",
+        body: "<p><strong>Why it places third:</strong> Airwallex is purpose-built for global e-commerce and B2B businesses. It provides UK, US, EU, AUD, SGD and HKD multi-currency receiving accounts in the company's name, plus virtual and physical corporate cards, expense management and embedded payment acceptance.</p><p><strong>Strengths:</strong> Excellent FX rates on large transfers, strong fit for Shopify, Amazon, Etsy and B2B invoicing, fast Stripe/PayPal payout processing.</p><p><strong>Limits:</strong> Document review can be stricter than Wise, monthly minimums or fees may apply at higher tiers.</p><p><strong>Best for:</strong> Established e-commerce sellers and B2B businesses processing $20k+/month.</p>",
+      },
+      {
+        h: "4. Revolut Business — Best for Modern Card and Spend Management",
+        body: "<p><strong>Why it places fourth:</strong> Revolut Business offers a modern, app-first banking experience with multi-currency wallets, virtual cards and team spend management. Non-resident approval is possible but more selective than Wise.</p><p><strong>Strengths:</strong> Slick UI, virtual cards on demand, multi-currency wallets, budget controls.</p><p><strong>Limits:</strong> Non-resident director approval is more selective; some directors report longer review times; account freezes during enhanced due diligence happen occasionally.</p><p><strong>Best for:</strong> Founders who want a card-and-spend-management layer on top of a primary Wise or Tide account.</p>",
+      },
+      {
+        h: "Document Checklist — Increase Your Approval Rate",
+        body: "<p>Whichever provider you apply to, prepare these documents <strong>in advance</strong>:</p><ol><li>Companies House Certificate of Incorporation</li><li>Companies House confirmation of ID verification (under ECCT Act 2023)</li><li>Director's passport (clear, in-date)</li><li>Director's residential address proof (utility bill or bank statement, last 90 days)</li><li>Real UK registered office address (not the formation agent's default)</li><li>Brief business description: what you sell, to whom, expected monthly volume</li><li>Website on your own domain with clear products/services</li></ol><p>The single biggest reason for rejection across all four providers is a <strong>weak or vague business description</strong>. Treat the application like a mini-pitch: be specific, be honest.</p>",
+      },
+      {
+        h: "Realistic Timelines (2026)",
+        body: "<ul><li><strong>Wise Business:</strong> 3–7 business days for non-residents</li><li><strong>Tide:</strong> 2–10 business days, faster if you have UK trading evidence</li><li><strong>Airwallex:</strong> 5–14 business days, with possible follow-up questions</li><li><strong>Revolut Business:</strong> 3–15 business days, variable by country of director</li></ul>",
+      },
+      {
+        h: "Get Expert Help — UK LTD + Banking Done Properly",
+        body: "<p>Banking approval is downstream of <strong>how cleanly your UK LTD was formed</strong>. Companies House ID verification, a real registered office, a verified director and a real website all improve approval odds across every fintech.</p><p><strong>Digiformation Ltd</strong> sets up UK LTDs end-to-end for non-resident directors worldwide and guides you through the right banking provider for your business model — without hidden fees and without promising approvals we cannot guarantee.</p><p>👉 <a href=\"/uk-services/uk-ltd-formation\">See UK LTD formation packages</a> · <a href=\"/banks-payment-solutions\">Explore banking options</a> · <a href=\"/contact\">Book a free consultation</a>.</p>",
+      },
+    ],
   },
   {
     slug: "shopify-store-launch-checklist-pakistan-sellers",
@@ -383,6 +599,52 @@ export const blogPosts: BlogPost[] = [
     metaTitle: "Shopify Launch Checklist 2026 — Worldwide Sellers Guide (UK LTD or US LLC)",
     metaDescription: "The complete 2026 Shopify store launch checklist for sellers worldwide — company formation, Stripe, PayPal, branding and SEO for Pakistan, India, Bangladesh, Morocco & beyond.",
     keywords: "Shopify launch checklist 2026, Shopify worldwide seller, Shopify UK LTD, Shopify US LLC, Shopify Stripe non resident, ecommerce checklist worldwide",
+    content: [
+      {
+        h: "Why Most Shopify Stores Fail Before They Even Launch",
+        body: "<p>Most new Shopify store owners — especially non-resident founders in Pakistan, India, Bangladesh, Morocco, UAE, the UK, USA, Canada and Australia — make the same mistake: they pick a theme and start adding products before the <strong>legal, banking and payment infrastructure</strong> is in place. Two weeks later they cannot accept Stripe, cannot withdraw funds, cannot register a domain email, and their first ad campaign burns budget on a store that cannot fulfil orders.</p><p>This launch checklist solves that. It is the exact order we use at Digiformation to take a Shopify store from \"idea\" to \"first sale\" — built for international sellers targeting UK, US, EU, Canada and Australian customers in 2026.</p>",
+      },
+      {
+        h: "Phase 1 — Legal Foundation (Week 1)",
+        body: "<ol><li><strong>Choose your entity:</strong> UK LTD for UK/EU markets, US LLC for the US market. (See our Amazon FBA UK LTD vs US LLC guide for the long-form comparison.)</li><li><strong>Form the company:</strong> register via Companies House (UK) or a US Secretary of State (Wyoming, Delaware, New Mexico).</li><li><strong>Complete ID verification:</strong> UK directors must complete Companies House ID verification under the ECCT Act 2023; US LLC owners should plan for FinCEN BOI filing if applicable.</li><li><strong>Get your tax ID:</strong> UK UTR (auto-issued by HMRC) or US EIN (IRS Form SS-4 for non-residents).</li><li><strong>Secure a real registered office</strong> — never use the formation agent's default address.</li></ol><p>This phase is the most expensive to skip. Stripe, PayPal, Shopify Payments and your bank will all ask for these documents within the first 30 days.</p>",
+      },
+      {
+        h: "Phase 2 — Banking (Week 1–2)",
+        body: "<ol><li>Open a <strong>UK business bank account</strong> (Wise Business, Tide, Airwallex) if you formed a UK LTD.</li><li>Open a <strong>US business bank account</strong> (Mercury, Relay, Wise USD) if you formed a US LLC.</li><li>Make sure the bank account name <strong>exactly matches</strong> the legal entity name — this is the single most common cause of Stripe/PayPal verification failure later.</li></ol>",
+      },
+      {
+        h: "Phase 3 — Domain, Email and Branding (Week 2)",
+        body: "<ol><li>Register a clean <strong>.com or local TLD domain</strong> in your business name.</li><li>Set up <strong>business email on your own domain</strong> (Google Workspace or Microsoft 365) — never use Gmail/Hotmail for store contact.</li><li>Design a basic <strong>logo</strong>, choose 2–3 brand colours and pick fonts. Keep it simple and trustworthy.</li><li>Create <strong>social handles</strong> (Instagram, TikTok, X, Facebook) matching your brand.</li></ol>",
+      },
+      {
+        h: "Phase 4 — Shopify Store Build (Week 2–3)",
+        body: "<ol><li>Sign up for Shopify at <a href=\"https://www.shopify.com\" target=\"_blank\" rel=\"noopener noreferrer\">shopify.com</a> using your business email and entity details.</li><li>Pick a clean, fast theme (Dawn or a paid theme with strong Core Web Vitals scores).</li><li>Set up <strong>store currency</strong> matching your primary market (GBP for UK, USD for US, EUR for Europe).</li><li>Configure <strong>tax settings</strong>: enable UK VAT if you are VAT-registered, configure US sales-tax handling (most marketplaces collect for you, but direct-to-consumer Shopify needs proper setup).</li><li>Add <strong>shipping zones and rates</strong> for every country you will ship to.</li><li>Install essential apps only: an SEO app, a reviews app, an email app (Klaviyo or Shopify Email).</li></ol>",
+      },
+      {
+        h: "Phase 5 — Payments (Week 3)",
+        body: "<ol><li><strong>Apply for Stripe:</strong> use your business entity and bank account. UK LTDs and US LLCs are both accepted.</li><li><strong>Apply for PayPal Business:</strong> through the country-correct PayPal portal (UK or US).</li><li><strong>Add a backup processor:</strong> Mollie for European customers, or local providers where Stripe is not yet available.</li><li>Test the full checkout flow with a real (small) order in each enabled currency.</li></ol><p>Many non-resident founders skip the backup processor and regret it the first time Stripe pauses a payout for review.</p>",
+      },
+      {
+        h: "Phase 6 — Products and Legal Pages (Week 3)",
+        body: "<ol><li>Upload <strong>professional product photos</strong> (white background plus 2–3 lifestyle shots per product).</li><li>Write <strong>original product descriptions</strong> — not copy-pasted from AliExpress or the manufacturer.</li><li>Create required <strong>legal pages</strong>: Terms of Service, Privacy Policy, Refund Policy, Shipping Policy, Contact, About. Stripe and PayPal both review these.</li><li>Display business name, registration number and address in the footer (UK LTD legal requirement).</li></ol>",
+      },
+      {
+        h: "Phase 7 — Pre-Launch SEO (Week 3–4)",
+        body: "<ol><li>Set <strong>unique meta titles and descriptions</strong> on every product and collection page.</li><li>Submit your sitemap (auto-generated by Shopify at /sitemap.xml) to <a href=\"https://search.google.com/search-console\" target=\"_blank\" rel=\"noopener noreferrer\">Google Search Console</a>.</li><li>Install <strong>Google Analytics 4</strong> and a <strong>Meta Pixel</strong> if running paid ads.</li><li>Optimise images (compress to WebP) and pick a theme that scores 70+ on PageSpeed Insights.</li><li>Plan your first 5–10 blog posts targeting buyer-intent keywords (product comparisons, buying guides).</li></ol>",
+      },
+      {
+        h: "Phase 8 — Launch and First Sale (Week 4+)",
+        body: "<ol><li>Run a <strong>soft launch</strong> with friends, family and existing audience first to test the funnel.</li><li>Send a <strong>welcome email sequence</strong> via Klaviyo or Shopify Email.</li><li>Launch <strong>small paid ad campaigns</strong> (£5–£20/day) on Meta or TikTok with strong creative.</li><li>Monitor the first 50 orders manually — fix issues fast and respond to every support email within 24 hours.</li></ol>",
+      },
+      {
+        h: "Common Pre-Launch Mistakes to Avoid",
+        body: "<ul><li>Buying paid ads before payments are fully tested</li><li>Using Gmail/Hotmail for the store contact email</li><li>Missing or template legal pages copied from another store</li><li>Mismatched company name between Companies House, bank and Stripe</li><li>Choosing a domain in your personal name instead of a brand name</li><li>Listing products you have not actually verified you can ship</li></ul>",
+      },
+      {
+        h: "Get Expert Help — Shopify Store Foundation Done Right",
+        body: "<p>The Shopify store is the <strong>shop window</strong>. The legal entity, banking, and payment infrastructure underneath are the <strong>plumbing</strong>. Get the plumbing wrong and the shop window cannot trade. Get it right and you can scale to six and seven figures on the same foundation.</p><p><strong>Digiformation Ltd</strong> sets up the complete Shopify-ready foundation for non-resident sellers worldwide: UK LTD or US LLC formation, banking, Stripe, PayPal and a professional Shopify-ready website.</p><p>👉 <a href=\"/uk-services\">UK LTD packages</a> · <a href=\"/usa-services\">US LLC packages</a> · <a href=\"/banks-payment-solutions\">Banking & payments</a> · <a href=\"/contact\">Book a free consultation</a>.</p>",
+      },
+    ],
   },
   {
     slug: "companies-house-default-address-problem-2026",
