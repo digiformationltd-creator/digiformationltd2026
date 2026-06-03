@@ -141,8 +141,8 @@ export const Contact = () => {
 
   useEffect(() => {
     setMeta(
-      "Contact Digiformation Ltd — UK LTD & US LLC Formation Support (Worldwide)",
-      "Contact Digiformation Ltd for UK Limited Company & US LLC formation, registered office address, Companies House ID verification and annual compliance. WhatsApp, email or inquiry form — for clients in Pakistan, India, UAE, UK, USA & worldwide.",
+      "Contact Digiformation Ltd — UK LTD & US LLC Support",
+      "Contact Digiformation Ltd for UK LTD & US LLC formation, registered office, ID verification and compliance. WhatsApp, email or inquiry form.",
       "contact Digiformation, UK company formation contact, US LLC formation help, Companies House support, registered office contact, ID verification help worldwide"
     );
     const cleanup = injectJsonLd("contact-page-schema", {
@@ -236,6 +236,7 @@ export const Contact = () => {
     <Layout>
       <section className="py-10">
         <div className="container mx-auto px-4 max-w-3xl">
+          <h1 className="sr-only">Contact Digiformation Ltd</h1>
           {/* Form */}
           {submitted ? (
             <div className="glass rounded-2xl p-10 flex flex-col items-center justify-center text-center space-y-4 min-h-[420px]">
@@ -923,8 +924,8 @@ const PackageCard = ({ p }: { p: DetailPkg }) => (
 export const Pricing = () => {
   useEffect(() => {
     setMeta(
-      "Pricing & Packages 2026 — UK LTD, US LLC, Banking & Compliance | Digiformation",
-      "Transparent 2026 pricing for UK Limited Company formation, US LLC formation, business banking (Tide, Wise, Mercury, Airwallex) and annual compliance. Fixed fees, no hidden costs — for non-residents in Pakistan, India, UAE, Bangladesh, Morocco & worldwide.",
+      "Pricing & Packages 2026 | Digiformation",
+      "Transparent 2026 pricing for UK LTD & US LLC formation, business banking and annual compliance. Fixed fees, no hidden costs.",
       "UK LTD pricing 2026, US LLC formation cost, business banking packages, Companies House fees, Digiformation pricing, non resident formation cost worldwide"
     );
   }, []);
@@ -1095,8 +1096,8 @@ export const FAQ = () => {
 
   useEffect(() => {
     setMeta(
-      "UK & US Company Formation FAQ 2026 — Companies House, EIN, ITIN, BOI | Digiformation",
-      "Answers to the most-asked 2026 questions on UK Limited Company registration, US LLC formation, Companies House ID verification, EIN, ITIN, BOI report, VAT and business banking — for non-resident founders worldwide.",
+      "UK & US Company Formation FAQ 2026 | Digiformation",
+      "Top 2026 answers on UK LTD & US LLC formation, Companies House ID verification, EIN, ITIN, BOI report, VAT and business banking.",
       "UK company formation FAQ 2026, US LLC FAQ, Companies House ID verification FAQ, EIN ITIN BOI FAQ, non resident formation questions worldwide, UK registered office address FAQ, SIC codes FAQ"
     );
     return injectJsonLd("faq-jsonld", {
@@ -1279,8 +1280,8 @@ const blogSections = [
 export const Blog = () => {
   useEffect(() => {
     setMeta(
-      "Digiformation Blog 2026 — UK LTD, US LLC, Stripe, PayPal & Banking Guides Worldwide",
-      "Expert 2026 guides for non-resident founders: UK LTD & US LLC formation, Stripe, PayPal, Payoneer, Wise, WorldFirst, Tide, Amazon FBA, eBay, Shopify and compliance — written for entrepreneurs in Pakistan, India, UAE, Bangladesh, Morocco & worldwide.",
+      "Digiformation Blog 2026 — UK LTD & US LLC Guides",
+      "Expert 2026 guides for non-resident founders: UK LTD & US LLC formation, Stripe, PayPal, Wise, Tide, Amazon FBA, Shopify and compliance.",
       "UK LTD blog 2026, US LLC guide, Stripe non resident, PayPal worldwide, Payoneer Wise WorldFirst, Amazon FBA UK, Shopify worldwide, ecommerce formation blog"
     );
     return injectJsonLd("blog-jsonld", {
