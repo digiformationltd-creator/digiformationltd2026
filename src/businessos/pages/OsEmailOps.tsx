@@ -239,10 +239,27 @@ export default function OsEmailOps() {
 
       {/* Log table */}
       <div className="os-glass overflow-hidden">
-        <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between">
+        <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between gap-3 flex-wrap">
           <div className="text-sm font-semibold">Email log ({filtered.length})</div>
-          <div className="text-[11px] text-white/40">Deduplicated by message_id</div>
+          <div className="flex items-center gap-3">
+            {bulkProgress && (
+              <span className="text-[11px] text-white/60 mono">
+                {bulkProgress.done}/{bulkProgress.total} · skipped {bulkProgress.skipped} · failed {bulkProgress.failed}
+              </span>
+            )}
+            <button
+              onClick={bulkRetry}
+              disabled={bulkRetrying || filtered.filter(r => r.status === "dlq" || r.status === "failed").length === 0}
+              className="h-8 px-3 rounded-lg text-xs border border-red-500/30 bg-red-500/10 text-red-200 hover:bg-red-500/20 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5"
+              title="Re-queue all failed/DLQ emails in current filter. Already-delivered duplicates are skipped."
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${bulkRetrying ? "animate-spin" : ""}`} />
+              {bulkRetrying ? "Retrying…" : `Retry all DLQ (${filtered.filter(r => r.status === "dlq" || r.status === "failed").length})`}
+            </button>
+            <div className="text-[11px] text-white/40">Deduplicated by message_id</div>
+          </div>
         </div>
+
         <div className="overflow-x-auto max-h-[520px] overflow-y-auto">
           <table className="w-full text-sm">
             <thead className="text-xs text-white/50 bg-white/[0.02] sticky top-0">
