@@ -1,5 +1,5 @@
 # Digiformation Ltd — robots.txt (2026)
-# https://digiformation.uk
+# https://www.digiformation.uk
 
 User-agent: *
 Allow: /
@@ -37,5 +37,5 @@ Crawl-delay: 10
 User-agent: SemrushBot
 Crawl-delay: 10
 
-Host: https://digiformation.uk
-Sitemap: https://digiformation.uk/sitemap.xml
+Host: https://www.digiformation.uk
+Sitemap: https://www.digiformation.uk/sitemap.xml

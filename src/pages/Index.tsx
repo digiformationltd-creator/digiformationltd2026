@@ -109,10 +109,8 @@ const Index = () => {
       <SnowParticles />
       <DigiNav />
       <main>
-        <h1 className="sr-only">
-          Digiformation Ltd — UK &amp; US Company Formation &amp; Banking Solutions
-        </h1>
         <DigiHero />
+
         <div id="quick-start"><QuickStartWidget /></div>
         <div id="stats"><DigiStats /></div>
         <div id="services-overview"><DigiServicesSlider /></div>

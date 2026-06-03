@@ -1,0 +1,63 @@
+# Digiformation Ltd
+
+> Fully-managed UK Limited Company and US LLC formation for non-residents worldwide — including Companies House ID verification, registered office, business banking, payment gateways (Stripe, PayPal, Wise, Tide, Airwallex), EIN, ITIN, BOI, UTR and VAT compliance.
+
+Digiformation Ltd is a UK-based corporate services provider operating in alignment with the Authorised Corporate Service Provider (ACSP) framework. We help founders in Pakistan, India, Bangladesh, UAE, Morocco, Nigeria, the UK, USA and worldwide register, verify and operate compliant UK and US businesses end-to-end.
+
+## Core pages
+
+- [Home](/): Overview of UK & US company formation, banking and compliance services.
+- [About](/about): Company background, mission and founder.
+- [Services](/services): Complete catalogue of formation, banking and compliance services.
+- [Pricing & Packages](/pricing): Transparent package pricing for every service.
+- [FAQ](/faq): Common questions on UK LTD, US LLC, ID verification, banking and payments.
+- [Contact](/contact): Speak to our team — WhatsApp, email and contact form.
+
+## UK services
+
+- [UK LTD Formation](/uk-services/uk-ltd-formation): Register a UK Limited Company with Companies House.
+- [LTD ID Verification](/uk-services/ltd-id-verification): Companies House ID verification under the ECCT Act 2023.
+- [Registered Office Address](/uk-services/registered-office-address): Physical UK registered office for one year.
+- [UTR Number](/uk-services/utr-number): HMRC Unique Taxpayer Reference for your UK company.
+- [UK VAT Registration](/uk-services/uk-vat-registration): VAT registration and ongoing UK tax compliance.
+- [Company Annual Filing](/uk-services/company-annual-filing): Confirmation Statement and annual accounts.
+
+## UK compliance
+
+- [Company Name Change](/uk-compliance/company-name-change): Change your UK company name without losing trading history.
+- [Registered Office Change](/uk-compliance/company-address-change): Update your Companies House registered office.
+- [Confirmation Statement](/uk-compliance/confirmation-statement): Annual Companies House filing.
+- [Director Appointment & Removal](/uk-compliance/director-appoint-remove): Manage UK company directors.
+
+## USA services
+
+- [US LLC Formation](/usa-services/us-llc-formation): Register a US LLC in Wyoming, Delaware, New Mexico and more.
+- [Choose State](/usa-llc/choose-state): Compare US states for LLC formation.
+- [EIN Application](/usa-services/ein-application): Obtain a US Employer Identification Number (no SSN required).
+- [ITIN Application](/usa-services/itin-application): Apply for a US Individual Taxpayer Identification Number.
+- [BOI Report Filing](/usa-services/boi-report): FinCEN Beneficial Ownership Information report.
+
+## Banking & payments
+
+- [Tide Business Account](/banks-payment-solutions/tide): UK business banking with Tide.
+- [Wise Business](/banks-payment-solutions/wise): Multi-currency UK business account.
+- [Airwallex](/banks-payment-solutions/airwallex): Global multi-currency business account.
+- [Stripe Setup](/banks-payment-solutions/stripe): Stripe payment gateway for UK LTD and US LLC.
+- [PayPal Business](/banks-payment-solutions/paypal): Verified PayPal business account.
+
+## Web & technology
+
+- [Web Development](/web-development): Custom React websites, e-commerce and landing pages.
+
+## Blog
+
+- [UK Companies House ID Verification 2025–2026](/blog/uk-company-id-verification-2025-2026-rule): New mandatory ID verification rule for directors and PSCs.
+- [Register a UK LTD as a Non-Resident](/blog/how-to-register-uk-ltd-from-pakistan-2026): Step-by-step UK company formation for non-residents.
+- [Open a Stripe Account in Unsupported Countries](/blog/how-to-open-stripe-account-pakistan-2026): Compliant route via UK LTD or US LLC.
+- [All articles](/blog): Full blog index covering UK & US formation, banking, payments and compliance.
+
+## Optional
+
+- [Privacy Policy](/privacy): How we handle your data.
+- [Terms of Service](/terms): Terms governing use of our services.
+- [Sitemap](/sitemap.xml): Full XML sitemap of all indexable pages.
