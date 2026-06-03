@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { TableSkeleton } from "../components/Skeletons";
+import OsInvoiceDrawer from "../components/OsInvoiceDrawer";
+import OsOrderDrawer from "../components/OsOrderDrawer";
 import {
   Search, RefreshCw, Loader2, ChevronRight, ExternalLink, Filter,
   FileText, Download, Mail, CheckCircle2, RotateCcw, PoundSterling,
@@ -70,6 +72,8 @@ export default function OsInvoices() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [openInvoiceId, setOpenInvoiceId] = useState<string | null>(null);
+  const [openOrderId, setOpenOrderId] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -142,13 +146,11 @@ export default function OsInvoices() {
     () => invoices.filter(i => isOverdue(i)).reduce((a, i) => a + (Number(i.total_gbp) || 0), 0), [invoices]
   );
 
-  const openInLegacy = (i: InvoiceRow) => {
-    if (i.user_id) navigate(`/admin/legacy?client=${i.user_id}&tab=invoices`);
-    else toast.info("No linked client — use Full Admin");
-  };
+  // Native drawers — guest-safe (keyed by id, not user_id).
+  const openInLegacy = (i: InvoiceRow) => setOpenInvoiceId(i.id);
   const openOrderInLegacy = (i: InvoiceRow) => {
-    if (i.user_id) navigate(`/admin/legacy?client=${i.user_id}&tab=orders`);
-    else toast.info("No linked client — use Full Admin");
+    if (i.order_id) setOpenOrderId(i.order_id);
+    else toast.info("No linked order");
   };
 
   // QUICK ACTIONS — reuse existing production flows
@@ -254,13 +256,9 @@ export default function OsInvoices() {
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
             Refresh
           </button>
-          <button
-            onClick={() => navigate("/admin/legacy")}
-            className="h-11 px-4 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:opacity-90"
-            title="Open full legacy admin"
-          >
-            <ExternalLink className="w-4 h-4" /> Full Admin
-          </button>
+          {/* Legacy fallback button removed in Wave 1 — invoice management is
+              now native via OsInvoiceDrawer. /admin/legacy stays mounted as
+              a hidden rollback path. */}
         </div>
 
         {/* Status pills */}

@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { TableSkeleton } from "../components/Skeletons";
+import OsOrderDrawer from "../components/OsOrderDrawer";
+import OsInvoiceDrawer from "../components/OsInvoiceDrawer";
 import { generateInvoiceNumber, SERVICE_CODES } from "@/lib/invoice";
 import {
   Search, RefreshCw, Loader2, ChevronRight, ShoppingBag,
@@ -79,6 +81,8 @@ export default function OsOrders() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [dateRange, setDateRange] = useState<string>("all");
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const [openOrderId, setOpenOrderId] = useState<string | null>(null);
+  const [openInvoiceId, setOpenInvoiceId] = useState<string | null>(null);
 
   /**
    * Inline status mutation. Mirrors Legacy Admin: update client_orders.status,
@@ -301,13 +305,18 @@ export default function OsOrders() {
     [orders]
   );
 
-  const openOrderInLegacy = (o: OrderRow) => {
-    if (o.user_id) navigate(`/admin/legacy?client=${o.user_id}&tab=orders`);
-    else toast.info("Guest order — open Full Admin for advanced actions");
-  };
-  const openInvoiceInLegacy = (o: OrderRow) => {
-    if (o.user_id) navigate(`/admin/legacy?client=${o.user_id}&tab=invoices`);
-    else toast.info("Guest order — open Full Admin for advanced actions");
+  // Native drawers — guest-safe (keyed by order/invoice id, not user_id).
+  const openOrder = (o: OrderRow) => setOpenOrderId(o.id);
+  const openInvoiceForOrder = async (o: OrderRow) => {
+    const { data } = await supabase
+      .from("invoices")
+      .select("id")
+      .eq("order_id", o.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (data?.id) setOpenInvoiceId(data.id);
+    else toast.info("No invoice generated for this order yet");
   };
 
   return (
@@ -347,13 +356,9 @@ export default function OsOrders() {
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
             Refresh
           </button>
-          <button
-            onClick={() => navigate("/admin/legacy")}
-            className="h-11 px-4 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:opacity-90"
-            title="Open full legacy admin"
-          >
-            <ExternalLink className="w-4 h-4" /> Full Admin
-          </button>
+          {/* Legacy fallback button intentionally removed in Wave 1 — order
+              management is now native via OsOrderDrawer. Route /admin/legacy
+              remains mounted as a hidden rollback path. */}
         </div>
 
         {/* Status pills */}
@@ -424,7 +429,7 @@ export default function OsOrders() {
                 {filtered.map((o) => (
                   <tr
                     key={o.id}
-                    onClick={() => openOrderInLegacy(o)}
+                    onClick={() => openOrder(o)}
                     className="border-b border-white/5 last:border-0 hover:bg-white/[0.03] transition cursor-pointer"
                   >
                     <td className="py-3 px-4">
@@ -513,7 +518,7 @@ export default function OsOrders() {
                           </button>
                         )}
                         <button
-                          onClick={() => openInvoiceInLegacy(o)}
+                          onClick={() => openInvoiceForOrder(o)}
                           className="px-2 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-[11px] text-white/70 inline-flex items-center gap-1"
                           title="Open invoices tab"
                         >
@@ -537,7 +542,7 @@ export default function OsOrders() {
           {filtered.map((o) => (
             <div
               key={o.id}
-              onClick={() => openOrderInLegacy(o)}
+              onClick={() => openOrder(o)}
               role="button"
               tabIndex={0}
               className="os-glass p-4 w-full text-left active:scale-[0.99] transition cursor-pointer"
@@ -597,7 +602,7 @@ export default function OsOrders() {
                   {o.invoice_number ? `Send ${o.invoice_number}` : "Generate Invoice"}
                 </button>
                 <button
-                  onClick={() => openOrderInLegacy(o)}
+                  onClick={() => openOrder(o)}
                   className="flex-1 min-w-[110px] text-[11px] font-medium rounded-lg py-2 text-center bg-white/[0.04] hover:bg-white/[0.08] text-white/70 inline-flex items-center justify-center gap-1"
                 >
                   <ShoppingBag className="w-3 h-3" /> Manage
@@ -608,6 +613,19 @@ export default function OsOrders() {
           ))}
         </div>
       )}
+
+      <OsOrderDrawer
+        orderId={openOrderId}
+        open={!!openOrderId}
+        onClose={() => setOpenOrderId(null)}
+        onChanged={load}
+      />
+      <OsInvoiceDrawer
+        invoiceId={openInvoiceId}
+        open={!!openInvoiceId}
+        onClose={() => setOpenInvoiceId(null)}
+        onChanged={load}
+      />
     </div>
   );
 }
