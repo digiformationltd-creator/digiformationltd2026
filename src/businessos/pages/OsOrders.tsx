@@ -81,6 +81,8 @@ export default function OsOrders() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [dateRange, setDateRange] = useState<string>("all");
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const [openOrderId, setOpenOrderId] = useState<string | null>(null);
+  const [openInvoiceId, setOpenInvoiceId] = useState<string | null>(null);
 
   /**
    * Inline status mutation. Mirrors Legacy Admin: update client_orders.status,
