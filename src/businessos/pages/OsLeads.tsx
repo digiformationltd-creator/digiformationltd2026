@@ -85,6 +85,14 @@ export default function OsLeads() {
   };
   useEffect(() => { load(); }, []);
 
+  useEffect(() => {
+    const ch = supabase
+      .channel("os-leads-rt")
+      .on("postgres_changes", { event: "*", schema: "public", table: "leads" }, () => load())
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, []);
+
   const byStage = useMemo(() => {
     const map: Record<Stage, Lead[]> = { new:[], contacted:[], interested:[], followup:[], converted:[], closed:[], rejected:[] };
     leads.forEach(l => map[l.stage].push(l));
