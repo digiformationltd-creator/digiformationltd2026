@@ -4,7 +4,9 @@ import { useSeo } from "@/lib/seo";
 import { ArrowRight, CheckCircle2, Building2, Briefcase, UserCircle2, Sparkles } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import ServiceFAQ from "@/components/seo/ServiceFAQ";
+import RelatedServices from "@/components/seo/RelatedServices";
+import RecommendedGuides from "@/components/seo/RecommendedGuides";
 
 type Pkg = {
   id: string;
@@ -113,9 +115,9 @@ const whoNeeds = [
 ];
 
 const related = [
-  { name: "Company Name & Address Change", path: "/uk-compliance/change-of-company-name" },
-  { name: "LTD ID Verification", path: "/uk-services/ltd-id-verification" },
-  { name: "UTR Registration", path: "/uk-services/utr-codes" },
+  { name: "Company Name & Address Change", path: "/uk-compliance/change-of-company-name", description: "Update your registered name, office, or director details with Companies House.", icon: "change-service" as const },
+  { name: "LTD ID Verification", path: "/uk-services/ltd-id-verification", description: "Mandatory identity verification for directors and persons with significant control.", icon: "id-verify" as const },
+  { name: "UTR Registration", path: "/uk-services/utr-codes", description: "Get your Unique Taxpayer Reference for HMRC tax filings.", icon: "utr" as const },
 ];
 
 const faqs = [
@@ -135,21 +137,14 @@ const RegisteredOfficeAddress = () => {
       { name: "UK Services", path: "/uk-services" },
       { name: "Registered Office Address", path: "/uk-services/registered-office-address" },
     ],
-    jsonLd: [
-      {
-        "@context": "https://schema.org",
-        "@type": "Service",
-        name: "UK Registered Office Address",
-        provider: { "@type": "Organization", name: "Digiformation Ltd" },
-        areaServed: "Worldwide",
-        description: "Official UK addresses for Registered Office, Business Service, and Director Service use.",
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
-      },
-    ],
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      name: "UK Registered Office Address",
+      provider: { "@type": "Organization", name: "Digiformation Ltd" },
+      areaServed: "Worldwide",
+      description: "Official UK addresses for Registered Office, Business Service, and Director Service use.",
+    },
   });
 
   const scrollTo = (id: string) => {
