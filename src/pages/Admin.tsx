@@ -4,6 +4,7 @@ import OsDashboard from "@/businessos/pages/OsDashboard";
 import OsLeads from "@/businessos/pages/OsLeads";
 import OsServices from "@/businessos/pages/OsServices";
 import OsClients from "@/businessos/pages/OsClients";
+import OsClientDetail from "@/businessos/pages/OsClientDetail";
 import OsOrders from "@/businessos/pages/OsOrders";
 import OsInvoices from "@/businessos/pages/OsInvoices";
 import OsDocuments from "@/businessos/pages/OsDocuments";
@@ -22,6 +23,7 @@ export default function Admin() {
         <Route path="leads" element={<OsLeads />} />
         <Route path="services" element={<OsServices />} />
         <Route path="clients" element={<OsClients />} />
+        <Route path="clients/:id" element={<OsClientDetail />} />
         <Route path="companies" element={<OsCompanies />} />
         <Route path="orders" element={<OsOrders />} />
         <Route path="invoices" element={<OsInvoices />} />
