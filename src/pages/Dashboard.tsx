@@ -1006,6 +1006,8 @@ const ClientOrdersSection = ({ rows, onBrowse }: { rows: any[]; onBrowse: () => 
     </div>
   );
 };
+
+const ClientSubscriptionsSection = ({ rows, onBrowse }: { rows: any[]; onBrowse: () => void }) => {
   const fmt = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n || 0);
   const fmtDate = (d: string | null) => d ? new Date(d).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—";
   if (rows.length === 0) return <EmptyState icon={CalendarDays} title="No active subscriptions" description="Recurring services like address renewals will appear here automatically." action={<Button variant="hero" className="rounded-full" onClick={onBrowse}>Browse Services</Button>} />;
