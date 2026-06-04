@@ -221,39 +221,36 @@ function buildPdf(opts: {
   doc.text(fmt(opts.amount), colAmt, y + 12, { align: 'right' })
   y += 40
 
-  // ---------- Bottom-anchored layout ----------
-  // Stack from bottom up: footer waves → contact strip → bank details → note (1 line)
-  const CONTACT_Y = H - 70           // single-line contact strip, just above wave
-  const BANK_BOTTOM = CONTACT_Y - 28 // gap above contact strip
-  const blockH = 110
-  const BANK_TOP = BANK_BOTTOM - blockH
-  const BANK_TITLE_Y = BANK_TOP - 8  // "Payment Details" heading
-  // Note sits in the gap between item totals and bank section
-  const NOTE_LABEL_Y = BANK_TITLE_Y - 36
-  const NOTE_TEXT_Y = NOTE_LABEL_Y + 16
-
-  // ---- NOTE (single line only) ----
+  // ---------- Note (close to subtotal, supports 2-3 short lines) ----------
   doc.setFont('helvetica', 'bold').setFontSize(10.5).setTextColor(...ACCENT_DARK)
-  doc.text('NOTE', M, NOTE_LABEL_Y)
+  doc.text('NOTE', M, y)
   doc.setDrawColor(...ACCENT_SOFT).setLineWidth(0.6)
-  doc.line(M, NOTE_LABEL_Y + 4, M + 32, NOTE_LABEL_Y + 4)
+  doc.line(M, y + 4, M + 32, y + 4)
+  const NOTE_TEXT_Y = y + 18
+  const NOTE_LINE_H = 13
+  const NOTE_MAX_LINES = 3
   if (opts.notes && opts.notes.trim()) {
-    doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(...SUB)
-    const oneLine = (doc.splitTextToSize(opts.notes.trim(), W - M * 2) as string[])[0] || ''
-    doc.text(oneLine, M, NOTE_TEXT_Y)
+    doc.setFont('helvetica', 'normal').setFontSize(9.5).setTextColor(...SUB)
+    const lines = (doc.splitTextToSize(opts.notes.trim(), W - M * 2) as string[]).slice(0, NOTE_MAX_LINES)
+    lines.forEach((ln, i) => doc.text(ln, M, NOTE_TEXT_Y + i * NOTE_LINE_H))
   } else {
-    // Reserve one blank underline for handwritten note
-    doc.setDrawColor(...ACCENT_SOFT).setLineWidth(0.5)
-    doc.line(M, NOTE_TEXT_Y + 2, W - M, NOTE_TEXT_Y + 2)
+    // Reserve 2 faint underlines for handwritten notes
+    doc.setDrawColor(...ACCENT_SOFT).setLineWidth(0.4)
+    for (let i = 0; i < 2; i++) {
+      const ly2 = NOTE_TEXT_Y + 2 + i * NOTE_LINE_H
+      doc.line(M, ly2, W - M, ly2)
+    }
   }
+  y = NOTE_TEXT_Y + NOTE_MAX_LINES * NOTE_LINE_H + 14
 
-  // ---- Payment Details heading ----
+  // ---------- Payment Details heading ----------
   doc.setFont('helvetica', 'bold').setFontSize(13).setTextColor(...ACCENT_DARK)
-  doc.text('Payment Details', M, BANK_TITLE_Y)
+  doc.text('Payment Details', M, y)
   doc.setDrawColor(...ACCENT_DARK).setLineWidth(1.2)
-  doc.line(M, BANK_TITLE_Y + 4, M + 70, BANK_TITLE_Y + 4)
+  doc.line(M, y + 4, M + 70, y + 4)
+  y += 14
 
-  // ---- 3-column bank blocks ----
+  // ---- 3-column bank blocks (rounded corners) ----
   const banks: { title: string; lines: [string, string][] }[] = [
     {
       title: 'UK — Clear Bank',
@@ -286,33 +283,43 @@ function buildPdf(opts: {
   const usable = W - M * 2
   const gap = 8
   const colW = (usable - gap * 2) / 3
+  const blockH = 110
+  const radius = 8
+  const BANK_TOP = y
   banks.forEach((b, i) => {
     const x = M + i * (colW + gap)
+    // Rounded card background
     doc.setFillColor(...HEADER_BG)
-    doc.rect(x, BANK_TOP, colW, blockH, 'F')
+    doc.roundedRect(x, BANK_TOP, colW, blockH, radius, radius, 'F')
+    // Accent stripe on left (clip-like, narrow rounded rect)
     doc.setFillColor(...ACCENT_DARK)
-    doc.rect(x, BANK_TOP, 3, blockH, 'F')
+    doc.roundedRect(x, BANK_TOP, 4, blockH, radius, radius, 'F')
     doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...ACCENT_DARK)
-    doc.text(b.title, x + 8, BANK_TOP + 14)
+    doc.text(b.title, x + 10, BANK_TOP + 14)
     let bly = BANK_TOP + 28
     for (const [k, v] of b.lines) {
       doc.setFont('helvetica', 'normal').setFontSize(7.5).setTextColor(...SUB)
-      doc.text(`${k}:`, x + 8, bly)
+      doc.text(`${k}:`, x + 10, bly)
       doc.setFont('helvetica', 'bold').setFontSize(7.5).setTextColor(...INK)
-      const vLines = doc.splitTextToSize(v, colW - 40) as string[]
-      doc.text(vLines, x + 36, bly)
+      const vLines = doc.splitTextToSize(v, colW - 42) as string[]
+      doc.text(vLines, x + 38, bly)
       bly += 11 * vLines.length
     }
   })
 
-  // ---- Single-line Contact strip (above footer wave) ----
+  // ---- Footer band (drawn first so contact text sits on top of it) ----
+  drawFooterBand(doc, W, H)
+
+  // ---- Contact Information inside footer design ----
+  // The tall soft-grey wave reaches up to ~H-65. Place label + strip on it.
+  const CONTACT_LABEL_Y = H - 50
+  const CONTACT_Y = H - 32
+  doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...ACCENT_DARK)
+  doc.text('CONTACT INFORMATION', W / 2, CONTACT_LABEL_Y, { align: 'center' })
   doc.setFont('helvetica', 'normal').setFontSize(8.5).setTextColor(...INK)
   const contacts = `WhatsApp: ${SITE_PHONE_PK}   |   Phone: ${SITE_PHONE_PK}   |   Email: ${SITE_EMAIL}   |   Web: ${SITE_WEB}`
   doc.text(contacts, W / 2, CONTACT_Y, { align: 'center' })
-  doc.setDrawColor(...ACCENT_SOFT).setLineWidth(0.5)
-  doc.line(M, CONTACT_Y - 10, W - M, CONTACT_Y - 10)
 
-  drawFooterBand(doc, W, H)
 
 
 
