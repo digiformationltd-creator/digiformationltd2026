@@ -96,7 +96,7 @@ const RotatingCta = () => {
   }, []);
   return (
     <Button asChild variant="hero" size="lg" className="rounded-full">
-      <Link to="/contact">
+      <Link to="/checkout?service=utr-number">
         <span key={i} className="inline-block animate-fade-in">{rotatingCtas[i]}</span>
         <ArrowRight className="w-4 h-4" />
       </Link>
@@ -213,7 +213,7 @@ const UtrCodes = () => {
                   <div className="mt-auto space-y-2">
                     {c.ctas.map((cta) => (
                       <Button key={cta} asChild variant="ghostGlow" className="rounded-full w-full">
-                        <Link to="/contact">{cta} <ArrowRight className="w-4 h-4" /></Link>
+                        <Link to={`/checkout?service=${encodeURIComponent(c.id)}`}>{cta} <ArrowRight className="w-4 h-4" /></Link>
                       </Button>
                     ))}
                   </div>

@@ -1,141 +1,84 @@
+# Unified Checkout, Pricing & Invoice System
 
 ## Goal
 
-Every service-related submission on the website must appear as an **Order** in the Orders dashboard and (when the customer has an account) in the Client Portal. The only exception is direct WhatsApp chat clicks, which stay in Leads/Enquiries only.
+Every service on the website routes through the same priced checkout flow that powers LTD ID Verification today. Orders are created with the correct amount, an unpaid invoice is generated and emailed automatically, and the customer can download it from their portal. No service may create a £0 order while it has a defined price.
 
-## Root cause (today)
+## What's wrong today
 
-- The **Checkout flow** (`/checkout`, `/banking-checkout`) already creates `client_orders` + `invoices` via the `generate-invoice` edge function. ✅
-- The **Contact form** (`/contact` and any service-page inquiry form that posts to it) only inserts into `contact_submissions`. It never creates an order row. ❌ This is why Zion's 4 "Confirmation Statement Filing" inquiries are invisible in both portal and dashboard.
+- `DynamicServicePage` (the template behind dozens of UK Services, UK Compliance, USA Services and Banking pages) routes its only CTA to `/contact`. That hits the inquiry-mirror trigger and produces a `client_orders` row with `amount_gbp = 0` and `status = 'Inquiry'`.
+- `ServicePage` (UTR, Registered Office Address, etc.) and `SimplePage` also CTA into `/contact`.
+- `UsaServicePage` already links to `/checkout` but only passes `title` + `service` — the checkout has no catalog entry, so the amount falls back to 0.
+- The compliance catalog inside `Checkout.tsx` is hard-coded and out of sync with `src/data/compliance.ts` (the real published prices).
+- Web Development / packages CTAs in `CorePages.tsx` go to `/contact`.
 
-## Solution (two layers — defence in depth)
+## Solution overview
 
-### Layer 1 — Database trigger (guarantees no submission is ever missed, now or in the future)
+One central service price catalog → every service page CTAs into `/checkout?service=<slug>` (or its dedicated checkout for LTD / LLC / Banking / IDV) → `CheckoutFlow` collects details and creates the order with the real price → `generate-invoice` runs as it already does for IDV → invoice email + portal download.
 
-Add an `AFTER INSERT` trigger on `public.contact_submissions` that automatically creates a matching row in `public.client_orders`:
+## Implementation
 
-- `source = 'inquiry'` (new column)
-- `status = 'Inquiry'`
-- `customer_name`, `customer_email`, `customer_whatsapp`, `country`, `service`, `notes` copied from the submission
-- `order_ref` generated via the existing `next_order_number()` sequence with a `GBQ` prefix (Q = inquiry, distinct from `GBLTD`/`GBBNK`/`GBCS` etc.)
-- `user_id` auto-linked if a profile already exists for that email (mirrors `handle_new_user` logic)
-- `amount_gbp = 0` (no payment yet)
+### 1. Central service catalog (single source of truth)
 
-Because the trigger sits at the database layer, **every** current form, every future form, every new service page, and every edge function that writes to `contact_submissions` will automatically produce an order — impossible to bypass by accident.
+Create `src/data/serviceCatalog.ts` exporting one `SERVICE_CATALOG` keyed by slug. Each entry: `slug`, `name`, `price` (GBP), `currency`, `category`, `description`, optional `fields` (extra checkout sections — e.g. CRN, company name).
 
-### Layer 2 — Schema additions on `client_orders`
+Seed from existing data:
+- UK Services: register LTD (uses dedicated jurisdiction flow), ID Verification (existing flow), Registered Office (£40), Confirmation Statement Filing (£60), UTR (£50), Auth Code, Activation Code, UK VAT (£70), etc.
+- UK Compliance: all 9 entries from `src/data/compliance.ts` with their real prices.
+- USA Services: EIN, ITIN, Annual Tax, BOI from `src/data/usaServices.ts` (price already numeric).
+- Banking: per-provider setup prices from `src/data/navigation.ts`.
+- Web Development / Packages: every pricing tier on `/web-development` and `/pricing` becomes a catalog entry.
 
-- Add `source TEXT NOT NULL DEFAULT 'checkout'` — values: `checkout`, `inquiry`, `manual`, `whatsapp` (reserved, never auto-populated).
-- Add `payment_status TEXT NOT NULL DEFAULT 'unpaid'` — values: `unpaid`, `paid`, `refunded`, `n/a`.
-- Add `inquiry_id UUID REFERENCES contact_submissions(id) ON DELETE SET NULL` — links the order back to its originating inquiry so admins can see the full history.
-- Update existing `generate-invoice` edge function to set `source = 'checkout'`, `payment_status = 'unpaid'` (no behavioural change, just labelling).
+`Checkout.tsx` is rewritten to look up `?service=<slug>` in `SERVICE_CATALOG` and feed the matched item into `CheckoutFlow` with `lockSelection` + `fixed: true` — exactly like the IDV checkout. Multi-add-on groups (UK Address bundle, multi-pick UK Compliance) keep their existing multi-select catalog but read prices from the catalog.
 
-### Layer 3 — Backfill historical inquiries
+### 2. Service page CTAs
 
-One-time data migration: for every `contact_submissions` row that does **not** already have a matching `client_orders` row (matched by email + close timestamp), create the missing order with `source = 'inquiry'`. This recovers Zion's 4 missing orders and any others from earlier customers.
+- `ServicePage` template: replace the `/contact` CTA with `/checkout?service=<slug>&title=...`. Pull `slug` + `price` from the catalog; render the real price on the button ("Order now — £50"). Fallback "Talk to us" link kept as a secondary ghost button only when the service has no price (rare).
+- `DynamicServicePage`: same — resolve the slug from its `path`, look up the catalog entry, render priced CTA. If a slug has no catalog entry it falls back to inquiry (so nothing breaks), but every shipped service will have an entry.
+- `UsaServicePage`: pass `?service=<slug>` so checkout finds the price (no more 0).
+- `CompliancePage`: already builds `/checkout?items=...` — switch the catalog inside `Checkout.tsx` to read from the central catalog so prices match the marketing page.
+- `CorePages.tsx` (web dev, packages, custom services): replace `/contact` CTAs with `/checkout?service=<package-slug>`.
+- `RegisteredOfficeAddress`, `UtrCodes`, `BlogPost`, `InsightPage`, `SimplePage`, `NotFound`, `DigiCTA`: secondary "Talk to us" links can stay, but every primary "Get started/Order" CTA becomes a checkout link. WhatsApp float untouched.
 
-### Layer 4 — Frontend audit and admin UI
+### 3. Checkout + order creation (no functional change, just labelling)
 
-1. **Admin Orders dashboard** — add `Source` and `Payment Status` columns + filters so the team can separate paid orders from inquiries at a glance, while still working from a single pipeline.
-2. **Client Portal Orders page** — show all the user's orders regardless of source (inquiry rows appear with a clear "Inquiry — Awaiting Quote" badge).
-3. **Service page audit** — verify every service page across Company Formation, Business Bank Account, UK Compliance, UK Services, USA Services, Web Development, Digital Services, and all packages has either a direct "Order Now" → `/checkout` CTA or routes through the contact form (which now auto-creates an order). Document any page that still only links to WhatsApp.
-4. **WhatsApp exception preserved** — `WhatsAppFloat`, direct `wa.me` links, and `whatsapp_clicks` table stay untouched. No order created.
+`CheckoutFlow` already creates the order via `generate-invoice` with the selected items' prices. Confirm:
+- `source = 'checkout'`, `payment_status = 'unpaid'` (already set in last migration).
+- `amount_gbp` = sum of selected items (already correct when prices are real).
+- `status = 'New'` (not `Inquiry`).
 
-### Layer 5 — Future-proofing rule
+### 4. Invoice generation
 
-Add a short developer note at the top of `contact_submissions` usages and a SQL comment on the table:
+Already implemented inside `generate-invoice` edge function (PDF stored in `invoices` bucket, row in `invoices`, email sent via `send-transactional-email` → `invoice-issued` template). No code change needed beyond confirming it fires for every checkout. The client portal Orders page already exposes invoice download — verify it shows the new orders.
 
-> Every insert into `contact_submissions` is mirrored into `client_orders` by a trigger. Any new service form may insert here freely; the order pipeline will follow automatically. Do NOT add new submission tables without applying the same mirror trigger.
+### 5. Contact form stays as a last-resort inquiry channel
 
-## Technical details
+`/contact` keeps creating inquiry orders via the existing trigger (so no submission is ever lost), but it is no longer the primary CTA for any priced service. Inquiry orders now only appear for genuine "talk to us" submissions, custom quotes, and WhatsApp escalations.
 
-**New migration** (one file):
+### 6. Backfill / cleanup (data only, optional)
 
-```sql
--- Schema additions
-ALTER TABLE public.client_orders
-  ADD COLUMN source TEXT NOT NULL DEFAULT 'checkout',
-  ADD COLUMN payment_status TEXT NOT NULL DEFAULT 'unpaid',
-  ADD COLUMN inquiry_id UUID REFERENCES public.contact_submissions(id) ON DELETE SET NULL;
+Existing £0 `Inquiry` orders for Zion and others remain in the system (as agreed last turn). No retroactive re-pricing — they were genuinely inquiries. Going forward, every new submission carries the right price.
 
-CREATE INDEX idx_client_orders_source ON public.client_orders(source);
-CREATE INDEX idx_client_orders_inquiry_id ON public.client_orders(inquiry_id);
+### 7. Guardrail
 
--- Trigger function: mirror every inquiry into an order
-CREATE OR REPLACE FUNCTION public.mirror_inquiry_to_order()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public
-AS $$
-DECLARE
-  matched_user_id UUID;
-  new_ref TEXT;
-BEGIN
-  SELECT user_id INTO matched_user_id
-  FROM public.profiles
-  WHERE lower(email) = lower(NEW.email)
-  LIMIT 1;
+Add a brief comment at the top of `serviceCatalog.ts`:
 
-  new_ref := 'GBQ' || to_char(now(), 'DDMM') || lpad(public.next_order_number()::text, 6, '0');
+> Every new service must be added here with its price. Service pages must CTA to `/checkout?service=<slug>`. Do not add new `/contact` CTAs for priced services.
 
-  INSERT INTO public.client_orders (
-    user_id, order_ref, service, amount_gbp, status,
-    customer_name, customer_email, customer_whatsapp, country_code,
-    notes, source, payment_status, inquiry_id
-  ) VALUES (
-    matched_user_id, new_ref, COALESCE(NEW.service, 'General Inquiry'), 0, 'Inquiry',
-    NEW.full_name, NEW.email, NEW.whatsapp, NEW.country,
-    NEW.message, 'inquiry', 'n/a', NEW.id
-  );
+## Files touched
 
-  RETURN NEW;
-END;
-$$;
+- **new** `src/data/serviceCatalog.ts` — central price catalog
+- `src/pages/Checkout.tsx` — read catalog by slug, lock single-service checkout, keep multi-select groups
+- `src/components/ServicePage.tsx` — priced CTA from catalog
+- `src/pages/DynamicServicePage.tsx` — pass slug + price into ServicePage
+- `src/pages/UsaServicePage.tsx` — checkout link carries `?service=<slug>`
+- `src/pages/CompliancePage.tsx` — verify slug mapping matches catalog
+- `src/pages/RegisteredOfficeAddress.tsx`, `src/pages/UtrCodes.tsx`, `src/pages/CorePages.tsx` (web dev + packages), `src/components/SimplePage.tsx`, `src/components/DigiCTA.tsx` — primary CTA → checkout
+- No database migrations required — schema already supports this.
+- No edge function changes — `generate-invoice` already creates priced orders + invoices.
 
-CREATE TRIGGER trg_mirror_inquiry_to_order
-AFTER INSERT ON public.contact_submissions
-FOR EACH ROW EXECUTE FUNCTION public.mirror_inquiry_to_order();
+## Out of scope
 
--- Backfill historical inquiries that have no matching order
-INSERT INTO public.client_orders (
-  user_id, order_ref, service, amount_gbp, status,
-  customer_name, customer_email, customer_whatsapp, country_code,
-  notes, source, payment_status, inquiry_id, created_at
-)
-SELECT
-  (SELECT user_id FROM public.profiles WHERE lower(email) = lower(cs.email) LIMIT 1),
-  'GBQ' || to_char(cs.created_at, 'DDMM') || lpad(public.next_order_number()::text, 6, '0'),
-  COALESCE(cs.service, 'General Inquiry'), 0, 'Inquiry',
-  cs.full_name, cs.email, cs.whatsapp, cs.country,
-  cs.message, 'inquiry', 'n/a', cs.id, cs.created_at
-FROM public.contact_submissions cs
-WHERE NOT EXISTS (
-  SELECT 1 FROM public.client_orders co
-  WHERE co.inquiry_id = cs.id
-     OR (lower(co.customer_email) = lower(cs.email)
-         AND abs(extract(epoch from (co.created_at - cs.created_at))) < 300)
-);
-
-COMMENT ON TABLE public.contact_submissions IS
-  'Every insert here is mirrored into client_orders by trg_mirror_inquiry_to_order. Any new submission form may insert freely; the order pipeline follows automatically.';
-```
-
-**Frontend changes**:
-
-- `src/businessos/pages/OsClientOrders.tsx` (admin Orders dashboard) — add Source + Payment Status columns and filter chips.
-- Client portal Orders page — render an "Inquiry — Awaiting Quote" badge when `source = 'inquiry'`.
-- `generate-invoice` edge function — explicitly write `source: 'checkout'`, `payment_status: 'unpaid'`.
-
-**Code audit** (read-only, no behaviour change unless something is broken):
-
-- Walk every service page (`UKLtdFormation`, `RegisteredOfficeAddress`, `UtrCodes`, `BankingCheckout`, `ServicePage` template, USA service pages, Web Dev pages, Digital service pages, Compliance pages) and confirm each has a CTA that ends in either `/checkout?...` (real order) or the contact form (auto-creates inquiry order).
-- Report anything that only links to WhatsApp or has no CTA, so you can decide whether to add a Checkout CTA.
-
-## What this delivers
-
-- Zion's 4 missing inquiries appear in both Orders dashboard and Client Portal immediately after backfill runs.
-- Every future inquiry from anywhere on the site automatically becomes an order — no code change required for new forms.
-- Real paid checkout orders and unpaid inquiries live in the same pipeline but are clearly distinguishable via `source` and `payment_status` filters.
-- WhatsApp-only conversations remain leads/enquiries, never orders.
-- A SQL-level guarantee that no future developer (or AI) can accidentally add a service form that bypasses the Orders pipeline.
+- Payment collection (Stripe/Paddle). Orders stay `unpaid` until you wire a provider — separate request.
+- WhatsApp float / `wa.me` links — remain inquiry-only as agreed.
+- Past £0 inquiry orders — left untouched.

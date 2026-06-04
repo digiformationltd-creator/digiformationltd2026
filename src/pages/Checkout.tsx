@@ -1,20 +1,19 @@
 import { useSeo } from "@/lib/seo";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import CheckoutFlow, { CheckoutItem } from "@/components/checkout/CheckoutFlow";
 import { complianceItemFormFields } from "@/data/compliance";
+import { findServiceBySlug } from "@/data/serviceCatalog";
 
 /**
- * Category-grouped catalog. Each group contains only services that belong
- * together so customers don't see unrelated items at checkout (e.g. a UK
- * Address customer should never be offered Web Development or PayPal
- * add-ons here).
+ * Category-grouped catalog for multi-add-on flows (UK Address bundle,
+ * full UK Compliance picker, ID Verification single-item). Individual
+ * per-service checkouts are resolved via the central serviceCatalog when
+ * the URL carries `?service=<slug>`.
  */
 type CatalogGroup = {
-  /** Identifier used in URL ?service= matching */
   key: string;
-  /** Match the URL `service` param against any of these (case-insensitive) */
   matches: string[];
   categoryLabel: string;
   description?: string;
@@ -24,7 +23,7 @@ type CatalogGroup = {
 const CATALOG_GROUPS: CatalogGroup[] = [
   {
     key: "uk-address",
-    matches: ["uk address services", "address services", "registered office", "business service address", "director service address"],
+    matches: ["uk address services", "address services"],
     categoryLabel: "UK Address Services",
     description: "Pick the address packages you need. All addresses are valid for 12 months.",
     items: [
@@ -36,15 +35,15 @@ const CATALOG_GROUPS: CatalogGroup[] = [
   },
   {
     key: "uk-compliance",
-    matches: ["compliance", "hmrc", "companies house", "utr", "vat", "confirmation statement", "annual accounts", "dormant", "company name change"],
+    matches: ["compliance", "hmrc", "companies house multi", "uk filings bundle"],
     categoryLabel: "UK Compliance & Filings",
     description: "HMRC and Companies House filings for your UK Limited company.",
     items: [
       { id: "utr", name: "UTR Number Registration", description: "HMRC tax registration for individuals or companies.", price: 50 },
       { id: "vat", name: "VAT Registration", description: "Register your UK company for VAT with HMRC.", price: 70 },
-      { id: "cs", name: "Confirmation Statement Filing", description: "Annual filing with Companies House.", price: 60 },
+      { id: "cs", name: "Confirmation Statement Filing", description: "Annual filing with Companies House.", price: 80 },
       { id: "aa", name: "Annual Accounts Filing", description: "Dormant or micro-entity accounts preparation & filing.", price: 120 },
-      { id: "name", name: "Company Name Change", description: "File a NM01 to change your company's registered name.", price: 50 },
+      { id: "name", name: "Company Name Change", description: "File a NM01 to change your company's registered name.", price: 30 },
       { id: "dorm", name: "Dormant Company Filing", description: "Keep your company compliant while inactive.", price: 80 },
     ],
   },
@@ -59,12 +58,6 @@ const CATALOG_GROUPS: CatalogGroup[] = [
   },
 ];
 
-/**
- * Optional URL params:
- *  ?items=roa,utr   pre-selects given items
- *  ?title=...       overrides title
- *  ?service=...     short label shown above summary, also used to pick the category
- */
 const Checkout = () => {
   const [params] = useSearchParams();
 
@@ -76,19 +69,54 @@ const Checkout = () => {
 
   const preselected = useMemo(() => {
     const raw = params.get("items") || "";
-    return raw
-      .split(",")
-      .map((s) => s.trim().toLowerCase())
-      .filter(Boolean);
+    return raw.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
   }, [params]);
 
-  const title = params.get("title") || "Order our services";
-  const contextLabel = params.get("service") || undefined;
+  const serviceParam = params.get("service") || "";
+  const titleParam = params.get("title");
 
-  // Pick the right category group: match by service param first, then by
-  // any pre-selected item id, otherwise default to UK Compliance.
+  // 1) Priority: single-service slug from the central catalog.
+  //    This is the standard, priced, locked checkout (same flow as IDV).
+  const catalogEntry = useMemo(() => findServiceBySlug(serviceParam), [serviceParam]);
+
+  if (catalogEntry) {
+    const item: CheckoutItem = {
+      id: catalogEntry.slug,
+      name: catalogEntry.name,
+      description: catalogEntry.description,
+      price: catalogEntry.price,
+      fixed: true,
+    };
+    const extraSection = catalogEntry.complianceItemId && complianceItemFormFields[catalogEntry.complianceItemId]
+      ? [{
+          itemId: catalogEntry.slug,
+          title: complianceItemFormFields[catalogEntry.complianceItemId].title,
+          fields: complianceItemFormFields[catalogEntry.complianceItemId].fields,
+        }]
+      : undefined;
+
+    return (
+      <Layout>
+        <CheckoutFlow
+          serviceTitle={titleParam || catalogEntry.name}
+          serviceCode="ORD"
+          currency={catalogEntry.currency}
+          items={[item]}
+          defaultSelectedIds={[item.id]}
+          lockSelection
+          contextLabel={`${catalogEntry.category} · ${catalogEntry.name}`}
+          eyebrow={`${catalogEntry.category} · Secure checkout`}
+          notesPlaceholder="Share any details we'll need to fulfil your order..."
+          fixedPackageName={catalogEntry.name}
+          extraSections={extraSection}
+        />
+      </Layout>
+    );
+  }
+
+  // 2) Fallback: multi-select category groups (Address bundle, Compliance picker, IDV).
   const activeGroup = useMemo(() => {
-    const svc = (params.get("service") || "").toLowerCase();
+    const svc = serviceParam.toLowerCase();
     if (svc) {
       const byService = CATALOG_GROUPS.find((g) =>
         g.matches.some((m) => svc.includes(m.toLowerCase()))
@@ -101,11 +129,9 @@ const Checkout = () => {
       );
       if (byItem) return byItem;
     }
-    return CATALOG_GROUPS[1]; // default to UK Compliance
-  }, [params, preselected]);
+    return CATALOG_GROUPS[1]; // default to UK Compliance picker
+  }, [serviceParam, preselected]);
 
-  // For the UK Compliance group, wire per-item dynamic field sections so the
-  // checkout collects exactly what each filing needs (CRN, auth code, etc.).
   const extraSections = useMemo(() => {
     if (activeGroup.key !== "uk-compliance") return undefined;
     return activeGroup.items
@@ -120,13 +146,13 @@ const Checkout = () => {
   return (
     <Layout>
       <CheckoutFlow
-        serviceTitle={title}
+        serviceTitle={titleParam || "Order our services"}
         serviceCode="ORD"
         currency="GBP"
         items={activeGroup.items}
         defaultSelectedIds={preselected}
         multiSelect
-        contextLabel={contextLabel || activeGroup.categoryLabel}
+        contextLabel={serviceParam || activeGroup.categoryLabel}
         eyebrow={`${activeGroup.categoryLabel} · Secure checkout`}
         notesPlaceholder="Share company name, registration number, or any details we'll need..."
         extraSections={extraSections}
