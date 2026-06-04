@@ -68,15 +68,17 @@ function drawHeaderBand(doc: jsPDF, W: number) {
   doc.ellipse(W * 0.28, -28, W * 0.62, 52, 'F')
 }
 
-// Footer: matching curved waves rising from the bottom edge.
+// Footer: tall curved band rising from bottom — hosts contact info inside.
 function drawFooterBand(doc: jsPDF, W: number, H: number) {
-  // Large soft-grey curve sweeping across most of the width
+  // Tall soft-grey curve sweeping across most of the width (taller so it
+  // can host the contact strip inside the footer design itself)
   doc.setFillColor(...ACCENT_SOFT)
-  doc.ellipse(W * 0.28, H + 28, W * 0.62, 52, 'F')
+  doc.ellipse(W * 0.30, H + 30, W * 0.70, 95, 'F')
   // Dark navy curve overlapping on the right
   doc.setFillColor(...ACCENT_DARK)
-  doc.ellipse(W * 0.78, H + 22, W * 0.42, 44, 'F')
+  doc.ellipse(W * 0.82, H + 18, W * 0.38, 60, 'F')
 }
+
 
 
 function drawWatermark(doc: jsPDF, W: number, H: number) {
