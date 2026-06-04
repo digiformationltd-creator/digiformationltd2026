@@ -171,7 +171,7 @@ function NewLeadModal({ onClose, onCreated }: { onClose: ()=>void; onCreated: ()
           <h3 className="text-lg font-bold">New Lead</h3>
           <button onClick={onClose} className="w-8 h-8 rounded-lg hover:bg-white/5 grid place-items-center"><X className="w-4 h-4"/></button>
         </div>
-        <div className="grid grid-cols-2 gap-3 text-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
           <Field label="Name *"><input value={f.name} onChange={e=>setF({...f,name:e.target.value})} className="w-full h-10 rounded-lg px-3"/></Field>
           <Field label="Email"><input value={f.email} onChange={e=>setF({...f,email:e.target.value})} className="w-full h-10 rounded-lg px-3"/></Field>
           <Field label="WhatsApp"><input value={f.whatsapp} onChange={e=>setF({...f,whatsapp:e.target.value})} className="w-full h-10 rounded-lg px-3"/></Field>
@@ -180,7 +180,7 @@ function NewLeadModal({ onClose, onCreated }: { onClose: ()=>void; onCreated: ()
           <Field label="Service"><input value={f.service} onChange={e=>setF({...f,service:e.target.value})} className="w-full h-10 rounded-lg px-3"/></Field>
           <Field label="Value (£)"><input type="number" value={f.value_gbp} onChange={e=>setF({...f,value_gbp:e.target.value})} className="w-full h-10 rounded-lg px-3 mono"/></Field>
           <Field label="Follow-up date"><input type="date" value={f.follow_up_date} onChange={e=>setF({...f,follow_up_date:e.target.value})} className="w-full h-10 rounded-lg px-3"/></Field>
-          <div className="col-span-2">
+          <div className="sm:col-span-2">
             <Field label="Notes"><textarea rows={3} value={f.notes} onChange={e=>setF({...f,notes:e.target.value})} className="w-full rounded-lg p-3"/></Field>
           </div>
         </div>
