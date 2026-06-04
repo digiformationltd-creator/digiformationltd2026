@@ -4,6 +4,7 @@
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { jsPDF } from 'npm:jspdf@2.5.2'
 import { LOGO_PNG_BASE64 } from './logo.ts'
+import { normalizePhoneToE164 } from '../_shared/phone.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -21,6 +22,7 @@ interface Body {
     email: string
     address?: string
     whatsapp?: string
+    whatsapp_e164?: string
     address_line1?: string
     address_line2?: string
     city?: string
@@ -30,6 +32,9 @@ interface Body {
   }
   notes?: string
   orderRef?: string
+  /** Flat list of every field the customer filled in on the checkout form.
+   *  Rendered as a structured "Customer & Order Details" page on the invoice. */
+  details?: { label: string; value: string }[]
   /** Storage paths (relative to client-docs bucket) of uploaded documents.
    *  The function generates 7-day signed URLs and embeds them in the PDF. */
   documents?: { label: string; path: string; filename: string }[]
@@ -216,6 +221,7 @@ function buildPdf(opts: {
   currency: string
   customer: Body['customer']
   notes?: string
+  details?: { label: string; value: string }[]
   documentLinks?: { label: string; url: string; filename: string }[]
 }) {
   const doc = new jsPDF({ unit: 'pt', format: 'a4' })
@@ -475,7 +481,55 @@ function buildPdf(opts: {
 
 
 
-  // Submitted documents page
+  // Customer & order details page — full structured dump of every form field
+  // the customer filled in, so the invoice is a complete record of the order.
+  if (opts.details && opts.details.length > 0) {
+    doc.addPage()
+    drawHeaderBand(doc, W)
+    drawWatermark(doc, W, H)
+    let dy = M + 30
+    doc.setFont('helvetica', 'bold').setFontSize(26).setTextColor(...ACCENT_DARK)
+    doc.text('Customer & Order Details', M, dy)
+    dy += 10
+    doc.setDrawColor(...ACCENT_DARK).setLineWidth(1.5)
+    doc.line(M, dy, M + 140, dy)
+    dy += 22
+    doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(...SUB)
+    doc.text(`Order Ref: ${opts.orderRef}    Invoice No: ${opts.invoiceNumber}`, M, dy)
+    dy += 22
+
+    const LABEL_W = 180
+    const VAL_W = W - M * 2 - LABEL_W - 12
+    const ROW_PAD = 6
+    for (const d of opts.details) {
+      const labelLines = doc.splitTextToSize(d.label, LABEL_W - 8) as string[]
+      const valueLines = doc.splitTextToSize(d.value || '—', VAL_W) as string[]
+      const rowLines = Math.max(labelLines.length, valueLines.length)
+      const rowH = rowLines * 13 + ROW_PAD * 2
+      if (dy + rowH > H - 90) {
+        drawFooterBand(doc, W, H)
+        doc.addPage(); drawHeaderBand(doc, W); drawWatermark(doc, W, H)
+        dy = M + 30
+        doc.setFont('helvetica', 'bold').setFontSize(20).setTextColor(...ACCENT_DARK)
+        doc.text('Customer & Order Details (continued)', M, dy)
+        dy += 28
+      }
+      // Zebra background
+      doc.setFillColor(248, 249, 251)
+      doc.rect(M, dy, W - M * 2, rowH, 'F')
+      doc.setFont('helvetica', 'bold').setFontSize(9.5).setTextColor(...ACCENT_DARK)
+      labelLines.forEach((ln, i) => doc.text(ln, M + 8, dy + ROW_PAD + 10 + i * 13))
+      doc.setFont('helvetica', 'normal').setFontSize(9.5).setTextColor(...INK)
+      valueLines.forEach((ln, i) => doc.text(ln, M + LABEL_W + 4, dy + ROW_PAD + 10 + i * 13))
+      // Separator
+      doc.setDrawColor(...DIVIDER).setLineWidth(0.3)
+      doc.line(M, dy + rowH, W - M, dy + rowH)
+      dy += rowH
+    }
+    drawFooterBand(doc, W, H)
+  }
+
+
   if (opts.documentLinks && opts.documentLinks.length > 0) {
     doc.addPage()
     drawHeaderBand(doc, W)
@@ -657,6 +711,13 @@ Deno.serve(async (req) => {
         documentLinks.push({ label: d.label, url: ds.signedUrl, filename: d.filename })
       }
     }
+    // Compose the structured details list. Frontend already sends a flat
+    // {label,value}[] of every form field; we accept it as-is.
+    const detailRows = Array.isArray(body.details) ? body.details.filter(d => d && d.label) : []
+
+    // Normalise phone for storage + lead capture (use frontend hint when present)
+    const phoneE164 = body.customer.whatsapp_e164?.trim()
+      || normalizePhoneToE164(body.customer.whatsapp, body.customer.country)
 
     // 1. Build PDF
     const pdfBytes = buildPdf({
@@ -667,6 +728,7 @@ Deno.serve(async (req) => {
       currency,
       customer: body.customer,
       notes: body.notes,
+      details: detailRows,
       documentLinks,
     })
 
@@ -694,6 +756,8 @@ Deno.serve(async (req) => {
         customer_name: body.customer.full_name ?? null,
         customer_email: body.customer.email ?? null,
         customer_whatsapp: body.customer.whatsapp ?? null,
+        customer_phone_e164: phoneE164,
+        country_code: body.customer.country ?? null,
         notes: body.notes ?? null,
         amount_mismatch: amountMismatch,
         source: 'checkout',
@@ -702,6 +766,40 @@ Deno.serve(async (req) => {
       .select('id')
       .single()
     if (orderErr) throw orderErr
+
+    // 4b. Auto-add to Lead Center (deduped by E.164 phone, fallback to email).
+    //     A failure here must never break the checkout response.
+    try {
+      if (phoneE164 || body.customer.email) {
+        const orFilters: string[] = []
+        if (phoneE164) orFilters.push(`phone_e164.eq.${phoneE164}`)
+        if (body.customer.email) orFilters.push(`email.ilike.${body.customer.email}`)
+        const { data: existingLead } = await admin
+          .from('leads')
+          .select('id')
+          .or(orFilters.join(','))
+          .limit(1)
+          .maybeSingle()
+        if (!existingLead) {
+          await admin.from('leads').insert({
+            name: body.customer.full_name || body.customer.email || 'Checkout lead',
+            email: body.customer.email ?? null,
+            whatsapp: body.customer.whatsapp ?? null,
+            phone_e164: phoneE164,
+            country: body.customer.country ?? null,
+            source: orderUserId ? 'portal_order' : 'guest_order',
+            service: body.packageName ? `${body.service} — ${body.packageName}` : body.service,
+            value_gbp: body.amount_gbp,
+            stage: 'new',
+            notes: `Auto-captured from order ${orderRef}.`,
+            preferred_contact_method: 'whatsapp',
+          })
+        }
+      }
+    } catch (e) {
+      console.warn('lead auto-capture failed (non-blocking)', e)
+    }
+
 
     const { error: invErr } = await admin.from('invoices').insert({
       user_id: orderUserId,
