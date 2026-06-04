@@ -4,6 +4,7 @@
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { jsPDF } from 'npm:jspdf@2.5.2'
 import { LOGO_PNG_BASE64 } from './logo.ts'
+import { normalizePhoneToE164 } from '../_shared/phone.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -21,6 +22,7 @@ interface Body {
     email: string
     address?: string
     whatsapp?: string
+    whatsapp_e164?: string
     address_line1?: string
     address_line2?: string
     city?: string
@@ -30,6 +32,9 @@ interface Body {
   }
   notes?: string
   orderRef?: string
+  /** Flat list of every field the customer filled in on the checkout form.
+   *  Rendered as a structured "Customer & Order Details" page on the invoice. */
+  details?: { label: string; value: string }[]
   /** Storage paths (relative to client-docs bucket) of uploaded documents.
    *  The function generates 7-day signed URLs and embeds them in the PDF. */
   documents?: { label: string; path: string; filename: string }[]
