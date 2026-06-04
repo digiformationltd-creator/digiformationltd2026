@@ -41,7 +41,7 @@ const CATALOG_GROUPS: CatalogGroup[] = [
     items: [
       { id: "utr", name: "UTR Number Registration", description: "HMRC tax registration for individuals or companies.", price: 50 },
       { id: "vat", name: "VAT Registration", description: "Register your UK company for VAT with HMRC.", price: 70 },
-      { id: "cs", name: "Confirmation Statement Filing", description: "Annual filing with Companies House.", price: 80 },
+      { id: "cs", name: "Confirmation Statement Filing", description: "Annual filing with Companies House.", price: 65 },
       { id: "aa", name: "Annual Accounts Filing", description: "Dormant or micro-entity accounts preparation & filing.", price: 120 },
       { id: "name", name: "Company Name Change", description: "File a NM01 to change your company's registered name.", price: 30 },
       { id: "dorm", name: "Dormant Company Filing", description: "Keep your company compliant while inactive.", price: 80 },
