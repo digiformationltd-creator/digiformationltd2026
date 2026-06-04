@@ -87,21 +87,22 @@ const Checkout = () => {
       price: catalogEntry.price,
       fixed: true,
     };
-    const extraSection = catalogEntry.complianceItemId && complianceItemFormFields[catalogEntry.complianceItemId]
+    const fallbackFields = catalogEntry.complianceItemId && complianceItemFormFields[catalogEntry.complianceItemId];
+    const fields = catalogEntry.formFields && catalogEntry.formFields.length > 0
+      ? catalogEntry.formFields
+      : fallbackFields?.fields;
+    const sectionTitle = fallbackFields?.title || `${catalogEntry.name} — Required Details`;
+    const extraSection = fields && fields.length > 0
       ? [{
           itemId: catalogEntry.slug,
-          title: complianceItemFormFields[catalogEntry.complianceItemId].title,
-          fields: complianceItemFormFields[catalogEntry.complianceItemId].fields,
+          title: sectionTitle,
+          fields,
         }]
       : undefined;
 
-    const isConfirmationStatement =
-      catalogEntry.complianceItemId === "cs" ||
-      catalogEntry.slug === "confirmation-statement";
-    const isAnnualAccounts =
-      catalogEntry.complianceItemId === "aa" ||
-      catalogEntry.slug === "annual-accounts-filing";
-    const minimalContact = isConfirmationStatement || isAnnualAccounts;
+    // Any service with a tailored requirements form only needs basic contact
+    // info — hide the default DOB / address / business-activity sections.
+    const minimalContact = !!extraSection;
 
     return (
       <Layout>
