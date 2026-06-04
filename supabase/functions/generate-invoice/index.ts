@@ -84,6 +84,56 @@ function drawFooterBand(doc: jsPDF, W: number, H: number) {
   doc.ellipse(W * 0.28, H + 28, W * 0.62, 52, 'F')
 }
 
+// Full footer: band + contact info row + social icons.
+// Drawn at the bottom of every invoice page so the design is consistent.
+function drawFullFooter(doc: jsPDF, W: number, H: number) {
+  drawFooterBand(doc, W, H)
+
+  const CONTACT_LABEL_Y = H - 64
+  const ICON_ROW_Y = H - 44
+  const SOCIAL_ROW_Y = H - 22
+
+  doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...ACCENT_DARK)
+  doc.text('CONTACT INFORMATION', W / 2, CONTACT_LABEL_Y, { align: 'center' })
+
+  const items: { draw: (cx: number, cy: number, s: number) => void; text: string }[] = [
+    { draw: (cx, cy, s) => drawWhatsAppIcon(doc, cx, cy, s), text: SITE_PHONE_PK },
+    { draw: (cx, cy, s) => drawEmailIcon(doc, cx, cy, s, ACCENT_DARK), text: SITE_EMAIL },
+    { draw: (cx, cy, s) => drawGlobeIcon(doc, cx, cy, s, ACCENT_DARK), text: SITE_WEB },
+  ]
+  const ICON_SIZE = 12
+  const ICON_TEXT_GAP = 6
+  const ITEM_GAP = 28
+  doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...ACCENT_DARK)
+  const widths = items.map(it => ICON_SIZE + ICON_TEXT_GAP + doc.getTextWidth(it.text))
+  const totalW = widths.reduce((a, b) => a + b, 0) + ITEM_GAP * (items.length - 1)
+  let x = (W - totalW) / 2
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i]
+    const iconCx = x + ICON_SIZE / 2
+    it.draw(iconCx, ICON_ROW_Y, ICON_SIZE)
+    doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...ACCENT_DARK)
+    doc.text(it.text, x + ICON_SIZE + ICON_TEXT_GAP, ICON_ROW_Y + 3)
+    x += widths[i] + ITEM_GAP
+  }
+
+  const socials: ((cx: number, cy: number, s: number) => void)[] = [
+    (cx, cy, s) => drawFacebookIcon(doc, cx, cy, s),
+    (cx, cy, s) => drawInstagramIcon(doc, cx, cy, s),
+    (cx, cy, s) => drawXTwitterIcon(doc, cx, cy, s),
+    (cx, cy, s) => drawLinkedInIcon(doc, cx, cy, s),
+    (cx, cy, s) => drawPinterestIcon(doc, cx, cy, s),
+  ]
+  const SOC_SIZE = 13
+  const SOC_GAP = 10
+  const socTotalW = socials.length * SOC_SIZE + (socials.length - 1) * SOC_GAP
+  let sx = (W - socTotalW) / 2 + SOC_SIZE / 2
+  for (const s of socials) {
+    s(sx, SOCIAL_ROW_Y, SOC_SIZE)
+    sx += SOC_SIZE + SOC_GAP
+  }
+}
+
 
 
 
