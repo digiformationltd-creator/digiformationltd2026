@@ -308,6 +308,8 @@ export default function OsOrders() {
     })();
     return orders.filter((o) => {
       if (statusFilter !== "all" && o.status !== statusFilter) return false;
+      if (sourceFilter !== "all" && (o.source || "checkout") !== sourceFilter) return false;
+      if (paymentFilter !== "all" && (o.payment_status || "unpaid") !== paymentFilter) return false;
       if (cutoff) {
         const d = new Date(o.order_date || o.created_at);
         if (d < cutoff) return false;
@@ -321,7 +323,7 @@ export default function OsOrders() {
         (o.invoice_number || "").toLowerCase().includes(q)
       );
     });
-  }, [orders, search, statusFilter, dateRange]);
+  }, [orders, search, statusFilter, sourceFilter, paymentFilter, dateRange]);
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: orders.length };
