@@ -481,7 +481,55 @@ function buildPdf(opts: {
 
 
 
-  // Submitted documents page
+  // Customer & order details page — full structured dump of every form field
+  // the customer filled in, so the invoice is a complete record of the order.
+  if (opts.details && opts.details.length > 0) {
+    doc.addPage()
+    drawHeaderBand(doc, W)
+    drawWatermark(doc, W, H)
+    let dy = M + 30
+    doc.setFont('helvetica', 'bold').setFontSize(26).setTextColor(...ACCENT_DARK)
+    doc.text('Customer & Order Details', M, dy)
+    dy += 10
+    doc.setDrawColor(...ACCENT_DARK).setLineWidth(1.5)
+    doc.line(M, dy, M + 140, dy)
+    dy += 22
+    doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(...SUB)
+    doc.text(`Order Ref: ${opts.orderRef}    Invoice No: ${opts.invoiceNumber}`, M, dy)
+    dy += 22
+
+    const LABEL_W = 180
+    const VAL_W = W - M * 2 - LABEL_W - 12
+    const ROW_PAD = 6
+    for (const d of opts.details) {
+      const labelLines = doc.splitTextToSize(d.label, LABEL_W - 8) as string[]
+      const valueLines = doc.splitTextToSize(d.value || '—', VAL_W) as string[]
+      const rowLines = Math.max(labelLines.length, valueLines.length)
+      const rowH = rowLines * 13 + ROW_PAD * 2
+      if (dy + rowH > H - 90) {
+        drawFooterBand(doc, W, H)
+        doc.addPage(); drawHeaderBand(doc, W); drawWatermark(doc, W, H)
+        dy = M + 30
+        doc.setFont('helvetica', 'bold').setFontSize(20).setTextColor(...ACCENT_DARK)
+        doc.text('Customer & Order Details (continued)', M, dy)
+        dy += 28
+      }
+      // Zebra background
+      doc.setFillColor(248, 249, 251)
+      doc.rect(M, dy, W - M * 2, rowH, 'F')
+      doc.setFont('helvetica', 'bold').setFontSize(9.5).setTextColor(...ACCENT_DARK)
+      labelLines.forEach((ln, i) => doc.text(ln, M + 8, dy + ROW_PAD + 10 + i * 13))
+      doc.setFont('helvetica', 'normal').setFontSize(9.5).setTextColor(...INK)
+      valueLines.forEach((ln, i) => doc.text(ln, M + LABEL_W + 4, dy + ROW_PAD + 10 + i * 13))
+      // Separator
+      doc.setDrawColor(...DIVIDER).setLineWidth(0.3)
+      doc.line(M, dy + rowH, W - M, dy + rowH)
+      dy += rowH
+    }
+    drawFooterBand(doc, W, H)
+  }
+
+
   if (opts.documentLinks && opts.documentLinks.length > 0) {
     doc.addPage()
     drawHeaderBand(doc, W)
