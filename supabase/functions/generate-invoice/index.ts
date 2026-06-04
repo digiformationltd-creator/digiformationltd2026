@@ -68,17 +68,21 @@ function drawHeaderBand(doc: jsPDF, W: number) {
   doc.ellipse(W * 0.28, -28, W * 0.62, 52, 'F')
 }
 
-// Footer: tall curved band rising from bottom — hosts contact info inside.
-// Style preserved (soft-grey accent + dark navy main wave), slightly taller
-// so contact label + icon row sits comfortably on the dark portion in white.
+// Footer: exact mirror of the header design — same two curves (dark navy
+// small curve on right + large soft-grey sweep), just scaled slightly larger
+// to comfortably host the contact info row.
 function drawFooterBand(doc: jsPDF, W: number, H: number) {
-  // Soft-grey accent curve at the top edge of the footer
-  doc.setFillColor(...ACCENT_SOFT)
-  doc.ellipse(W * 0.30, H - 40, W * 0.72, 55, 'F')
-  // Dark navy main wave covering full width — hosts the contact info
+  // Dark navy curve on the right (mirrors header's top-right dark curve) —
+  // kept low so it sits below the contact row.
   doc.setFillColor(...ACCENT_DARK)
-  doc.ellipse(W * 0.55, H + 10, W * 0.90, 78, 'F')
+  doc.ellipse(W * 0.78, H + 30, W * 0.42, 45, 'F')
+  // Large soft-grey curve sweeping across most of the width (mirrors header)
+  doc.setFillColor(...ACCENT_SOFT)
+  doc.ellipse(W * 0.28, H + 28, W * 0.62, 78, 'F')
 }
+
+
+
 
 // ---- Vector contact icons (drawn in white, scalable, no emoji) ----
 function drawPhoneHandset(doc: jsPDF, cx: number, cy: number, s: number, rgb: [number,number,number]) {
@@ -100,11 +104,11 @@ function drawWhatsAppIcon(doc: jsPDF, cx: number, cy: number, s: number) {
   // White handset glyph
   drawPhoneHandset(doc, cx, cy, s * 0.62, [255, 255, 255])
 }
-function drawPhoneIcon(doc: jsPDF, cx: number, cy: number, s: number) {
-  drawPhoneHandset(doc, cx, cy, s * 0.95, [255, 255, 255])
+function drawPhoneIcon(doc: jsPDF, cx: number, cy: number, s: number, rgb: [number,number,number] = [255,255,255]) {
+  drawPhoneHandset(doc, cx, cy, s * 0.95, rgb)
 }
-function drawEmailIcon(doc: jsPDF, cx: number, cy: number, s: number) {
-  doc.setDrawColor(255, 255, 255)
+function drawEmailIcon(doc: jsPDF, cx: number, cy: number, s: number, rgb: [number,number,number] = [255,255,255]) {
+  doc.setDrawColor(...rgb)
   doc.setLineWidth(s * 0.09)
   const w = s, h = s * 0.7
   doc.rect(cx - w / 2, cy - h / 2, w, h)
@@ -112,14 +116,15 @@ function drawEmailIcon(doc: jsPDF, cx: number, cy: number, s: number) {
   doc.line(cx - w / 2, cy - h / 2, cx, cy + h * 0.18)
   doc.line(cx, cy + h * 0.18, cx + w / 2, cy - h / 2)
 }
-function drawGlobeIcon(doc: jsPDF, cx: number, cy: number, s: number) {
-  doc.setDrawColor(255, 255, 255)
+function drawGlobeIcon(doc: jsPDF, cx: number, cy: number, s: number, rgb: [number,number,number] = [255,255,255]) {
+  doc.setDrawColor(...rgb)
   doc.setLineWidth(s * 0.08)
   const r = s / 2
   doc.circle(cx, cy, r)
   doc.line(cx - r, cy, cx + r, cy)
   doc.ellipse(cx, cy, r * 0.42, r)
 }
+
 
 
 
@@ -354,24 +359,26 @@ function buildPdf(opts: {
   // ---- Footer band (drawn first so contact text sits on top of it) ----
   drawFooterBand(doc, W, H)
 
-  // ---- Contact Information inside footer design (white on dark wave) ----
-  const CONTACT_LABEL_Y = H - 62
-  const ICON_ROW_Y = H - 32
-  doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(255, 255, 255)
+  // ---- Contact Information inside footer (dark text on soft-grey wave) ----
+  const CONTACT_LABEL_Y = H - 52
+  const ICON_ROW_Y = H - 28
+
+  doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...ACCENT_DARK)
   doc.text('CONTACT INFORMATION', W / 2, CONTACT_LABEL_Y, { align: 'center' })
 
   // Build icon + text pairs and lay them out centered as a single row.
+  // Outline icons render in ACCENT_DARK to contrast with the soft-grey wave;
+  // WhatsApp keeps its brand green disc with a white handset glyph.
   const items: { draw: (cx: number, cy: number, s: number) => void; text: string }[] = [
     { draw: (cx, cy, s) => drawWhatsAppIcon(doc, cx, cy, s), text: SITE_PHONE_PK },
-    { draw: (cx, cy, s) => drawPhoneIcon(doc, cx, cy, s),    text: SITE_PHONE_PK },
-    { draw: (cx, cy, s) => drawEmailIcon(doc, cx, cy, s),    text: SITE_EMAIL },
-    { draw: (cx, cy, s) => drawGlobeIcon(doc, cx, cy, s),    text: SITE_WEB },
+    { draw: (cx, cy, s) => drawPhoneIcon(doc, cx, cy, s, ACCENT_DARK),    text: SITE_PHONE_PK },
+    { draw: (cx, cy, s) => drawEmailIcon(doc, cx, cy, s, ACCENT_DARK),    text: SITE_EMAIL },
+    { draw: (cx, cy, s) => drawGlobeIcon(doc, cx, cy, s, ACCENT_DARK),    text: SITE_WEB },
   ]
   const ICON_SIZE = 12
   const ICON_TEXT_GAP = 6
   const ITEM_GAP = 22
-  doc.setFont('helvetica', 'normal').setFontSize(8.8).setTextColor(255, 255, 255)
-  // Measure total width
+  doc.setFont('helvetica', 'normal').setFontSize(8.8).setTextColor(...ACCENT_DARK)
   const widths = items.map(it => ICON_SIZE + ICON_TEXT_GAP + doc.getTextWidth(it.text))
   const totalW = widths.reduce((a, b) => a + b, 0) + ITEM_GAP * (items.length - 1)
   let x = (W - totalW) / 2
@@ -379,10 +386,11 @@ function buildPdf(opts: {
     const it = items[i]
     const iconCx = x + ICON_SIZE / 2
     it.draw(iconCx, ICON_ROW_Y, ICON_SIZE)
-    doc.setTextColor(255, 255, 255)
+    doc.setTextColor(...ACCENT_DARK)
     doc.text(it.text, x + ICON_SIZE + ICON_TEXT_GAP, ICON_ROW_Y + 3)
     x += widths[i] + ITEM_GAP
   }
+
 
 
 
