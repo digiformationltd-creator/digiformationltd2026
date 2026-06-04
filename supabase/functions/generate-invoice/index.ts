@@ -57,25 +57,27 @@ function genRefs() {
   }
 }
 
-// Elegant grey/black top bar + thin accent rule
+// Header: mirrored version of the footer — overlapping soft-grey and
+// dark-navy curves arching down from the top edge.
 function drawHeaderBand(doc: jsPDF, W: number) {
+  // Dark navy curve on the right, peeking out from behind
   doc.setFillColor(...ACCENT_DARK)
-  doc.rect(0, 0, W, 8, 'F')
-  doc.setFillColor(...ACCENT_MID)
-  doc.rect(0, 8, W, 2, 'F')
+  doc.ellipse(W * 0.78, -22, W * 0.42, 44, 'F')
+  // Large soft-grey curve sweeping across most of the width
   doc.setFillColor(...ACCENT_SOFT)
-  doc.rect(0, 10, W, 1, 'F')
+  doc.ellipse(W * 0.28, -28, W * 0.62, 52, 'F')
 }
 
-// Matching footer band with subtle waves above for a polished close
+// Footer: matching curved waves rising from the bottom edge.
 function drawFooterBand(doc: jsPDF, W: number, H: number) {
+  // Large soft-grey curve sweeping across most of the width
   doc.setFillColor(...ACCENT_SOFT)
-  doc.ellipse(W * 0.30, H - 30, W * 0.55, 50, 'F')
-  doc.setFillColor(...ACCENT_MID)
-  doc.ellipse(W * 0.82, H - 25, W * 0.40, 42, 'F')
+  doc.ellipse(W * 0.28, H + 28, W * 0.62, 52, 'F')
+  // Dark navy curve overlapping on the right
   doc.setFillColor(...ACCENT_DARK)
-  doc.rect(0, H - 10, W, 10, 'F')
+  doc.ellipse(W * 0.78, H + 22, W * 0.42, 44, 'F')
 }
+
 
 function drawWatermark(doc: jsPDF, W: number, H: number) {
   doc.saveGraphicsState()
