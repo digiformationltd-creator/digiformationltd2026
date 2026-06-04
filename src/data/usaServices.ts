@@ -97,6 +97,13 @@ export const usaServicePages: UsaService[] = [
     metaDescription:
       "Apply for your U.S. ITIN number with Digiformation Ltd. Fast, secure, and IRS-compliant for non-resident LLC owners.",
     keywords: "ITIN number service, US ITIN for non-residents, IRS ITIN application, ITIN processing online",
+    formFields: [
+      { key: "applicant_name", label: "Full Name (as on passport)", required: true },
+      { key: "foreign_address", label: "Foreign Residential Address", type: "textarea", required: true, placeholder: "Full address with country" },
+      { key: "reason", label: "Reason for ITIN", required: true, placeholder: "LLC ownership / U.S. tax filing / other" },
+      { key: "llc_name", label: "LLC Name (if applicable)" },
+      { key: "documents_note", label: "Documents (sent separately)", type: "textarea", placeholder: "Email notarized passport copy and proof of foreign address to info@digiformation.uk after checkout." },
+    ],
   },
   {
     slug: "annual-tax-filing",
