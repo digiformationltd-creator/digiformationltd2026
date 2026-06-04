@@ -75,7 +75,7 @@ const services = [
   { name: "Business Service Address", price: "£60/yr", desc: "Use for company registration & marketing", icon: MapPin, link: "/uk-services/registered-office-address" },
   { name: "Director Service Address", price: "£20/yr", desc: "Address for 1 Director (1 year contract)", icon: UserCog, link: "/uk-services/registered-office-address#director-service" },
   { name: "Confirmation Statement", price: "£80", desc: "Annual confirmation filing with Companies House", icon: FileText, link: "/uk-compliance/confirmation-statement" },
-  { name: "Annual Accounts Filing", price: "From £120", desc: "Annual accounts submission to HMRC", icon: FileText, link: "/uk-compliance/annual-accounts-filing" },
+  { name: "Annual Accounts Filing", price: "From £100", desc: "Annual accounts submission to HMRC", icon: FileText, link: "/uk-compliance/annual-accounts-filing" },
   { name: "Director Appoint / Remove", price: "£10", desc: "Add or remove a director", icon: UserCog, link: "/uk-compliance/director-appoint-remove" },
   { name: "Company Name Change", price: "£30", desc: "Change your registered company name", icon: Building2, link: "/uk-compliance/company-name-change" },
   { name: "Company Address Change", price: "£10", desc: "Update your registered office address", icon: MapPin, link: "/uk-compliance/company-address-change" },

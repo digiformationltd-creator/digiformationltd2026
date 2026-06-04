@@ -87,7 +87,7 @@ export const compliancePages: CompliancePage[] = [
     slug: "annual-accounts-filing",
     title: "Annual Accounts Filing Service",
     hero: "File Your UK Company Annual Accounts On Time",
-    price: "From £120",
+    price: "From £100",
     eyebrow: "UK Compliance",
     overview: [
       "Preparation of statutory annual accounts",

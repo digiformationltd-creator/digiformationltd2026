@@ -169,7 +169,7 @@ export const insights: Insight[] = [
             ["ECCTA verification (1 officer)", "30", "45", "60"],
             ["Confirmation statement", "34", "34", "34"],
             ["Bookkeeping (micro)", "0", "180", "360"],
-            ["Annual accounts", "0", "120", "300"],
+            ["Annual accounts", "0", "100", "300"],
             ["Total", "£172", "£646", "£1,183"],
           ],
         },
