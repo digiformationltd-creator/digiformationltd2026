@@ -921,11 +921,93 @@ const AddressField = ({ label, value, onChange, type = "text" }: { label: string
 
 const ClientOrdersSection = ({ rows, onBrowse }: { rows: any[]; onBrowse: () => void }) => {
   const fmt = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n || 0);
-  if (rows.length === 0) return <EmptyState icon={ShoppingBag} title="No orders yet" description="Your service orders will appear here automatically once placed." action={<Button variant="hero" className="rounded-full" onClick={onBrowse}>Place First Order</Button>} />;
-  return <div className="space-y-3"><p className="text-sm opacity-70">Your orders are generated automatically from service requests.</p>{rows.map((o) => <div key={o.id} className="glass rounded-xl p-4 flex items-center justify-between gap-3 flex-wrap"><div><div className="text-[10px] uppercase tracking-wider opacity-50 mb-0.5">Order #</div><div className="font-mono font-semibold text-primary">{o.order_ref || "Reference pending"}</div><div className="text-sm">{o.service}</div><div className="text-xs opacity-60">{o.order_date} • {fmt(Number(o.amount_gbp))}</div></div><StatusBadge status={o.status} /></div>)}</div>;
+const ORDER_STAGES = [
+  { key: "confirmed", label: "Confirmed", match: ["new", "confirm", "received", "pending"] },
+  { key: "processing", label: "In Progress", match: ["progress", "processing", "start"] },
+  { key: "completed", label: "Completed", match: ["complete", "delivered", "done"] },
+];
+const stageIndex = (status: string) => {
+  const s = (status || "").toLowerCase();
+  if (s.includes("cancel")) return -1;
+  if (ORDER_STAGES[2].match.some((m) => s.includes(m))) return 2;
+  if (ORDER_STAGES[1].match.some((m) => s.includes(m))) return 1;
+  return 0;
 };
 
-const ClientSubscriptionsSection = ({ rows, onBrowse }: { rows: any[]; onBrowse: () => void }) => {
+const ClientOrdersSection = ({ rows, onBrowse }: { rows: any[]; onBrowse: () => void }) => {
+  const fmt = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n || 0);
+  const [selected, setSelected] = useState<any | null>(null);
+  if (rows.length === 0) return <EmptyState icon={ShoppingBag} title="No orders yet" description="Your service orders will appear here automatically once placed." action={<Button variant="hero" className="rounded-full" onClick={onBrowse}>Place First Order</Button>} />;
+  return (
+    <div className="space-y-3">
+      <p className="text-sm opacity-70">Tap an order to view its progress and details.</p>
+      {rows.map((o) => (
+        <button
+          key={o.id}
+          type="button"
+          onClick={() => setSelected(o)}
+          className="w-full text-left glass rounded-xl p-4 flex items-center justify-between gap-3 flex-wrap hover:bg-white/5 transition"
+        >
+          <div>
+            <div className="text-[10px] uppercase tracking-wider opacity-50 mb-0.5">Order #</div>
+            <div className="font-mono font-semibold text-primary">{o.order_ref || "Reference pending"}</div>
+            <div className="text-sm">{o.service}</div>
+            <div className="text-xs opacity-60">{o.order_date} • {fmt(Number(o.amount_gbp))}</div>
+          </div>
+          <StatusBadge status={o.status} />
+        </button>
+      ))}
+      <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
+        <DialogContent className="max-w-md">
+          {selected && (() => {
+            const idx = stageIndex(selected.status);
+            const cancelled = idx < 0;
+            return (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="font-mono text-primary">{selected.order_ref || "Order"}</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <div className="text-sm font-semibold">{selected.service}</div>
+                    {selected.package_name && <div className="text-xs opacity-70">{selected.package_name}</div>}
+                    <div className="text-xs opacity-60 mt-1">{selected.order_date} • {fmt(Number(selected.amount_gbp))}</div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="text-[11px] uppercase tracking-wider opacity-60">Progress</div>
+                    {cancelled ? (
+                      <div className="rounded-lg bg-rose-500/10 text-rose-300 px-3 py-2 text-sm ring-1 ring-rose-400/30">This order has been cancelled.</div>
+                    ) : (
+                      <div className="space-y-2">
+                        {ORDER_STAGES.map((stage, i) => {
+                          const done = i < idx;
+                          const active = i === idx;
+                          return (
+                            <div key={stage.key} className="flex items-center gap-3">
+                              {done ? <CheckCircle2 className="w-5 h-5 text-emerald-400" /> : active ? <Clock className="w-5 h-5 text-amber-400" /> : <Circle className="w-5 h-5 opacity-40" />}
+                              <span className={done ? "text-emerald-200" : active ? "text-amber-200 font-medium" : "opacity-50"}>{stage.label}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                  {selected.notes && (
+                    <div>
+                      <div className="text-[11px] uppercase tracking-wider opacity-60 mb-1">Notes</div>
+                      <div className="text-sm opacity-80 whitespace-pre-wrap">{selected.notes}</div>
+                    </div>
+                  )}
+                  <div className="text-xs opacity-60">Current status: <StatusBadge status={selected.status} /></div>
+                </div>
+              </>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
   const fmt = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n || 0);
   const fmtDate = (d: string | null) => d ? new Date(d).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—";
   if (rows.length === 0) return <EmptyState icon={CalendarDays} title="No active subscriptions" description="Recurring services like address renewals will appear here automatically." action={<Button variant="hero" className="rounded-full" onClick={onBrowse}>Browse Services</Button>} />;
