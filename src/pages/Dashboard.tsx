@@ -919,8 +919,6 @@ const AddressField = ({ label, value, onChange, type = "text" }: { label: string
   </div>
 );
 
-const ClientOrdersSection = ({ rows, onBrowse }: { rows: any[]; onBrowse: () => void }) => {
-  const fmt = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n || 0);
 const ORDER_STAGES = [
   { key: "confirmed", label: "Confirmed", match: ["new", "confirm", "received", "pending"] },
   { key: "processing", label: "In Progress", match: ["progress", "processing", "start"] },
