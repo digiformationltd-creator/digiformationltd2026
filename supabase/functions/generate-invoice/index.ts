@@ -98,12 +98,31 @@ function drawPhoneHandset(doc: jsPDF, cx: number, cy: number, s: number, rgb: [n
   doc.circle(cx + ox, cy + ox, s * 0.17, 'F')
 }
 function drawWhatsAppIcon(doc: jsPDF, cx: number, cy: number, s: number) {
-  // Official brand green disc
-  doc.setFillColor(37, 211, 102)
-  doc.circle(cx, cy, s / 2, 'F')
-  // White handset glyph
-  drawPhoneHandset(doc, cx, cy, s * 0.62, [255, 255, 255])
+  // Official-style WhatsApp mark: green speech bubble outline with phone handset inside.
+  const green: [number, number, number] = [37, 211, 102]
+  const r = s / 2
+  const stroke = s * 0.11
+  // Speech-bubble circle (outline only, white interior to keep footer bg showing through)
+  doc.setDrawColor(...green)
+  doc.setLineWidth(stroke)
+  doc.setLineCap?.('round' as any)
+  doc.setLineJoin?.('round' as any)
+  doc.circle(cx, cy, r - stroke / 2)
+  // Tail (small triangle pointing down-left)
+  const tx = cx - r * 0.55, ty = cy + r * 0.55
+  doc.setFillColor(...green)
+  doc.triangle(
+    tx, ty,
+    tx + s * 0.22, ty - s * 0.05,
+    tx + s * 0.05, ty + s * 0.22,
+    'F'
+  )
+  // Mask the inside of the tail base with white so it reads as outline
+  // (skip — keeps look clean enough at small size)
+  // Handset glyph in green
+  drawPhoneHandset(doc, cx, cy - s * 0.02, s * 0.5, green)
 }
+
 function drawPhoneIcon(doc: jsPDF, cx: number, cy: number, s: number, rgb: [number,number,number] = [255,255,255]) {
   drawPhoneHandset(doc, cx, cy, s * 0.95, rgb)
 }
