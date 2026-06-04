@@ -102,11 +102,11 @@ function drawWhatsAppIcon(doc: jsPDF, cx: number, cy: number, s: number) {
   // White handset glyph
   drawPhoneHandset(doc, cx, cy, s * 0.62, [255, 255, 255])
 }
-function drawPhoneIcon(doc: jsPDF, cx: number, cy: number, s: number) {
-  drawPhoneHandset(doc, cx, cy, s * 0.95, [255, 255, 255])
+function drawPhoneIcon(doc: jsPDF, cx: number, cy: number, s: number, rgb: [number,number,number] = [255,255,255]) {
+  drawPhoneHandset(doc, cx, cy, s * 0.95, rgb)
 }
-function drawEmailIcon(doc: jsPDF, cx: number, cy: number, s: number) {
-  doc.setDrawColor(255, 255, 255)
+function drawEmailIcon(doc: jsPDF, cx: number, cy: number, s: number, rgb: [number,number,number] = [255,255,255]) {
+  doc.setDrawColor(...rgb)
   doc.setLineWidth(s * 0.09)
   const w = s, h = s * 0.7
   doc.rect(cx - w / 2, cy - h / 2, w, h)
@@ -114,14 +114,15 @@ function drawEmailIcon(doc: jsPDF, cx: number, cy: number, s: number) {
   doc.line(cx - w / 2, cy - h / 2, cx, cy + h * 0.18)
   doc.line(cx, cy + h * 0.18, cx + w / 2, cy - h / 2)
 }
-function drawGlobeIcon(doc: jsPDF, cx: number, cy: number, s: number) {
-  doc.setDrawColor(255, 255, 255)
+function drawGlobeIcon(doc: jsPDF, cx: number, cy: number, s: number, rgb: [number,number,number] = [255,255,255]) {
+  doc.setDrawColor(...rgb)
   doc.setLineWidth(s * 0.08)
   const r = s / 2
   doc.circle(cx, cy, r)
   doc.line(cx - r, cy, cx + r, cy)
   doc.ellipse(cx, cy, r * 0.42, r)
 }
+
 
 
 
