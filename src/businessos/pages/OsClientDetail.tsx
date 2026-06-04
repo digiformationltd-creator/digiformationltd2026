@@ -108,7 +108,7 @@ export default function OsClientDetail() {
       {tab === "company"       && <CompanyTab userId={userId} />}
       {tab === "addresses"     && <AddressesTab userId={userId} />}
       {tab === "orders"        && <OrdersTab userId={userId} email={profile?.email} />}
-      {tab === "invoices"      && <InvoicesTab userId={userId} />}
+      {tab === "invoices"      && <InvoicesTab userId={userId} email={profile?.email} />}
       {tab === "documents"     && <DocumentsTab userId={userId} email={profile?.email} name={profile?.full_name} />}
       {tab === "wallet"        && <WalletTab userId={userId} />}
       {tab === "subscriptions" && <SubscriptionsTab userId={userId} />}
