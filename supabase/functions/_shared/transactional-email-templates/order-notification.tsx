@@ -51,7 +51,7 @@ const OrderNotificationEmail = ({
 }: Props) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>New order: {service || 'Digiformation'}</Preview>
+    <Preview>{`New order from ${customerName || customerEmail || 'a customer'} — ${service || 'Digiformation'}`}</Preview>
     <Body style={main}>
       <Container style={container}>
         <Heading style={h1}>🛒 New order received</Heading>
