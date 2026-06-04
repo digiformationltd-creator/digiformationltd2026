@@ -95,6 +95,10 @@ const Checkout = () => {
         }]
       : undefined;
 
+    const isConfirmationStatement =
+      catalogEntry.complianceItemId === "cs" ||
+      catalogEntry.slug === "confirmation-statement";
+
     return (
       <Layout>
         <CheckoutFlow
@@ -109,6 +113,9 @@ const Checkout = () => {
           notesPlaceholder="Share any details we'll need to fulfil your order..."
           fixedPackageName={catalogEntry.name}
           extraSections={extraSection}
+          showDateOfBirth={!isConfirmationStatement}
+          hideBusinessActivity={isConfirmationStatement}
+          hideAddress={isConfirmationStatement}
         />
       </Layout>
     );

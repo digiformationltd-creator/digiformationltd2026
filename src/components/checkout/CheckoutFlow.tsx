@@ -127,6 +127,8 @@ export type CheckoutFlowProps = {
   showProofOfAddress?: boolean;
   /** Show a "Date of birth" field (used for IDV) */
   showDateOfBirth?: boolean;
+  /** Hide the entire residential address block (used for compliance filings) */
+  hideAddress?: boolean;
   /** Show a "Passport number" field (used for IDV) */
   showPassportNumber?: boolean;
   /** Show a "Website" field (used for banks) */
@@ -195,6 +197,7 @@ const CheckoutFlow = ({
   showSeparateWhatsapp = false,
   whatsappContactLabel = "WhatsApp contact number",
   whatsappContactPlaceholder = "+44 ... or +1 ...",
+  hideAddress = false,
   extras,
   extraSections,
 }: CheckoutFlowProps) => {
@@ -379,12 +382,12 @@ const CheckoutFlow = ({
         /\S+@\S+\.\S+/.test(form.email) &&
         form.whatsapp.trim().length >= 5 &&
         (!showSeparateWhatsapp || form.whatsapp_contact.trim().length >= 5) &&
-        form.country.trim().length >= 2 &&
-        form.nationality.trim().length >= 2 &&
-        form.address_line1.trim().length >= 3 &&
-        form.address_line2.trim().length >= 2 &&
-        form.city.trim().length >= 2 &&
-        form.postal_code.trim().length >= 3 &&
+        (hideAddress || form.country.trim().length >= 2) &&
+        (hideAddress || form.nationality.trim().length >= 2) &&
+        (hideAddress || form.address_line1.trim().length >= 3) &&
+        (hideAddress || form.address_line2.trim().length >= 2) &&
+        (hideAddress || form.city.trim().length >= 2) &&
+        (hideAddress || form.postal_code.trim().length >= 3) &&
         (!showBusinessType || form.business_type.trim().length >= 2) &&
         (hideBusinessActivity || form.business_category.trim().length > 0) &&
         (hideBusinessActivity || (form.business_category === "Other"
@@ -437,14 +440,15 @@ const CheckoutFlow = ({
     const lines = selectedItems
       .map((i) => `• ${i.name} — ${formatMoney(i.price, currency)}`)
       .join("\n");
-    const addressBlock =
-      `\nResidential address:\n` +
-      `${form.address_line1}\n` +
-      `${form.address_line2}\n` +
-      `${form.city}${form.state ? `, ${form.state}` : ""}, ${form.postal_code}\n` +
-      `${form.country}\n` +
-      `Nationality: ${form.nationality}\n` +
-      (showBusinessType && form.business_type ? `\nBusiness type: ${form.business_type}\n` : "");
+    const addressBlock = hideAddress
+      ? ""
+      : `\nResidential address:\n` +
+        `${form.address_line1}\n` +
+        `${form.address_line2}\n` +
+        `${form.city}${form.state ? `, ${form.state}` : ""}, ${form.postal_code}\n` +
+        `${form.country}\n` +
+        `Nationality: ${form.nationality}\n` +
+        (showBusinessType && form.business_type ? `\nBusiness type: ${form.business_type}\n` : "");
 
     const serviceModeLabel =
       serviceMode === "ltd-only"
@@ -996,66 +1000,67 @@ const CheckoutFlow = ({
                   )}
                 </div>
 
-                {/* Residential address */}
-                <div className="rounded-2xl border border-border/40 p-4 md:p-5 space-y-4">
-                  <div>
-                    <h3 className="font-semibold">Residential home address</h3>
-                    <p className="text-xs opacity-70 mt-1">Used for verification and on official documents.</p>
-                  </div>
-                  <Field
-                    label="Address line 1 (house no., street)"
-                    value={form.address_line1}
-                    onChange={(v) => setForm({ ...form, address_line1: v })}
-                    required
-                    minLength={3}
-                  />
-                  <Field
-                    label="Address line 2 (area, road)"
-                    value={form.address_line2}
-                    onChange={(v) => setForm({ ...form, address_line2: v })}
-                    required
-                    minLength={2}
-                  />
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <Field label="City" value={form.city} onChange={(v) => setForm({ ...form, city: v })} required minLength={2} />
-                    <Field label="State / Province (optional)" value={form.state} onChange={(v) => setForm({ ...form, state: v })} />
-                  </div>
-                  <Field label="Postal code" value={form.postal_code} onChange={(v) => setForm({ ...form, postal_code: v })} required minLength={3} />
-                  <div className="grid sm:grid-cols-2 gap-4">
+                {!hideAddress && (
+                  <div className="rounded-2xl border border-border/40 p-4 md:p-5 space-y-4">
                     <div>
-                      <label className="block text-sm font-medium mb-1.5">
-                        Country of residence <span className="text-destructive">*</span>
-                      </label>
-                      <select
-                        value={form.country}
-                        onChange={(e) => setForm({ ...form, country: e.target.value })}
-                        required
-                        className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
-                      >
-                        <option value="">Select your country…</option>
-                        {COUNTRIES.map((c) => (
-                          <option key={c} value={c}>{c}</option>
-                        ))}
-                      </select>
+                      <h3 className="font-semibold">Residential home address</h3>
+                      <p className="text-xs opacity-70 mt-1">Used for verification and on official documents.</p>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-1.5">
-                        Nationality <span className="text-destructive">*</span>
-                      </label>
-                      <select
-                        value={form.nationality}
-                        onChange={(e) => setForm({ ...form, nationality: e.target.value })}
-                        required
-                        className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
-                      >
-                        <option value="">Select your nationality…</option>
-                        {COUNTRIES.map((c) => (
-                          <option key={c} value={c}>{c}</option>
-                        ))}
-                      </select>
+                    <Field
+                      label="Address line 1 (house no., street)"
+                      value={form.address_line1}
+                      onChange={(v) => setForm({ ...form, address_line1: v })}
+                      required
+                      minLength={3}
+                    />
+                    <Field
+                      label="Address line 2 (area, road)"
+                      value={form.address_line2}
+                      onChange={(v) => setForm({ ...form, address_line2: v })}
+                      required
+                      minLength={2}
+                    />
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <Field label="City" value={form.city} onChange={(v) => setForm({ ...form, city: v })} required minLength={2} />
+                      <Field label="State / Province (optional)" value={form.state} onChange={(v) => setForm({ ...form, state: v })} />
+                    </div>
+                    <Field label="Postal code" value={form.postal_code} onChange={(v) => setForm({ ...form, postal_code: v })} required minLength={3} />
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-1.5">
+                          Country of residence <span className="text-destructive">*</span>
+                        </label>
+                        <select
+                          value={form.country}
+                          onChange={(e) => setForm({ ...form, country: e.target.value })}
+                          required
+                          className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+                        >
+                          <option value="">Select your country…</option>
+                          {COUNTRIES.map((c) => (
+                            <option key={c} value={c}>{c}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1.5">
+                          Nationality <span className="text-destructive">*</span>
+                        </label>
+                        <select
+                          value={form.nationality}
+                          onChange={(e) => setForm({ ...form, nationality: e.target.value })}
+                          required
+                          className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+                        >
+                          <option value="">Select your nationality…</option>
+                          {COUNTRIES.map((c) => (
+                            <option key={c} value={c}>{c}</option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 {showBusinessType && (
                   <Field
@@ -1282,16 +1287,20 @@ const CheckoutFlow = ({
                     <ReviewLine label="Email" value={form.email} />
                     <ReviewLine label={whatsappLabel} value={form.whatsapp} />
                     {showSeparateWhatsapp && <ReviewLine label={whatsappContactLabel} value={form.whatsapp_contact} />}
-                    <ReviewLine label="Country of residence" value={form.country} />
-                    <ReviewLine label="Nationality" value={form.nationality} />
+                    {!hideAddress && <ReviewLine label="Country of residence" value={form.country} />}
+                    {!hideAddress && <ReviewLine label="Nationality" value={form.nationality} />}
                   </dl>
-                  <div className="text-sm font-semibold mt-4 mb-1">Address</div>
-                  <p className="text-sm opacity-85 whitespace-pre-wrap">
-                    {form.address_line1}
-                    {form.address_line2 ? `\n${form.address_line2}` : ""}
-                    {`\n${form.city}, ${form.postal_code}`}
-                    {`\n${form.country}`}
-                  </p>
+                  {!hideAddress && (
+                    <>
+                      <div className="text-sm font-semibold mt-4 mb-1">Address</div>
+                      <p className="text-sm opacity-85 whitespace-pre-wrap">
+                        {form.address_line1}
+                        {form.address_line2 ? `\n${form.address_line2}` : ""}
+                        {`\n${form.city}, ${form.postal_code}`}
+                        {`\n${form.country}`}
+                      </p>
+                    </>
+                  )}
                   {showBusinessType && form.business_type && (
                     <>
                       <div className="text-sm font-semibold mt-3 mb-1">Business type</div>
