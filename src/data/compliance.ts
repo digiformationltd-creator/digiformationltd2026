@@ -296,11 +296,16 @@ export const complianceItemFormFields: Record<string, { title: string; fields: C
   aa: {
     title: "Annual Accounts Filing",
     fields: [
-      ...baseCompanyFields,
-      { key: "aa_company_name", label: "Company Name", required: true },
-      { key: "aa_utr", label: "UTR Number", required: true },
-      { key: "aa_period", label: "Accounting Period", required: true, placeholder: "e.g. 01/04/2024 – 31/03/2025" },
-      { key: "aa_financials", label: "Business Financial Statement", type: "textarea", required: true, placeholder: "Income, expenses, profit/loss, bank balance for the full year" },
+      { key: "aa_company_number", label: "Company Number (CRN)", placeholder: "e.g. 12345678", required: true },
+      { key: "aa_auth_code", label: "Company Authentication Code", placeholder: "6-character code from Companies House", required: true },
+      {
+        key: "aa_financials",
+        label: "Business Financial Statement",
+        type: "textarea",
+        required: false,
+        placeholder: "Income, expenses, budget — full year figures, bookkeeping details and expenses sheet. If you prefer, email these details to info@digiformation.uk",
+        description: "Share income, expenses, budget (full year figures), bookkeeping details and expenses sheet. You can also send these by email to info@digiformation.uk",
+      },
     ],
   },
   name: {
