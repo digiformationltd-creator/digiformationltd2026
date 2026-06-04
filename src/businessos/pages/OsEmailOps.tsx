@@ -344,7 +344,7 @@ export default function OsEmailOps() {
         <div className="px-4 py-3 border-b border-white/5 text-sm font-semibold flex items-center gap-2">
           <Ban className="w-4 h-4" /> Suppression list ({suppressed.length})
         </div>
-        <div className="overflow-x-auto max-h-[280px] overflow-y-auto">
+        <div className="overflow-x-auto max-h-[280px] overflow-y-auto hidden md:block">
           <table className="w-full text-sm">
             <thead className="text-xs text-white/50 bg-white/[0.02] sticky top-0">
               <tr>
@@ -367,6 +367,17 @@ export default function OsEmailOps() {
             </tbody>
           </table>
         </div>
+        <div className="md:hidden divide-y divide-white/5 max-h-[280px] overflow-y-auto">
+          {suppressed.length === 0 && <div className="p-6 text-center text-white/40 text-xs">No suppressed emails</div>}
+          {suppressed.map(s => (
+            <div key={s.id} className="p-3 space-y-1">
+              <div className="text-xs font-semibold break-all">{s.email}</div>
+              <div className="text-[11px] text-white/60">{s.reason}</div>
+              <div className="text-[10px] text-white/40 mono">{new Date(s.created_at).toLocaleString()}</div>
+            </div>
+          ))}
+        </div>
+
       </div>
     </div>
   );
