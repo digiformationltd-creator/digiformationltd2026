@@ -182,6 +182,16 @@ export const usaServicePages: UsaService[] = [
     metaDescription:
       "File your U.S. LLC BOI report accurately with Digiformation Ltd. Digital confirmation and full compliance guaranteed.",
     keywords: "BOI report service, Beneficial ownership report USA, LLC compliance filing, BOI report submission",
+    formFields: [
+      { key: "llc_name", label: "LLC Name", required: true },
+      { key: "ein", label: "EIN", required: true },
+      { key: "state", label: "State of Formation", required: true },
+      { key: "owner_name", label: "Beneficial Owner Full Name", required: true },
+      { key: "owner_dob", label: "Beneficial Owner Date of Birth", required: true, placeholder: "DD/MM/YYYY" },
+      { key: "owner_address", label: "Beneficial Owner Residential Address", type: "textarea", required: true },
+      { key: "applicant_details", label: "Company Applicant Details (if formed after 2024)", type: "textarea" },
+      { key: "documents_note", label: "Documents (sent separately)", type: "textarea", placeholder: "Email passport or government-issued ID copy to info@digiformation.uk after checkout." },
+    ],
   },
 ];
 
