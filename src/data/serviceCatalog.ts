@@ -14,7 +14,7 @@
  * - Never create an order with £0 when the service has a defined price.
  * - The /contact form is reserved for genuine "talk to us" enquiries only.
  */
-import { compliancePages } from "./compliance";
+import { compliancePages, type ComplianceFormField } from "./compliance";
 import { usaServicePages } from "./usaServices";
 import { banking } from "./navigation";
 
