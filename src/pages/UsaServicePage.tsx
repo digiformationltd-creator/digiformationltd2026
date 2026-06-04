@@ -176,7 +176,7 @@ const UsaServicePage = () => {
           <h2 className="text-4xl md:text-5xl font-bold mb-4">Apply for {page.title.replace(" Service", "")}</h2>
           <p className="opacity-80 mb-8">Service fee <span className="text-gradient font-bold">${page.price} {page.currency}</span> — turnaround {page.turnaround}. We handle the filing end-to-end and keep you updated.</p>
           <Button asChild variant="hero" size="lg" className="rounded-full">
-            <Link to={`/checkout?title=${encodeURIComponent(page.title)}&service=${encodeURIComponent(page.title)}`}>Apply Now <ArrowRight className="w-4 h-4" /></Link>
+            <Link to={`/checkout?service=${encodeURIComponent(page.slug)}&title=${encodeURIComponent(page.title)}`}>Apply Now — ${page.price} <ArrowRight className="w-4 h-4" /></Link>
           </Button>
         </div>
       </section>
