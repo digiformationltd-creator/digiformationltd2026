@@ -24,6 +24,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { buildOrderRef } from "@/lib/orderRef";
 import { COUNTRIES } from "@/lib/countries";
+import { normalizePhoneToE164 } from "@/lib/phone";
 import { SearchableCountrySelect } from "./SearchableCountrySelect";
 import exampleHoldingSelfie from "@/assets/example-holding-selfie.jpg";
 import exampleIdFront from "@/assets/example-id-front.jpg";
