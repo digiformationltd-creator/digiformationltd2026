@@ -360,8 +360,9 @@ function buildPdf(opts: {
   drawFooterBand(doc, W, H)
 
   // ---- Contact Information inside footer (dark text on soft-grey wave) ----
-  const CONTACT_LABEL_Y = H - 44
-  const ICON_ROW_Y = H - 20
+  const CONTACT_LABEL_Y = H - 52
+  const ICON_ROW_Y = H - 28
+
   doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...ACCENT_DARK)
   doc.text('CONTACT INFORMATION', W / 2, CONTACT_LABEL_Y, { align: 'center' })
 
