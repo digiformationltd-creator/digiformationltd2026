@@ -745,6 +745,7 @@ const webDevPackages: DetailPkg[] = [
     note: "E-commerce Setup",
     tone: "from-rose-500/25 to-rose-500/5",
     ring: "ring-rose-400/60",
+    link: "/checkout?service=web-ecommerce-shopify",
     features: [
       "Free domain included",
       "Shopify trial arranged from our end",
@@ -764,6 +765,7 @@ const webDevPackages: DetailPkg[] = [
     note: "Website Package",
     tone: "from-emerald-500/20 to-emerald-500/5",
     ring: "ring-emerald-500/40",
+    link: "/checkout?service=web-react-basic",
     features: [
       "4-page React website (Home, About, Services, Contact)",
       "Basic logo design with 1 revision",
@@ -781,6 +783,7 @@ const webDevPackages: DetailPkg[] = [
     note: "Website Package",
     tone: "from-sky-500/25 to-sky-500/5",
     ring: "ring-sky-400/60",
+    link: "/checkout?service=web-react-standard",
     features: [
       "6-page React website",
       "Enhanced logo design (2 concepts, 3 revisions)",
@@ -801,6 +804,7 @@ const webDevPackages: DetailPkg[] = [
     note: "Website Package",
     tone: "from-amber-400/25 to-amber-400/5",
     ring: "ring-amber-400/60",
+    link: "/checkout?service=web-react-premium",
     features: [
       "10-page React website",
       "Comprehensive logo package (3 concepts, unlimited revisions)",
@@ -822,6 +826,7 @@ const webDevPackages: DetailPkg[] = [
     note: "E-Commerce Website Package",
     tone: "from-fuchsia-500/25 to-fuchsia-500/5",
     ring: "ring-fuchsia-400/60",
+    link: "/checkout?service=web-react-ecommerce-basic",
     features: [
       "Multi-page React website (Home, Shop, About, Services, Contact)",
       "Product catalog (image, title, price, short description)",
