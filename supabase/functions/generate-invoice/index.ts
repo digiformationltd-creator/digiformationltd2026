@@ -431,6 +431,8 @@ Deno.serve(async (req) => {
         customer_whatsapp: body.customer.whatsapp ?? null,
         notes: body.notes ?? null,
         amount_mismatch: amountMismatch,
+        source: 'checkout',
+        payment_status: 'unpaid',
       })
       .select('id')
       .single()
