@@ -1250,7 +1250,7 @@ const CheckoutFlow = ({
                               }
                               window.open(liveSelfieLink, "_blank", "noopener,noreferrer");
                               setVerificationLinkRequested(true);
-                              toast({ title: "Verification link opened", description: "Complete all 3 steps on the link, then come back to continue your order." });
+                              toast({ title: "Verification link opened", description: "Complete both steps on the link, then come back to continue your order." });
                             }}
                             className="w-full inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-primary text-primary-foreground font-bold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                           >
