@@ -472,6 +472,7 @@ const ukLtdPackages: DetailPkg[] = [
     note: "3–5 Business Days",
     tone: "from-emerald-500/20 to-emerald-500/5",
     ring: "ring-emerald-500/40",
+    link: "/uk-services/uk-ltd-formation/choose-jurisdiction?package=Starter",
     features: [
       "UK LTD (Company) Registration",
       "Companies House Incorporation Fee Included",
@@ -489,6 +490,7 @@ const ukLtdPackages: DetailPkg[] = [
     badge: "Most Popular",
     tone: "from-sky-500/25 to-sky-500/5",
     ring: "ring-sky-400/60",
+    link: "/uk-services/uk-ltd-formation/choose-jurisdiction?package=Silver",
     features: [
       "UK LTD (Company) Registration",
       "Companies House Incorporation Fee Included",
@@ -506,6 +508,7 @@ const ukLtdPackages: DetailPkg[] = [
     price: "£180",
     tone: "from-amber-400/25 to-amber-400/5",
     ring: "ring-amber-400/50",
+    link: "/uk-services/uk-ltd-formation/choose-jurisdiction?package=Gold",
     features: [
       "UK LTD (Company) Registration",
       "Companies House Incorporation Fee Included",
@@ -524,6 +527,7 @@ const ukLtdPackages: DetailPkg[] = [
     price: "£200",
     tone: "from-rose-500/25 to-rose-500/5",
     ring: "ring-rose-400/50",
+    link: "/uk-services/uk-ltd-formation/choose-jurisdiction?package=Platinum",
     features: [
       "UK LTD (Company) Registration",
       "Companies House Incorporation Fee Included",
