@@ -58,6 +58,7 @@ const COMPLIANCE_ENTRIES: CatalogEntry[] = compliancePages.map((p) => ({
   price: num(p.price),
   currency: "GBP",
   category: "UK Compliance",
+  formFields: p.formFields,
 }));
 
 const USA_ENTRIES: CatalogEntry[] = usaServicePages.map((p) => ({
@@ -67,6 +68,7 @@ const USA_ENTRIES: CatalogEntry[] = usaServicePages.map((p) => ({
   price: p.price,
   currency: "USD",
   category: "USA Services",
+  formFields: p.formFields,
 }));
 
 const BANKING_ENTRIES: CatalogEntry[] = banking.map((b) => {
