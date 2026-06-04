@@ -15,6 +15,8 @@ const SENDER_DOMAIN = "notify.help.digiformation.uk"
 // When display_from_root is enabled, this can be the root domain for cleaner branding,
 // even though actual sending uses the subdomain above.
 const FROM_DOMAIN = "digiformation.uk"
+// FROM_EMAIL is the full address shown to recipients in the From: header.
+const FROM_EMAIL = `info@${FROM_DOMAIN}`
 
 // Generate a cryptographically random 32-byte hex token
 function generateToken(): string {
