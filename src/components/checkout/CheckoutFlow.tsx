@@ -1000,66 +1000,67 @@ const CheckoutFlow = ({
                   )}
                 </div>
 
-                {/* Residential address */}
-                <div className="rounded-2xl border border-border/40 p-4 md:p-5 space-y-4">
-                  <div>
-                    <h3 className="font-semibold">Residential home address</h3>
-                    <p className="text-xs opacity-70 mt-1">Used for verification and on official documents.</p>
-                  </div>
-                  <Field
-                    label="Address line 1 (house no., street)"
-                    value={form.address_line1}
-                    onChange={(v) => setForm({ ...form, address_line1: v })}
-                    required
-                    minLength={3}
-                  />
-                  <Field
-                    label="Address line 2 (area, road)"
-                    value={form.address_line2}
-                    onChange={(v) => setForm({ ...form, address_line2: v })}
-                    required
-                    minLength={2}
-                  />
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <Field label="City" value={form.city} onChange={(v) => setForm({ ...form, city: v })} required minLength={2} />
-                    <Field label="State / Province (optional)" value={form.state} onChange={(v) => setForm({ ...form, state: v })} />
-                  </div>
-                  <Field label="Postal code" value={form.postal_code} onChange={(v) => setForm({ ...form, postal_code: v })} required minLength={3} />
-                  <div className="grid sm:grid-cols-2 gap-4">
+                {!hideAddress && (
+                  <div className="rounded-2xl border border-border/40 p-4 md:p-5 space-y-4">
                     <div>
-                      <label className="block text-sm font-medium mb-1.5">
-                        Country of residence <span className="text-destructive">*</span>
-                      </label>
-                      <select
-                        value={form.country}
-                        onChange={(e) => setForm({ ...form, country: e.target.value })}
-                        required
-                        className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
-                      >
-                        <option value="">Select your country…</option>
-                        {COUNTRIES.map((c) => (
-                          <option key={c} value={c}>{c}</option>
-                        ))}
-                      </select>
+                      <h3 className="font-semibold">Residential home address</h3>
+                      <p className="text-xs opacity-70 mt-1">Used for verification and on official documents.</p>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-1.5">
-                        Nationality <span className="text-destructive">*</span>
-                      </label>
-                      <select
-                        value={form.nationality}
-                        onChange={(e) => setForm({ ...form, nationality: e.target.value })}
-                        required
-                        className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
-                      >
-                        <option value="">Select your nationality…</option>
-                        {COUNTRIES.map((c) => (
-                          <option key={c} value={c}>{c}</option>
-                        ))}
-                      </select>
+                    <Field
+                      label="Address line 1 (house no., street)"
+                      value={form.address_line1}
+                      onChange={(v) => setForm({ ...form, address_line1: v })}
+                      required
+                      minLength={3}
+                    />
+                    <Field
+                      label="Address line 2 (area, road)"
+                      value={form.address_line2}
+                      onChange={(v) => setForm({ ...form, address_line2: v })}
+                      required
+                      minLength={2}
+                    />
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <Field label="City" value={form.city} onChange={(v) => setForm({ ...form, city: v })} required minLength={2} />
+                      <Field label="State / Province (optional)" value={form.state} onChange={(v) => setForm({ ...form, state: v })} />
+                    </div>
+                    <Field label="Postal code" value={form.postal_code} onChange={(v) => setForm({ ...form, postal_code: v })} required minLength={3} />
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-1.5">
+                          Country of residence <span className="text-destructive">*</span>
+                        </label>
+                        <select
+                          value={form.country}
+                          onChange={(e) => setForm({ ...form, country: e.target.value })}
+                          required
+                          className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+                        >
+                          <option value="">Select your country…</option>
+                          {COUNTRIES.map((c) => (
+                            <option key={c} value={c}>{c}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1.5">
+                          Nationality <span className="text-destructive">*</span>
+                        </label>
+                        <select
+                          value={form.nationality}
+                          onChange={(e) => setForm({ ...form, nationality: e.target.value })}
+                          required
+                          className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+                        >
+                          <option value="">Select your nationality…</option>
+                          {COUNTRIES.map((c) => (
+                            <option key={c} value={c}>{c}</option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 {showBusinessType && (
                   <Field
