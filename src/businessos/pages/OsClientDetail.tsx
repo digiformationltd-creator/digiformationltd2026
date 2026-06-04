@@ -357,31 +357,55 @@ function OrdersTab({ userId, email }: { userId: string; email?: string | null })
         <span className="text-white/60">{rows.length} order{rows.length === 1 ? "" : "s"} · Qty {rows.length}</span>
         <span className="font-semibold">Total: {fmtGBP(total)}</span>
       </div>
-      {rows.map((o) => (
-        <button key={o.id} onClick={() => setOpenId(o.id)} className="os-glass p-3 w-full text-left hover:bg-white/[0.04]">
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[10px] uppercase tracking-wider text-white/40">Order #</span>
-                <span className="font-mono text-xs text-white/90">{o.order_ref || "Reference pending"}</span>
-                {!o.user_id && <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-200">guest</span>}
+      {rows.map((o) => {
+        const cancelled = (o.status || "").toLowerCase().includes("cancel");
+        const cancelOrder = async (e: React.MouseEvent) => {
+          e.stopPropagation();
+          if (cancelled) return;
+          if (!window.confirm(`Cancel order ${o.order_ref || ""}? This cannot be undone from here.`)) return;
+          const { error } = await supabase.from("client_orders").update({ status: "Cancelled" }).eq("id", o.id);
+          if (error) { toast.error(error.message); return; }
+          toast.success("Order cancelled");
+          load();
+        };
+        return (
+          <div key={o.id} className="os-glass p-3 hover:bg-white/[0.04]">
+            <button onClick={() => setOpenId(o.id)} className="w-full text-left">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[10px] uppercase tracking-wider text-white/40">Order #</span>
+                    <span className="font-mono text-xs text-white/90">{o.order_ref || "Reference pending"}</span>
+                    {!o.user_id && <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-200">guest</span>}
+                  </div>
+                  <div className="text-sm font-semibold truncate mt-0.5">{o.service}</div>
+                  <div className="text-[11px] text-white/50 mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
+                    <span>Qty 1</span>
+                    <span>{fmtDate(o.order_date)}</span>
+                    {o.customer_email && <span className="truncate">{o.customer_email}</span>}
+                    {o.customer_whatsapp && <span>{o.customer_whatsapp}</span>}
+                    <span>{invCounts[o.id] || 0} invoice{(invCounts[o.id] || 0) === 1 ? "" : "s"}</span>
+                  </div>
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="font-bold">{fmtGBP(Number(o.amount_gbp))}</div>
+                  <div className={`text-[10px] mt-1 px-2 py-0.5 rounded-full ring-1 inline-block ${statusTone(o.status)}`}>{o.status}</div>
+                </div>
               </div>
-              <div className="text-sm font-semibold truncate mt-0.5">{o.service}</div>
-              <div className="text-[11px] text-white/50 mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
-                <span>Qty 1</span>
-                <span>{fmtDate(o.order_date)}</span>
-                {o.customer_email && <span className="truncate">{o.customer_email}</span>}
-                {o.customer_whatsapp && <span>{o.customer_whatsapp}</span>}
-                <span>{invCounts[o.id] || 0} invoice{(invCounts[o.id] || 0) === 1 ? "" : "s"}</span>
-              </div>
-            </div>
-            <div className="text-right shrink-0">
-              <div className="font-bold">{fmtGBP(Number(o.amount_gbp))}</div>
-              <div className={`text-[10px] mt-1 px-2 py-0.5 rounded-full ring-1 inline-block ${statusTone(o.status)}`}>{o.status}</div>
+            </button>
+            <div className="mt-2 pt-2 border-t border-white/5 flex justify-end">
+              <button
+                onClick={cancelOrder}
+                disabled={cancelled}
+                className="px-2.5 py-1 rounded-md text-[11px] font-semibold inline-flex items-center gap-1 bg-rose-500/10 hover:bg-rose-500/20 ring-1 ring-rose-400/30 text-rose-200 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <Trash2 className="w-3 h-3" />
+                {cancelled ? "Cancelled" : "Cancel order"}
+              </button>
             </div>
           </div>
-        </button>
-      ))}
+        );
+      })}
       <OsOrderDrawer orderId={openId} open={!!openId} onClose={() => setOpenId(null)} onChanged={load} />
     </div>
   );
