@@ -121,6 +121,15 @@ export default function MobileNav() {
           </NavLink>
         </nav>
 
+        <div className="shrink-0 px-3 py-3 border-t border-white/5">
+          <button
+            onClick={handleLogout}
+            className="os-nav-item w-full text-left hover:bg-red-500/10 hover:text-red-400 transition-colors"
+          >
+            <LogOut className="w-4 h-4 shrink-0" />
+            <span className="truncate">Logout</span>
+          </button>
+        </div>
         <div className="shrink-0 px-5 py-4 border-t border-white/5 text-[11px] text-white/40">
           v1.0 · {new Date().getFullYear()}
         </div>
