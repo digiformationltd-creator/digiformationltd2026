@@ -1180,7 +1180,30 @@ const CheckoutFlow = ({
                                 {f.label}{" "}
                                 {f.required && <span className="text-destructive">*</span>}
                               </label>
-                              {f.type === "textarea" ? (
+                              {f.type === "mail-action" ? (
+                                <div className="space-y-2">
+                                  <a
+                                    href={`mailto:${f.email}${f.subject ? `?subject=${encodeURIComponent(f.subject)}` : ""}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={() => setExtraField(f.key, new Date().toISOString())}
+                                    className={`inline-flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl border-2 text-sm font-semibold transition ${
+                                      extra[f.key]
+                                        ? "bg-primary/10 border-primary text-primary"
+                                        : "bg-primary text-primary-foreground border-primary hover:opacity-90"
+                                    }`}
+                                  >
+                                    {extra[f.key]
+                                      ? `✓ Email opened — you can continue`
+                                      : `Email documents to ${f.email}`}
+                                  </a>
+                                  {extra[f.key] && (
+                                    <p className="text-xs text-primary font-medium">
+                                      Great — send the documents from your mail app, then continue to place your order.
+                                    </p>
+                                  )}
+                                </div>
+                              ) : f.type === "textarea" ? (
                                 <textarea
                                   value={extra[f.key] || ""}
                                   onChange={(e) => setExtraField(f.key, e.target.value)}
