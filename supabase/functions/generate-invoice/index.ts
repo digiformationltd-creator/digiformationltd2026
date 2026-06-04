@@ -43,10 +43,11 @@ const SITE_EMAIL = 'info@digiformation.uk'
 const SITE_WEB = 'www.digiformation.uk'
 const INK: [number, number, number] = [20, 20, 20]
 const SUB: [number, number, number] = [90, 90, 90]
-const HEADER_BG: [number, number, number] = [225, 225, 225]
-const DIVIDER: [number, number, number] = [215, 215, 215]
-const WAVE_LIGHT: [number, number, number] = [205, 208, 212]
-const WAVE_DARK: [number, number, number] = [70, 75, 82]
+const HEADER_BG: [number, number, number] = [240, 240, 240]
+const DIVIDER: [number, number, number] = [220, 220, 220]
+const ACCENT_DARK: [number, number, number] = [35, 38, 42]
+const ACCENT_MID: [number, number, number] = [120, 124, 130]
+const ACCENT_SOFT: [number, number, number] = [200, 204, 210]
 
 function genRefs() {
   const stamp = Date.now().toString(36).toUpperCase()
@@ -56,13 +57,24 @@ function genRefs() {
   }
 }
 
-function drawWaves(doc: jsPDF, W: number, H: number) {
-  doc.setFillColor(...WAVE_LIGHT)
-  doc.ellipse(W * 0.32, H + 30, W * 0.55, 110, 'F')
-  doc.setFillColor(...WAVE_DARK)
-  doc.ellipse(W * 0.85, H + 20, W * 0.45, 95, 'F')
-  doc.setFillColor(...WAVE_LIGHT)
-  doc.ellipse(W * 0.55, H + 50, W * 0.35, 70, 'F')
+// Elegant grey/black top bar + thin accent rule
+function drawHeaderBand(doc: jsPDF, W: number) {
+  doc.setFillColor(...ACCENT_DARK)
+  doc.rect(0, 0, W, 8, 'F')
+  doc.setFillColor(...ACCENT_MID)
+  doc.rect(0, 8, W, 2, 'F')
+  doc.setFillColor(...ACCENT_SOFT)
+  doc.rect(0, 10, W, 1, 'F')
+}
+
+// Matching footer band with subtle waves above for a polished close
+function drawFooterBand(doc: jsPDF, W: number, H: number) {
+  doc.setFillColor(...ACCENT_SOFT)
+  doc.ellipse(W * 0.30, H - 30, W * 0.55, 50, 'F')
+  doc.setFillColor(...ACCENT_MID)
+  doc.ellipse(W * 0.82, H - 25, W * 0.40, 42, 'F')
+  doc.setFillColor(...ACCENT_DARK)
+  doc.rect(0, H - 10, W, 10, 'F')
 }
 
 function drawWatermark(doc: jsPDF, W: number, H: number) {
@@ -71,9 +83,10 @@ function drawWatermark(doc: jsPDF, W: number, H: number) {
   const GState = (doc as any).GState
   if (GState) {
     // @ts-ignore
-    doc.setGState(new GState({ opacity: 0.07 }))
+    doc.setGState(new GState({ opacity: 0.05 }))
   }
-  doc.setFont('helvetica', 'bold').setFontSize(78).setTextColor(40, 40, 40)
+  // Smaller, subtle watermark — full brand name still legible
+  doc.setFont('helvetica', 'bold').setFontSize(46).setTextColor(60, 60, 60)
   doc.text('DIGIFORMATION LTD', W / 2, H / 2, { align: 'center', angle: 30 })
   doc.restoreGraphicsState()
 }
@@ -93,31 +106,40 @@ function buildPdf(opts: {
   const doc = new jsPDF({ unit: 'pt', format: 'a4' })
   const W = doc.internal.pageSize.getWidth()
   const H = doc.internal.pageSize.getHeight()
-  const M = 56
+  const M = 48
   const sym = opts.currency === 'USD' ? '$' : '£'
   const fmt = (n: number) => `${sym}${n.toFixed(2)}`
 
+  drawHeaderBand(doc, W)
   drawWatermark(doc, W, H)
 
-  // ---- Header: Logo + Invoice No ----
+  // ---- Header: large logo flush to top-left ----
+  const LOGO_SIZE = 150
+  const logoY = 24
   try {
-    doc.addImage(`data:image/png;base64,${LOGO_PNG_BASE64}`, 'PNG', M, M, 110, 110, undefined, 'FAST')
+    doc.addImage(`data:image/png;base64,${LOGO_PNG_BASE64}`, 'PNG', M, logoY, LOGO_SIZE, LOGO_SIZE, undefined, 'FAST')
   } catch (_) {
-    doc.setFont('helvetica', 'bold').setFontSize(11).setTextColor(...INK)
-    doc.text('DIGIFORMATION', M, M + 20)
-    doc.text('LTD', M, M + 34)
+    doc.setFont('helvetica', 'bold').setFontSize(18).setTextColor(...INK)
+    doc.text('DIGIFORMATION', M, logoY + 40)
+    doc.text('LTD', M, logoY + 62)
   }
-  doc.setFont('helvetica', 'normal').setFontSize(11).setTextColor(...INK)
-  doc.text(`NO. ${opts.invoiceNumber}`, W - M, M + 20, { align: 'right' })
+  // Invoice number — top right
+  doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(...SUB)
+  doc.text('INVOICE NO.', W - M, logoY + 28, { align: 'right' })
+  doc.setFont('helvetica', 'bold').setFontSize(13).setTextColor(...INK)
+  doc.text(opts.invoiceNumber, W - M, logoY + 46, { align: 'right' })
 
   // ---- Title ----
-  doc.setFont('helvetica', 'bold').setFontSize(58).setTextColor(...INK)
-  doc.text('INVOICE', M, M + 160)
+  doc.setFont('helvetica', 'bold').setFontSize(54).setTextColor(...ACCENT_DARK)
+  doc.text('INVOICE', M, logoY + LOGO_SIZE + 50)
+  // Accent rule under title
+  doc.setDrawColor(...ACCENT_DARK).setLineWidth(2)
+  doc.line(M, logoY + LOGO_SIZE + 58, M + 90, logoY + LOGO_SIZE + 58)
 
-  let y = M + 220
+  let y = logoY + LOGO_SIZE + 90
 
   // Date
-  doc.setFont('helvetica', 'bold').setFontSize(11).setTextColor(...INK)
+  doc.setFont('helvetica', 'bold').setFontSize(10.5).setTextColor(...INK)
   doc.text('Date:', M, y)
   doc.setFont('helvetica', 'normal').setTextColor(...SUB)
   doc.text(formatLongDate(opts.issueDate), M + 50, y)
@@ -125,49 +147,52 @@ function buildPdf(opts: {
   doc.text('Order Ref:', W / 2 + 10, y)
   doc.setFont('helvetica', 'normal').setTextColor(...SUB)
   doc.text(opts.orderRef, W / 2 + 80, y)
-  y += 36
+  y += 30
 
   // Billed To / From
   const c = opts.customer
   const colR = W / 2 + 10
-  doc.setFont('helvetica', 'bold').setFontSize(11).setTextColor(...INK)
-  doc.text('Billed to:', M, y)
-  doc.text('From:', colR, y)
+  doc.setFont('helvetica', 'bold').setFontSize(10.5).setTextColor(...ACCENT_DARK)
+  doc.text('BILLED TO', M, y)
+  doc.text('FROM', colR, y)
+  doc.setDrawColor(...ACCENT_SOFT).setLineWidth(0.6)
+  doc.line(M, y + 4, M + 60, y + 4)
+  doc.line(colR, y + 4, colR + 40, y + 4)
 
-  let ly = y + 16
-  doc.setFont('helvetica', 'normal').setFontSize(10.5).setTextColor(...SUB)
-  doc.text(c.full_name || '—', M, ly); ly += 14
-  if (c.email) { doc.text(c.email, M, ly); ly += 14 }
-  if (c.whatsapp) { doc.text(`WhatsApp: ${c.whatsapp}`, M, ly); ly += 14 }
+  let ly = y + 18
+  doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(...SUB)
+  doc.text(c.full_name || '—', M, ly); ly += 13
+  if (c.email) { doc.text(c.email, M, ly); ly += 13 }
+  if (c.whatsapp) { doc.text(`WhatsApp: ${c.whatsapp}`, M, ly); ly += 13 }
   const addrParts = [c.address_line1, c.address_line2, [c.city, c.state, c.postal_code].filter(Boolean).join(', '), c.country].filter(Boolean) as string[]
   const billedAddr = addrParts.length ? addrParts.join(', ') : (c.address || '')
   if (billedAddr) {
     const wrapped = doc.splitTextToSize(billedAddr, W / 2 - M - 20) as string[]
-    for (const w of wrapped) { doc.text(w, M, ly); ly += 14 }
+    for (const w of wrapped) { doc.text(w, M, ly); ly += 13 }
   }
 
-  let ry = y + 16
-  doc.text(SITE_NAME, colR, ry); ry += 14
-  doc.text(SITE_WEB, colR, ry); ry += 14
-  doc.text(SITE_EMAIL, colR, ry); ry += 14
-  doc.text(`UK: ${SITE_PHONE}`, colR, ry); ry += 14
-  doc.text(`PK: ${SITE_PHONE_PK}`, colR, ry); ry += 14
+  let ry = y + 18
+  doc.text(SITE_NAME, colR, ry); ry += 13
+  doc.text(SITE_WEB, colR, ry); ry += 13
+  doc.text(SITE_EMAIL, colR, ry); ry += 13
+  doc.text(`UK: ${SITE_PHONE}`, colR, ry); ry += 13
+  doc.text(`PK: ${SITE_PHONE_PK}`, colR, ry); ry += 13
 
   y = Math.max(ly, ry) + 24
 
-  // Items table
-  doc.setFillColor(...HEADER_BG)
-  doc.rect(M, y, W - M * 2, 30, 'F')
-  doc.setFont('helvetica', 'normal').setFontSize(11).setTextColor(...INK)
+  // Items table — dark header band, professional grey/black palette
+  doc.setFillColor(...ACCENT_DARK)
+  doc.rect(M, y, W - M * 2, 32, 'F')
+  doc.setFont('helvetica', 'bold').setFontSize(10.5).setTextColor(255, 255, 255)
   const colItem = M + 14
   const colQty = W * 0.55
   const colPrice = W * 0.72
   const colAmt = W - M - 14
-  doc.text('Item', colItem, y + 20)
-  doc.text('Quantity', colQty, y + 20, { align: 'center' })
-  doc.text('Price', colPrice, y + 20, { align: 'center' })
-  doc.text('Amount', colAmt, y + 20, { align: 'right' })
-  y += 30
+  doc.text('ITEM', colItem, y + 20)
+  doc.text('QTY', colQty, y + 20, { align: 'center' })
+  doc.text('PRICE', colPrice, y + 20, { align: 'center' })
+  doc.text('AMOUNT', colAmt, y + 20, { align: 'right' })
+  y += 32
 
   const desc = opts.packageName ? `${opts.service} — ${opts.packageName}` : opts.service
   const wrapped = doc.splitTextToSize(desc, (colQty - colItem) - 30) as string[]
@@ -180,43 +205,59 @@ function buildPdf(opts: {
   y += rowH
 
   doc.setDrawColor(...DIVIDER).setLineWidth(0.6).line(M, y, W - M, y)
+  y += 16
+
+  // Total bar
+  doc.setFillColor(...HEADER_BG)
+  doc.rect(W * 0.55 - 10, y - 6, W - M - (W * 0.55 - 10), 28, 'F')
+  doc.setFont('helvetica', 'bold').setFontSize(12).setTextColor(...ACCENT_DARK)
+  doc.text('TOTAL', colPrice, y + 12, { align: 'center' })
+  doc.text(fmt(opts.amount), colAmt, y + 12, { align: 'right' })
+  y += 40
+
+  // Note — wider area, more room for long notes
+  doc.setFont('helvetica', 'bold').setFontSize(10.5).setTextColor(...ACCENT_DARK)
+  doc.text('NOTE', M, y)
+  doc.setDrawColor(...ACCENT_SOFT).setLineWidth(0.6)
+  doc.line(M, y + 4, M + 32, y + 4)
   y += 18
-
-  doc.setFont('helvetica', 'bold').setFontSize(12).setTextColor(...INK)
-  doc.text('Total', colPrice, y + 4, { align: 'center' })
-  doc.text(fmt(opts.amount), colAmt, y + 4, { align: 'right' })
-  y += 32
-
-  doc.setDrawColor(...DIVIDER).setLineWidth(0.6).line(M, y, W - M, y)
-  y += 28
-
-  // Note
-  doc.setFont('helvetica', 'bold').setFontSize(11).setTextColor(...INK)
-  doc.text('Note:', M, y)
-  doc.setFont('helvetica', 'normal').setTextColor(...SUB)
+  doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(...SUB)
   const note = (opts.notes && opts.notes.trim())
     ? opts.notes
     : `Thank you for choosing ${SITE_NAME}. Payment is due within 7 days of invoice date.`
-  const noteLines = doc.splitTextToSize(note, W - M * 2 - 50) as string[]
-  doc.text(noteLines, M + 42, y)
-  y += noteLines.length * 14 + 22
+  // Full-width note area, with line spacing and clipping just above the footer
+  const noteMaxWidth = W - M * 2
+  const noteLines = doc.splitTextToSize(note, noteMaxWidth) as string[]
+  const noteBottomLimit = H - 180
+  const lineHeight = 14
+  let noteY = y
+  for (const ln of noteLines) {
+    if (noteY > noteBottomLimit) break
+    doc.text(ln, M, noteY)
+    noteY += lineHeight
+  }
+  y = noteY + 16
 
   // Signature
-  const sigY = H - 160
-  doc.setFont('times', 'italic').setFontSize(20).setTextColor(...INK)
+  const sigY = H - 130
+  doc.setFont('times', 'italic').setFontSize(22).setTextColor(...ACCENT_DARK)
   doc.text('Digiformation', M, sigY)
-  doc.setDrawColor(...INK).setLineWidth(0.5).line(M, sigY + 6, M + 140, sigY + 6)
+  doc.setDrawColor(...ACCENT_DARK).setLineWidth(0.6).line(M, sigY + 6, M + 150, sigY + 6)
   doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...INK)
   doc.text(SITE_NAME, M, sigY + 20)
+  doc.setFont('helvetica', 'normal').setFontSize(8.5).setTextColor(...SUB)
+  doc.text('Authorised Signatory', M, sigY + 32)
 
-  drawWaves(doc, W, H)
+  drawFooterBand(doc, W, H)
+
 
   // Submitted documents page
   if (opts.documentLinks && opts.documentLinks.length > 0) {
     doc.addPage()
+    drawHeaderBand(doc, W)
     drawWatermark(doc, W, H)
     let dy = M + 30
-    doc.setFont('helvetica', 'bold').setFontSize(28).setTextColor(...INK)
+    doc.setFont('helvetica', 'bold').setFontSize(28).setTextColor(...ACCENT_DARK)
     doc.text('Submitted Documents', M, dy)
     dy += 26
     doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(...SUB)
@@ -233,9 +274,9 @@ function buildPdf(opts: {
       doc.setFont('helvetica', 'bold').setFontSize(10).setTextColor(16, 100, 200)
       doc.textWithLink('▼ Download', W - M - 90, dy + 36, { url: d.url })
       dy += 72
-      if (dy > H - 200) { doc.addPage(); drawWatermark(doc, W, H); dy = M + 30 }
+      if (dy > H - 200) { doc.addPage(); drawHeaderBand(doc, W); drawWatermark(doc, W, H); dy = M + 30 }
     }
-    drawWaves(doc, W, H)
+    drawFooterBand(doc, W, H)
   }
 
   return doc.output('arraybuffer') as ArrayBuffer
