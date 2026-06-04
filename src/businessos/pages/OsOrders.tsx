@@ -9,7 +9,7 @@ import { generateInvoiceNumber, SERVICE_CODES } from "@/lib/invoice";
 import {
   Search, RefreshCw, Loader2, ChevronRight, ShoppingBag,
   ExternalLink, Filter, CheckCircle2, Clock, Truck, RotateCcw, XCircle, Hourglass,
-  FileText, Mail, User, PoundSterling, Play, Ban, Send, FilePlus,
+  FileText, Mail, User, PoundSterling, Play, Ban, Send, FilePlus, MessageSquare, Wallet,
 } from "lucide-react";
 
 interface OrderRow {
