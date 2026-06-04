@@ -6,6 +6,13 @@ import { supabase } from "@/integrations/supabase/client";
 
 export default function Sidebar() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/auth", { replace: true });
+  };
+
   return (
     <aside className="os-sidebar-bg hidden md:flex w-[260px] shrink-0 border-r border-white/5 h-screen sticky top-0 flex-col">
       <div className="px-4 py-4 border-b border-white/5">
