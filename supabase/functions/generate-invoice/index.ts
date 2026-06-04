@@ -354,15 +354,36 @@ function buildPdf(opts: {
   // ---- Footer band (drawn first so contact text sits on top of it) ----
   drawFooterBand(doc, W, H)
 
-  // ---- Contact Information inside footer design ----
-  // The tall soft-grey wave reaches up to ~H-65. Place label + strip on it.
-  const CONTACT_LABEL_Y = H - 50
-  const CONTACT_Y = H - 32
-  doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...ACCENT_DARK)
+  // ---- Contact Information inside footer design (white on dark wave) ----
+  const CONTACT_LABEL_Y = H - 62
+  const ICON_ROW_Y = H - 32
+  doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(255, 255, 255)
   doc.text('CONTACT INFORMATION', W / 2, CONTACT_LABEL_Y, { align: 'center' })
-  doc.setFont('helvetica', 'normal').setFontSize(8.5).setTextColor(...INK)
-  const contacts = `WhatsApp: ${SITE_PHONE_PK}   |   Phone: ${SITE_PHONE_PK}   |   Email: ${SITE_EMAIL}   |   Web: ${SITE_WEB}`
-  doc.text(contacts, W / 2, CONTACT_Y, { align: 'center' })
+
+  // Build icon + text pairs and lay them out centered as a single row.
+  const items: { draw: (cx: number, cy: number, s: number) => void; text: string }[] = [
+    { draw: (cx, cy, s) => drawWhatsAppIcon(doc, cx, cy, s), text: SITE_PHONE_PK },
+    { draw: (cx, cy, s) => drawPhoneIcon(doc, cx, cy, s),    text: SITE_PHONE_PK },
+    { draw: (cx, cy, s) => drawEmailIcon(doc, cx, cy, s),    text: SITE_EMAIL },
+    { draw: (cx, cy, s) => drawGlobeIcon(doc, cx, cy, s),    text: SITE_WEB },
+  ]
+  const ICON_SIZE = 12
+  const ICON_TEXT_GAP = 6
+  const ITEM_GAP = 22
+  doc.setFont('helvetica', 'normal').setFontSize(8.8).setTextColor(255, 255, 255)
+  // Measure total width
+  const widths = items.map(it => ICON_SIZE + ICON_TEXT_GAP + doc.getTextWidth(it.text))
+  const totalW = widths.reduce((a, b) => a + b, 0) + ITEM_GAP * (items.length - 1)
+  let x = (W - totalW) / 2
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i]
+    const iconCx = x + ICON_SIZE / 2
+    it.draw(iconCx, ICON_ROW_Y, ICON_SIZE)
+    doc.setTextColor(255, 255, 255)
+    doc.text(it.text, x + ICON_SIZE + ICON_TEXT_GAP, ICON_ROW_Y + 3)
+    x += widths[i] + ITEM_GAP
+  }
+
 
 
 
