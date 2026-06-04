@@ -117,8 +117,12 @@ const OrderNotificationEmail = ({
 export const template = {
   component: OrderNotificationEmail,
   to: BUSINESS_EMAIL,
-  subject: (d: Record<string, any>) =>
-    `New order — ${d.service || 'Digiformation'}${d.packageName ? ` (${d.packageName})` : ''}`,
+  subject: (d: Record<string, any>) => {
+    const who = (d.customerName && String(d.customerName).trim()) || d.customerEmail || 'New customer'
+    const svc = d.service || 'Digiformation'
+    const ref = d.orderRef ? ` [${d.orderRef}]` : ''
+    return `New order from ${who} — ${svc}${d.packageName ? ` (${d.packageName})` : ''}${ref}`
+  },
   displayName: 'Order notification (business)',
   previewData: {
     customerName: 'Jane Doe',
