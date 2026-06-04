@@ -1278,12 +1278,11 @@ const CheckoutFlow = ({
                       ) : (
                         <div className="rounded-xl bg-primary/15 border border-primary/40 p-4 space-y-2">
                           <div className="flex items-center gap-2 text-primary font-semibold text-sm">
-                            <CheckCircle2 className="w-5 h-5" /> Link sent to your email
+                            <CheckCircle2 className="w-5 h-5" /> Verification link opened
                           </div>
                           <p className="text-xs opacity-85 leading-relaxed">
-                            Open the link from <span className="font-semibold">{form.email}</span>, complete all 3 steps,
-                            then send us a screenshot of the success page on <span className="font-semibold">WhatsApp</span> or reply to our email.
-                            You can now continue to review your order.
+                            Complete all <span className="font-semibold">3 steps</span> on the verification link and upload the requested documents (live selfie, passport/ID and email confirmation).
+                            Once done, the <span className="font-semibold">Continue</span> button below will be enabled — then continue to review and place your order.
                           </p>
                           <button
                             type="button"
