@@ -551,6 +551,7 @@ const usaLlcPackages: DetailPkg[] = [
     note: "Base price — state surcharge may apply",
     tone: "from-emerald-500/20 to-emerald-500/5",
     ring: "ring-emerald-500/40",
+    link: "/usa-services/us-llc-formation/choose-state?package=Starter",
     features: [
       "U.S. LLC Registration",
       "Shared Business Address (no portal, no mail support)",
@@ -567,6 +568,7 @@ const usaLlcPackages: DetailPkg[] = [
     badge: "Most Popular",
     tone: "from-sky-500/25 to-sky-500/5",
     ring: "ring-sky-400/60",
+    link: "/usa-services/us-llc-formation/choose-state?package=Silver",
     features: [
       "U.S. LLC Registration",
       "Unique Business Address (with portal access & mail support)",
@@ -582,6 +584,7 @@ const usaLlcPackages: DetailPkg[] = [
     price: "£400",
     tone: "from-amber-400/25 to-amber-400/5",
     ring: "ring-amber-400/50",
+    link: "/usa-services/us-llc-formation/choose-state?package=Gold",
     features: [
       "U.S. LLC Registration",
       "Unique Business Address (with portal access & mail support)",
@@ -603,6 +606,7 @@ const addressPackages: DetailPkg[] = [
     note: "1 Year Contract",
     tone: "from-emerald-500/20 to-emerald-500/5",
     ring: "ring-emerald-500/40",
+    link: "/checkout?service=registered-office-address",
     features: [
       "Unique Office Number with Address",
       "Use address for registration of 1 Company/Business",
@@ -621,6 +625,7 @@ const addressPackages: DetailPkg[] = [
     note: "1 Year Contract",
     tone: "from-sky-500/25 to-sky-500/5",
     ring: "ring-sky-400/60",
+    link: "/checkout?service=business-service-address",
     features: [
       "Unique Office Number with Address",
       "Use for registration of 1 Company/Business",
@@ -638,6 +643,7 @@ const addressPackages: DetailPkg[] = [
     note: "1 Year Contract",
     tone: "from-amber-400/25 to-amber-400/5",
     ring: "ring-amber-400/50",
+    link: "/checkout?service=director-service-address",
     features: [
       "Unique Office Number with Address",
       "Use address for 1 Director",
