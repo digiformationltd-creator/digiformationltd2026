@@ -232,7 +232,9 @@ function buildPdf(opts: {
   // Full-width note area, with line spacing and clipping just above the footer
   const noteMaxWidth = W - M * 2
   const noteLines = doc.splitTextToSize(note, noteMaxWidth) as string[]
-  const noteBottomLimit = H - 180
+  // Reserve space for payment details + contact + signature + footer band
+  const paymentBlockTop = H - 330
+  const noteBottomLimit = paymentBlockTop - 20
   const lineHeight = 14
   let noteY = y
   for (const ln of noteLines) {
@@ -240,104 +242,89 @@ function buildPdf(opts: {
     doc.text(ln, M, noteY)
     noteY += lineHeight
   }
-  y = noteY + 16
 
-  // Signature
-  const sigY = H - 130
-  doc.setFont('times', 'italic').setFontSize(22).setTextColor(...ACCENT_DARK)
-  doc.text('Digiformation', M, sigY)
-  doc.setDrawColor(...ACCENT_DARK).setLineWidth(0.6).line(M, sigY + 6, M + 150, sigY + 6)
-  doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...INK)
-  doc.text(SITE_NAME, M, sigY + 20)
-  doc.setFont('helvetica', 'normal').setFontSize(8.5).setTextColor(...SUB)
-  doc.text('Authorised Signatory', M, sigY + 32)
-
-  drawFooterBand(doc, W, H)
-
-  // ---------- Payment Details page ----------
-  doc.addPage()
-  drawHeaderBand(doc, W)
-  drawWatermark(doc, W, H)
-  let py = M + 30
-  doc.setFont('helvetica', 'bold').setFontSize(28).setTextColor(...ACCENT_DARK)
+  // ---------- Payment Details (inline, 3 columns) ----------
+  let py = paymentBlockTop
+  doc.setFont('helvetica', 'bold').setFontSize(13).setTextColor(...ACCENT_DARK)
   doc.text('Payment Details', M, py)
-  doc.setDrawColor(...ACCENT_DARK).setLineWidth(2)
-  doc.line(M, py + 8, M + 90, py + 8)
-  py += 30
-  doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(...SUB)
-  doc.text('Please use any of the bank accounts below to settle this invoice.', M, py)
-  py += 22
+  doc.setDrawColor(...ACCENT_DARK).setLineWidth(1.2)
+  doc.line(M, py + 4, M + 70, py + 4)
+  py += 14
 
   const banks: { title: string; lines: [string, string][] }[] = [
     {
-      title: 'United Kingdom — Clear Bank',
+      title: 'UK — Clear Bank',
       lines: [
-        ['Account Title', 'Muhammad Haroon'],
-        ['Account Number', '12863656'],
-        ['Sort Code', '04-28-12'],
+        ['Title', 'Muhammad Haroon'],
+        ['Acct', '12863656'],
+        ['Sort', '04-28-12'],
         ['IBAN', 'GB20CLRB04281286365680'],
-        ['BIC / SWIFT', 'CLRBGB22XXX'],
+        ['SWIFT', 'CLRBGB22XXX'],
       ],
     },
     {
-      title: 'United States — JP Morgan Chase NA',
+      title: 'USA — JP Morgan Chase',
       lines: [
-        ['Account Title', 'Muhammad Haroon'],
-        ['Account Number', '30000002945251'],
-        ['Routing Number', '028000024'],
-        ['Account Type', 'Checking (Current)'],
+        ['Title', 'Muhammad Haroon'],
+        ['Acct', '30000002945251'],
+        ['Routing', '028000024'],
+        ['Type', 'Checking'],
       ],
     },
     {
-      title: 'Pakistan — UBL (United Bank Limited)',
+      title: 'Pakistan — UBL',
       lines: [
-        ['Account Title', 'Muhammad Haroon'],
-        ['Account Number', '1482314848734'],
+        ['Title', 'Muhammad Haroon'],
+        ['Acct', '1482314848734'],
         ['IBAN', 'PK21UNIL0109000314848734'],
       ],
     },
   ]
 
-  for (const b of banks) {
-    const blockH = 28 + b.lines.length * 16 + 14
+  const usable = W - M * 2
+  const gap = 8
+  const colW = (usable - gap * 2) / 3
+  const blockH = 130
+  banks.forEach((b, i) => {
+    const x = M + i * (colW + gap)
     doc.setFillColor(...HEADER_BG)
-    doc.rect(M, py, W - M * 2, blockH, 'F')
+    doc.rect(x, py, colW, blockH, 'F')
     doc.setFillColor(...ACCENT_DARK)
-    doc.rect(M, py, 4, blockH, 'F')
-    doc.setFont('helvetica', 'bold').setFontSize(12).setTextColor(...ACCENT_DARK)
-    doc.text(b.title, M + 16, py + 20)
-    let ly2 = py + 40
+    doc.rect(x, py, 3, blockH, 'F')
+    doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...ACCENT_DARK)
+    doc.text(b.title, x + 8, py + 14)
+    let ly = py + 28
     for (const [k, v] of b.lines) {
-      doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(...SUB)
-      doc.text(`${k}:`, M + 16, ly2)
-      doc.setFont('helvetica', 'bold').setFontSize(10).setTextColor(...INK)
-      doc.text(v, M + 150, ly2)
-      ly2 += 16
+      doc.setFont('helvetica', 'normal').setFontSize(7.5).setTextColor(...SUB)
+      doc.text(`${k}:`, x + 8, ly)
+      doc.setFont('helvetica', 'bold').setFontSize(7.5).setTextColor(...INK)
+      const vLines = doc.splitTextToSize(v, colW - 40) as string[]
+      doc.text(vLines, x + 36, ly)
+      ly += 12 * vLines.length
     }
-    py += blockH + 14
-  }
+  })
+  py += blockH + 12
 
   // Contact Us strip
-  py += 6
-  doc.setFont('helvetica', 'bold').setFontSize(14).setTextColor(...ACCENT_DARK)
+  doc.setFont('helvetica', 'bold').setFontSize(11).setTextColor(...ACCENT_DARK)
   doc.text('Contact Us', M, py)
-  doc.setDrawColor(...ACCENT_DARK).setLineWidth(1.4)
-  doc.line(M, py + 6, M + 60, py + 6)
-  py += 22
-  doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(...INK)
-  const contacts: [string, string][] = [
-    ['WhatsApp', '+92 316 4467464'],
-    ['Phone', '+92 316 4467464'],
-    ['Email', SITE_EMAIL],
-    ['Website', SITE_WEB],
-  ]
-  for (const [k, v] of contacts) {
-    doc.setFont('helvetica', 'bold').setTextColor(...SUB)
-    doc.text(`${k}:`, M, py)
-    doc.setFont('helvetica', 'normal').setTextColor(...INK)
-    doc.text(v, M + 70, py)
-    py += 15
-  }
+  doc.setDrawColor(...ACCENT_DARK).setLineWidth(1)
+  doc.line(M, py + 4, M + 50, py + 4)
+  py += 14
+  doc.setFontSize(8.5).setTextColor(...INK)
+  const contacts = `WhatsApp: +92 316 4467464   |   Phone: +92 316 4467464   |   Email: ${SITE_EMAIL}   |   Web: ${SITE_WEB}`
+  doc.setFont('helvetica', 'normal')
+  doc.text(contacts, M, py)
+
+  // Signature (right side, compact)
+  const sigY = H - 110
+  doc.setFont('times', 'italic').setFontSize(18).setTextColor(...ACCENT_DARK)
+  doc.text('Digiformation', W - M, sigY, { align: 'right' })
+  doc.setDrawColor(...ACCENT_DARK).setLineWidth(0.6).line(W - M - 130, sigY + 6, W - M, sigY + 6)
+  doc.setFont('helvetica', 'bold').setFontSize(8.5).setTextColor(...INK)
+  doc.text(SITE_NAME, W - M, sigY + 18, { align: 'right' })
+  doc.setFont('helvetica', 'normal').setFontSize(8).setTextColor(...SUB)
+  doc.text('Authorised Signatory', W - M, sigY + 28, { align: 'right' })
 
   drawFooterBand(doc, W, H)
 
