@@ -54,6 +54,14 @@ export const usaServicePages: UsaService[] = [
     metaDescription:
       "Get your U.S. LLC EIN number quickly with Digiformation Ltd. Digital certificate and fast processing for all new LLCs.",
     keywords: "EIN number service, US EIN for LLC, LLC EIN registration, EIN issuance online",
+    formFields: [
+      { key: "llc_name", label: "Registered LLC Name", required: true },
+      { key: "state", label: "State of Formation", required: true, placeholder: "e.g. Wyoming" },
+      { key: "responsible_party_name", label: "Responsible Party Full Name", required: true },
+      { key: "responsible_party_address", label: "Responsible Party Address", type: "textarea", required: true, placeholder: "Full residential address with country" },
+      { key: "business_activity", label: "Business Activity Description", type: "textarea", required: true, placeholder: "What your LLC does / will trade in" },
+      { key: "documents_note", label: "Documents (sent separately)", type: "textarea", placeholder: "Email Articles of Organization (PDF) and passport copy of the responsible party to info@digiformation.uk after checkout." },
+    ],
   },
   {
     slug: "itin-number",
