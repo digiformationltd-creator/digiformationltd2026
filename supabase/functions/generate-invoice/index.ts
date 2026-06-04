@@ -254,9 +254,10 @@ function buildPdf(opts: {
   // Submitted documents page
   if (opts.documentLinks && opts.documentLinks.length > 0) {
     doc.addPage()
+    drawHeaderBand(doc, W)
     drawWatermark(doc, W, H)
     let dy = M + 30
-    doc.setFont('helvetica', 'bold').setFontSize(28).setTextColor(...INK)
+    doc.setFont('helvetica', 'bold').setFontSize(28).setTextColor(...ACCENT_DARK)
     doc.text('Submitted Documents', M, dy)
     dy += 26
     doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(...SUB)
@@ -273,9 +274,9 @@ function buildPdf(opts: {
       doc.setFont('helvetica', 'bold').setFontSize(10).setTextColor(16, 100, 200)
       doc.textWithLink('▼ Download', W - M - 90, dy + 36, { url: d.url })
       dy += 72
-      if (dy > H - 200) { doc.addPage(); drawWatermark(doc, W, H); dy = M + 30 }
+      if (dy > H - 200) { doc.addPage(); drawHeaderBand(doc, W); drawWatermark(doc, W, H); dy = M + 30 }
     }
-    drawWaves(doc, W, H)
+    drawFooterBand(doc, W, H)
   }
 
   return doc.output('arraybuffer') as ArrayBuffer
