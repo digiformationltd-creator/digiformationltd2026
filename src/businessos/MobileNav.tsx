@@ -1,10 +1,11 @@
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Menu, X, Shield } from "lucide-react";
+import { Menu, X, Shield, LogOut } from "lucide-react";
 import { NAV } from "./nav";
 import logo from "@/assets/digiformation-logo-official.png";
 import { setNavDrawerOpen } from "@/lib/nav-drawer";
+import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Admin mobile drawer.
@@ -20,6 +21,12 @@ export default function MobileNav() {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/auth", { replace: true });
+  };
 
   useEffect(() => { setMounted(true); }, []);
   useEffect(() => { setOpen(false); }, [pathname]);
@@ -114,6 +121,15 @@ export default function MobileNav() {
           </NavLink>
         </nav>
 
+        <div className="shrink-0 px-3 py-3 border-t border-white/5">
+          <button
+            onClick={handleLogout}
+            className="os-nav-item w-full text-left hover:bg-red-500/10 hover:text-red-400 transition-colors"
+          >
+            <LogOut className="w-4 h-4 shrink-0" />
+            <span className="truncate">Logout</span>
+          </button>
+        </div>
         <div className="shrink-0 px-5 py-4 border-t border-white/5 text-[11px] text-white/40">
           v1.0 · {new Date().getFullYear()}
         </div>
