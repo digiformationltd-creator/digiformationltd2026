@@ -11,10 +11,11 @@ const SITE_NAME = "Digiformation Ltd"
 // It MUST match the subdomain delegated to Lovable's nameservers — never the root domain.
 // The email API looks up this exact domain; a mismatch causes "No email domain record found".
 const SENDER_DOMAIN = "notify.help.digiformation.uk"
-// FROM_DOMAIN is the domain shown in the From: header (e.g., "example.com").
-// When display_from_root is enabled, this can be the root domain for cleaner branding,
-// even though actual sending uses the subdomain above.
-const FROM_DOMAIN = "digiformation.uk"
+// FROM_DOMAIN must align with SENDER_DOMAIN (same registered domain or a parent).
+// SENDER_DOMAIN is a subdomain of help.digiformation.uk, so From must be on
+// help.digiformation.uk (or notify.help.digiformation.uk). Using the root
+// digiformation.uk causes "sender_domain_mismatch" errors from the provider.
+const FROM_DOMAIN = "help.digiformation.uk"
 // FROM_EMAIL is the full address shown to recipients in the From: header.
 const FROM_EMAIL = `info@${FROM_DOMAIN}`
 
