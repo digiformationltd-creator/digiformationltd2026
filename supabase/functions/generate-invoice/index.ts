@@ -69,16 +69,58 @@ function drawHeaderBand(doc: jsPDF, W: number) {
 }
 
 // Footer: tall curved band rising from bottom — hosts contact info inside.
+// Style preserved (soft-grey accent + dark navy main wave), slightly taller
+// so contact label + icon row sits comfortably on the dark portion in white.
 function drawFooterBand(doc: jsPDF, W: number, H: number) {
-  // Tall soft-grey curve sweeping across most of the width (taller so it
-  // can host the contact strip inside the footer design itself)
+  // Soft-grey accent curve at the top edge of the footer
   doc.setFillColor(...ACCENT_SOFT)
-  doc.ellipse(W * 0.30, H + 30, W * 0.70, 95, 'F')
-  // Dark navy curve overlapping on the right — kept low so it doesn't
-  // overlap the contact text that sits on the soft-grey area.
+  doc.ellipse(W * 0.30, H - 40, W * 0.72, 55, 'F')
+  // Dark navy main wave covering full width — hosts the contact info
   doc.setFillColor(...ACCENT_DARK)
-  doc.ellipse(W * 0.82, H + 32, W * 0.38, 46, 'F')
+  doc.ellipse(W * 0.55, H + 10, W * 0.90, 78, 'F')
 }
+
+// ---- Vector contact icons (drawn in white, scalable, no emoji) ----
+function drawPhoneHandset(doc: jsPDF, cx: number, cy: number, s: number, rgb: [number,number,number]) {
+  doc.setFillColor(...rgb)
+  doc.setDrawColor(...rgb)
+  doc.setLineWidth(s * 0.22)
+  doc.setLineCap?.('round' as any)
+  const ox = s * 0.32
+  // Diagonal handset bar
+  doc.line(cx - ox, cy - ox, cx + ox, cy + ox)
+  // Earpiece + mouthpiece bulbs
+  doc.circle(cx - ox, cy - ox, s * 0.17, 'F')
+  doc.circle(cx + ox, cy + ox, s * 0.17, 'F')
+}
+function drawWhatsAppIcon(doc: jsPDF, cx: number, cy: number, s: number) {
+  // Official brand green disc
+  doc.setFillColor(37, 211, 102)
+  doc.circle(cx, cy, s / 2, 'F')
+  // White handset glyph
+  drawPhoneHandset(doc, cx, cy, s * 0.62, [255, 255, 255])
+}
+function drawPhoneIcon(doc: jsPDF, cx: number, cy: number, s: number) {
+  drawPhoneHandset(doc, cx, cy, s * 0.95, [255, 255, 255])
+}
+function drawEmailIcon(doc: jsPDF, cx: number, cy: number, s: number) {
+  doc.setDrawColor(255, 255, 255)
+  doc.setLineWidth(s * 0.09)
+  const w = s, h = s * 0.7
+  doc.rect(cx - w / 2, cy - h / 2, w, h)
+  // V flap
+  doc.line(cx - w / 2, cy - h / 2, cx, cy + h * 0.18)
+  doc.line(cx, cy + h * 0.18, cx + w / 2, cy - h / 2)
+}
+function drawGlobeIcon(doc: jsPDF, cx: number, cy: number, s: number) {
+  doc.setDrawColor(255, 255, 255)
+  doc.setLineWidth(s * 0.08)
+  const r = s / 2
+  doc.circle(cx, cy, r)
+  doc.line(cx - r, cy, cx + r, cy)
+  doc.ellipse(cx, cy, r * 0.42, r)
+}
+
 
 
 
