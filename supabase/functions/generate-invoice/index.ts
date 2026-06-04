@@ -254,6 +254,95 @@ function buildPdf(opts: {
 
   drawFooterBand(doc, W, H)
 
+  // ---------- Payment Details page ----------
+  doc.addPage()
+  drawHeaderBand(doc, W)
+  drawWatermark(doc, W, H)
+  let py = M + 30
+  doc.setFont('helvetica', 'bold').setFontSize(28).setTextColor(...ACCENT_DARK)
+  doc.text('Payment Details', M, py)
+  doc.setDrawColor(...ACCENT_DARK).setLineWidth(2)
+  doc.line(M, py + 8, M + 90, py + 8)
+  py += 30
+  doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(...SUB)
+  doc.text('Please use any of the bank accounts below to settle this invoice.', M, py)
+  py += 22
+
+  const banks: { title: string; lines: [string, string][] }[] = [
+    {
+      title: 'United Kingdom — Clear Bank',
+      lines: [
+        ['Account Title', 'Muhammad Haroon'],
+        ['Account Number', '12863656'],
+        ['Sort Code', '04-28-12'],
+        ['IBAN', 'GB20CLRB04281286365680'],
+        ['BIC / SWIFT', 'CLRBGB22XXX'],
+      ],
+    },
+    {
+      title: 'United States — JP Morgan Chase NA',
+      lines: [
+        ['Account Title', 'Muhammad Haroon'],
+        ['Account Number', '30000002945251'],
+        ['Routing Number', '028000024'],
+        ['Account Type', 'Checking (Current)'],
+      ],
+    },
+    {
+      title: 'Pakistan — UBL (United Bank Limited)',
+      lines: [
+        ['Account Title', 'Muhammad Haroon'],
+        ['Account Number', '1482314848734'],
+        ['IBAN', 'PK21UNIL0109000314848734'],
+      ],
+    },
+  ]
+
+  for (const b of banks) {
+    const blockH = 28 + b.lines.length * 16 + 14
+    doc.setFillColor(...HEADER_BG)
+    doc.rect(M, py, W - M * 2, blockH, 'F')
+    doc.setFillColor(...ACCENT_DARK)
+    doc.rect(M, py, 4, blockH, 'F')
+    doc.setFont('helvetica', 'bold').setFontSize(12).setTextColor(...ACCENT_DARK)
+    doc.text(b.title, M + 16, py + 20)
+    let ly2 = py + 40
+    for (const [k, v] of b.lines) {
+      doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(...SUB)
+      doc.text(`${k}:`, M + 16, ly2)
+      doc.setFont('helvetica', 'bold').setFontSize(10).setTextColor(...INK)
+      doc.text(v, M + 150, ly2)
+      ly2 += 16
+    }
+    py += blockH + 14
+  }
+
+  // Contact Us strip
+  py += 6
+  doc.setFont('helvetica', 'bold').setFontSize(14).setTextColor(...ACCENT_DARK)
+  doc.text('Contact Us', M, py)
+  doc.setDrawColor(...ACCENT_DARK).setLineWidth(1.4)
+  doc.line(M, py + 6, M + 60, py + 6)
+  py += 22
+  doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(...INK)
+  const contacts: [string, string][] = [
+    ['WhatsApp', '+92 316 4467464'],
+    ['Phone', '+92 316 4467464'],
+    ['Email', SITE_EMAIL],
+    ['Website', SITE_WEB],
+  ]
+  for (const [k, v] of contacts) {
+    doc.setFont('helvetica', 'bold').setTextColor(...SUB)
+    doc.text(`${k}:`, M, py)
+    doc.setFont('helvetica', 'normal').setTextColor(...INK)
+    doc.text(v, M + 70, py)
+    py += 15
+  }
+
+  drawFooterBand(doc, W, H)
+
+
+
 
   // Submitted documents page
   if (opts.documentLinks && opts.documentLinks.length > 0) {
