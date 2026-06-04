@@ -345,15 +345,25 @@ function OrdersTab({ userId, email }: { userId: string; email?: string | null })
 }
 
 // ─────────────────────────── INVOICES ───────────────────────────
-function InvoicesTab({ userId }: { userId: string }) {
+function InvoicesTab({ userId, email }: { userId: string; email?: string | null }) {
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase.from("invoices").select("*").eq("user_id", userId).order("issue_date", { ascending: false });
-    setRows(data || []);
+    const [{ data: linked }, { data: guest }] = await Promise.all([
+      supabase.from("invoices").select("*").eq("user_id", userId).order("issue_date", { ascending: false }),
+      email
+        ? supabase.from("invoices").select("*").is("user_id", null).ilike("bill_to_email", email).order("issue_date", { ascending: false })
+        : Promise.resolve({ data: [] as any[] }),
+    ]);
+    const merged = [...(linked || [])];
+    for (const row of guest || []) {
+      if (!merged.some((inv) => inv.id === row.id)) merged.push(row);
+    }
+    merged.sort((a, b) => new Date(b.issue_date || b.created_at).getTime() - new Date(a.issue_date || a.created_at).getTime());
+    setRows(merged);
     setLoading(false);
   };
   useEffect(() => {
@@ -362,7 +372,7 @@ function InvoicesTab({ userId }: { userId: string }) {
       .on("postgres_changes", { event: "*", schema: "public", table: "invoices", filter: `user_id=eq.${userId}` }, load)
       .subscribe();
     return () => { supabase.removeChannel(ch); };
-  }, [userId]);
+  }, [userId, email]);
 
   if (loading) return <div className="os-glass p-8 text-center"><Loader2 className="w-5 h-5 animate-spin mx-auto text-white/40" /></div>;
   if (!rows.length) return <div className="os-glass p-8 text-center text-sm text-white/50">No invoices.</div>;
