@@ -440,14 +440,15 @@ const CheckoutFlow = ({
     const lines = selectedItems
       .map((i) => `• ${i.name} — ${formatMoney(i.price, currency)}`)
       .join("\n");
-    const addressBlock =
-      `\nResidential address:\n` +
-      `${form.address_line1}\n` +
-      `${form.address_line2}\n` +
-      `${form.city}${form.state ? `, ${form.state}` : ""}, ${form.postal_code}\n` +
-      `${form.country}\n` +
-      `Nationality: ${form.nationality}\n` +
-      (showBusinessType && form.business_type ? `\nBusiness type: ${form.business_type}\n` : "");
+    const addressBlock = hideAddress
+      ? ""
+      : `\nResidential address:\n` +
+        `${form.address_line1}\n` +
+        `${form.address_line2}\n` +
+        `${form.city}${form.state ? `, ${form.state}` : ""}, ${form.postal_code}\n` +
+        `${form.country}\n` +
+        `Nationality: ${form.nationality}\n` +
+        (showBusinessType && form.business_type ? `\nBusiness type: ${form.business_type}\n` : "");
 
     const serviceModeLabel =
       serviceMode === "ltd-only"
