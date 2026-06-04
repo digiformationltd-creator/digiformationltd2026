@@ -133,7 +133,7 @@ const UK_SERVICE_ENTRIES: CatalogEntry[] = [
     slug: "company-annual-filing",
     name: "Confirmation Statement Filing",
     description: "Annual Confirmation Statement filing with Companies House.",
-    price: 80,
+    price: 65,
     currency: "GBP",
     category: "UK Services",
     complianceItemId: "cs",
