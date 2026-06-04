@@ -69,16 +69,58 @@ function drawHeaderBand(doc: jsPDF, W: number) {
 }
 
 // Footer: tall curved band rising from bottom — hosts contact info inside.
+// Style preserved (soft-grey accent + dark navy main wave), slightly taller
+// so contact label + icon row sits comfortably on the dark portion in white.
 function drawFooterBand(doc: jsPDF, W: number, H: number) {
-  // Tall soft-grey curve sweeping across most of the width (taller so it
-  // can host the contact strip inside the footer design itself)
+  // Soft-grey accent curve at the top edge of the footer
   doc.setFillColor(...ACCENT_SOFT)
-  doc.ellipse(W * 0.30, H + 30, W * 0.70, 95, 'F')
-  // Dark navy curve overlapping on the right — kept low so it doesn't
-  // overlap the contact text that sits on the soft-grey area.
+  doc.ellipse(W * 0.30, H - 40, W * 0.72, 55, 'F')
+  // Dark navy main wave covering full width — hosts the contact info
   doc.setFillColor(...ACCENT_DARK)
-  doc.ellipse(W * 0.82, H + 32, W * 0.38, 46, 'F')
+  doc.ellipse(W * 0.55, H + 10, W * 0.90, 78, 'F')
 }
+
+// ---- Vector contact icons (drawn in white, scalable, no emoji) ----
+function drawPhoneHandset(doc: jsPDF, cx: number, cy: number, s: number, rgb: [number,number,number]) {
+  doc.setFillColor(...rgb)
+  doc.setDrawColor(...rgb)
+  doc.setLineWidth(s * 0.22)
+  doc.setLineCap?.('round' as any)
+  const ox = s * 0.32
+  // Diagonal handset bar
+  doc.line(cx - ox, cy - ox, cx + ox, cy + ox)
+  // Earpiece + mouthpiece bulbs
+  doc.circle(cx - ox, cy - ox, s * 0.17, 'F')
+  doc.circle(cx + ox, cy + ox, s * 0.17, 'F')
+}
+function drawWhatsAppIcon(doc: jsPDF, cx: number, cy: number, s: number) {
+  // Official brand green disc
+  doc.setFillColor(37, 211, 102)
+  doc.circle(cx, cy, s / 2, 'F')
+  // White handset glyph
+  drawPhoneHandset(doc, cx, cy, s * 0.62, [255, 255, 255])
+}
+function drawPhoneIcon(doc: jsPDF, cx: number, cy: number, s: number) {
+  drawPhoneHandset(doc, cx, cy, s * 0.95, [255, 255, 255])
+}
+function drawEmailIcon(doc: jsPDF, cx: number, cy: number, s: number) {
+  doc.setDrawColor(255, 255, 255)
+  doc.setLineWidth(s * 0.09)
+  const w = s, h = s * 0.7
+  doc.rect(cx - w / 2, cy - h / 2, w, h)
+  // V flap
+  doc.line(cx - w / 2, cy - h / 2, cx, cy + h * 0.18)
+  doc.line(cx, cy + h * 0.18, cx + w / 2, cy - h / 2)
+}
+function drawGlobeIcon(doc: jsPDF, cx: number, cy: number, s: number) {
+  doc.setDrawColor(255, 255, 255)
+  doc.setLineWidth(s * 0.08)
+  const r = s / 2
+  doc.circle(cx, cy, r)
+  doc.line(cx - r, cy, cx + r, cy)
+  doc.ellipse(cx, cy, r * 0.42, r)
+}
+
 
 
 
@@ -312,15 +354,36 @@ function buildPdf(opts: {
   // ---- Footer band (drawn first so contact text sits on top of it) ----
   drawFooterBand(doc, W, H)
 
-  // ---- Contact Information inside footer design ----
-  // The tall soft-grey wave reaches up to ~H-65. Place label + strip on it.
-  const CONTACT_LABEL_Y = H - 50
-  const CONTACT_Y = H - 32
-  doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...ACCENT_DARK)
+  // ---- Contact Information inside footer design (white on dark wave) ----
+  const CONTACT_LABEL_Y = H - 62
+  const ICON_ROW_Y = H - 32
+  doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(255, 255, 255)
   doc.text('CONTACT INFORMATION', W / 2, CONTACT_LABEL_Y, { align: 'center' })
-  doc.setFont('helvetica', 'normal').setFontSize(8.5).setTextColor(...INK)
-  const contacts = `WhatsApp: ${SITE_PHONE_PK}   |   Phone: ${SITE_PHONE_PK}   |   Email: ${SITE_EMAIL}   |   Web: ${SITE_WEB}`
-  doc.text(contacts, W / 2, CONTACT_Y, { align: 'center' })
+
+  // Build icon + text pairs and lay them out centered as a single row.
+  const items: { draw: (cx: number, cy: number, s: number) => void; text: string }[] = [
+    { draw: (cx, cy, s) => drawWhatsAppIcon(doc, cx, cy, s), text: SITE_PHONE_PK },
+    { draw: (cx, cy, s) => drawPhoneIcon(doc, cx, cy, s),    text: SITE_PHONE_PK },
+    { draw: (cx, cy, s) => drawEmailIcon(doc, cx, cy, s),    text: SITE_EMAIL },
+    { draw: (cx, cy, s) => drawGlobeIcon(doc, cx, cy, s),    text: SITE_WEB },
+  ]
+  const ICON_SIZE = 12
+  const ICON_TEXT_GAP = 6
+  const ITEM_GAP = 22
+  doc.setFont('helvetica', 'normal').setFontSize(8.8).setTextColor(255, 255, 255)
+  // Measure total width
+  const widths = items.map(it => ICON_SIZE + ICON_TEXT_GAP + doc.getTextWidth(it.text))
+  const totalW = widths.reduce((a, b) => a + b, 0) + ITEM_GAP * (items.length - 1)
+  let x = (W - totalW) / 2
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i]
+    const iconCx = x + ICON_SIZE / 2
+    it.draw(iconCx, ICON_ROW_Y, ICON_SIZE)
+    doc.setTextColor(255, 255, 255)
+    doc.text(it.text, x + ICON_SIZE + ICON_TEXT_GAP, ICON_ROW_Y + 3)
+    x += widths[i] + ITEM_GAP
+  }
+
 
 
 
