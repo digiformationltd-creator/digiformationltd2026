@@ -304,7 +304,6 @@ export const complianceItemFormFields: Record<string, { title: string; fields: C
         type: "textarea",
         required: false,
         placeholder: "Income, expenses, budget — full year figures, bookkeeping details and expenses sheet. If you prefer, email these details to info@digiformation.uk",
-        description: "Share income, expenses, budget (full year figures), bookkeeping details and expenses sheet. You can also send these by email to info@digiformation.uk",
       },
     ],
   },
