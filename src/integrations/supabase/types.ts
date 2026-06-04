@@ -232,11 +232,14 @@ export type Database = {
           customer_phone_e164: string | null
           customer_whatsapp: string | null
           id: string
+          inquiry_id: string | null
           notes: string | null
           order_date: string
           order_ref: string
+          payment_status: string
           preferred_contact_method: string | null
           service: string
+          source: string
           status: string
           user_id: string | null
         }
@@ -250,11 +253,14 @@ export type Database = {
           customer_phone_e164?: string | null
           customer_whatsapp?: string | null
           id?: string
+          inquiry_id?: string | null
           notes?: string | null
           order_date?: string
           order_ref: string
+          payment_status?: string
           preferred_contact_method?: string | null
           service: string
+          source?: string
           status?: string
           user_id?: string | null
         }
@@ -268,15 +274,26 @@ export type Database = {
           customer_phone_e164?: string | null
           customer_whatsapp?: string | null
           id?: string
+          inquiry_id?: string | null
           notes?: string | null
           order_date?: string
           order_ref?: string
+          payment_status?: string
           preferred_contact_method?: string | null
           service?: string
+          source?: string
           status?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "client_orders_inquiry_id_fkey"
+            columns: ["inquiry_id"]
+            isOneToOne: false
+            referencedRelation: "contact_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       client_subscriptions: {
         Row: {

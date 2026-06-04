@@ -9,7 +9,7 @@ import { generateInvoiceNumber, SERVICE_CODES } from "@/lib/invoice";
 import {
   Search, RefreshCw, Loader2, ChevronRight, ShoppingBag,
   ExternalLink, Filter, CheckCircle2, Clock, Truck, RotateCcw, XCircle, Hourglass,
-  FileText, Mail, User, PoundSterling, Play, Ban, Send, FilePlus,
+  FileText, Mail, User, PoundSterling, Play, Ban, Send, FilePlus, MessageSquare, Wallet,
 } from "lucide-react";
 
 interface OrderRow {
@@ -25,12 +25,16 @@ interface OrderRow {
   order_date: string;
   created_at: string;
   notes: string | null;
+  source?: string | null;
+  payment_status?: string | null;
+  inquiry_id?: string | null;
   invoice_number?: string | null;
   invoice_status?: string | null;
 }
 
 const STATUSES = [
   { key: "all",         label: "All",         icon: Filter,        color: "text-white/70" },
+  { key: "Inquiry",     label: "Inquiry",     icon: MessageSquare, color: "text-sky-300" },
   { key: "Pending",     label: "Pending",     icon: Hourglass,     color: "text-amber-300" },
   { key: "In Progress", label: "In Progress", icon: Clock,         color: "text-blue-300" },
   { key: "Delivered",   label: "Delivered",   icon: Truck,         color: "text-cyan-300" },
@@ -39,8 +43,24 @@ const STATUSES = [
   { key: "Cancelled",   label: "Cancelled",   icon: XCircle,       color: "text-rose-300" },
 ];
 
+const SOURCES = [
+  { key: "all",      label: "All sources" },
+  { key: "checkout", label: "Paid checkout" },
+  { key: "inquiry",  label: "Inquiries" },
+  { key: "manual",   label: "Manual" },
+];
+
+const PAYMENT_STATUSES = [
+  { key: "all",      label: "All payment" },
+  { key: "unpaid",   label: "Unpaid" },
+  { key: "paid",     label: "Paid" },
+  { key: "refunded", label: "Refunded" },
+  { key: "n/a",      label: "N/A (inquiry)" },
+];
+
 const statusChip = (s: string) => {
   const map: Record<string, string> = {
+    "Inquiry":     "bg-sky-500/15 text-sky-200 ring-1 ring-sky-400/30",
     "Pending":     "bg-amber-500/15 text-amber-200 ring-1 ring-amber-400/30",
     "In Progress": "bg-blue-500/15 text-blue-200 ring-1 ring-blue-400/30",
     "Delivered":   "bg-cyan-500/15 text-cyan-200 ring-1 ring-cyan-400/30",
@@ -49,6 +69,19 @@ const statusChip = (s: string) => {
     "Cancelled":   "bg-rose-500/15 text-rose-200 ring-1 ring-rose-400/30",
   };
   return map[s] || "bg-white/[0.06] text-white/70 ring-1 ring-white/10";
+};
+
+const sourceChip = (s?: string | null) => {
+  if (!s || s === "checkout") return "bg-emerald-500/10 text-emerald-200/80 ring-1 ring-emerald-400/20";
+  if (s === "inquiry")        return "bg-sky-500/10 text-sky-200/80 ring-1 ring-sky-400/20";
+  if (s === "manual")         return "bg-white/[0.05] text-white/60 ring-1 ring-white/10";
+  if (s === "whatsapp")       return "bg-green-500/10 text-green-200/80 ring-1 ring-green-400/20";
+  return "bg-white/[0.05] text-white/60 ring-1 ring-white/10";
+};
+
+const sourceLabel = (s?: string | null) => {
+  if (!s || s === "checkout") return "Checkout";
+  return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
 const invoiceChip = (s?: string | null) => {
@@ -79,6 +112,8 @@ export default function OsOrders() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [sourceFilter, setSourceFilter] = useState<string>("all");
+  const [paymentFilter, setPaymentFilter] = useState<string>("all");
   const [dateRange, setDateRange] = useState<string>("all");
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [openOrderId, setOpenOrderId] = useState<string | null>(null);
@@ -273,6 +308,8 @@ export default function OsOrders() {
     })();
     return orders.filter((o) => {
       if (statusFilter !== "all" && o.status !== statusFilter) return false;
+      if (sourceFilter !== "all" && (o.source || "checkout") !== sourceFilter) return false;
+      if (paymentFilter !== "all" && (o.payment_status || "unpaid") !== paymentFilter) return false;
       if (cutoff) {
         const d = new Date(o.order_date || o.created_at);
         if (d < cutoff) return false;
@@ -286,7 +323,7 @@ export default function OsOrders() {
         (o.invoice_number || "").toLowerCase().includes(q)
       );
     });
-  }, [orders, search, statusFilter, dateRange]);
+  }, [orders, search, statusFilter, sourceFilter, paymentFilter, dateRange]);
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: orders.length };
@@ -341,6 +378,22 @@ export default function OsOrders() {
               className="w-full h-11 rounded-xl pl-10 pr-3 text-sm"
             />
           </div>
+          <select
+            value={sourceFilter}
+            onChange={(e) => setSourceFilter(e.target.value)}
+            className="h-11 px-3 rounded-xl text-sm os-glass bg-transparent"
+            title="Filter by order source"
+          >
+            {SOURCES.map(s => <option key={s.key} value={s.key} className="bg-slate-900">{s.label}</option>)}
+          </select>
+          <select
+            value={paymentFilter}
+            onChange={(e) => setPaymentFilter(e.target.value)}
+            className="h-11 px-3 rounded-xl text-sm os-glass bg-transparent"
+            title="Filter by payment status"
+          >
+            {PAYMENT_STATUSES.map(p => <option key={p.key} value={p.key} className="bg-slate-900">{p.label}</option>)}
+          </select>
           <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value)}
@@ -434,6 +487,20 @@ export default function OsOrders() {
                   >
                     <td className="py-3 px-4">
                       <div className="font-mono text-xs text-white/80">{o.order_ref}</div>
+                      <div className="mt-1 flex items-center gap-1">
+                        <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider ${sourceChip(o.source)}`}>
+                          {sourceLabel(o.source)}
+                        </span>
+                        {o.payment_status && o.payment_status !== "n/a" && (
+                          <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider ${
+                            o.payment_status === "paid" ? "bg-emerald-500/10 text-emerald-200/80 ring-1 ring-emerald-400/20" :
+                            o.payment_status === "refunded" ? "bg-rose-500/10 text-rose-200/80 ring-1 ring-rose-400/20" :
+                            "bg-amber-500/10 text-amber-200/80 ring-1 ring-amber-400/20"
+                          }`}>
+                            {o.payment_status}
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="py-3 px-4">
                       <div className="font-semibold truncate max-w-[180px]">{o.customer_name || "(guest)"}</div>
@@ -549,10 +616,13 @@ export default function OsOrders() {
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <span className="font-mono text-[11px] text-white/60">{o.order_ref}</span>
                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${statusChip(o.status)}`}>
                       {o.status}
+                    </span>
+                    <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider ${sourceChip(o.source)}`}>
+                      {sourceLabel(o.source)}
                     </span>
                   </div>
                   <div className="font-semibold truncate">{o.service}</div>
