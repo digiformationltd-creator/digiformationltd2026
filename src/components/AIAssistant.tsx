@@ -165,7 +165,7 @@ const AIAssistant = () => {
                 <Sparkles className="w-5 h-5" />
               </div>
               <div className="min-w-0">
-                <h3 className="font-bold text-base leading-tight truncate">Digi Assistant</h3>
+                <h3 className="font-bold text-base leading-tight truncate">Ask AI</h3>
                 <p className="text-xs opacity-90 flex items-center gap-1">
                   <span className="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
                   Online • Replies instantly
