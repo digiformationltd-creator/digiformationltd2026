@@ -711,6 +711,13 @@ Deno.serve(async (req) => {
         documentLinks.push({ label: d.label, url: ds.signedUrl, filename: d.filename })
       }
     }
+    // Compose the structured details list. Frontend already sends a flat
+    // {label,value}[] of every form field; we accept it as-is.
+    const detailRows = Array.isArray(body.details) ? body.details.filter(d => d && d.label) : []
+
+    // Normalise phone for storage + lead capture (use frontend hint when present)
+    const phoneE164 = body.customer.whatsapp_e164?.trim()
+      || normalizePhoneToE164(body.customer.whatsapp, body.customer.country)
 
     // 1. Build PDF
     const pdfBytes = buildPdf({
@@ -721,6 +728,7 @@ Deno.serve(async (req) => {
       currency,
       customer: body.customer,
       notes: body.notes,
+      details: detailRows,
       documentLinks,
     })
 
@@ -748,6 +756,8 @@ Deno.serve(async (req) => {
         customer_name: body.customer.full_name ?? null,
         customer_email: body.customer.email ?? null,
         customer_whatsapp: body.customer.whatsapp ?? null,
+        customer_phone_e164: phoneE164,
+        country_code: body.customer.country ?? null,
         notes: body.notes ?? null,
         amount_mismatch: amountMismatch,
         source: 'checkout',
@@ -756,6 +766,40 @@ Deno.serve(async (req) => {
       .select('id')
       .single()
     if (orderErr) throw orderErr
+
+    // 4b. Auto-add to Lead Center (deduped by E.164 phone, fallback to email).
+    //     A failure here must never break the checkout response.
+    try {
+      if (phoneE164 || body.customer.email) {
+        const orFilters: string[] = []
+        if (phoneE164) orFilters.push(`phone_e164.eq.${phoneE164}`)
+        if (body.customer.email) orFilters.push(`email.ilike.${body.customer.email}`)
+        const { data: existingLead } = await admin
+          .from('leads')
+          .select('id')
+          .or(orFilters.join(','))
+          .limit(1)
+          .maybeSingle()
+        if (!existingLead) {
+          await admin.from('leads').insert({
+            name: body.customer.full_name || body.customer.email || 'Checkout lead',
+            email: body.customer.email ?? null,
+            whatsapp: body.customer.whatsapp ?? null,
+            phone_e164: phoneE164,
+            country: body.customer.country ?? null,
+            source: orderUserId ? 'portal_order' : 'guest_order',
+            service: body.packageName ? `${body.service} — ${body.packageName}` : body.service,
+            value_gbp: body.amount_gbp,
+            stage: 'new',
+            notes: `Auto-captured from order ${orderRef}.`,
+            preferred_contact_method: 'whatsapp',
+          })
+        }
+      }
+    } catch (e) {
+      console.warn('lead auto-capture failed (non-blocking)', e)
+    }
+
 
     const { error: invErr } = await admin.from('invoices').insert({
       user_id: orderUserId,
