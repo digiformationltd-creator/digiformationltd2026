@@ -111,7 +111,7 @@ export const compliancePages: CompliancePage[] = [
     slug: "confirmation-statement",
     title: "Confirmation Statement Service",
     hero: "File Your Annual Confirmation Statement",
-    price: "£80",
+    price: "£65",
     eyebrow: "UK Compliance",
     overview: [
       "Prepare your annual confirmation statement",
