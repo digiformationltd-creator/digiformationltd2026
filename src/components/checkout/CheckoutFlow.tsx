@@ -1251,7 +1251,7 @@ const CheckoutFlow = ({
                         <ol className="space-y-1.5 text-sm">
                           <li className="flex gap-2.5"><span className="font-bold text-primary">1.</span><span><strong>Live face scan</strong> — quick selfie scan from your phone camera</span></li>
                           <li className="flex gap-2.5"><span className="font-bold text-primary">2.</span><span><strong>Live passport / ID scan</strong> — scan your document with your camera</span></li>
-                          <li className="flex gap-2.5"><span className="font-bold text-primary">3.</span><span><strong>Email verification</strong> — confirm your email address</span></li>
+                          
                         </ol>
                       </div>
 
@@ -1281,7 +1281,7 @@ const CheckoutFlow = ({
                             <CheckCircle2 className="w-5 h-5" /> Verification link opened
                           </div>
                           <p className="text-xs opacity-85 leading-relaxed">
-                            Complete all <span className="font-semibold">3 steps</span> on the verification link and upload the requested documents (live selfie, passport/ID and email confirmation).
+                            Complete both <span className="font-semibold">steps</span> on the verification link and upload the requested documents (live selfie and passport/ID scan).
                             Once done, the <span className="font-semibold">Continue</span> button below will be enabled — then continue to review and place your order.
                           </p>
                           <button
