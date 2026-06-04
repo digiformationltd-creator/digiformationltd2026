@@ -144,7 +144,7 @@ const AIAssistant = () => {
         </span>
         {/* Tooltip on hover (desktop) */}
         <span className="hidden sm:block absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-foreground text-background text-xs font-semibold px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-          Ask AI Assistant
+          Ask AI
         </span>
       </button>
 
