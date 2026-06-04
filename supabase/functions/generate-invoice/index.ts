@@ -74,10 +74,12 @@ function drawFooterBand(doc: jsPDF, W: number, H: number) {
   // can host the contact strip inside the footer design itself)
   doc.setFillColor(...ACCENT_SOFT)
   doc.ellipse(W * 0.30, H + 30, W * 0.70, 95, 'F')
-  // Dark navy curve overlapping on the right
+  // Dark navy curve overlapping on the right — kept low so it doesn't
+  // overlap the contact text that sits on the soft-grey area.
   doc.setFillColor(...ACCENT_DARK)
-  doc.ellipse(W * 0.82, H + 18, W * 0.38, 60, 'F')
+  doc.ellipse(W * 0.82, H + 32, W * 0.38, 46, 'F')
 }
+
 
 
 
