@@ -260,7 +260,7 @@ export default function OsEmailOps() {
           </div>
         </div>
 
-        <div className="overflow-x-auto max-h-[520px] overflow-y-auto">
+        <div className="overflow-x-auto max-h-[520px] overflow-y-auto hidden md:block">
           <table className="w-full text-sm">
             <thead className="text-xs text-white/50 bg-white/[0.02] sticky top-0">
               <tr>
@@ -307,6 +307,36 @@ export default function OsEmailOps() {
             </tbody>
           </table>
         </div>
+
+        {/* Mobile cards */}
+        <div className="md:hidden divide-y divide-white/5 max-h-[520px] overflow-y-auto">
+          {loading && <div className="p-6 text-center text-white/40 text-xs">Loading…</div>}
+          {!loading && filtered.length === 0 && <div className="p-6 text-center text-white/40 text-xs">No emails match the filter</div>}
+          {filtered.map(r => (
+            <div key={r.id} className="p-3 space-y-1.5">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0 flex-1">
+                  <div className="text-xs font-semibold truncate">{r.template_name}</div>
+                  <div className="text-[11px] text-white/60 truncate">{r.recipient_email}</div>
+                </div>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full border shrink-0 ${STATUS_COLORS[r.status] || "bg-white/5 text-white/60 border-white/10"}`}>
+                  {r.status}
+                </span>
+              </div>
+              <div className="text-[10px] text-white/40 mono">{new Date(r.created_at).toLocaleString()}</div>
+              {r.error_message && (
+                <div className="text-[11px] text-red-300/80 break-words">{r.error_message}</div>
+              )}
+              {(r.status === "dlq" || r.status === "failed") && (
+                <button disabled={retrying === r.id} onClick={() => retry(r)}
+                  className="w-full h-8 px-2 rounded-md text-[11px] border border-white/10 hover:bg-white/5 disabled:opacity-50">
+                  {retrying === r.id ? "Retrying…" : "Retry"}
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+
       </div>
 
       {/* Suppression list */}
