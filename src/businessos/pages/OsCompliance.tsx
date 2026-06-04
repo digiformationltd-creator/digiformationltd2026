@@ -206,7 +206,8 @@ export default function OsCompliance() {
         <Card label="Later" value={counts.later} tone="green" active={filter === "later"} onClick={() => setFilter("later")} icon={<CheckCircle2 className="w-4 h-4" />} />
       </div>
 
-      <div className="os-glass overflow-hidden">
+      {/* Desktop table */}
+      <div className="os-glass overflow-hidden hidden md:block">
         <div className="overflow-x-auto max-h-[640px] overflow-y-auto">
           <table className="w-full text-sm">
             <thead className="text-xs text-white/50 bg-white/[0.02] sticky top-0">
@@ -267,6 +268,45 @@ export default function OsCompliance() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile cards */}
+      <div className="md:hidden space-y-3">
+        {loading && <div className="os-glass p-6 text-center text-white/40 text-xs">Loading…</div>}
+        {!loading && filtered.length === 0 && <div className="os-glass p-6 text-center text-white/40 text-xs">No items</div>}
+        {filtered.map(r => {
+          const days = daysUntil(r.due_date);
+          const key = `${r.kind}-${r.target_id}`;
+          return (
+            <div key={key} className="os-glass p-4 space-y-2">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <Link to={`/admin/clients/${r.user_id}`} className="font-semibold text-sm hover:text-blue-300 truncate block">
+                    {r.client_name}
+                  </Link>
+                  {r.client_email && <div className="text-[10px] text-white/40 truncate">{r.client_email}</div>}
+                </div>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full border shrink-0 ${KIND_META[r.kind].color}`}>
+                  {KIND_META[r.kind].label}
+                </span>
+              </div>
+              <div className="text-xs text-white/70">{r.label}</div>
+              <div className="flex flex-wrap items-center gap-2 text-[11px]">
+                <span className="mono text-white/60">Due {r.due_date}</span>
+                <span className={`px-2 py-0.5 rounded-full border mono ${urgencyClass(days)}`}>
+                  {days < 0 ? `${Math.abs(days)}d overdue` : `in ${days}d`}
+                </span>
+                <span className="text-white/40 mono">· {r.reminders_sent} sent</span>
+              </div>
+              <button disabled={sending === key || !r.client_email}
+                onClick={() => sendReminder(r)}
+                className="w-full h-9 px-3 rounded-lg text-xs border border-white/10 hover:bg-white/5 disabled:opacity-40 inline-flex items-center justify-center gap-1.5">
+                <Mail className="w-3.5 h-3.5" />
+                {sending === key ? "Sending…" : "Send reminder"}
+              </button>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
