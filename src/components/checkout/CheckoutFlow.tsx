@@ -1027,38 +1027,20 @@ const CheckoutFlow = ({
                     </div>
                     <Field label="Postal code" value={form.postal_code} onChange={(v) => setForm({ ...form, postal_code: v })} required minLength={3} />
                     <div className="grid sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium mb-1.5">
-                          Country of residence <span className="text-destructive">*</span>
-                        </label>
-                        <select
-                          value={form.country}
-                          onChange={(e) => setForm({ ...form, country: e.target.value })}
-                          required
-                          className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
-                        >
-                          <option value="">Select your country…</option>
-                          {COUNTRIES.map((c) => (
-                            <option key={c} value={c}>{c}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1.5">
-                          Nationality <span className="text-destructive">*</span>
-                        </label>
-                        <select
-                          value={form.nationality}
-                          onChange={(e) => setForm({ ...form, nationality: e.target.value })}
-                          required
-                          className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
-                        >
-                          <option value="">Select your nationality…</option>
-                          {COUNTRIES.map((c) => (
-                            <option key={c} value={c}>{c}</option>
-                          ))}
-                        </select>
-                      </div>
+                      <SearchableCountrySelect
+                        label="Country of residence"
+                        value={form.country}
+                        onChange={(v) => setForm({ ...form, country: v })}
+                        required
+                        placeholder="Search or select country…"
+                      />
+                      <SearchableCountrySelect
+                        label="Nationality"
+                        value={form.nationality}
+                        onChange={(v) => setForm({ ...form, nationality: v })}
+                        required
+                        placeholder="Search or select nationality…"
+                      />
                     </div>
                   </div>
                 )}
