@@ -3,8 +3,13 @@ export type ComplianceFormField = {
   label: string;
   placeholder?: string;
   required?: boolean;
-  type?: "text" | "textarea" | "date";
+  type?: "text" | "textarea" | "date" | "mail-action";
   helper?: string;
+  /** For type="mail-action": the destination email and (optional) subject.
+   *  Clicking the button opens the user's mail client and marks the field
+   *  as completed so the Continue / Place Order button unlocks. */
+  email?: string;
+  subject?: string;
 };
 
 export type CompliancePage = {
