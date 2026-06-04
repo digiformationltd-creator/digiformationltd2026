@@ -256,9 +256,9 @@ export const compliancePages: CompliancePage[] = [
     metaDescription: "Official AD01 filing service from Digiformation LTD. Update your UK registered office address with full postal handling.",
     keywords: "AD01 form, AD01 filing, UK registered office change, Companies House address",
     formFields: [
-      ...baseCompanyFields,
+      { key: "company_number", label: "Company Number (CRN)", placeholder: "e.g. 12345678", required: true },
       { key: "current_company_name", label: "Company Name", placeholder: "Registered company name", required: true },
-      { key: "new_registered_address", label: "New Registered Address", placeholder: "Full UK address with postcode", required: true, type: "textarea" },
+      { key: "director_full_name", label: "Director's Full Name", placeholder: "As shown on passport", required: true },
     ],
   },
 ];
