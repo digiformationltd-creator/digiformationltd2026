@@ -37,8 +37,12 @@ export type CatalogEntry = {
   /** Optional bespoke checkout path (overrides default /checkout?service=slug). */
   checkoutPath?: string;
   /** Optional UK Compliance item id reused inside the uk-compliance multi-select
-   *  group so existing dynamic field sections continue to fire. */
+    *  group so existing dynamic field sections continue to fire. */
   complianceItemId?: string;
+  /** Per-service required-information fields rendered on the checkout. When
+   *  present, the checkout hides default DOB / address / business activity
+   *  sections and only asks for these specific fields. */
+  formFields?: ComplianceFormField[];
 };
 
 // Strip leading currency symbol & whitespace, return numeric price.
