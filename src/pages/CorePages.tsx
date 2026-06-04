@@ -199,7 +199,7 @@ export const Contact = () => {
       email: form.email,
       whatsapp: form.whatsapp,
       country: form.country,
-      service: form.service,
+      service: form.service?.trim() ? form.service.trim() : "General Inquiry",
       message: form.message,
       page_path: window.location.pathname,
       referrer: document.referrer || null,
