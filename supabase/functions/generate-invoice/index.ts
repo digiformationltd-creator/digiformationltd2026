@@ -68,17 +68,15 @@ function drawHeaderBand(doc: jsPDF, W: number) {
   doc.ellipse(W * 0.28, -28, W * 0.62, 52, 'F')
 }
 
-// Footer: exact mirror of the header design — same two curves (dark navy
-// small curve on right + large soft-grey sweep), just scaled slightly larger
-// to comfortably host the contact info row.
+// Footer: exact mirror of the header band — same two curves flipped along
+// the bottom edge so the footer reads as a true mirror of the header.
 function drawFooterBand(doc: jsPDF, W: number, H: number) {
-  // Dark navy curve on the right (mirrors header's top-right dark curve) —
-  // kept low so it sits below the contact row.
+  // Dark navy curve on the right (mirror of header's top-right dark curve)
   doc.setFillColor(...ACCENT_DARK)
-  doc.ellipse(W * 0.78, H + 30, W * 0.42, 45, 'F')
-  // Large soft-grey curve sweeping across most of the width (mirrors header)
+  doc.ellipse(W * 0.78, H + 22, W * 0.42, 44, 'F')
+  // Large soft-grey curve sweeping across most of the width (mirror of header)
   doc.setFillColor(...ACCENT_SOFT)
-  doc.ellipse(W * 0.28, H + 28, W * 0.62, 78, 'F')
+  doc.ellipse(W * 0.28, H + 28, W * 0.62, 52, 'F')
 }
 
 
@@ -143,6 +141,51 @@ function drawGlobeIcon(doc: jsPDF, cx: number, cy: number, s: number, rgb: [numb
   doc.line(cx - r, cy, cx + r, cy)
   doc.ellipse(cx, cy, r * 0.42, r)
 }
+
+// ---- Social media brand icons (filled discs with white glyph) ----
+function drawDisc(doc: jsPDF, cx: number, cy: number, s: number, rgb: [number, number, number]) {
+  doc.setFillColor(...rgb)
+  doc.circle(cx, cy, s / 2, 'F')
+}
+function drawFacebookIcon(doc: jsPDF, cx: number, cy: number, s: number) {
+  drawDisc(doc, cx, cy, s, [24, 119, 242])
+  doc.setFont('helvetica', 'bold').setFontSize(s * 0.95).setTextColor(255, 255, 255)
+  doc.text('f', cx, cy + s * 0.28, { align: 'center' })
+}
+function drawInstagramIcon(doc: jsPDF, cx: number, cy: number, s: number) {
+  // Instagram brand-ish gradient approximated as warm magenta disc
+  drawDisc(doc, cx, cy, s, [225, 48, 108])
+  // White rounded square camera body
+  const r = s * 0.32
+  doc.setDrawColor(255, 255, 255)
+  doc.setLineWidth(s * 0.08)
+  doc.roundedRect(cx - r, cy - r, r * 2, r * 2, s * 0.08, s * 0.08)
+  // Lens
+  doc.circle(cx, cy, s * 0.16)
+  // Flash dot
+  doc.setFillColor(255, 255, 255)
+  doc.circle(cx + r * 0.6, cy - r * 0.6, s * 0.04, 'F')
+}
+function drawXTwitterIcon(doc: jsPDF, cx: number, cy: number, s: number) {
+  drawDisc(doc, cx, cy, s, [0, 0, 0])
+  doc.setDrawColor(255, 255, 255)
+  doc.setLineWidth(s * 0.12)
+  const o = s * 0.26
+  doc.line(cx - o, cy - o, cx + o, cy + o)
+  doc.line(cx - o, cy + o, cx + o, cy - o)
+}
+function drawLinkedInIcon(doc: jsPDF, cx: number, cy: number, s: number) {
+  drawDisc(doc, cx, cy, s, [10, 102, 194])
+  doc.setFont('helvetica', 'bold').setFontSize(s * 0.6).setTextColor(255, 255, 255)
+  doc.text('in', cx, cy + s * 0.2, { align: 'center' })
+}
+function drawPinterestIcon(doc: jsPDF, cx: number, cy: number, s: number) {
+  drawDisc(doc, cx, cy, s, [203, 32, 39])
+  doc.setFont('helvetica', 'bold').setFontSize(s * 0.85).setTextColor(255, 255, 255)
+  doc.text('P', cx, cy + s * 0.26, { align: 'center' })
+}
+
+
 
 
 
@@ -379,25 +422,23 @@ function buildPdf(opts: {
   drawFooterBand(doc, W, H)
 
   // ---- Contact Information inside footer (dark text on soft-grey wave) ----
-  const CONTACT_LABEL_Y = H - 52
-  const ICON_ROW_Y = H - 28
+  const CONTACT_LABEL_Y = H - 64
+  const ICON_ROW_Y = H - 44
+  const SOCIAL_ROW_Y = H - 22
 
   doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...ACCENT_DARK)
   doc.text('CONTACT INFORMATION', W / 2, CONTACT_LABEL_Y, { align: 'center' })
 
-  // Build icon + text pairs and lay them out centered as a single row.
-  // Outline icons render in ACCENT_DARK to contrast with the soft-grey wave;
-  // WhatsApp keeps its brand green disc with a white handset glyph.
+  // Three contact items: WhatsApp, Email, Website — all bold.
   const items: { draw: (cx: number, cy: number, s: number) => void; text: string }[] = [
     { draw: (cx, cy, s) => drawWhatsAppIcon(doc, cx, cy, s), text: SITE_PHONE_PK },
-    { draw: (cx, cy, s) => drawPhoneIcon(doc, cx, cy, s, ACCENT_DARK),    text: SITE_PHONE_PK },
-    { draw: (cx, cy, s) => drawEmailIcon(doc, cx, cy, s, ACCENT_DARK),    text: SITE_EMAIL },
-    { draw: (cx, cy, s) => drawGlobeIcon(doc, cx, cy, s, ACCENT_DARK),    text: SITE_WEB },
+    { draw: (cx, cy, s) => drawEmailIcon(doc, cx, cy, s, ACCENT_DARK), text: SITE_EMAIL },
+    { draw: (cx, cy, s) => drawGlobeIcon(doc, cx, cy, s, ACCENT_DARK), text: SITE_WEB },
   ]
   const ICON_SIZE = 12
   const ICON_TEXT_GAP = 6
-  const ITEM_GAP = 22
-  doc.setFont('helvetica', 'normal').setFontSize(8.8).setTextColor(...ACCENT_DARK)
+  const ITEM_GAP = 28
+  doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...ACCENT_DARK)
   const widths = items.map(it => ICON_SIZE + ICON_TEXT_GAP + doc.getTextWidth(it.text))
   const totalW = widths.reduce((a, b) => a + b, 0) + ITEM_GAP * (items.length - 1)
   let x = (W - totalW) / 2
@@ -405,10 +446,28 @@ function buildPdf(opts: {
     const it = items[i]
     const iconCx = x + ICON_SIZE / 2
     it.draw(iconCx, ICON_ROW_Y, ICON_SIZE)
-    doc.setTextColor(...ACCENT_DARK)
+    doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...ACCENT_DARK)
     doc.text(it.text, x + ICON_SIZE + ICON_TEXT_GAP, ICON_ROW_Y + 3)
     x += widths[i] + ITEM_GAP
   }
+
+  // ---- Social media row (brand-colored discs) ----
+  const socials: ((cx: number, cy: number, s: number) => void)[] = [
+    (cx, cy, s) => drawFacebookIcon(doc, cx, cy, s),
+    (cx, cy, s) => drawInstagramIcon(doc, cx, cy, s),
+    (cx, cy, s) => drawXTwitterIcon(doc, cx, cy, s),
+    (cx, cy, s) => drawLinkedInIcon(doc, cx, cy, s),
+    (cx, cy, s) => drawPinterestIcon(doc, cx, cy, s),
+  ]
+  const SOC_SIZE = 13
+  const SOC_GAP = 10
+  const socTotalW = socials.length * SOC_SIZE + (socials.length - 1) * SOC_GAP
+  let sx = (W - socTotalW) / 2 + SOC_SIZE / 2
+  for (const s of socials) {
+    s(sx, SOCIAL_ROW_Y, SOC_SIZE)
+    sx += SOC_SIZE + SOC_GAP
+  }
+
 
 
 
