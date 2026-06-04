@@ -107,9 +107,9 @@ export const compliancePages: CompliancePage[] = [
     formFields: [
       ...baseCompanyFields,
       { key: "current_company_name", label: "Company Name", placeholder: "Registered company name", required: true },
-      { key: "utr_number", label: "UTR Number", placeholder: "10-digit HMRC tax reference", required: true },
-      { key: "accounting_period", label: "Accounting Period", placeholder: "e.g. 01/04/2024 – 31/03/2025", required: true },
-      { key: "financial_summary", label: "Business Financial Statement", placeholder: "Income, expenses, profit/loss, bank balance — share full-year figures here", required: true, type: "textarea", helper: "We'll follow up on WhatsApp for supporting documents." },
+      { key: "utr_number", label: "UTR Number (optional)", placeholder: "10-digit HMRC tax reference", required: false },
+      { key: "accounting_period", label: "Accounting Period (optional)", placeholder: "e.g. 01/04/2024 – 31/03/2025", required: false },
+      { key: "financial_summary", label: "Business Financial Statement (optional)", placeholder: "Short summary if you'd like — full bookkeeping documents can be emailed", required: false, type: "textarea", helper: "Optional: please email all bookkeeping documents, Excel files, bank statements and full-year income/expenses to info@digiformation.uk." },
     ],
   },
   {
