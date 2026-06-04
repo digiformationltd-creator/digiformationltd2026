@@ -250,7 +250,12 @@ export const compliancePages: CompliancePage[] = [
       "Postal handling support",
       "Companies House submission",
     ],
-    requirements: ["Company Number (CRN)", "Company Authentication Code", "New Registered Address"],
+    requirements: [
+      "Company Number (CRN)",
+      "Company Name",
+      "Director's Full Name",
+      "New Registered Office Address (optional — we can provide one if you don't have your own)",
+    ],
     description: "Official AD01 filing service to update your UK registered office address with full postal and Companies House handling.",
     metaTitle: "AD01 Form Filing Service | Registered Office Update | Digiformation LTD",
     metaDescription: "Official AD01 filing service from Digiformation LTD. Update your UK registered office address with full postal handling.",
