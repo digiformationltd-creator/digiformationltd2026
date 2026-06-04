@@ -18,6 +18,8 @@ import {
   Menu, ShieldCheck, Save, Trash2, ChevronDown, ArrowLeft, Home,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { CheckCircle2, Circle, Clock } from "lucide-react";
 import logo from "@/assets/digiformation-logo-official.png";
 import UserDrawer from "@/components/UserDrawer";
 import { downloadInvoicePdf } from "@/lib/invoice";
