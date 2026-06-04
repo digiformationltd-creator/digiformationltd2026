@@ -139,6 +139,14 @@ export const usaServicePages: UsaService[] = [
     metaDescription:
       "Simplify U.S. LLC annual tax filing with Digiformation Ltd. Secure portal access and expert IRS-compliant support.",
     keywords: "Annual tax filing service, LLC tax filing USA, IRS tax compliance, US LLC taxation",
+    formFields: [
+      { key: "llc_name", label: "LLC Name", required: true },
+      { key: "ein", label: "EIN", required: true, placeholder: "9-digit EIN" },
+      { key: "state", label: "State of Formation", required: true },
+      { key: "members", label: "Members / Owners Details", type: "textarea", required: true, placeholder: "Name, address, ownership % for each member" },
+      { key: "financial_summary", label: "Annual Income & Expense Summary", type: "textarea", required: true, placeholder: "Full-year revenue, expenses, profit/loss" },
+      { key: "documents_note", label: "Documents (sent separately)", type: "textarea", placeholder: "Email bank statements for the tax year and previous filings (if any) to info@digiformation.uk after checkout." },
+    ],
   },
   {
     slug: "bio-report",
