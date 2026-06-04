@@ -178,7 +178,6 @@ function buildPdf(opts: {
   doc.text(SITE_NAME, colR, ry); ry += 13
   doc.text(SITE_WEB, colR, ry); ry += 13
   doc.text(SITE_EMAIL, colR, ry); ry += 13
-  doc.text(`UK: ${SITE_PHONE}`, colR, ry); ry += 13
   doc.text(`PK: ${SITE_PHONE_PK}`, colR, ry); ry += 13
 
   y = Math.max(ly, ry) + 24
