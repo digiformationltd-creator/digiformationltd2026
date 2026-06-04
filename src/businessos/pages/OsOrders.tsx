@@ -25,12 +25,16 @@ interface OrderRow {
   order_date: string;
   created_at: string;
   notes: string | null;
+  source?: string | null;
+  payment_status?: string | null;
+  inquiry_id?: string | null;
   invoice_number?: string | null;
   invoice_status?: string | null;
 }
 
 const STATUSES = [
   { key: "all",         label: "All",         icon: Filter,        color: "text-white/70" },
+  { key: "Inquiry",     label: "Inquiry",     icon: MessageSquare, color: "text-sky-300" },
   { key: "Pending",     label: "Pending",     icon: Hourglass,     color: "text-amber-300" },
   { key: "In Progress", label: "In Progress", icon: Clock,         color: "text-blue-300" },
   { key: "Delivered",   label: "Delivered",   icon: Truck,         color: "text-cyan-300" },
@@ -39,8 +43,24 @@ const STATUSES = [
   { key: "Cancelled",   label: "Cancelled",   icon: XCircle,       color: "text-rose-300" },
 ];
 
+const SOURCES = [
+  { key: "all",      label: "All sources" },
+  { key: "checkout", label: "Paid checkout" },
+  { key: "inquiry",  label: "Inquiries" },
+  { key: "manual",   label: "Manual" },
+];
+
+const PAYMENT_STATUSES = [
+  { key: "all",      label: "All payment" },
+  { key: "unpaid",   label: "Unpaid" },
+  { key: "paid",     label: "Paid" },
+  { key: "refunded", label: "Refunded" },
+  { key: "n/a",      label: "N/A (inquiry)" },
+];
+
 const statusChip = (s: string) => {
   const map: Record<string, string> = {
+    "Inquiry":     "bg-sky-500/15 text-sky-200 ring-1 ring-sky-400/30",
     "Pending":     "bg-amber-500/15 text-amber-200 ring-1 ring-amber-400/30",
     "In Progress": "bg-blue-500/15 text-blue-200 ring-1 ring-blue-400/30",
     "Delivered":   "bg-cyan-500/15 text-cyan-200 ring-1 ring-cyan-400/30",
@@ -49,6 +69,19 @@ const statusChip = (s: string) => {
     "Cancelled":   "bg-rose-500/15 text-rose-200 ring-1 ring-rose-400/30",
   };
   return map[s] || "bg-white/[0.06] text-white/70 ring-1 ring-white/10";
+};
+
+const sourceChip = (s?: string | null) => {
+  if (!s || s === "checkout") return "bg-emerald-500/10 text-emerald-200/80 ring-1 ring-emerald-400/20";
+  if (s === "inquiry")        return "bg-sky-500/10 text-sky-200/80 ring-1 ring-sky-400/20";
+  if (s === "manual")         return "bg-white/[0.05] text-white/60 ring-1 ring-white/10";
+  if (s === "whatsapp")       return "bg-green-500/10 text-green-200/80 ring-1 ring-green-400/20";
+  return "bg-white/[0.05] text-white/60 ring-1 ring-white/10";
+};
+
+const sourceLabel = (s?: string | null) => {
+  if (!s || s === "checkout") return "Checkout";
+  return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
 const invoiceChip = (s?: string | null) => {
