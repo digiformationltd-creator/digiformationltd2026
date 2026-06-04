@@ -220,7 +220,7 @@ export default function OsOrders() {
       .from("client_orders")
       .select("*")
       .order("order_date", { ascending: false })
-      .limit(500);
+      .limit(5000);
     if (error) {
       setLoading(false);
       toast.error(error.message || "Unable to load orders");
