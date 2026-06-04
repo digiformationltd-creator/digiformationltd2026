@@ -3,8 +3,13 @@ export type ComplianceFormField = {
   label: string;
   placeholder?: string;
   required?: boolean;
-  type?: "text" | "textarea" | "date";
+  type?: "text" | "textarea" | "date" | "mail-action";
   helper?: string;
+  /** For type="mail-action": the destination email and (optional) subject.
+   *  Clicking the button opens the user's mail client and marks the field
+   *  as completed so the Continue / Place Order button unlocks. */
+  email?: string;
+  subject?: string;
 };
 
 export type CompliancePage = {
@@ -296,14 +301,25 @@ export const complianceItemFormFields: Record<string, { title: string; fields: C
   aa: {
     title: "Annual Accounts Filing",
     fields: [
+      { key: "aa_company_name", label: "Company Name", placeholder: "Registered company name", required: true },
       { key: "aa_company_number", label: "Company Number (CRN)", placeholder: "e.g. 12345678", required: true },
       { key: "aa_auth_code", label: "Company Authentication Code", placeholder: "6-character code from Companies House", required: true },
       {
-        key: "aa_financials",
+        key: "aa_financials_note",
         label: "Business Financial Statement",
         type: "textarea",
         required: false,
-        placeholder: "Income, expenses, budget — full year figures, bookkeeping details and expenses sheet. If you prefer, email these details to info@digiformation.uk",
+        placeholder: "Optional: paste a short summary here (income, expenses, budget, bookkeeping details, expenses sheet). You can also email the full documents — see button below.",
+        helper: "We need full-year income, expenses, budget figures, bookkeeping details and expenses sheet.",
+      },
+      {
+        key: "aa_email_docs",
+        label: "Email your documents",
+        type: "mail-action",
+        required: true,
+        email: "info@digiformation.uk",
+        subject: "Annual Accounts Filing — Financial Documents",
+        helper: "Tap to open your email app and send the financial documents to info@digiformation.uk. Once opened, the Continue button will unlock.",
       },
     ],
   },
