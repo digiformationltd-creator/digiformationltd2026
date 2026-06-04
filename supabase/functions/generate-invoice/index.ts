@@ -87,11 +87,41 @@ function drawFooterBand(doc: jsPDF, W: number, H: number) {
 // Full footer: band + contact info row + social icons.
 // Drawn at the bottom of every invoice page so the design is consistent.
 function drawFullFooter(doc: jsPDF, W: number, H: number) {
+  // ---- Social row sits in the WHITE area above the curved band so the
+  //      brand glyphs are clearly legible and don't fight the design.
+  const SOCIAL_LABEL_Y = H - 108
+  const SOCIAL_ROW_Y   = H - 92
+  const DIVIDER_Y      = H - 78
+
+  doc.setFont('helvetica', 'bold').setFontSize(8).setTextColor(...SUB)
+  doc.text('FOLLOW US', W / 2, SOCIAL_LABEL_Y, { align: 'center' })
+
+  const socials: ((cx: number, cy: number, s: number) => void)[] = [
+    (cx, cy, s) => drawFacebookIcon(doc, cx, cy, s),
+    (cx, cy, s) => drawInstagramIcon(doc, cx, cy, s),
+    (cx, cy, s) => drawXTwitterIcon(doc, cx, cy, s),
+    (cx, cy, s) => drawLinkedInIcon(doc, cx, cy, s),
+    (cx, cy, s) => drawPinterestIcon(doc, cx, cy, s),
+  ]
+  const SOC_SIZE = 14
+  const SOC_GAP = 12
+  const socTotalW = socials.length * SOC_SIZE + (socials.length - 1) * SOC_GAP
+  let sx = (W - socTotalW) / 2 + SOC_SIZE / 2
+  for (const s of socials) {
+    s(sx, SOCIAL_ROW_Y, SOC_SIZE)
+    sx += SOC_SIZE + SOC_GAP
+  }
+
+  // Hairline divider separating socials from the contact band
+  doc.setDrawColor(...DIVIDER).setLineWidth(0.4)
+  doc.line(W * 0.25, DIVIDER_Y, W * 0.75, DIVIDER_Y)
+
+  // ---- Curved footer band ----
   drawFooterBand(doc, W, H)
 
-  const CONTACT_LABEL_Y = H - 64
-  const ICON_ROW_Y = H - 44
-  const SOCIAL_ROW_Y = H - 22
+  // ---- Contact info on the band (dark text on soft-grey wave) ----
+  const CONTACT_LABEL_Y = H - 56
+  const ICON_ROW_Y = H - 32
 
   doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...ACCENT_DARK)
   doc.text('CONTACT INFORMATION', W / 2, CONTACT_LABEL_Y, { align: 'center' })
@@ -115,22 +145,6 @@ function drawFullFooter(doc: jsPDF, W: number, H: number) {
     doc.setFont('helvetica', 'bold').setFontSize(9).setTextColor(...ACCENT_DARK)
     doc.text(it.text, x + ICON_SIZE + ICON_TEXT_GAP, ICON_ROW_Y + 3)
     x += widths[i] + ITEM_GAP
-  }
-
-  const socials: ((cx: number, cy: number, s: number) => void)[] = [
-    (cx, cy, s) => drawFacebookIcon(doc, cx, cy, s),
-    (cx, cy, s) => drawInstagramIcon(doc, cx, cy, s),
-    (cx, cy, s) => drawXTwitterIcon(doc, cx, cy, s),
-    (cx, cy, s) => drawLinkedInIcon(doc, cx, cy, s),
-    (cx, cy, s) => drawPinterestIcon(doc, cx, cy, s),
-  ]
-  const SOC_SIZE = 13
-  const SOC_GAP = 10
-  const socTotalW = socials.length * SOC_SIZE + (socials.length - 1) * SOC_GAP
-  let sx = (W - socTotalW) / 2 + SOC_SIZE / 2
-  for (const s of socials) {
-    s(sx, SOCIAL_ROW_Y, SOC_SIZE)
-    sx += SOC_SIZE + SOC_GAP
   }
 }
 
