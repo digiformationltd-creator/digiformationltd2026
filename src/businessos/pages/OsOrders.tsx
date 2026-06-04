@@ -112,6 +112,8 @@ export default function OsOrders() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [sourceFilter, setSourceFilter] = useState<string>("all");
+  const [paymentFilter, setPaymentFilter] = useState<string>("all");
   const [dateRange, setDateRange] = useState<string>("all");
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [openOrderId, setOpenOrderId] = useState<string | null>(null);
