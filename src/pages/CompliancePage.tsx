@@ -13,6 +13,26 @@ const trust = [
   { icon: FileCheck, label: "Documents Included" },
 ];
 
+// Map each compliance page slug to a preselected checkout item from the
+// UK Compliance catalog in /checkout. This routes every compliance order
+// through the same CheckoutFlow → generate-invoice pipeline that creates
+// client_orders + invoices and fires order-confirmation / order-notification
+// emails — keeping the flow identical to ID Verification, LTD Formation, etc.
+const SLUG_TO_CHECKOUT_ITEM: Record<string, string> = {
+  "confirmation-statement": "cs",
+  "annual-accounts-filing": "aa",
+  "company-name-change": "name",
+};
+
+const buildCheckoutLink = (slug: string, title: string) => {
+  const item = SLUG_TO_CHECKOUT_ITEM[slug];
+  const params = new URLSearchParams();
+  if (item) params.set("items", item);
+  params.set("title", title);
+  params.set("service", title);
+  return `/checkout?${params.toString()}`;
+};
+
 const CompliancePage = () => {
   const { slug } = useParams();
   const page = findCompliancePage(slug);
@@ -61,7 +81,7 @@ const CompliancePage = () => {
             <p className="mt-8 text-lg md:text-xl leading-relaxed max-w-2xl opacity-90">{page.description}</p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 items-start sm:items-center">
               <Button asChild variant="hero" size="lg" className="rounded-full">
-                <Link to={`/contact?service=${encodeURIComponent(page.title)}`}>Get Started — {page.price} <ArrowRight className="w-4 h-4" /></Link>
+                <Link to={buildCheckoutLink(page.slug, page.title)}>Get Started — {page.price} <ArrowRight className="w-4 h-4" /></Link>
               </Button>
               <Button asChild variant="ghostGlow" size="lg" className="rounded-full">
                 <Link to="/uk-compliance">All Compliance Services</Link>
