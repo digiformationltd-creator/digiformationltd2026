@@ -92,6 +92,11 @@ const UK_SERVICE_ENTRIES: CatalogEntry[] = [
     price: 40,
     currency: "GBP",
     category: "UK Address",
+    formFields: [
+      { key: "company_name", label: "Company Name", required: true },
+      { key: "company_number", label: "Company Number (CRN)", required: true, placeholder: "e.g. 12345678" },
+      { key: "director_name", label: "Primary Director Name", required: true },
+    ],
   },
   {
     slug: "business-service-address",
@@ -100,6 +105,11 @@ const UK_SERVICE_ENTRIES: CatalogEntry[] = [
     price: 60,
     currency: "GBP",
     category: "UK Address",
+    formFields: [
+      { key: "company_name", label: "Company Name", required: true },
+      { key: "company_number", label: "Company Number (CRN)", required: true, placeholder: "e.g. 12345678" },
+      { key: "contact_name", label: "Primary Contact Name", required: true },
+    ],
   },
   {
     slug: "director-service-address",
@@ -108,6 +118,11 @@ const UK_SERVICE_ENTRIES: CatalogEntry[] = [
     price: 20,
     currency: "GBP",
     category: "UK Address",
+    formFields: [
+      { key: "director_name", label: "Director Full Name", required: true },
+      { key: "company_name", label: "Company Name", required: true },
+      { key: "company_number", label: "Company Number (CRN)", required: true, placeholder: "e.g. 12345678" },
+    ],
   },
   {
     slug: "address-all-in-one",
@@ -116,6 +131,11 @@ const UK_SERVICE_ENTRIES: CatalogEntry[] = [
     price: 80,
     currency: "GBP",
     category: "UK Address",
+    formFields: [
+      { key: "company_name", label: "Company Name", required: true },
+      { key: "company_number", label: "Company Number (CRN)", required: true, placeholder: "e.g. 12345678" },
+      { key: "director_name", label: "Primary Director Name", required: true },
+    ],
   },
   {
     slug: "utr-number",
@@ -151,6 +171,11 @@ const UK_SERVICE_ENTRIES: CatalogEntry[] = [
     price: 30,
     currency: "GBP",
     category: "UK Services",
+    formFields: [
+      { key: "company_name", label: "Company Name", required: true },
+      { key: "company_number", label: "Company Number (CRN)", required: true, placeholder: "e.g. 12345678" },
+      { key: "registered_address", label: "Registered Office Address", type: "textarea", required: true, placeholder: "Where Companies House should post the code" },
+    ],
   },
   {
     slug: "activation-code",
@@ -159,6 +184,12 @@ const UK_SERVICE_ENTRIES: CatalogEntry[] = [
     price: 30,
     currency: "GBP",
     category: "UK Services",
+    formFields: [
+      { key: "company_name", label: "Company Name", required: true },
+      { key: "company_number", label: "Company Number (CRN)", required: true, placeholder: "e.g. 12345678" },
+      { key: "utr", label: "UTR Number", required: true, placeholder: "10-digit HMRC reference" },
+      { key: "gateway_id", label: "HMRC Government Gateway ID (if any)" },
+    ],
   },
 ];
 
