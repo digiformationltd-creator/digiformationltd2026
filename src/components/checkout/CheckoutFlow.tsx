@@ -1022,7 +1022,7 @@ const CheckoutFlow = ({
                     />
                     <div className="grid sm:grid-cols-2 gap-4">
                       <Field label="City" value={form.city} onChange={(v) => setForm({ ...form, city: v })} required minLength={2} />
-                      <Field label="State / Province (optional)" value={form.state} onChange={(v) => setForm({ ...form, state: v })} />
+                      <Field label="State / Province" value={form.state} onChange={(v) => setForm({ ...form, state: v })} required minLength={2} />
                     </div>
                     <Field label="Postal code" value={form.postal_code} onChange={(v) => setForm({ ...form, postal_code: v })} required minLength={3} />
                     <div className="grid sm:grid-cols-2 gap-4">
