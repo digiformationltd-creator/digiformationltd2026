@@ -68,17 +68,18 @@ function drawHeaderBand(doc: jsPDF, W: number) {
   doc.ellipse(W * 0.28, -28, W * 0.62, 52, 'F')
 }
 
-// Footer: tall curved band rising from bottom — hosts contact info inside.
-// Style preserved (soft-grey accent + dark navy main wave), slightly taller
-// so contact label + icon row sits comfortably on the dark portion in white.
+// Footer: exact mirror of the header design — same two curves (dark navy
+// small curve on right + large soft-grey sweep), just scaled slightly larger
+// to accommodate the contact info row inside.
 function drawFooterBand(doc: jsPDF, W: number, H: number) {
-  // Soft-grey accent curve at the top edge of the footer
-  doc.setFillColor(...ACCENT_SOFT)
-  doc.ellipse(W * 0.30, H - 40, W * 0.72, 55, 'F')
-  // Dark navy main wave covering full width — hosts the contact info
+  // Dark navy curve on the right (mirrors header's top-right dark curve)
   doc.setFillColor(...ACCENT_DARK)
-  doc.ellipse(W * 0.55, H + 10, W * 0.90, 78, 'F')
+  doc.ellipse(W * 0.78, H + 30, W * 0.42, 60, 'F')
+  // Large soft-grey curve sweeping across most of the width (mirrors header)
+  doc.setFillColor(...ACCENT_SOFT)
+  doc.ellipse(W * 0.28, H + 38, W * 0.62, 72, 'F')
 }
+
 
 // ---- Vector contact icons (drawn in white, scalable, no emoji) ----
 function drawPhoneHandset(doc: jsPDF, cx: number, cy: number, s: number, rgb: [number,number,number]) {
