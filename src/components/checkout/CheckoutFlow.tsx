@@ -127,6 +127,8 @@ export type CheckoutFlowProps = {
   showProofOfAddress?: boolean;
   /** Show a "Date of birth" field (used for IDV) */
   showDateOfBirth?: boolean;
+  /** Hide the entire residential address block (used for compliance filings) */
+  hideAddress?: boolean;
   /** Show a "Passport number" field (used for IDV) */
   showPassportNumber?: boolean;
   /** Show a "Website" field (used for banks) */
