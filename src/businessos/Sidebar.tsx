@@ -1,6 +1,8 @@
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { LogOut } from "lucide-react";
 import { NAV } from "./nav";
 import logo from "@/assets/digiformation-logo-official.png";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Sidebar() {
   const { pathname } = useLocation();
