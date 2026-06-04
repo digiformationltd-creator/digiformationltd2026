@@ -221,6 +221,7 @@ function buildPdf(opts: {
   currency: string
   customer: Body['customer']
   notes?: string
+  details?: { label: string; value: string }[]
   documentLinks?: { label: string; url: string; filename: string }[]
 }) {
   const doc = new jsPDF({ unit: 'pt', format: 'a4' })
