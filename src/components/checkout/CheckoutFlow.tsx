@@ -538,6 +538,53 @@ const CheckoutFlow = ({
       })
     );
 
+    // Build a full structured detail list so the invoice + lead capture
+    // includes every field the customer filled in on the checkout form.
+    const customerDetails: { label: string; value: string }[] = [];
+    const pushDetail = (label: string, value?: string | null) => {
+      const v = (value ?? "").trim();
+      if (v) customerDetails.push({ label, value: v });
+    };
+    pushDetail("Full name", form.full_name || `${form.first_name} ${form.last_name}`.trim());
+    pushDetail("Email", form.email);
+    pushDetail("WhatsApp", form.whatsapp);
+    if (showSeparateWhatsapp) pushDetail(whatsappContactLabel, form.whatsapp_contact);
+    if (showCompanyName) pushDetail("Proposed company / Trading name", form.company_name);
+    if (showServiceMode) pushDetail("Service mode", serviceModeLabel);
+    if (showServiceMode && serviceMode === "ltd-only") pushDetail("Companies House personal code", form.personal_code);
+    if (showRole) pushDetail("Applicant role", form.role);
+    if (showDateOfBirth) pushDetail("Date of birth", form.date_of_birth);
+    if (showPassportNumber) pushDetail("Passport number", form.passport_number);
+    pushDetail("ID document type", form.id_doc_type);
+    if (!hideAddress) {
+      pushDetail("Country of residence", form.country);
+      pushDetail("Nationality", form.nationality);
+      pushDetail("Address line 1", form.address_line1);
+      pushDetail("Address line 2", form.address_line2);
+      pushDetail("City", form.city);
+      pushDetail("State / Region", form.state);
+      pushDetail("Postal code", form.postal_code);
+    }
+    if (showBusinessType) pushDetail("Business type", form.business_type);
+    if (!hideBusinessActivity) {
+      if (form.business_category === "Other") {
+        pushDetail("Business activity (other)", form.business_other);
+      } else {
+        pushDetail("Business category", form.business_category);
+        pushDetail("Business subcategory", form.business_subcategory);
+      }
+      pushDetail("SIC codes", form.sic_codes);
+    }
+    if (showWebsite) pushDetail("Website", form.website);
+    for (const sec of activeExtraSections) {
+      for (const f of sec.fields) {
+        pushDetail(`${sec.title} — ${f.label}`, extra[f.key]);
+      }
+    }
+    pushDetail("Additional notes", form.message);
+
+    const whatsappE164 = normalizePhoneToE164(form.whatsapp, form.country);
+
     let invoiceNumber: string | undefined;
     let invoiceUrl: string | undefined;
     let documentLinks: { label: string; url: string; filename: string }[] = [];
@@ -556,6 +603,7 @@ const CheckoutFlow = ({
               .filter(Boolean)
               .join(", "),
             whatsapp: form.whatsapp,
+            whatsapp_e164: whatsappE164,
             address_line1: form.address_line1,
             address_line2: form.address_line2,
             city: form.city,
@@ -563,7 +611,8 @@ const CheckoutFlow = ({
             postal_code: form.postal_code,
             country: form.country,
           },
-          notes: `${contextLabel ? contextLabel + "\n" : ""}${lines}\nBusiness activity: ${activityText}`,
+          details: customerDetails,
+          notes: `${contextLabel ? contextLabel + "\n" : ""}${lines}${activityText ? `\nBusiness activity: ${activityText}` : ""}`,
           orderRef,
           documents: uploadedDocs,
         },
