@@ -293,6 +293,7 @@ function AddressesTab({ userId }: { userId: string }) {
 // ─────────────────────────── ORDERS ───────────────────────────
 function OrdersTab({ userId, email }: { userId: string; email?: string | null }) {
   const [rows, setRows] = useState<any[]>([]);
+  const [invCounts, setInvCounts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState<string | null>(null);
 
@@ -310,6 +311,21 @@ function OrdersTab({ userId, email }: { userId: string; email?: string | null })
     }
     merged.sort((a, b) => new Date(b.order_date || b.created_at).getTime() - new Date(a.order_date || a.created_at).getTime());
     setRows(merged);
+
+    // Invoice counts per order — gives admin a quick at-a-glance "is this billed?"
+    if (merged.length) {
+      const { data: invs } = await supabase
+        .from("invoices")
+        .select("order_id")
+        .in("order_id", merged.map((o) => o.id));
+      const counts: Record<string, number> = {};
+      for (const inv of invs || []) {
+        if (inv.order_id) counts[inv.order_id] = (counts[inv.order_id] || 0) + 1;
+      }
+      setInvCounts(counts);
+    } else {
+      setInvCounts({});
+    }
     setLoading(false);
   };
   useEffect(() => {
@@ -320,22 +336,49 @@ function OrdersTab({ userId, email }: { userId: string; email?: string | null })
     return () => { supabase.removeChannel(ch); };
   }, [userId, email]);
 
+  const statusTone = (s: string) => {
+    const k = (s || "").toLowerCase();
+    if (k.includes("complete")) return "bg-emerald-500/15 text-emerald-200 ring-emerald-400/30";
+    if (k.includes("progress")) return "bg-blue-500/15 text-blue-200 ring-blue-400/30";
+    if (k.includes("deliver")) return "bg-cyan-500/15 text-cyan-200 ring-cyan-400/30";
+    if (k.includes("revision")) return "bg-purple-500/15 text-purple-200 ring-purple-400/30";
+    if (k.includes("cancel")) return "bg-rose-500/15 text-rose-200 ring-rose-400/30";
+    return "bg-amber-500/15 text-amber-200 ring-amber-400/30";
+  };
+
   if (loading) return <div className="os-glass p-8 text-center"><Loader2 className="w-5 h-5 animate-spin mx-auto text-white/40" /></div>;
   if (!rows.length) return <div className="os-glass p-8 text-center text-sm text-white/50">No orders for this client.</div>;
 
+  const total = rows.reduce((s, o) => s + Number(o.amount_gbp || 0), 0);
+
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
+      <div className="os-glass p-3 flex items-center justify-between text-xs">
+        <span className="text-white/60">{rows.length} order{rows.length === 1 ? "" : "s"} · Qty {rows.length}</span>
+        <span className="font-semibold">Total: {fmtGBP(total)}</span>
+      </div>
       {rows.map((o) => (
-        <button key={o.id} onClick={() => setOpenId(o.id)} className="os-glass p-3 w-full text-left flex items-center justify-between gap-3 hover:bg-white/[0.04]">
-          <div className="min-w-0">
-            <div className="text-[10px] uppercase tracking-wider text-white/40">Order #</div>
-            <div className="font-mono text-xs text-white/80">{o.order_ref || "Reference pending"}</div>
-            <div className="text-sm font-semibold truncate">{o.service}</div>
-            <div className="text-[11px] text-white/40">{fmtDate(o.order_date)}</div>
-          </div>
-          <div className="text-right shrink-0">
-            <div className="font-bold">{fmtGBP(Number(o.amount_gbp))}</div>
-            <div className="text-[10px] mt-0.5 px-2 py-0.5 rounded-full bg-white/[0.06] text-white/70 inline-block">{o.status}</div>
+        <button key={o.id} onClick={() => setOpenId(o.id)} className="os-glass p-3 w-full text-left hover:bg-white/[0.04]">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[10px] uppercase tracking-wider text-white/40">Order #</span>
+                <span className="font-mono text-xs text-white/90">{o.order_ref || "Reference pending"}</span>
+                {!o.user_id && <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-200">guest</span>}
+              </div>
+              <div className="text-sm font-semibold truncate mt-0.5">{o.service}</div>
+              <div className="text-[11px] text-white/50 mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
+                <span>Qty 1</span>
+                <span>{fmtDate(o.order_date)}</span>
+                {o.customer_email && <span className="truncate">{o.customer_email}</span>}
+                {o.customer_whatsapp && <span>{o.customer_whatsapp}</span>}
+                <span>{invCounts[o.id] || 0} invoice{(invCounts[o.id] || 0) === 1 ? "" : "s"}</span>
+              </div>
+            </div>
+            <div className="text-right shrink-0">
+              <div className="font-bold">{fmtGBP(Number(o.amount_gbp))}</div>
+              <div className={`text-[10px] mt-1 px-2 py-0.5 rounded-full ring-1 inline-block ${statusTone(o.status)}`}>{o.status}</div>
+            </div>
           </div>
         </button>
       ))}
