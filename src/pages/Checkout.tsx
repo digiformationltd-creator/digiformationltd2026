@@ -98,6 +98,10 @@ const Checkout = () => {
     const isConfirmationStatement =
       catalogEntry.complianceItemId === "cs" ||
       catalogEntry.slug === "confirmation-statement";
+    const isAnnualAccounts =
+      catalogEntry.complianceItemId === "aa" ||
+      catalogEntry.slug === "annual-accounts-filing";
+    const minimalContact = isConfirmationStatement || isAnnualAccounts;
 
     return (
       <Layout>
@@ -113,9 +117,9 @@ const Checkout = () => {
           notesPlaceholder="Share any details we'll need to fulfil your order..."
           fixedPackageName={catalogEntry.name}
           extraSections={extraSection}
-          showDateOfBirth={!isConfirmationStatement}
-          hideBusinessActivity={isConfirmationStatement}
-          hideAddress={isConfirmationStatement}
+          showDateOfBirth={!minimalContact}
+          hideBusinessActivity={minimalContact}
+          hideAddress={minimalContact}
         />
       </Layout>
     );
