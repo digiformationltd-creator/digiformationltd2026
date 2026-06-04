@@ -510,7 +510,7 @@ function buildPdf(opts: {
       const rowLines = Math.max(labelLines.length, valueLines.length)
       const rowH = rowLines * 13 + ROW_PAD * 2
       if (dy + rowH > H - 90) {
-        drawFooterBand(doc, W, H)
+        drawFullFooter(doc, W, H)
         doc.addPage(); drawHeaderBand(doc, W); drawWatermark(doc, W, H)
         dy = M + 30
         doc.setFont('helvetica', 'bold').setFontSize(20).setTextColor(...ACCENT_DARK)
@@ -529,7 +529,7 @@ function buildPdf(opts: {
       doc.line(M, dy + rowH, W - M, dy + rowH)
       dy += rowH
     }
-    drawFooterBand(doc, W, H)
+    drawFullFooter(doc, W, H)
   }
 
 
@@ -557,7 +557,7 @@ function buildPdf(opts: {
       dy += 72
       if (dy > H - 200) { doc.addPage(); drawHeaderBand(doc, W); drawWatermark(doc, W, H); dy = M + 30 }
     }
-    drawFooterBand(doc, W, H)
+    drawFullFooter(doc, W, H)
   }
 
   return doc.output('arraybuffer') as ArrayBuffer
