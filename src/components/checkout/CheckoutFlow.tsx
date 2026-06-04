@@ -382,12 +382,12 @@ const CheckoutFlow = ({
         /\S+@\S+\.\S+/.test(form.email) &&
         form.whatsapp.trim().length >= 5 &&
         (!showSeparateWhatsapp || form.whatsapp_contact.trim().length >= 5) &&
-        form.country.trim().length >= 2 &&
-        form.nationality.trim().length >= 2 &&
-        form.address_line1.trim().length >= 3 &&
-        form.address_line2.trim().length >= 2 &&
-        form.city.trim().length >= 2 &&
-        form.postal_code.trim().length >= 3 &&
+        (hideAddress || form.country.trim().length >= 2) &&
+        (hideAddress || form.nationality.trim().length >= 2) &&
+        (hideAddress || form.address_line1.trim().length >= 3) &&
+        (hideAddress || form.address_line2.trim().length >= 2) &&
+        (hideAddress || form.city.trim().length >= 2) &&
+        (hideAddress || form.postal_code.trim().length >= 3) &&
         (!showBusinessType || form.business_type.trim().length >= 2) &&
         (hideBusinessActivity || form.business_category.trim().length > 0) &&
         (hideBusinessActivity || (form.business_category === "Other"
