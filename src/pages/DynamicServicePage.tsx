@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import ServicePage from "@/components/ServicePage";
 import { ukServices, ukCompliance, usaServices, banking } from "@/data/navigation";
 import Layout from "@/components/layout/Layout";
+import { slugFromPath } from "@/data/serviceCatalog";
 
 const allServices = [
   ...ukServices.map(s => ({ ...s, group: "UK Services", base: "/uk-services" })),
@@ -28,11 +29,14 @@ export const DynamicServicePage = () => {
     );
   }
 
+  const catalogSlug = slugFromPath(match.path);
+
   return (
     <ServicePage
       eyebrow={match.group}
       title={match.name}
       contactService={match.name}
+      checkoutSlug={catalogSlug}
       description={`Professional ${match.name.toLowerCase()} delivered with speed, transparency and full compliance. Trusted by 300+ entrepreneurs across the UK, USA and beyond.`}
     />
   );
