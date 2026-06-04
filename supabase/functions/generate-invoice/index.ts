@@ -142,6 +142,51 @@ function drawGlobeIcon(doc: jsPDF, cx: number, cy: number, s: number, rgb: [numb
   doc.ellipse(cx, cy, r * 0.42, r)
 }
 
+// ---- Social media brand icons (filled discs with white glyph) ----
+function drawDisc(doc: jsPDF, cx: number, cy: number, s: number, rgb: [number, number, number]) {
+  doc.setFillColor(...rgb)
+  doc.circle(cx, cy, s / 2, 'F')
+}
+function drawFacebookIcon(doc: jsPDF, cx: number, cy: number, s: number) {
+  drawDisc(doc, cx, cy, s, [24, 119, 242])
+  doc.setFont('helvetica', 'bold').setFontSize(s * 0.95).setTextColor(255, 255, 255)
+  doc.text('f', cx, cy + s * 0.28, { align: 'center' })
+}
+function drawInstagramIcon(doc: jsPDF, cx: number, cy: number, s: number) {
+  // Instagram brand-ish gradient approximated as warm magenta disc
+  drawDisc(doc, cx, cy, s, [225, 48, 108])
+  // White rounded square camera body
+  const r = s * 0.32
+  doc.setDrawColor(255, 255, 255)
+  doc.setLineWidth(s * 0.08)
+  doc.roundedRect(cx - r, cy - r, r * 2, r * 2, s * 0.08, s * 0.08)
+  // Lens
+  doc.circle(cx, cy, s * 0.16)
+  // Flash dot
+  doc.setFillColor(255, 255, 255)
+  doc.circle(cx + r * 0.6, cy - r * 0.6, s * 0.04, 'F')
+}
+function drawXTwitterIcon(doc: jsPDF, cx: number, cy: number, s: number) {
+  drawDisc(doc, cx, cy, s, [0, 0, 0])
+  doc.setDrawColor(255, 255, 255)
+  doc.setLineWidth(s * 0.12)
+  const o = s * 0.26
+  doc.line(cx - o, cy - o, cx + o, cy + o)
+  doc.line(cx - o, cy + o, cx + o, cy - o)
+}
+function drawLinkedInIcon(doc: jsPDF, cx: number, cy: number, s: number) {
+  drawDisc(doc, cx, cy, s, [10, 102, 194])
+  doc.setFont('helvetica', 'bold').setFontSize(s * 0.6).setTextColor(255, 255, 255)
+  doc.text('in', cx, cy + s * 0.2, { align: 'center' })
+}
+function drawPinterestIcon(doc: jsPDF, cx: number, cy: number, s: number) {
+  drawDisc(doc, cx, cy, s, [203, 32, 39])
+  doc.setFont('helvetica', 'bold').setFontSize(s * 0.85).setTextColor(255, 255, 255)
+  doc.text('P', cx, cy + s * 0.26, { align: 'center' })
+}
+
+
+
 
 
 
