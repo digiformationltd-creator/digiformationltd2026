@@ -219,37 +219,37 @@ function buildPdf(opts: {
   doc.text(fmt(opts.amount), colAmt, y + 12, { align: 'right' })
   y += 40
 
-  // Note — wider area, more room for long notes
-  doc.setFont('helvetica', 'bold').setFontSize(10.5).setTextColor(...ACCENT_DARK)
-  doc.text('NOTE', M, y)
-  doc.setDrawColor(...ACCENT_SOFT).setLineWidth(0.6)
-  doc.line(M, y + 4, M + 32, y + 4)
-  y += 18
-  doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(...SUB)
-  const note = (opts.notes && opts.notes.trim())
-    ? opts.notes
-    : `Thank you for choosing ${SITE_NAME}. Payment is due within 7 days of invoice date.`
-  // Full-width note area, with line spacing and clipping just above the footer
-  const noteMaxWidth = W - M * 2
-  const noteLines = doc.splitTextToSize(note, noteMaxWidth) as string[]
-  // Reserve space for payment details + contact + signature + footer band
-  const paymentBlockTop = H - 330
-  const noteBottomLimit = paymentBlockTop - 20
-  const lineHeight = 14
-  let noteY = y
-  for (const ln of noteLines) {
-    if (noteY > noteBottomLimit) break
-    doc.text(ln, M, noteY)
-    noteY += lineHeight
+  // Note — only when user supplied custom notes (skip default placeholder to save room)
+  const hasCustomNote = !!(opts.notes && opts.notes.trim())
+  let noteEndY = y
+  if (hasCustomNote) {
+    doc.setFont('helvetica', 'bold').setFontSize(10.5).setTextColor(...ACCENT_DARK)
+    doc.text('NOTE', M, y)
+    doc.setDrawColor(...ACCENT_SOFT).setLineWidth(0.6)
+    doc.line(M, y + 4, M + 32, y + 4)
+    y += 18
+    doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(...SUB)
+    const noteMaxWidth = W - M * 2
+    const noteLines = doc.splitTextToSize(opts.notes!.trim(), noteMaxWidth) as string[]
+    const noteBottomLimit = H - 360
+    const lineHeight = 14
+    let noteY = y
+    for (const ln of noteLines) {
+      if (noteY > noteBottomLimit) break
+      doc.text(ln, M, noteY)
+      noteY += lineHeight
+    }
+    noteEndY = noteY + 6
   }
 
   // ---------- Payment Details (inline, 3 columns) ----------
-  let py = paymentBlockTop
+  let py = Math.max(noteEndY + 10, H - 330)
   doc.setFont('helvetica', 'bold').setFontSize(13).setTextColor(...ACCENT_DARK)
   doc.text('Payment Details', M, py)
   doc.setDrawColor(...ACCENT_DARK).setLineWidth(1.2)
   doc.line(M, py + 4, M + 70, py + 4)
   py += 14
+
 
   const banks: { title: string; lines: [string, string][] }[] = [
     {
