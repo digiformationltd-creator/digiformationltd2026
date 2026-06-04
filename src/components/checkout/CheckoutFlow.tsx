@@ -1251,7 +1251,7 @@ const CheckoutFlow = ({
                         <ol className="space-y-1.5 text-sm">
                           <li className="flex gap-2.5"><span className="font-bold text-primary">1.</span><span><strong>Live face scan</strong> — quick selfie scan from your phone camera</span></li>
                           <li className="flex gap-2.5"><span className="font-bold text-primary">2.</span><span><strong>Live passport / ID scan</strong> — scan your document with your camera</span></li>
-                          <li className="flex gap-2.5"><span className="font-bold text-primary">3.</span><span><strong>Email verification</strong> — confirm your email address</span></li>
+                          
                         </ol>
                       </div>
 
