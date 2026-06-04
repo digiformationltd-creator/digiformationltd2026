@@ -116,8 +116,11 @@ function buildPdf(opts: {
   // ---- Header: large logo flush to top-left ----
   const LOGO_SIZE = 150
   const logoY = 24
+  // Logo PNG has internal transparent padding; shift left so the visible
+  // glyph aligns exactly with the "I" in INVOICE below.
+  const LOGO_X = M - 18
   try {
-    doc.addImage(`data:image/png;base64,${LOGO_PNG_BASE64}`, 'PNG', M, logoY, LOGO_SIZE, LOGO_SIZE, undefined, 'FAST')
+    doc.addImage(`data:image/png;base64,${LOGO_PNG_BASE64}`, 'PNG', LOGO_X, logoY, LOGO_SIZE, LOGO_SIZE, undefined, 'FAST')
   } catch (_) {
     doc.setFont('helvetica', 'bold').setFontSize(18).setTextColor(...INK)
     doc.text('DIGIFORMATION', M, logoY + 40)
