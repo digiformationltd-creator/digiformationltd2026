@@ -379,6 +379,22 @@ export default function OsOrders() {
             />
           </div>
           <select
+            value={sourceFilter}
+            onChange={(e) => setSourceFilter(e.target.value)}
+            className="h-11 px-3 rounded-xl text-sm os-glass bg-transparent"
+            title="Filter by order source"
+          >
+            {SOURCES.map(s => <option key={s.key} value={s.key} className="bg-slate-900">{s.label}</option>)}
+          </select>
+          <select
+            value={paymentFilter}
+            onChange={(e) => setPaymentFilter(e.target.value)}
+            className="h-11 px-3 rounded-xl text-sm os-glass bg-transparent"
+            title="Filter by payment status"
+          >
+            {PAYMENT_STATUSES.map(p => <option key={p.key} value={p.key} className="bg-slate-900">{p.label}</option>)}
+          </select>
+          <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value)}
             className="h-11 px-3 rounded-xl text-sm os-glass bg-transparent"
