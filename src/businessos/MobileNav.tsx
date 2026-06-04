@@ -1,10 +1,11 @@
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { Menu, X, Shield } from "lucide-react";
+import { Menu, X, Shield, LogOut } from "lucide-react";
 import { NAV } from "./nav";
 import logo from "@/assets/digiformation-logo-official.png";
 import { setNavDrawerOpen } from "@/lib/nav-drawer";
+import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Admin mobile drawer.
