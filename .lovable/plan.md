@@ -1,182 +1,141 @@
-# Phase D — UI Action Wiring Roadmap
 
-**Principle:** Business OS becomes the *control surface*. Legacy Admin remains the *engine*. Supabase stays the single source of truth. **No automation, edge function, RLS, or email template is modified in Phase D — only UI wiring.**
+## Goal
 
----
+Every service-related submission on the website must appear as an **Order** in the Orders dashboard and (when the customer has an account) in the Client Portal. The only exception is direct WhatsApp chat clicks, which stay in Leads/Enquiries only.
 
-## 1. Full Action Inventory
+## Root cause (today)
 
-Every action listed exists today in Legacy Admin and is already backed by a working mutation (Supabase table write or edge function). Phase D only re-exposes them inside Business OS.
+- The **Checkout flow** (`/checkout`, `/banking-checkout`) already creates `client_orders` + `invoices` via the `generate-invoice` edge function. ✅
+- The **Contact form** (`/contact` and any service-page inquiry form that posts to it) only inserts into `contact_submissions`. It never creates an order row. ❌ This is why Zion's 4 "Confirmation Statement Filing" inquiries are invisible in both portal and dashboard.
 
-| # | Action | Domain | Current execution source | Backend touchpoint |
-|---|---|---|---|---|
-| A1 | **Start Order** (Pending → In Progress) | Orders | Legacy admin order row button | `UPDATE client_orders.status` → triggers `order-in-progress` email |
-| A2 | **Complete Order** (In Progress → Completed) | Orders | Legacy admin order row button | `UPDATE client_orders.status` → triggers `order-completed` email |
-| A3 | **Generate Invoice** | Orders → Invoices | Legacy admin "Invoice" button | `generate-invoice` edge function (creates row in `invoices`, PDF to `invoices` bucket) |
-| A4 | **Send Invoice Email** | Invoices | Legacy admin invoice row | `send-transactional-email` (`invoice-issued`) |
-| A5 | **Mark Invoice Paid** | Invoices | Legacy admin status toggle | `UPDATE invoices.status='Paid'` → triggers `invoice-paid` email |
-| A6 | **Reply to Ticket** | Support | Legacy admin reply form | `UPDATE client_tickets` + `send-transactional-email` |
-| A7 | **Close Ticket** | Support | Legacy admin status button | `UPDATE client_tickets.status='Closed'` |
-| A8 | **Upload Document** | Documents | Legacy admin upload | Storage `client-docs` + `INSERT client_documents` → `document-uploaded` email |
-| A9 | **Sync Companies House data** | Companies | Legacy admin "Sync" | `UPDATE client_company_details` (manual fields) |
-| A10 | **AD01 — Change Registered Office** | Addresses | Legacy admin address form | `UPDATE client_addresses` (start/expire/status) |
-| A11 | **Mark Address Renewed** | Addresses | Legacy admin "Renew" | `UPDATE client_addresses.expire_date` |
-| A12 | **Mark Lead Sold / Convert** | Leads → Clients/Orders | Legacy admin convert flow | `INSERT client_orders` + `UPDATE leads.stage='won'` + activity row |
-| A13 | **Move Lead Stage** | Leads | Legacy admin Kanban | `UPDATE leads.stage, position` |
-| A14 | **Auth: invite/reset/role change** | Users | Legacy admin user panel | `admin-clients` edge function + `user_roles` writes |
-| A15 | **Trigger Compliance Reminder manually** | Compliance | Legacy admin button | `send-scheduled-reminders` edge function (single-target mode) |
-| A16 | **Run Email System Check** | System | Legacy admin diagnostics | `send-transactional-email` (`email-system-check`) |
-| A17 | **Suppress / Unsuppress Email** | System | Legacy admin email tools | `INSERT/DELETE suppressed_emails` (service role only) |
-| A18 | **Cancel Order / Refund note** | Orders | Legacy admin status | `UPDATE client_orders.status='Cancelled'` + wallet txn |
+## Solution (two layers — defence in depth)
 
----
+### Layer 1 — Database trigger (guarantees no submission is ever missed, now or in the future)
 
-## 2. Per-Action Wiring Spec
+Add an `AFTER INSERT` trigger on `public.contact_submissions` that automatically creates a matching row in `public.client_orders`:
 
-The spec below is identical in shape for every action. The roadmap (§5) selects which ones to wire in each wave.
+- `source = 'inquiry'` (new column)
+- `status = 'Inquiry'`
+- `customer_name`, `customer_email`, `customer_whatsapp`, `country`, `service`, `notes` copied from the submission
+- `order_ref` generated via the existing `next_order_number()` sequence with a `GBQ` prefix (Q = inquiry, distinct from `GBLTD`/`GBBNK`/`GBCS` etc.)
+- `user_id` auto-linked if a profile already exists for that email (mirrors `handle_new_user` logic)
+- `amount_gbp = 0` (no payment yet)
 
-For each action we will define:
+Because the trigger sits at the database layer, **every** current form, every future form, every new service page, and every edge function that writes to `contact_submissions` will automatically produce an order — impossible to bypass by accident.
 
-- **Current execution source** — the Legacy Admin button that exists today (untouched).
-- **Current API/function** — the Supabase write or edge function it already calls.
-- **Business OS UI location** — where the new button/menu/drawer appears (`OsOrders`, `OsInvoices`, `OsSupport`, `OsCompanies`, `OsDocuments`, `OsLeads`).
-- **Data dependencies** — rows that must be loaded before the action is enabled (e.g. Generate Invoice requires `client_orders` + linked profile).
-- **Mutation flow** — exact client call (`supabase.from(...).update(...)` or `supabase.functions.invoke(...)`). **No new edge functions.**
-- **Optimistic update** — update the React Query cache for that row immediately; reconcile from server response or realtime event.
-- **Loading/error state** — per-row spinner on the action button, disable while pending, toast on error with retry, never blanket-block the page.
-- **Permission/security** — every mutation already enforced by RLS (`has_role(auth.uid(),'admin')`). UI hides the button when `useIsAdmin()` is false. Edge-function admin gating already in place.
-- **Rollback/failure** — on error, revert optimistic cache, surface the Supabase error message, leave Legacy Admin as fallback path so the user is never stuck.
+### Layer 2 — Schema additions on `client_orders`
 
-### Worked example — A3 Generate Invoice
+- Add `source TEXT NOT NULL DEFAULT 'checkout'` — values: `checkout`, `inquiry`, `manual`, `whatsapp` (reserved, never auto-populated).
+- Add `payment_status TEXT NOT NULL DEFAULT 'unpaid'` — values: `unpaid`, `paid`, `refunded`, `n/a`.
+- Add `inquiry_id UUID REFERENCES contact_submissions(id) ON DELETE SET NULL` — links the order back to its originating inquiry so admins can see the full history.
+- Update existing `generate-invoice` edge function to set `source = 'checkout'`, `payment_status = 'unpaid'` (no behavioural change, just labelling).
 
-- Source: Legacy `/admin/legacy` order row → "Invoice" button.
-- Function: `supabase.functions.invoke('generate-invoice', { body: { order_id } })`.
-- New location: `OsOrders` row action menu + Order Drawer "Billing" tab.
-- Dependencies: order row, profile (`bill_to_name/email/address`).
-- Mutation: invoke edge fn; on success it returns `{ invoice_id, pdf_url }`.
-- Optimistic: insert a placeholder invoice into the `invoices` query cache with status `Unpaid` and `pending=true`.
-- Loading: spinner inside button; row marked "Generating…".
-- Error: toast with edge-function error string; rollback placeholder; button re-enabled.
-- Permission: button hidden unless admin; edge fn re-checks `admin` role server-side.
-- Fallback: Legacy button still works.
+### Layer 3 — Backfill historical inquiries
 
-The same template applies 1:1 to A1, A2, A4, A5, A6, A7, A8, A11, A12, A13, A15, A18.
+One-time data migration: for every `contact_submissions` row that does **not** already have a matching `client_orders` row (matched by email + close timestamp), create the missing order with `source = 'inquiry'`. This recovers Zion's 4 missing orders and any others from earlier customers.
 
----
+### Layer 4 — Frontend audit and admin UI
 
-## 3. Migration Order (safest → highest risk)
+1. **Admin Orders dashboard** — add `Source` and `Payment Status` columns + filters so the team can separate paid orders from inquiries at a glance, while still working from a single pipeline.
+2. **Client Portal Orders page** — show all the user's orders regardless of source (inquiry rows appear with a clear "Inquiry — Awaiting Quote" badge).
+3. **Service page audit** — verify every service page across Company Formation, Business Bank Account, UK Compliance, UK Services, USA Services, Web Development, Digital Services, and all packages has either a direct "Order Now" → `/checkout` CTA or routes through the contact form (which now auto-creates an order). Document any page that still only links to WhatsApp.
+4. **WhatsApp exception preserved** — `WhatsAppFloat`, direct `wa.me` links, and `whatsapp_clicks` table stay untouched. No order created.
 
-```text
-Wave 1 — Read-only parity (no risk)
-  - Order/Invoice/Ticket/Lead detail drawers in Business OS
-  - Status badges, audit trails, linked entities
-  - No mutations yet; pure visualization
+### Layer 5 — Future-proofing rule
 
-Wave 2 — Idempotent single-row writes (low risk)
-  A1  Start Order
-  A2  Complete Order
-  A7  Close Ticket
-  A13 Move Lead Stage
-  A11 Mark Address Renewed
-  → all are single UPDATE statements already covered by RLS
+Add a short developer note at the top of `contact_submissions` usages and a SQL comment on the table:
 
-Wave 3 — Email-triggering writes (medium risk; relies on existing queue)
-  A5  Mark Invoice Paid          (fires invoice-paid)
-  A6  Reply to Ticket            (fires ticket reply email if template exists)
-  A18 Cancel Order
+> Every insert into `contact_submissions` is mirrored into `client_orders` by a trigger. Any new service form may insert here freely; the order pipeline will follow automatically. Do NOT add new submission tables without applying the same mirror trigger.
 
-Wave 4 — Edge-function-backed actions (higher risk; needs robust error UI)
-  A3  Generate Invoice
-  A4  Send Invoice Email
-  A8  Upload Document
-  A15 Trigger Compliance Reminder
-  A16 Email System Check
+## Technical details
 
-Wave 5 — Cross-entity / state-machine actions (highest risk)
-  A12 Mark Lead Sold → creates client_orders row, updates lead, logs activity
-  A10 AD01 Change Registered Office
-  A9  Sync Companies House details
+**New migration** (one file):
 
-Wave 6 — Auth & sensitive ops (last, behind explicit confirm dialogs)
-  A14 Invite / reset / role change
-  A17 Email suppression management
+```sql
+-- Schema additions
+ALTER TABLE public.client_orders
+  ADD COLUMN source TEXT NOT NULL DEFAULT 'checkout',
+  ADD COLUMN payment_status TEXT NOT NULL DEFAULT 'unpaid',
+  ADD COLUMN inquiry_id UUID REFERENCES public.contact_submissions(id) ON DELETE SET NULL;
+
+CREATE INDEX idx_client_orders_source ON public.client_orders(source);
+CREATE INDEX idx_client_orders_inquiry_id ON public.client_orders(inquiry_id);
+
+-- Trigger function: mirror every inquiry into an order
+CREATE OR REPLACE FUNCTION public.mirror_inquiry_to_order()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  matched_user_id UUID;
+  new_ref TEXT;
+BEGIN
+  SELECT user_id INTO matched_user_id
+  FROM public.profiles
+  WHERE lower(email) = lower(NEW.email)
+  LIMIT 1;
+
+  new_ref := 'GBQ' || to_char(now(), 'DDMM') || lpad(public.next_order_number()::text, 6, '0');
+
+  INSERT INTO public.client_orders (
+    user_id, order_ref, service, amount_gbp, status,
+    customer_name, customer_email, customer_whatsapp, country_code,
+    notes, source, payment_status, inquiry_id
+  ) VALUES (
+    matched_user_id, new_ref, COALESCE(NEW.service, 'General Inquiry'), 0, 'Inquiry',
+    NEW.full_name, NEW.email, NEW.whatsapp, NEW.country,
+    NEW.message, 'inquiry', 'n/a', NEW.id
+  );
+
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER trg_mirror_inquiry_to_order
+AFTER INSERT ON public.contact_submissions
+FOR EACH ROW EXECUTE FUNCTION public.mirror_inquiry_to_order();
+
+-- Backfill historical inquiries that have no matching order
+INSERT INTO public.client_orders (
+  user_id, order_ref, service, amount_gbp, status,
+  customer_name, customer_email, customer_whatsapp, country_code,
+  notes, source, payment_status, inquiry_id, created_at
+)
+SELECT
+  (SELECT user_id FROM public.profiles WHERE lower(email) = lower(cs.email) LIMIT 1),
+  'GBQ' || to_char(cs.created_at, 'DDMM') || lpad(public.next_order_number()::text, 6, '0'),
+  COALESCE(cs.service, 'General Inquiry'), 0, 'Inquiry',
+  cs.full_name, cs.email, cs.whatsapp, cs.country,
+  cs.message, 'inquiry', 'n/a', cs.id, cs.created_at
+FROM public.contact_submissions cs
+WHERE NOT EXISTS (
+  SELECT 1 FROM public.client_orders co
+  WHERE co.inquiry_id = cs.id
+     OR (lower(co.customer_email) = lower(cs.email)
+         AND abs(extract(epoch from (co.created_at - cs.created_at))) < 300)
+);
+
+COMMENT ON TABLE public.contact_submissions IS
+  'Every insert here is mirrored into client_orders by trg_mirror_inquiry_to_order. Any new submission form may insert freely; the order pipeline follows automatically.';
 ```
 
-Rule: a wave does not start until the previous wave is verified in production with Legacy fallback still enabled.
+**Frontend changes**:
 
----
+- `src/businessos/pages/OsClientOrders.tsx` (admin Orders dashboard) — add Source + Payment Status columns and filter chips.
+- Client portal Orders page — render an "Inquiry — Awaiting Quote" badge when `source = 'inquiry'`.
+- `generate-invoice` edge function — explicitly write `source: 'checkout'`, `payment_status: 'unpaid'`.
 
-## 4. UI Architecture Recommendations
+**Code audit** (read-only, no behaviour change unless something is broken):
 
-- **Inline row actions** — one primary action per row (`Start`, `Complete`, `Invoice`, `Reply`). Anything destructive or multi-field goes into a drawer.
-- **Action drawers** — right-side `Sheet` per entity (`OrderDrawer`, `InvoiceDrawer`, `TicketDrawer`, `LeadDrawer`). Holds detail tabs + a sticky action bar at the bottom.
-- **Batch actions** — checkbox column on Orders / Invoices / Leads. Bulk bar appears when ≥1 row selected: Bulk Start, Bulk Complete, Bulk Mark Paid, Bulk Move Stage. Backed by sequential calls with a single toast summary; no new RPC.
-- **Sticky workflow controls** — drawer footer pinned with primary CTA always visible on mobile.
-- **Keyboard efficiency** — `j/k` row navigation, `enter` opens drawer, `s` start, `c` complete, `i` invoice, `r` reply, `esc` close drawer. Implement via a shared `useHotkeys` in BusinessOSLayout.
-- **Mobile behavior** — row swipe → action menu; drawer becomes full-screen sheet; bulk-select disabled below `md`. Logo and topbar already responsive.
+- Walk every service page (`UKLtdFormation`, `RegisteredOfficeAddress`, `UtrCodes`, `BankingCheckout`, `ServicePage` template, USA service pages, Web Dev pages, Digital service pages, Compliance pages) and confirm each has a CTA that ends in either `/checkout?...` (real order) or the contact form (auto-creates inquiry order).
+- Report anything that only links to WhatsApp or has no CTA, so you can decide whether to add a Checkout CTA.
 
----
+## What this delivers
 
-## 5. State Architecture
-
-- **React Query** is the single client cache. Each entity gets one query key: `['orders']`, `['invoices']`, `['tickets']`, `['leads']`, `['addresses']`.
-- **Mutation pattern**: `useMutation` with `onMutate` (optimistic patch), `onError` (rollback + toast), `onSettled` (invalidate the entity key only — never the world).
-- **Realtime** (already enabled in project) subscribes per page to `postgres_changes` for the relevant table and calls `queryClient.setQueryData` to merge — keeps multi-admin sessions consistent without polling.
-- **Cache ownership**: a row is owned by exactly one query key. Drawers read from the same cache (no parallel fetch).
-- **Derived DB fields** (e.g. `invoices.total_gbp`, `replies_count`, `unread_count`) are never computed client-side after a mutation; the UI re-reads the row from realtime or the mutation's `returning` payload. This avoids drift.
-
----
-
-## 6. Technical Debt Risks & Mitigations
-
-| Risk | Where it appears | Mitigation |
-|---|---|---|
-| **Legacy coupling** — same button exists in both UIs | Waves 2-5 | Keep Legacy as fallback during wave; remove only after 1 week of clean telemetry |
-| **Duplicated mutations** drifting apart | A3, A5, A12 | Both UIs MUST call the same edge function / same UPDATE. No business logic in Business OS components — only call sites |
-| **Race conditions** (two admins acting on same row) | A1, A2, A5, A13 | Rely on realtime to refresh; mutations are idempotent (`status='Completed'` twice is a no-op) |
-| **Stale UI** after edge function side-effects (email queue, PDF) | A3, A4, A8 | Use realtime on `invoices` + `email_send_log` to update row badges (`Generating…`, `Sent`, `Failed`) |
-| **Optimistic rollback gaps** on edge-fn errors | Wave 4 | Always wrap invoke in try/catch and revert cache in `onError`; never assume success |
-| **Permission drift** (button visible to non-admin) | All waves | Single `useIsAdmin()` hook gates every action; server-side RLS is the real guard |
-
----
-
-## 7. Final Target Architecture
-
-**Fully migrates into Business OS** (Legacy buttons eventually retired):
-- All order lifecycle actions (A1, A2, A18)
-- All invoice actions (A3, A4, A5)
-- Support reply/close (A6, A7)
-- Document upload (A8)
-- Lead pipeline + conversion (A12, A13)
-- Address renewal & AD01 (A10, A11)
-- Manual compliance reminder trigger (A15)
-
-**Stays available in Legacy Admin as fallback / power-user tools** (not removed):
-- Email system check (A16)
-- Suppression management (A17)
-- Bulk data corrections / raw table edits
-- Anything not yet covered by a Business OS screen
-
-**Must NEVER move out of the existing backend layer**:
-- The edge functions themselves (`send-transactional-email`, `generate-invoice`, `process-email-queue`, `send-scheduled-reminders`, `admin-clients`, `auth-email-hook`)
-- React Email templates and the `TEMPLATES` registry
-- pgmq queues, `enqueue_email` / `read_email_batch` / `move_to_dlq` RPCs
-- RLS policies and `has_role()` security definer
-- The cron schedule for `process-email-queue` and reminders
-- Supabase auth configuration and the single client instance
-
----
-
-## 8. Execution Roadmap (step-by-step)
-
-1. **Scaffold shared primitives** — `useEntityMutation`, `useIsAdmin`, `RowActionMenu`, `EntityDrawer`, `BulkActionBar`, `useHotkeys`. No backend changes.
-2. **Wave 1**: build read-only drawers for Orders, Invoices, Tickets, Leads. Ship.
-3. **Wave 2**: wire A1, A2, A7, A11, A13 using the shared primitives. Keep Legacy buttons. Ship and observe for 3-7 days.
-4. **Wave 3**: wire A5, A6, A18. Verify email queue still drains cleanly via `email_send_log`. Ship.
-5. **Wave 4**: wire A3, A4, A8, A15, A16. Add realtime subscription on `invoices` and `email_send_log` for live status. Ship.
-6. **Wave 5**: wire A9, A10, A12 inside dedicated drawers with confirm dialogs and activity logging.
-7. **Wave 6**: wire A14, A17 behind a `Settings → Admin Tools` area with double-confirm.
-8. **Retire Legacy buttons one wave at a time** only after the corresponding Business OS path has shown zero error-rate increase for one week.
-9. **Final state**: Legacy Admin remains mounted at `/admin/legacy` as an always-available escape hatch; Business OS is the daily driver.
-
-**No automation engine, no edge function, no RLS policy, no email template, and no Supabase config is modified at any step of this roadmap.**
+- Zion's 4 missing inquiries appear in both Orders dashboard and Client Portal immediately after backfill runs.
+- Every future inquiry from anywhere on the site automatically becomes an order — no code change required for new forms.
+- Real paid checkout orders and unpaid inquiries live in the same pipeline but are clearly distinguishable via `source` and `payment_status` filters.
+- WhatsApp-only conversations remain leads/enquiries, never orders.
+- A SQL-level guarantee that no future developer (or AI) can accidentally add a service form that bypasses the Orders pipeline.
