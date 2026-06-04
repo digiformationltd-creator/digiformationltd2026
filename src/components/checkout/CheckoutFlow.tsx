@@ -1287,16 +1287,20 @@ const CheckoutFlow = ({
                     <ReviewLine label="Email" value={form.email} />
                     <ReviewLine label={whatsappLabel} value={form.whatsapp} />
                     {showSeparateWhatsapp && <ReviewLine label={whatsappContactLabel} value={form.whatsapp_contact} />}
-                    <ReviewLine label="Country of residence" value={form.country} />
-                    <ReviewLine label="Nationality" value={form.nationality} />
+                    {!hideAddress && <ReviewLine label="Country of residence" value={form.country} />}
+                    {!hideAddress && <ReviewLine label="Nationality" value={form.nationality} />}
                   </dl>
-                  <div className="text-sm font-semibold mt-4 mb-1">Address</div>
-                  <p className="text-sm opacity-85 whitespace-pre-wrap">
-                    {form.address_line1}
-                    {form.address_line2 ? `\n${form.address_line2}` : ""}
-                    {`\n${form.city}, ${form.postal_code}`}
-                    {`\n${form.country}`}
-                  </p>
+                  {!hideAddress && (
+                    <>
+                      <div className="text-sm font-semibold mt-4 mb-1">Address</div>
+                      <p className="text-sm opacity-85 whitespace-pre-wrap">
+                        {form.address_line1}
+                        {form.address_line2 ? `\n${form.address_line2}` : ""}
+                        {`\n${form.city}, ${form.postal_code}`}
+                        {`\n${form.country}`}
+                      </p>
+                    </>
+                  )}
                   {showBusinessType && form.business_type && (
                     <>
                       <div className="text-sm font-semibold mt-3 mb-1">Business type</div>
