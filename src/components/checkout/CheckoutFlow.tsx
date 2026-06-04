@@ -497,7 +497,7 @@ const CheckoutFlow = ({
       full_name: form.full_name,
       email: form.email,
       whatsapp: form.whatsapp,
-      country: form.country,
+      country: form.country?.trim() ? form.country.trim() : "N/A",
       service: `${serviceTitle} — ${packageName}`,
       message: summary,
       page_path: window.location.pathname + window.location.search,
