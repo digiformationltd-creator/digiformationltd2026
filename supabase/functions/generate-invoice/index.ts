@@ -68,17 +68,15 @@ function drawHeaderBand(doc: jsPDF, W: number) {
   doc.ellipse(W * 0.28, -28, W * 0.62, 52, 'F')
 }
 
-// Footer: exact mirror of the header design — same two curves (dark navy
-// small curve on right + large soft-grey sweep), just scaled slightly larger
-// to comfortably host the contact info row.
+// Footer: exact mirror of the header band — same two curves flipped along
+// the bottom edge so the footer reads as a true mirror of the header.
 function drawFooterBand(doc: jsPDF, W: number, H: number) {
-  // Dark navy curve on the right (mirrors header's top-right dark curve) —
-  // kept low so it sits below the contact row.
+  // Dark navy curve on the right (mirror of header's top-right dark curve)
   doc.setFillColor(...ACCENT_DARK)
-  doc.ellipse(W * 0.78, H + 30, W * 0.42, 45, 'F')
-  // Large soft-grey curve sweeping across most of the width (mirrors header)
+  doc.ellipse(W * 0.78, H + 22, W * 0.42, 44, 'F')
+  // Large soft-grey curve sweeping across most of the width (mirror of header)
   doc.setFillColor(...ACCENT_SOFT)
-  doc.ellipse(W * 0.28, H + 28, W * 0.62, 78, 'F')
+  doc.ellipse(W * 0.28, H + 28, W * 0.62, 52, 'F')
 }
 
 
