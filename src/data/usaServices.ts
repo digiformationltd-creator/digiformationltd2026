@@ -1,3 +1,5 @@
+import type { ComplianceFormField } from "./compliance";
+
 export type UsaService = {
   slug: string;
   title: string;
@@ -12,6 +14,9 @@ export type UsaService = {
   metaTitle: string;
   metaDescription: string;
   keywords: string;
+  /** Required-info fields rendered on the checkout, mirroring the
+   *  requirements list shown on the service page. */
+  formFields?: ComplianceFormField[];
 };
 
 export const usaServicePages: UsaService[] = [
