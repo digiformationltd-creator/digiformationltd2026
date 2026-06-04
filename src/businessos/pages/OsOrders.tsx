@@ -487,6 +487,20 @@ export default function OsOrders() {
                   >
                     <td className="py-3 px-4">
                       <div className="font-mono text-xs text-white/80">{o.order_ref}</div>
+                      <div className="mt-1 flex items-center gap-1">
+                        <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider ${sourceChip(o.source)}`}>
+                          {sourceLabel(o.source)}
+                        </span>
+                        {o.payment_status && o.payment_status !== "n/a" && (
+                          <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider ${
+                            o.payment_status === "paid" ? "bg-emerald-500/10 text-emerald-200/80 ring-1 ring-emerald-400/20" :
+                            o.payment_status === "refunded" ? "bg-rose-500/10 text-rose-200/80 ring-1 ring-rose-400/20" :
+                            "bg-amber-500/10 text-amber-200/80 ring-1 ring-amber-400/20"
+                          }`}>
+                            {o.payment_status}
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="py-3 px-4">
                       <div className="font-semibold truncate max-w-[180px]">{o.customer_name || "(guest)"}</div>
