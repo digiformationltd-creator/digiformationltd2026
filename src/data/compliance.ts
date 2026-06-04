@@ -288,10 +288,9 @@ export const complianceItemFormFields: Record<string, { title: string; fields: C
   cs: {
     title: "Confirmation Statement Filing",
     fields: [
-      ...baseCompanyFields,
+      { key: "cs_company_number", label: "Company Number (CRN)", placeholder: "e.g. 12345678", required: true },
       { key: "cs_company_name", label: "Company Name", required: true },
-      { key: "cs_director_personal_code", label: "Director's Personal Code", required: true, placeholder: "e.g. ABCD1234EFGH" },
-      { key: "cs_changes", label: "Any changes since last statement?", type: "textarea", placeholder: "Shareholders, SIC codes, address... write 'None' if no changes" },
+      { key: "cs_auth_code", label: "Authentication Code", placeholder: "6-character code from Companies House", required: true },
     ],
   },
   aa: {
