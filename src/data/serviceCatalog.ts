@@ -14,7 +14,7 @@
  * - Never create an order with £0 when the service has a defined price.
  * - The /contact form is reserved for genuine "talk to us" enquiries only.
  */
-import { compliancePages } from "./compliance";
+import { compliancePages, type ComplianceFormField } from "./compliance";
 import { usaServicePages } from "./usaServices";
 import { banking } from "./navigation";
 
@@ -37,8 +37,12 @@ export type CatalogEntry = {
   /** Optional bespoke checkout path (overrides default /checkout?service=slug). */
   checkoutPath?: string;
   /** Optional UK Compliance item id reused inside the uk-compliance multi-select
-   *  group so existing dynamic field sections continue to fire. */
+    *  group so existing dynamic field sections continue to fire. */
   complianceItemId?: string;
+  /** Per-service required-information fields rendered on the checkout. When
+   *  present, the checkout hides default DOB / address / business activity
+   *  sections and only asks for these specific fields. */
+  formFields?: ComplianceFormField[];
 };
 
 // Strip leading currency symbol & whitespace, return numeric price.
@@ -54,6 +58,7 @@ const COMPLIANCE_ENTRIES: CatalogEntry[] = compliancePages.map((p) => ({
   price: num(p.price),
   currency: "GBP",
   category: "UK Compliance",
+  formFields: p.formFields,
 }));
 
 const USA_ENTRIES: CatalogEntry[] = usaServicePages.map((p) => ({
@@ -63,6 +68,7 @@ const USA_ENTRIES: CatalogEntry[] = usaServicePages.map((p) => ({
   price: p.price,
   currency: "USD",
   category: "USA Services",
+  formFields: p.formFields,
 }));
 
 const BANKING_ENTRIES: CatalogEntry[] = banking.map((b) => {
@@ -86,6 +92,11 @@ const UK_SERVICE_ENTRIES: CatalogEntry[] = [
     price: 40,
     currency: "GBP",
     category: "UK Address",
+    formFields: [
+      { key: "company_name", label: "Company Name", required: true },
+      { key: "company_number", label: "Company Number (CRN)", required: true, placeholder: "e.g. 12345678" },
+      { key: "director_name", label: "Primary Director Name", required: true },
+    ],
   },
   {
     slug: "business-service-address",
@@ -94,6 +105,11 @@ const UK_SERVICE_ENTRIES: CatalogEntry[] = [
     price: 60,
     currency: "GBP",
     category: "UK Address",
+    formFields: [
+      { key: "company_name", label: "Company Name", required: true },
+      { key: "company_number", label: "Company Number (CRN)", required: true, placeholder: "e.g. 12345678" },
+      { key: "contact_name", label: "Primary Contact Name", required: true },
+    ],
   },
   {
     slug: "director-service-address",
@@ -102,6 +118,11 @@ const UK_SERVICE_ENTRIES: CatalogEntry[] = [
     price: 20,
     currency: "GBP",
     category: "UK Address",
+    formFields: [
+      { key: "director_name", label: "Director Full Name", required: true },
+      { key: "company_name", label: "Company Name", required: true },
+      { key: "company_number", label: "Company Number (CRN)", required: true, placeholder: "e.g. 12345678" },
+    ],
   },
   {
     slug: "address-all-in-one",
@@ -110,6 +131,11 @@ const UK_SERVICE_ENTRIES: CatalogEntry[] = [
     price: 80,
     currency: "GBP",
     category: "UK Address",
+    formFields: [
+      { key: "company_name", label: "Company Name", required: true },
+      { key: "company_number", label: "Company Number (CRN)", required: true, placeholder: "e.g. 12345678" },
+      { key: "director_name", label: "Primary Director Name", required: true },
+    ],
   },
   {
     slug: "utr-number",
@@ -145,6 +171,11 @@ const UK_SERVICE_ENTRIES: CatalogEntry[] = [
     price: 30,
     currency: "GBP",
     category: "UK Services",
+    formFields: [
+      { key: "company_name", label: "Company Name", required: true },
+      { key: "company_number", label: "Company Number (CRN)", required: true, placeholder: "e.g. 12345678" },
+      { key: "registered_address", label: "Registered Office Address", type: "textarea", required: true, placeholder: "Where Companies House should post the code" },
+    ],
   },
   {
     slug: "activation-code",
@@ -153,6 +184,12 @@ const UK_SERVICE_ENTRIES: CatalogEntry[] = [
     price: 30,
     currency: "GBP",
     category: "UK Services",
+    formFields: [
+      { key: "company_name", label: "Company Name", required: true },
+      { key: "company_number", label: "Company Number (CRN)", required: true, placeholder: "e.g. 12345678" },
+      { key: "utr", label: "UTR Number", required: true, placeholder: "10-digit HMRC reference" },
+      { key: "gateway_id", label: "HMRC Government Gateway ID (if any)" },
+    ],
   },
 ];
 

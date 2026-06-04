@@ -1,3 +1,5 @@
+import type { ComplianceFormField } from "./compliance";
+
 export type UsaService = {
   slug: string;
   title: string;
@@ -12,6 +14,9 @@ export type UsaService = {
   metaTitle: string;
   metaDescription: string;
   keywords: string;
+  /** Required-info fields rendered on the checkout, mirroring the
+   *  requirements list shown on the service page. */
+  formFields?: ComplianceFormField[];
 };
 
 export const usaServicePages: UsaService[] = [
@@ -49,6 +54,14 @@ export const usaServicePages: UsaService[] = [
     metaDescription:
       "Get your U.S. LLC EIN number quickly with Digiformation Ltd. Digital certificate and fast processing for all new LLCs.",
     keywords: "EIN number service, US EIN for LLC, LLC EIN registration, EIN issuance online",
+    formFields: [
+      { key: "llc_name", label: "Registered LLC Name", required: true },
+      { key: "state", label: "State of Formation", required: true, placeholder: "e.g. Wyoming" },
+      { key: "responsible_party_name", label: "Responsible Party Full Name", required: true },
+      { key: "responsible_party_address", label: "Responsible Party Address", type: "textarea", required: true, placeholder: "Full residential address with country" },
+      { key: "business_activity", label: "Business Activity Description", type: "textarea", required: true, placeholder: "What your LLC does / will trade in" },
+      { key: "documents_note", label: "Documents (sent separately)", type: "textarea", placeholder: "Email Articles of Organization (PDF) and passport copy of the responsible party to info@digiformation.uk after checkout." },
+    ],
   },
   {
     slug: "itin-number",
@@ -84,6 +97,13 @@ export const usaServicePages: UsaService[] = [
     metaDescription:
       "Apply for your U.S. ITIN number with Digiformation Ltd. Fast, secure, and IRS-compliant for non-resident LLC owners.",
     keywords: "ITIN number service, US ITIN for non-residents, IRS ITIN application, ITIN processing online",
+    formFields: [
+      { key: "applicant_name", label: "Full Name (as on passport)", required: true },
+      { key: "foreign_address", label: "Foreign Residential Address", type: "textarea", required: true, placeholder: "Full address with country" },
+      { key: "reason", label: "Reason for ITIN", required: true, placeholder: "LLC ownership / U.S. tax filing / other" },
+      { key: "llc_name", label: "LLC Name (if applicable)" },
+      { key: "documents_note", label: "Documents (sent separately)", type: "textarea", placeholder: "Email notarized passport copy and proof of foreign address to info@digiformation.uk after checkout." },
+    ],
   },
   {
     slug: "annual-tax-filing",
@@ -119,6 +139,14 @@ export const usaServicePages: UsaService[] = [
     metaDescription:
       "Simplify U.S. LLC annual tax filing with Digiformation Ltd. Secure portal access and expert IRS-compliant support.",
     keywords: "Annual tax filing service, LLC tax filing USA, IRS tax compliance, US LLC taxation",
+    formFields: [
+      { key: "llc_name", label: "LLC Name", required: true },
+      { key: "ein", label: "EIN", required: true, placeholder: "9-digit EIN" },
+      { key: "state", label: "State of Formation", required: true },
+      { key: "members", label: "Members / Owners Details", type: "textarea", required: true, placeholder: "Name, address, ownership % for each member" },
+      { key: "financial_summary", label: "Annual Income & Expense Summary", type: "textarea", required: true, placeholder: "Full-year revenue, expenses, profit/loss" },
+      { key: "documents_note", label: "Documents (sent separately)", type: "textarea", placeholder: "Email bank statements for the tax year and previous filings (if any) to info@digiformation.uk after checkout." },
+    ],
   },
   {
     slug: "bio-report",
@@ -154,6 +182,16 @@ export const usaServicePages: UsaService[] = [
     metaDescription:
       "File your U.S. LLC BOI report accurately with Digiformation Ltd. Digital confirmation and full compliance guaranteed.",
     keywords: "BOI report service, Beneficial ownership report USA, LLC compliance filing, BOI report submission",
+    formFields: [
+      { key: "llc_name", label: "LLC Name", required: true },
+      { key: "ein", label: "EIN", required: true },
+      { key: "state", label: "State of Formation", required: true },
+      { key: "owner_name", label: "Beneficial Owner Full Name", required: true },
+      { key: "owner_dob", label: "Beneficial Owner Date of Birth", required: true, placeholder: "DD/MM/YYYY" },
+      { key: "owner_address", label: "Beneficial Owner Residential Address", type: "textarea", required: true },
+      { key: "applicant_details", label: "Company Applicant Details (if formed after 2024)", type: "textarea" },
+      { key: "documents_note", label: "Documents (sent separately)", type: "textarea", placeholder: "Email passport or government-issued ID copy to info@digiformation.uk after checkout." },
+    ],
   },
 ];
 
