@@ -616,10 +616,13 @@ export default function OsOrders() {
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <span className="font-mono text-[11px] text-white/60">{o.order_ref}</span>
                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${statusChip(o.status)}`}>
                       {o.status}
+                    </span>
+                    <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider ${sourceChip(o.source)}`}>
+                      {sourceLabel(o.source)}
                     </span>
                   </div>
                   <div className="font-semibold truncate">{o.service}</div>
