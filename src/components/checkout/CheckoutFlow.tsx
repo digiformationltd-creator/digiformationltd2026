@@ -151,7 +151,7 @@ export type CheckoutFlowProps = {
   extraSections?: {
     itemId: string;
     title: string;
-    fields: { key: string; label: string; placeholder?: string; required?: boolean; type?: "text" | "textarea" | "date"; helper?: string }[];
+    fields: { key: string; label: string; placeholder?: string; required?: boolean; type?: "text" | "textarea" | "date" | "mail-action"; helper?: string; email?: string; subject?: string }[];
   }[];
 };
 
