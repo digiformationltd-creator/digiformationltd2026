@@ -134,7 +134,7 @@ const AIAssistant = () => {
       {/* Floating button — bottom-right, stacked above WhatsApp */}
       <button
         onClick={() => setOpen(true)}
-        aria-label="Open Digi AI Assistant"
+        aria-label="Ask AI"
         className="hide-on-nav-open fixed bottom-24 right-5 z-50 group flex items-center justify-center bg-gradient-brand text-primary-foreground rounded-full shadow-glow hover:shadow-elegant hover:scale-110 transition-all w-14 h-14 sm:w-16 sm:h-16"
       >
         <Bot className="w-7 h-7 sm:w-8 sm:h-8" />
