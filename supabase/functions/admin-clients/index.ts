@@ -20,12 +20,14 @@ Deno.serve(async (req) => {
     }
 
     const authHeader = req.headers.get("Authorization") || "";
-    const userClient = createClient(supabaseUrl, anonKey, {
-      global: { headers: { Authorization: authHeader } },
-    });
+    const token = authHeader.replace(/^Bearer\s+/i, "").trim();
     const adminClient = createClient(supabaseUrl, serviceRoleKey);
 
-    const { data: authData, error: authError } = await userClient.auth.getUser();
+    if (!token) return json({ error: "Login required" }, 401);
+
+    // Validate JWT directly via admin client — does not require a live session row,
+    // so it keeps working on mobile when the session has rotated/expired.
+    const { data: authData, error: authError } = await adminClient.auth.getUser(token);
     if (authError || !authData.user) return json({ error: "Login required" }, 401);
 
     const requesterEmail = authData.user.email?.toLowerCase() || "";
