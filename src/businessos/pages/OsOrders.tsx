@@ -694,7 +694,8 @@ export default function OsOrders() {
               </div>
 
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
