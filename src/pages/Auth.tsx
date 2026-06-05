@@ -241,7 +241,7 @@ const Auth = () => {
                   <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.4l6.1 5c-.4.4 6.7-4.9 6.7-14.4 0-1.2-.1-2.4-.4-3.5z"/>
                 </svg>
               )}
-              <span>Continue with Google</span>
+              <span style={{ color: "#0f172a" }}>Continue with Google</span>
             </button>
             <div className="flex items-center gap-3 mb-3">
               <div className="h-px flex-1 bg-white/15" />
