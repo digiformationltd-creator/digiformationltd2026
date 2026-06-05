@@ -69,7 +69,7 @@ const Auth = () => {
     const routeForSession = (session: NonNullable<Awaited<ReturnType<typeof recoverSession>>["session"]>) => {
       if (redirected) return;
       redirected = true;
-      navigate(session.user.email?.toLowerCase() === "info@digiformation.uk" ? "/admin" : "/dashboard", { replace: true });
+      navigate(destinationForEmail(session.user.email), { replace: true });
     };
     // INITIAL_SESSION fires automatically on mount with current session, so no need
     // to call getSession() separately (which would cause an extra token refresh).
