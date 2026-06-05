@@ -354,7 +354,7 @@ const Auth = () => {
                         name="password"
                         type={showSignUpPassword ? "text" : "password"}
                         required
-                        placeholder="Min 8 chars · Aa1!"
+                        placeholder="At least 8 characters"
                         className="pl-9 pr-12 bg-background/40 border-white/15 focus-visible:ring-primary/50"
                         autoComplete="new-password"
                       />
