@@ -200,7 +200,7 @@ export const bankingProviders: BankingProvider[] = [
     tagline: "Borderless banking for freelancers, remote workers, and global businesses.",
     description: "Receive international payments in USD, GBP, and EUR with foreign accounts, convert to local currency at great rates, and spend globally with virtual cards.",
     features: [],
-    requirements: REQ_UK,
+    requirements: REQ_BOTH,
     setupPrice: "£50",
     metaTitle: "Grey Borderless Banking | Digiformation Ltd",
     metaDescription: "Open foreign currency accounts with Grey. Receive USD, GBP, EUR payments and spend globally with virtual cards.",
