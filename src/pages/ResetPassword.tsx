@@ -17,10 +17,8 @@ const passwordSchema = z
   .string()
   .min(8, "Password must be at least 8 characters")
   .max(72, "Password too long")
-  .regex(/[A-Z]/, "Password must include an uppercase letter")
-  .regex(/[a-z]/, "Password must include a lowercase letter")
-  .regex(/[0-9]/, "Password must include a number")
-  .regex(/[^A-Za-z0-9]/, "Password must include a symbol (e.g. !@#$)");
+  .regex(/[A-Za-z]/, "Password must include a letter")
+  .regex(/[0-9]/, "Password must include a number");
 
 type Status = "checking" | "ready" | "invalid" | "success";
 
