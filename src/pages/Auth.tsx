@@ -224,11 +224,12 @@ const Auth = () => {
               </div>
             )}
 
-            <Button
+            <button
               type="button"
               onClick={handleGoogle}
               disabled={googleLoading || loading}
-              className="w-full mb-3 rounded-full bg-white text-slate-900 hover:bg-white/90 border border-white/30"
+              className="w-full mb-3 rounded-full inline-flex items-center justify-center gap-2 h-10 px-4 text-sm font-medium border border-white/40 transition hover:opacity-90 disabled:opacity-60"
+              style={{ backgroundColor: "#ffffff", color: "#0f172a" }}
             >
               {googleLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -240,8 +241,8 @@ const Auth = () => {
                   <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.4l6.1 5c-.4.4 6.7-4.9 6.7-14.4 0-1.2-.1-2.4-.4-3.5z"/>
                 </svg>
               )}
-              Continue with Google
-            </Button>
+              <span style={{ color: "#0f172a" }}>Continue with Google</span>
+            </button>
             <div className="flex items-center gap-3 mb-3">
               <div className="h-px flex-1 bg-white/15" />
               <span className="text-[10px] uppercase tracking-wider opacity-60">or</span>

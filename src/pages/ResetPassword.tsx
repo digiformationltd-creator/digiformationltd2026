@@ -17,10 +17,8 @@ const passwordSchema = z
   .string()
   .min(8, "Password must be at least 8 characters")
   .max(72, "Password too long")
-  .regex(/[A-Z]/, "Password must include an uppercase letter")
-  .regex(/[a-z]/, "Password must include a lowercase letter")
-  .regex(/[0-9]/, "Password must include a number")
-  .regex(/[^A-Za-z0-9]/, "Password must include a symbol (e.g. !@#$)");
+  .regex(/[A-Za-z]/, "Password must include a letter")
+  .regex(/[0-9]/, "Password must include a number");
 
 type Status = "checking" | "ready" | "invalid" | "success";
 
@@ -82,29 +80,25 @@ const ResetPassword = () => {
     };
   }, []);
 
-  // Live password rule checks
+  // Live password rule checks (relaxed: length + letter + number)
   const checks = useMemo(() => ({
     length: password.length >= 8,
-    upper: /[A-Z]/.test(password),
-    lower: /[a-z]/.test(password),
+    letter: /[A-Za-z]/.test(password),
     number: /[0-9]/.test(password),
-    symbol: /[^A-Za-z0-9]/.test(password),
   }), [password]);
 
   const passedCount = Object.values(checks).filter(Boolean).length;
   const strengthLabel =
-    passedCount <= 1 ? "Very weak" :
-    passedCount === 2 ? "Weak" :
-    passedCount === 3 ? "Fair" :
-    passedCount === 4 ? "Strong" : "Excellent";
+    passedCount === 0 ? "Very weak" :
+    passedCount === 1 ? "Weak" :
+    passedCount === 2 ? "Fair" : "Strong";
   const strengthColor =
-    passedCount <= 1 ? "bg-destructive" :
-    passedCount === 2 ? "bg-orange-500" :
-    passedCount === 3 ? "bg-yellow-500" :
-    passedCount === 4 ? "bg-green-500" : "bg-emerald-500";
+    passedCount === 0 ? "bg-destructive" :
+    passedCount === 1 ? "bg-orange-500" :
+    passedCount === 2 ? "bg-yellow-500" : "bg-emerald-500";
 
   const matches = confirm.length > 0 && confirm === password;
-  const allValid = passedCount === 5 && matches;
+  const allValid = passedCount === 3 && matches;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -247,12 +241,12 @@ const ResetPassword = () => {
                       <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                         <div
                           className={`h-full ${strengthColor} transition-all duration-300`}
-                          style={{ width: `${(passedCount / 5) * 100}%` }}
+                          style={{ width: `${(passedCount / 3) * 100}%` }}
                         />
                       </div>
                       <div className="flex items-center justify-between mt-1.5 text-[11px]">
                         <span className="opacity-70">Strength</span>
-                        <span className={`font-medium ${passedCount >= 4 ? "text-emerald-500" : passedCount >= 3 ? "text-yellow-500" : "text-destructive"}`}>
+                        <span className={`font-medium ${passedCount === 3 ? "text-emerald-500" : passedCount === 2 ? "text-yellow-500" : "text-destructive"}`}>
                           {strengthLabel}
                         </span>
                       </div>
@@ -262,10 +256,8 @@ const ResetPassword = () => {
                   {/* Live checklist */}
                   <ul className="mt-3 grid grid-cols-1 gap-1.5">
                     <Rule ok={checks.length} label="At least 8 characters" />
-                    <Rule ok={checks.upper} label="One uppercase letter (A-Z)" />
-                    <Rule ok={checks.lower} label="One lowercase letter (a-z)" />
-                    <Rule ok={checks.number} label="One number (0-9)" />
-                    <Rule ok={checks.symbol} label="One symbol (e.g. !@#$%)" />
+                    <Rule ok={checks.letter} label="At least one letter (a-z or A-Z)" />
+                    <Rule ok={checks.number} label="At least one number (0-9)" />
                   </ul>
                 </div>
 
