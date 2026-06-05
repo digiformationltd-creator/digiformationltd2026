@@ -241,12 +241,12 @@ const ResetPassword = () => {
                       <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                         <div
                           className={`h-full ${strengthColor} transition-all duration-300`}
-                          style={{ width: `${(passedCount / 5) * 100}%` }}
+                          style={{ width: `${(passedCount / 3) * 100}%` }}
                         />
                       </div>
                       <div className="flex items-center justify-between mt-1.5 text-[11px]">
                         <span className="opacity-70">Strength</span>
-                        <span className={`font-medium ${passedCount >= 4 ? "text-emerald-500" : passedCount >= 3 ? "text-yellow-500" : "text-destructive"}`}>
+                        <span className={`font-medium ${passedCount === 3 ? "text-emerald-500" : passedCount === 2 ? "text-yellow-500" : "text-destructive"}`}>
                           {strengthLabel}
                         </span>
                       </div>
