@@ -473,7 +473,15 @@ const CheckoutFlow = ({
 
   const submitOrder = async () => {
     if (selectedItems.length === 0) return;
+    // Defer login until the moment of placing the order. If not authed, open
+    // the inline account dialog and remember to auto-resume submission.
+    if (!isAuthed) {
+      pendingSubmitRef.current = true;
+      setAuthGateOpen(true);
+      return;
+    }
     setSubmitting(true);
+
 
     // Use the actually selected item name (so if the user switches packages
     // on the page, the invoice reflects their choice — not the URL default).
