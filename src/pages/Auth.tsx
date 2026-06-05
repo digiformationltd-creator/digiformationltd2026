@@ -224,30 +224,6 @@ const Auth = () => {
               </div>
             )}
 
-            <button
-              type="button"
-              onClick={handleGoogle}
-              disabled={googleLoading || loading}
-              className="w-full mb-3 rounded-full inline-flex items-center justify-center gap-2 h-10 px-4 text-sm font-medium border border-white/40 transition hover:opacity-90 disabled:opacity-60"
-              style={{ backgroundColor: "#ffffff", color: "#0f172a" }}
-            >
-              {googleLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <svg className="w-4 h-4" viewBox="0 0 48 48" aria-hidden="true">
-                  <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.4 29.3 35.5 24 35.5c-6.4 0-11.5-5.1-11.5-11.5S17.6 12.5 24 12.5c2.9 0 5.6 1.1 7.7 2.9l5.7-5.7C33.9 6.4 29.2 4.5 24 4.5 13.2 4.5 4.5 13.2 4.5 24S13.2 43.5 24 43.5 43.5 34.8 43.5 24c0-1.2-.1-2.4-.4-3.5z"/>
-                  <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 12.5 24 12.5c2.9 0 5.6 1.1 7.7 2.9l5.7-5.7C33.9 6.4 29.2 4.5 24 4.5 16.3 4.5 9.7 8.8 6.3 14.7z"/>
-                  <path fill="#4CAF50" d="M24 43.5c5.1 0 9.7-1.9 13.2-5.1l-6.1-5c-2 1.4-4.4 2.1-7.1 2.1-5.3 0-9.7-3.1-11.3-7.5l-6.5 5C9.6 39.1 16.2 43.5 24 43.5z"/>
-                  <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.4l6.1 5c-.4.4 6.7-4.9 6.7-14.4 0-1.2-.1-2.4-.4-3.5z"/>
-                </svg>
-              )}
-              <span style={{ color: "#0f172a" }}>Continue with Google</span>
-            </button>
-            <div className="flex items-center gap-3 mb-3">
-              <div className="h-px flex-1 bg-white/15" />
-              <span className="text-[10px] uppercase tracking-wider opacity-60">or</span>
-              <div className="h-px flex-1 bg-white/15" />
-            </div>
 
             <Tabs value={tab} onValueChange={(v) => setTab(v as "signin" | "signup")}>
               <TabsList className="grid grid-cols-2 w-full mb-4">
