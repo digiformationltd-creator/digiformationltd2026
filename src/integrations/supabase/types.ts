@@ -1236,6 +1236,7 @@ export type Database = {
           read_ct: number
         }[]
       }
+      resolve_service_price: { Args: { _title: string }; Returns: number }
     }
     Enums: {
       app_role: "admin" | "client"
