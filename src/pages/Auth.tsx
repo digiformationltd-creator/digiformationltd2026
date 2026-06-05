@@ -26,11 +26,34 @@ const nameSchema = z.string().trim().min(2, "Please enter your full name").max(1
 
 const Auth = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = useMemo(() => searchParams.get("redirect") || "", [searchParams]);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [tab, setTab] = useState<"signin" | "signup">("signin");
   const [showForgot, setShowForgot] = useState(false);
   const [showSignInPassword, setShowSignInPassword] = useState(false);
   const [showSignUpPassword, setShowSignUpPassword] = useState(false);
+
+  const destinationForEmail = (email?: string | null) => {
+    if (redirectTo && redirectTo.startsWith("/")) return redirectTo;
+    return email?.toLowerCase() === "info@digiformation.uk" ? "/admin" : "/dashboard";
+  };
+
+  const handleGoogle = async () => {
+    setGoogleLoading(true);
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: `${window.location.origin}/auth${redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ""}`,
+    });
+    if (result.error) {
+      setGoogleLoading(false);
+      toast.error("Could not sign in with Google. Please try again.");
+      return;
+    }
+    if (result.redirected) return;
+    // Session set
+    setGoogleLoading(false);
+  };
 
   // Redirect if already logged in (but NOT during password recovery)
   useSeo({
