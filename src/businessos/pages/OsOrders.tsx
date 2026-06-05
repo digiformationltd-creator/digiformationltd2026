@@ -479,19 +479,28 @@ export default function OsOrders() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((o) => (
+                {filtered.map((o) => {
+                  const cancelled = o.status === "Cancelled";
+                  return (
                   <tr
                     key={o.id}
                     onClick={() => openOrder(o)}
-                    className="border-b border-white/5 last:border-0 hover:bg-white/[0.03] transition cursor-pointer"
+                    className={`border-b border-white/5 last:border-0 hover:bg-white/[0.03] transition cursor-pointer ${
+                      cancelled ? "bg-rose-500/[0.04] border-l-2 border-l-rose-400/60 opacity-70" : ""
+                    }`}
                   >
                     <td className="py-3 px-4">
-                      <div className="font-mono text-xs text-white/80">{o.order_ref}</div>
+                      <div className={`font-mono text-xs ${cancelled ? "line-through text-white/50" : "text-white/80"}`}>{o.order_ref}</div>
                       <div className="mt-1 flex items-center gap-1">
                         <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider ${sourceChip(o.source)}`}>
                           {sourceLabel(o.source)}
                         </span>
-                        {o.payment_status && o.payment_status !== "n/a" && (
+                        {cancelled && (
+                          <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-rose-500/20 text-rose-200 ring-1 ring-rose-400/40">
+                            Cancelled
+                          </span>
+                        )}
+                        {o.payment_status && o.payment_status !== "n/a" && !cancelled && (
                           <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider ${
                             o.payment_status === "paid" ? "bg-emerald-500/10 text-emerald-200/80 ring-1 ring-emerald-400/20" :
                             o.payment_status === "refunded" ? "bg-rose-500/10 text-rose-200/80 ring-1 ring-rose-400/20" :
@@ -503,10 +512,10 @@ export default function OsOrders() {
                       </div>
                     </td>
                     <td className="py-3 px-4">
-                      <div className="font-semibold truncate max-w-[180px]">{o.customer_name || "(guest)"}</div>
+                      <div className={`font-semibold truncate max-w-[180px] ${cancelled ? "line-through text-white/50" : ""}`}>{o.customer_name || "(guest)"}</div>
                       {o.customer_email && <div className="text-[11px] text-white/40 truncate max-w-[180px]">{o.customer_email}</div>}
                     </td>
-                    <td className="py-3 px-4 text-white/70 truncate max-w-[200px]">{o.service}</td>
+                    <td className={`py-3 px-4 truncate max-w-[200px] ${cancelled ? "line-through text-white/40" : "text-white/70"}`}>{o.service}</td>
                     <td className="py-3 px-4">
                       <span className={`px-2.5 py-1 rounded-full text-[11px] font-semibold ${statusChip(o.status)}`}>
                         {o.status}
