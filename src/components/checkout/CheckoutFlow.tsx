@@ -309,6 +309,25 @@ const CheckoutFlow = ({
     website: "",
   };
   const [form, setForm] = useState(() => ({ ...emptyForm, ...(draft?.form ?? {}) }));
+
+  // Prefill name/email from the logged-in user once auth resolves
+  useEffect(() => {
+    if (!isAuthed) return;
+    setForm((prev: any) => {
+      const next = { ...prev };
+      if (authedEmail && !prev.email) next.email = authedEmail;
+      if (authedName && !prev.full_name) {
+        next.full_name = authedName;
+        if (!prev.first_name && !prev.last_name) {
+          const parts = authedName.trim().split(/\s+/);
+          next.first_name = parts[0] || "";
+          next.last_name = parts.slice(1).join(" ");
+        }
+      }
+      return next;
+    });
+  }, [isAuthed, authedEmail, authedName]);
+
   const [extra, setExtra] = useState<Record<string, string>>(() => (draft?.extra && typeof draft.extra === "object" ? draft.extra : {}));
   const setExtraField = (key: string, value: string) => setExtra((p) => ({ ...p, [key]: value }));
   const [idFront, setIdFront] = useState<File | null>(null);
