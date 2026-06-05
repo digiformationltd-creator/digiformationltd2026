@@ -1,7 +1,8 @@
 import { useSeo } from "@/lib/seo";
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 import { checkAdminSession, recoverSession } from "@/lib/auth/session";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,10 +19,8 @@ const passwordSchema = z
   .string()
   .min(8, "Password must be at least 8 characters")
   .max(72, "Password too long")
-  .regex(/[A-Z]/, "Password must include an uppercase letter")
-  .regex(/[a-z]/, "Password must include a lowercase letter")
-  .regex(/[0-9]/, "Password must include a number")
-  .regex(/[^A-Za-z0-9]/, "Password must include a symbol (e.g. !@#$)");
+  .regex(/[A-Za-z]/, "Password must include a letter")
+  .regex(/[0-9]/, "Password must include a number");
 const signinPasswordSchema = z.string().min(1, "Password is required").max(72);
 const nameSchema = z.string().trim().min(2, "Please enter your full name").max(100);
 
