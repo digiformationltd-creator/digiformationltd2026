@@ -203,6 +203,37 @@ const CheckoutFlow = ({
   extras,
   extraSections,
 }: CheckoutFlowProps) => {
+  // ---------- Login gate ----------
+  // Every checkout/order must be tied to a real user account so we can
+  // properly track it. Inquiries and WhatsApp buttons remain public.
+  const location = useLocation();
+  const [authChecked, setAuthChecked] = useState(false);
+  const [isAuthed, setIsAuthed] = useState(false);
+  const [authedEmail, setAuthedEmail] = useState<string | null>(null);
+  const [authedName, setAuthedName] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!mounted) return;
+      const u = data.session?.user;
+      setIsAuthed(!!u);
+      setAuthedEmail(u?.email ?? null);
+      setAuthedName((u?.user_metadata as any)?.full_name ?? null);
+      setAuthChecked(true);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      const u = session?.user;
+      setIsAuthed(!!u);
+      setAuthedEmail(u?.email ?? null);
+      setAuthedName((u?.user_metadata as any)?.full_name ?? null);
+    });
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
   // Merge extras into the master items list so selection / pricing logic
   // continues to work uniformly.
   const allItems = useMemo(() => {
