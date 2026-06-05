@@ -746,6 +746,19 @@ const CheckoutFlow = ({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // Resume the order submission automatically once the user authenticates
+  // through the inline auth dialog at the "Place Order" step.
+  useEffect(() => {
+    if (isAuthed && pendingSubmitRef.current) {
+      pendingSubmitRef.current = false;
+      setAuthGateOpen(false);
+      submitOrder();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthed]);
+
+
+
   if (successInfo) {
     return (
       <section className="py-14 md:py-20">
