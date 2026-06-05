@@ -110,7 +110,7 @@ const Auth = () => {
     }
     toast.success("Welcome back!");
     const admin = ev.data.toLowerCase() === "info@digiformation.uk" ? await checkAdminSession() : null;
-    const dest = admin?.ok ? "/admin" : "/dashboard";
+    const dest = admin?.ok ? "/admin" : destinationForEmail(ev.data);
     navigate(dest, { replace: true });
   };
 
