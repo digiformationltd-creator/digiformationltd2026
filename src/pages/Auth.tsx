@@ -1,7 +1,8 @@
 import { useSeo } from "@/lib/seo";
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 import { checkAdminSession, recoverSession } from "@/lib/auth/session";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,20 +19,41 @@ const passwordSchema = z
   .string()
   .min(8, "Password must be at least 8 characters")
   .max(72, "Password too long")
-  .regex(/[A-Z]/, "Password must include an uppercase letter")
-  .regex(/[a-z]/, "Password must include a lowercase letter")
-  .regex(/[0-9]/, "Password must include a number")
-  .regex(/[^A-Za-z0-9]/, "Password must include a symbol (e.g. !@#$)");
+  .regex(/[A-Za-z]/, "Password must include a letter")
+  .regex(/[0-9]/, "Password must include a number");
 const signinPasswordSchema = z.string().min(1, "Password is required").max(72);
 const nameSchema = z.string().trim().min(2, "Please enter your full name").max(100);
 
 const Auth = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = useMemo(() => searchParams.get("redirect") || "", [searchParams]);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [tab, setTab] = useState<"signin" | "signup">("signin");
   const [showForgot, setShowForgot] = useState(false);
   const [showSignInPassword, setShowSignInPassword] = useState(false);
   const [showSignUpPassword, setShowSignUpPassword] = useState(false);
+
+  const destinationForEmail = (email?: string | null) => {
+    if (redirectTo && redirectTo.startsWith("/")) return redirectTo;
+    return email?.toLowerCase() === "info@digiformation.uk" ? "/admin" : "/dashboard";
+  };
+
+  const handleGoogle = async () => {
+    setGoogleLoading(true);
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: `${window.location.origin}/auth${redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ""}`,
+    });
+    if (result.error) {
+      setGoogleLoading(false);
+      toast.error("Could not sign in with Google. Please try again.");
+      return;
+    }
+    if (result.redirected) return;
+    // Session set
+    setGoogleLoading(false);
+  };
 
   // Redirect if already logged in (but NOT during password recovery)
   useSeo({
@@ -47,7 +69,7 @@ const Auth = () => {
     const routeForSession = (session: NonNullable<Awaited<ReturnType<typeof recoverSession>>["session"]>) => {
       if (redirected) return;
       redirected = true;
-      navigate(session.user.email?.toLowerCase() === "info@digiformation.uk" ? "/admin" : "/dashboard", { replace: true });
+      navigate(destinationForEmail(session.user.email), { replace: true });
     };
     // INITIAL_SESSION fires automatically on mount with current session, so no need
     // to call getSession() separately (which would cause an extra token refresh).
@@ -88,7 +110,7 @@ const Auth = () => {
     }
     toast.success("Welcome back!");
     const admin = ev.data.toLowerCase() === "info@digiformation.uk" ? await checkAdminSession() : null;
-    const dest = admin?.ok ? "/admin" : "/dashboard";
+    const dest = admin?.ok ? "/admin" : destinationForEmail(ev.data);
     navigate(dest, { replace: true });
   };
 
@@ -147,7 +169,7 @@ const Auth = () => {
     }).catch((err) => console.error("welcome email failed", err));
 
     toast.success("Account created! Logging you in...");
-    const dest = ev.data.toLowerCase() === "info@digiformation.uk" ? "/admin" : "/dashboard";
+    const dest = destinationForEmail(ev.data);
     navigate(dest, { replace: true });
   };
 
@@ -196,11 +218,42 @@ const Auth = () => {
               <p className="text-xs opacity-70 mt-0.5">Manage your company, orders & subscriptions</p>
             </div>
 
+            {redirectTo && (
+              <div className="mb-3 text-xs text-center px-3 py-2 rounded-lg bg-primary/10 border border-primary/20">
+                Sign in or create an account to complete your order.
+              </div>
+            )}
+
+            <Button
+              type="button"
+              onClick={handleGoogle}
+              disabled={googleLoading || loading}
+              className="w-full mb-3 rounded-full bg-white text-slate-900 hover:bg-white/90 border border-white/30"
+            >
+              {googleLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <svg className="w-4 h-4" viewBox="0 0 48 48" aria-hidden="true">
+                  <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.4 29.3 35.5 24 35.5c-6.4 0-11.5-5.1-11.5-11.5S17.6 12.5 24 12.5c2.9 0 5.6 1.1 7.7 2.9l5.7-5.7C33.9 6.4 29.2 4.5 24 4.5 13.2 4.5 4.5 13.2 4.5 24S13.2 43.5 24 43.5 43.5 34.8 43.5 24c0-1.2-.1-2.4-.4-3.5z"/>
+                  <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 12.5 24 12.5c2.9 0 5.6 1.1 7.7 2.9l5.7-5.7C33.9 6.4 29.2 4.5 24 4.5 16.3 4.5 9.7 8.8 6.3 14.7z"/>
+                  <path fill="#4CAF50" d="M24 43.5c5.1 0 9.7-1.9 13.2-5.1l-6.1-5c-2 1.4-4.4 2.1-7.1 2.1-5.3 0-9.7-3.1-11.3-7.5l-6.5 5C9.6 39.1 16.2 43.5 24 43.5z"/>
+                  <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.4l6.1 5c-.4.4 6.7-4.9 6.7-14.4 0-1.2-.1-2.4-.4-3.5z"/>
+                </svg>
+              )}
+              Continue with Google
+            </Button>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="h-px flex-1 bg-white/15" />
+              <span className="text-[10px] uppercase tracking-wider opacity-60">or</span>
+              <div className="h-px flex-1 bg-white/15" />
+            </div>
+
             <Tabs value={tab} onValueChange={(v) => setTab(v as "signin" | "signup")}>
               <TabsList className="grid grid-cols-2 w-full mb-4">
                 <TabsTrigger value="signin">Sign In</TabsTrigger>
                 <TabsTrigger value="signup">Create Account</TabsTrigger>
               </TabsList>
+
 
               <TabsContent value="signin">
                 {showForgot ? (
@@ -301,7 +354,7 @@ const Auth = () => {
                         name="password"
                         type={showSignUpPassword ? "text" : "password"}
                         required
-                        placeholder="Min 8 chars · Aa1!"
+                        placeholder="At least 8 characters"
                         className="pl-9 pr-12 bg-background/40 border-white/15 focus-visible:ring-primary/50"
                         autoComplete="new-password"
                       />
@@ -315,7 +368,7 @@ const Auth = () => {
                       </button>
                     </div>
                     <p className="text-[10px] opacity-60 mt-1">
-                      Must include uppercase, lowercase, number & symbol. Leaked passwords are blocked.
+                      At least 8 characters with a letter and a number.
                     </p>
                   </div>
                   <Button type="submit" variant="hero" className="w-full rounded-full" disabled={loading}>

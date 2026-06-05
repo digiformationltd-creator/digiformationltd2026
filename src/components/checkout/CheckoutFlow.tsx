@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
@@ -203,6 +203,37 @@ const CheckoutFlow = ({
   extras,
   extraSections,
 }: CheckoutFlowProps) => {
+  // ---------- Login gate ----------
+  // Every checkout/order must be tied to a real user account so we can
+  // properly track it. Inquiries and WhatsApp buttons remain public.
+  const location = useLocation();
+  const [authChecked, setAuthChecked] = useState(false);
+  const [isAuthed, setIsAuthed] = useState(false);
+  const [authedEmail, setAuthedEmail] = useState<string | null>(null);
+  const [authedName, setAuthedName] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!mounted) return;
+      const u = data.session?.user;
+      setIsAuthed(!!u);
+      setAuthedEmail(u?.email ?? null);
+      setAuthedName((u?.user_metadata as any)?.full_name ?? null);
+      setAuthChecked(true);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      const u = session?.user;
+      setIsAuthed(!!u);
+      setAuthedEmail(u?.email ?? null);
+      setAuthedName((u?.user_metadata as any)?.full_name ?? null);
+    });
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
   // Merge extras into the master items list so selection / pricing logic
   // continues to work uniformly.
   const allItems = useMemo(() => {
@@ -278,6 +309,25 @@ const CheckoutFlow = ({
     website: "",
   };
   const [form, setForm] = useState(() => ({ ...emptyForm, ...(draft?.form ?? {}) }));
+
+  // Prefill name/email from the logged-in user once auth resolves
+  useEffect(() => {
+    if (!isAuthed) return;
+    setForm((prev: any) => {
+      const next = { ...prev };
+      if (authedEmail && !prev.email) next.email = authedEmail;
+      if (authedName && !prev.full_name) {
+        next.full_name = authedName;
+        if (!prev.first_name && !prev.last_name) {
+          const parts = authedName.trim().split(/\s+/);
+          next.first_name = parts[0] || "";
+          next.last_name = parts.slice(1).join(" ");
+        }
+      }
+      return next;
+    });
+  }, [isAuthed, authedEmail, authedName]);
+
   const [extra, setExtra] = useState<Record<string, string>>(() => (draft?.extra && typeof draft.extra === "object" ? draft.extra : {}));
   const setExtraField = (key: string, value: string) => setExtra((p) => ({ ...p, [key]: value }));
   const [idFront, setIdFront] = useState<File | null>(null);
@@ -752,6 +802,52 @@ const CheckoutFlow = ({
   const showSelection = !lockSelection && stepIdx === 0;
   const showDetails = stepIdx === (lockSelection ? 0 : 1);
   const showReview = stepIdx === (lockSelection ? 1 : 2);
+
+  // Auth gate: require login before showing the order flow
+  if (authChecked && !isAuthed) {
+    const redirectParam = encodeURIComponent(location.pathname + location.search);
+    const authHref = `/auth?redirect=${redirectParam}`;
+    return (
+      <section className="relative overflow-hidden bg-gradient-hero">
+        <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
+        <div className="container mx-auto px-4 py-16 md:py-24 relative">
+          <div className="max-w-lg mx-auto glass rounded-2xl p-7 sm:p-9 shadow-elegant text-center">
+            <div className="mx-auto w-14 h-14 rounded-full bg-primary/15 flex items-center justify-center mb-4">
+              <ShieldCheck className="w-7 h-7 text-primary" />
+            </div>
+            {eyebrow && (
+              <p className="text-[11px] uppercase tracking-wider opacity-60 mb-1">{eyebrow}</p>
+            )}
+            <h1 className="text-2xl font-semibold mb-2">Sign in to place your order</h1>
+            <p className="text-sm opacity-80 mb-6">
+              To proceed with checkout for <span className="font-medium">{serviceTitle}</span>, please sign in or create a free account. This keeps every order linked to your dashboard so you can track progress, invoices and documents.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button asChild variant="hero" className="rounded-full">
+                <Link to={authHref}>Sign in / Create account</Link>
+              </Button>
+              <Button asChild variant="ghostGlow" className="rounded-full">
+                <Link to="/contact">Contact us instead</Link>
+              </Button>
+            </div>
+            <p className="text-[11px] opacity-60 mt-5">
+              Just have a question? Use the contact form or WhatsApp button — no account needed.
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+  if (!authChecked) {
+    return (
+      <section className="bg-gradient-hero">
+        <div className="container mx-auto px-4 py-24 flex items-center justify-center">
+          <Loader2 className="w-6 h-6 animate-spin opacity-70" />
+        </div>
+      </section>
+    );
+  }
+
 
   return (
     <>
