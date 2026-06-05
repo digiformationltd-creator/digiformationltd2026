@@ -1719,4 +1719,163 @@ const UploadField = ({
   );
 };
 
+/**
+ * Inline auth dialog shown when the customer reaches "Place Order" without
+ * being logged in. Lets them sign in or create a free account in-place; on
+ * success the parent's `isAuthed` flips true and the parent's effect resumes
+ * submitOrder() automatically.
+ */
+const CheckoutAuthGate = ({
+  open,
+  onOpenChange,
+  defaultEmail,
+  defaultName,
+}: {
+  open: boolean;
+  onOpenChange: (o: boolean) => void;
+  defaultEmail?: string;
+  defaultName?: string;
+}) => {
+  const [mode, setMode] = useState<"signup" | "signin">("signup");
+  const [name, setName] = useState(defaultName || "");
+  const [email, setEmail] = useState(defaultEmail || "");
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setName(defaultName || "");
+      setEmail(defaultEmail || "");
+      setPassword("");
+    }
+  }, [open, defaultEmail, defaultName]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      toast({ title: "Enter a valid email", variant: "destructive" });
+      return;
+    }
+    if (password.length < 8) {
+      toast({ title: "Password must be at least 8 characters", variant: "destructive" });
+      return;
+    }
+    setBusy(true);
+    try {
+      if (mode === "signup") {
+        if (name.trim().length < 2) {
+          toast({ title: "Please enter your full name", variant: "destructive" });
+          setBusy(false);
+          return;
+        }
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/dashboard`,
+            data: { full_name: name.trim() },
+          },
+        });
+        if (error) {
+          const msg = error.message.toLowerCase().includes("already")
+            ? "This email is already registered. Switch to Sign in."
+            : error.message;
+          toast({ title: "Could not create account", description: msg, variant: "destructive" });
+          setBusy(false);
+          return;
+        }
+        if (!data.session) {
+          const { error: si } = await supabase.auth.signInWithPassword({ email, password });
+          if (si) {
+            toast({ title: "Account created — please sign in", description: si.message, variant: "destructive" });
+            setBusy(false);
+            return;
+          }
+        }
+        toast({ title: "Account created — placing your order…" });
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          toast({ title: "Sign in failed", description: "Check your email & password.", variant: "destructive" });
+          setBusy(false);
+          return;
+        }
+        toast({ title: "Signed in — placing your order…" });
+      }
+      // parent's onAuthStateChange listener flips isAuthed → effect resumes submit.
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>
+            {mode === "signup" ? "Create your account to place this order" : "Sign in to place this order"}
+          </DialogTitle>
+        </DialogHeader>
+        <p className="text-xs opacity-75 -mt-2">
+          Every order is linked to a free account so you can track progress,
+          invoices and documents from your dashboard.
+        </p>
+        <form onSubmit={handleSubmit} className="space-y-3 mt-2">
+          {mode === "signup" && (
+            <div>
+              <label className="block text-xs font-medium mb-1">Full name</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your full name"
+                className="w-full px-3 py-2 rounded-lg bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+                required
+              />
+            </div>
+          )}
+          <div>
+            <label className="block text-xs font-medium mb-1">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="w-full px-3 py-2 rounded-lg bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+              required
+              autoComplete="email"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium mb-1">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={mode === "signup" ? "At least 8 characters" : "Your password"}
+              className="w-full px-3 py-2 rounded-lg bg-muted/30 border border-border/40 focus:border-primary outline-none text-sm"
+              required
+              autoComplete={mode === "signup" ? "new-password" : "current-password"}
+            />
+          </div>
+          <Button type="submit" variant="hero" className="w-full rounded-full" disabled={busy}>
+            {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+            {mode === "signup" ? "Create account & place order" : "Sign in & place order"}
+          </Button>
+          <button
+            type="button"
+            onClick={() => setMode(mode === "signup" ? "signin" : "signup")}
+            className="block w-full text-center text-xs opacity-75 hover:opacity-100 underline"
+          >
+            {mode === "signup"
+              ? "Already have an account? Sign in"
+              : "New customer? Create a free account"}
+          </button>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 export default CheckoutFlow;
+
