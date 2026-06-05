@@ -256,10 +256,8 @@ const ResetPassword = () => {
                   {/* Live checklist */}
                   <ul className="mt-3 grid grid-cols-1 gap-1.5">
                     <Rule ok={checks.length} label="At least 8 characters" />
-                    <Rule ok={checks.upper} label="One uppercase letter (A-Z)" />
-                    <Rule ok={checks.lower} label="One lowercase letter (a-z)" />
-                    <Rule ok={checks.number} label="One number (0-9)" />
-                    <Rule ok={checks.symbol} label="One symbol (e.g. !@#$%)" />
+                    <Rule ok={checks.letter} label="At least one letter (a-z or A-Z)" />
+                    <Rule ok={checks.number} label="At least one number (0-9)" />
                   </ul>
                 </div>
 
