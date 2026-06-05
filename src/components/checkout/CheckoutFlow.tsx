@@ -1582,7 +1582,18 @@ const CheckoutFlow = ({
           <p className="text-xs opacity-70">This is just a reference example. Your photo should be sharp, well-lit and show all corners / details clearly.</p>
         </DialogContent>
       </Dialog>
+
+      <CheckoutAuthGate
+        open={authGateOpen}
+        onOpenChange={(o) => {
+          setAuthGateOpen(o);
+          if (!o) pendingSubmitRef.current = false;
+        }}
+        defaultEmail={form.email}
+        defaultName={form.full_name || `${form.first_name} ${form.last_name}`.trim()}
+      />
     </>
+
   );
 };
 
