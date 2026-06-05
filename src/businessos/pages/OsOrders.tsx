@@ -605,7 +605,8 @@ export default function OsOrders() {
                     </td>
 
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
