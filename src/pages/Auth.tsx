@@ -169,7 +169,7 @@ const Auth = () => {
     }).catch((err) => console.error("welcome email failed", err));
 
     toast.success("Account created! Logging you in...");
-    const dest = ev.data.toLowerCase() === "info@digiformation.uk" ? "/admin" : "/dashboard";
+    const dest = destinationForEmail(ev.data);
     navigate(dest, { replace: true });
   };
 
