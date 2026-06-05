@@ -275,6 +275,9 @@ const CheckoutFlow = ({
   });
   const [stepIdx, setStepIdx] = useState(draft?.stepIdx ?? 0);
   const [submitting, setSubmitting] = useState(false);
+  const [authGateOpen, setAuthGateOpen] = useState(false);
+  const pendingSubmitRef = useRef(false);
+
   const [successInfo, setSuccessInfo] = useState<{
     orderRef: string;
     invoiceUrl?: string;
