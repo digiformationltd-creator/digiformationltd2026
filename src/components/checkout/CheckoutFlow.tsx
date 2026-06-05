@@ -803,41 +803,7 @@ const CheckoutFlow = ({
   const showDetails = stepIdx === (lockSelection ? 0 : 1);
   const showReview = stepIdx === (lockSelection ? 1 : 2);
 
-  // Auth gate: require login before showing the order flow
-  if (authChecked && !isAuthed) {
-    const redirectParam = encodeURIComponent(location.pathname + location.search);
-    const authHref = `/auth?redirect=${redirectParam}`;
-    return (
-      <section className="relative overflow-hidden bg-gradient-hero">
-        <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
-        <div className="container mx-auto px-4 py-16 md:py-24 relative">
-          <div className="max-w-lg mx-auto glass rounded-2xl p-7 sm:p-9 shadow-elegant text-center">
-            <div className="mx-auto w-14 h-14 rounded-full bg-primary/15 flex items-center justify-center mb-4">
-              <ShieldCheck className="w-7 h-7 text-primary" />
-            </div>
-            {eyebrow && (
-              <p className="text-[11px] uppercase tracking-wider opacity-60 mb-1">{eyebrow}</p>
-            )}
-            <h1 className="text-2xl font-semibold mb-2">Sign in to place your order</h1>
-            <p className="text-sm opacity-80 mb-6">
-              To proceed with checkout for <span className="font-medium">{serviceTitle}</span>, please sign in or create a free account. This keeps every order linked to your dashboard so you can track progress, invoices and documents.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button asChild variant="hero" className="rounded-full">
-                <Link to={authHref}>Sign in / Create account</Link>
-              </Button>
-              <Button asChild variant="ghostGlow" className="rounded-full">
-                <Link to="/contact">Contact us instead</Link>
-              </Button>
-            </div>
-            <p className="text-[11px] opacity-60 mt-5">
-              Just have a question? Use the contact form or WhatsApp button — no account needed.
-            </p>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  // Auth gate is now deferred — collected at "Place Order" via inline modal.
   if (!authChecked) {
     return (
       <section className="bg-gradient-hero">
@@ -847,6 +813,7 @@ const CheckoutFlow = ({
       </section>
     );
   }
+
 
 
   return (
