@@ -368,7 +368,7 @@ const Auth = () => {
                       </button>
                     </div>
                     <p className="text-[10px] opacity-60 mt-1">
-                      Must include uppercase, lowercase, number & symbol. Leaked passwords are blocked.
+                      At least 8 characters with a letter and a number.
                     </p>
                   </div>
                   <Button type="submit" variant="hero" className="w-full rounded-full" disabled={loading}>
