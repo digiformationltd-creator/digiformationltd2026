@@ -479,19 +479,28 @@ export default function OsOrders() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((o) => (
+                {filtered.map((o) => {
+                  const cancelled = o.status === "Cancelled";
+                  return (
                   <tr
                     key={o.id}
                     onClick={() => openOrder(o)}
-                    className="border-b border-white/5 last:border-0 hover:bg-white/[0.03] transition cursor-pointer"
+                    className={`border-b border-white/5 last:border-0 hover:bg-white/[0.03] transition cursor-pointer ${
+                      cancelled ? "bg-rose-500/[0.04] border-l-2 border-l-rose-400/60 opacity-70" : ""
+                    }`}
                   >
                     <td className="py-3 px-4">
-                      <div className="font-mono text-xs text-white/80">{o.order_ref}</div>
+                      <div className={`font-mono text-xs ${cancelled ? "line-through text-white/50" : "text-white/80"}`}>{o.order_ref}</div>
                       <div className="mt-1 flex items-center gap-1">
                         <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider ${sourceChip(o.source)}`}>
                           {sourceLabel(o.source)}
                         </span>
-                        {o.payment_status && o.payment_status !== "n/a" && (
+                        {cancelled && (
+                          <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-rose-500/20 text-rose-200 ring-1 ring-rose-400/40">
+                            Cancelled
+                          </span>
+                        )}
+                        {o.payment_status && o.payment_status !== "n/a" && !cancelled && (
                           <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider ${
                             o.payment_status === "paid" ? "bg-emerald-500/10 text-emerald-200/80 ring-1 ring-emerald-400/20" :
                             o.payment_status === "refunded" ? "bg-rose-500/10 text-rose-200/80 ring-1 ring-rose-400/20" :
@@ -503,10 +512,10 @@ export default function OsOrders() {
                       </div>
                     </td>
                     <td className="py-3 px-4">
-                      <div className="font-semibold truncate max-w-[180px]">{o.customer_name || "(guest)"}</div>
+                      <div className={`font-semibold truncate max-w-[180px] ${cancelled ? "line-through text-white/50" : ""}`}>{o.customer_name || "(guest)"}</div>
                       {o.customer_email && <div className="text-[11px] text-white/40 truncate max-w-[180px]">{o.customer_email}</div>}
                     </td>
-                    <td className="py-3 px-4 text-white/70 truncate max-w-[200px]">{o.service}</td>
+                    <td className={`py-3 px-4 truncate max-w-[200px] ${cancelled ? "line-through text-white/40" : "text-white/70"}`}>{o.service}</td>
                     <td className="py-3 px-4">
                       <span className={`px-2.5 py-1 rounded-full text-[11px] font-semibold ${statusChip(o.status)}`}>
                         {o.status}
@@ -596,7 +605,8 @@ export default function OsOrders() {
                     </td>
 
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -606,18 +616,22 @@ export default function OsOrders() {
       {/* Mobile cards */}
       {filtered.length > 0 && (
         <div className="md:hidden space-y-3">
-          {filtered.map((o) => (
+          {filtered.map((o) => {
+            const cancelled = o.status === "Cancelled";
+            return (
             <div
               key={o.id}
               onClick={() => openOrder(o)}
               role="button"
               tabIndex={0}
-              className="os-glass p-4 w-full text-left active:scale-[0.99] transition cursor-pointer"
+              className={`os-glass p-4 w-full text-left active:scale-[0.99] transition cursor-pointer ${
+                cancelled ? "border-l-2 border-l-rose-400/60 bg-rose-500/[0.04] opacity-75" : ""
+              }`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <span className="font-mono text-[11px] text-white/60">{o.order_ref}</span>
+                    <span className={`font-mono text-[11px] ${cancelled ? "line-through text-white/40" : "text-white/60"}`}>{o.order_ref}</span>
                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${statusChip(o.status)}`}>
                       {o.status}
                     </span>
@@ -625,7 +639,7 @@ export default function OsOrders() {
                       {sourceLabel(o.source)}
                     </span>
                   </div>
-                  <div className="font-semibold truncate">{o.service}</div>
+                  <div className={`font-semibold truncate ${cancelled ? "line-through text-white/50" : ""}`}>{o.service}</div>
                   <div className="flex items-center gap-1.5 text-xs text-white/60 mt-1 truncate">
                     <User className="w-3 h-3 shrink-0" />
                     <span className="truncate">{o.customer_name || "(guest)"}</span>
@@ -680,7 +694,8 @@ export default function OsOrders() {
               </div>
 
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
