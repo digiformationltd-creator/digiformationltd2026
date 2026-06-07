@@ -680,6 +680,7 @@ const CheckoutFlow = ({
           notes: `${contextLabel ? contextLabel + "\n" : ""}${lines}${activityText ? `\nBusiness activity: ${activityText}` : ""}`,
           orderRef,
           documents: uploadedDocs,
+          checkout_request_id: checkoutRequestIdRef.current,
         },
       });
       if (invErr) throw invErr;
