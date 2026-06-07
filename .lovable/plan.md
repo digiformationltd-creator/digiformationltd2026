@@ -1,84 +1,140 @@
-# Unified Checkout, Pricing & Invoice System
+# WhatsApp CRM — Safe, Meta-Compliant Architecture
 
-## Goal
+A lightweight, relationship-focused CRM built on the **official Meta WhatsApp Cloud API**. No spam engine. Five transactional automations + manual broadcasts only. Designed to keep your WhatsApp Business number safe for years.
 
-Every service on the website routes through the same priced checkout flow that powers LTD ID Verification today. Orders are created with the correct amount, an unpaid invoice is generated and emailed automatically, and the customer can download it from their portal. No service may create a £0 order while it has a defined price.
+---
 
-## What's wrong today
+## 1. Architecture (high level)
 
-- `DynamicServicePage` (the template behind dozens of UK Services, UK Compliance, USA Services and Banking pages) routes its only CTA to `/contact`. That hits the inquiry-mirror trigger and produces a `client_orders` row with `amount_gbp = 0` and `status = 'Inquiry'`.
-- `ServicePage` (UTR, Registered Office Address, etc.) and `SimplePage` also CTA into `/contact`.
-- `UsaServicePage` already links to `/checkout` but only passes `title` + `service` — the checkout has no catalog entry, so the amount falls back to 0.
-- The compliance catalog inside `Checkout.tsx` is hard-coded and out of sync with `src/data/compliance.ts` (the real published prices).
-- Web Development / packages CTAs in `CorePages.tsx` go to `/contact`.
+```text
+   Checkout / Portal / Inquiry
+            │  (E.164 phone already normalised by src/lib/phone.ts)
+            ▼
+   whatsapp_contacts  ◄──────── linked to ─────────►  profiles / client_orders /
+   (single source of truth)                            invoices / client_company_details
+            │
+            ├── whatsapp_threads (1 per contact)
+            │       └── whatsapp_messages (inbound + outbound history)
+            │
+            ├── whatsapp_templates (Meta-approved templates cache)
+            │
+            ├── whatsapp_send_queue (rate-limited outbox, pgmq)
+            │
+            ├── whatsapp_broadcasts (manual campaigns, audited)
+            │
+            └── whatsapp_consent (opt-in / opt-out / cooldown state)
+```
 
-## Solution overview
+We already have `whatsapp_clicks`, `whatsapp_message_log`, `whatsapp_threads` — we will **reuse and extend** instead of duplicating.
 
-One central service price catalog → every service page CTAs into `/checkout?service=<slug>` (or its dedicated checkout for LTD / LLC / Banking / IDV) → `CheckoutFlow` collects details and creates the order with the real price → `generate-invoice` runs as it already does for IDV → invoice email + portal download.
+---
 
-## Implementation
+## 2. Database changes (new + extended)
 
-### 1. Central service catalog (single source of truth)
+**New tables**
+- `whatsapp_contacts` — canonical contact (E.164 phone PK), `user_id` (nullable, links to `profiles`), `display_name`, `country`, `source` (checkout/inquiry/manual/portal), `first_seen_at`, `last_seen_at`, `opt_in_status` (`pending` / `opted_in` / `opted_out`), `last_message_at`, `last_broadcast_at`, `tags[]`.
+- `whatsapp_consent_events` — append-only log of every opt-in / opt-out / template-acceptance for compliance audit.
+- `whatsapp_templates` — local cache of Meta-approved templates (name, language, category `UTILITY|MARKETING|AUTHENTICATION`, status, variables, last sync).
+- `whatsapp_broadcasts` — manual broadcast campaign (name, template, audience filter, scheduled_at, status, sent/failed counts, created_by).
+- `whatsapp_broadcast_recipients` — per-contact delivery row (status, wa_message_id, error).
 
-Create `src/data/serviceCatalog.ts` exporting one `SERVICE_CATALOG` keyed by slug. Each entry: `slug`, `name`, `price` (GBP), `currency`, `category`, `description`, optional `fields` (extra checkout sections — e.g. CRN, company name).
+**Extend existing**
+- `whatsapp_message_log` — add `contact_id`, `template_name`, `category`, `wa_message_id`, `direction` (`in`/`out`), `status` (`queued|sent|delivered|read|failed`).
+- `client_orders`, `invoices`, `leads` — already carry phone; add helper view `v_whatsapp_linked_contacts` that joins everything by E.164.
 
-Seed from existing data:
-- UK Services: register LTD (uses dedicated jurisdiction flow), ID Verification (existing flow), Registered Office (£40), Confirmation Statement Filing (£60), UTR (£50), Auth Code, Activation Code, UK VAT (£70), etc.
-- UK Compliance: all 9 entries from `src/data/compliance.ts` with their real prices.
-- USA Services: EIN, ITIN, Annual Tax, BOI from `src/data/usaServices.ts` (price already numeric).
-- Banking: per-provider setup prices from `src/data/navigation.ts`.
-- Web Development / Packages: every pricing tier on `/web-development` and `/pricing` becomes a catalog entry.
+All tables get strict RLS: only `admin` / `staff` roles read/write; clients never see the CRM.
 
-`Checkout.tsx` is rewritten to look up `?service=<slug>` in `SERVICE_CATALOG` and feed the matched item into `CheckoutFlow` with `lockSelection` + `fixed: true` — exactly like the IDV checkout. Multi-add-on groups (UK Address bundle, multi-pick UK Compliance) keep their existing multi-select catalog but read prices from the catalog.
+---
 
-### 2. Service page CTAs
+## 3. The 5 (and only 5) automated messages
 
-- `ServicePage` template: replace the `/contact` CTA with `/checkout?service=<slug>&title=...`. Pull `slug` + `price` from the catalog; render the real price on the button ("Order now — £50"). Fallback "Talk to us" link kept as a secondary ghost button only when the service has no price (rare).
-- `DynamicServicePage`: same — resolve the slug from its `path`, look up the catalog entry, render priced CTA. If a slug has no catalog entry it falls back to inquiry (so nothing breaks), but every shipped service will have an entry.
-- `UsaServicePage`: pass `?service=<slug>` so checkout finds the price (no more 0).
-- `CompliancePage`: already builds `/checkout?items=...` — switch the catalog inside `Checkout.tsx` to read from the central catalog so prices match the marketing page.
-- `CorePages.tsx` (web dev, packages, custom services): replace `/contact` CTAs with `/checkout?service=<package-slug>`.
-- `RegisteredOfficeAddress`, `UtrCodes`, `BlogPost`, `InsightPage`, `SimplePage`, `NotFound`, `DigiCTA`: secondary "Talk to us" links can stay, but every primary "Get started/Order" CTA becomes a checkout link. WhatsApp float untouched.
+| # | Trigger | Template category | When |
+|---|---|---|---|
+| 1 | Order processing started | UTILITY | `client_orders.status` → `In Progress` |
+| 2 | Order completed | UTILITY | `client_orders.status` → `Completed` |
+| 3 | Confirmation statement reminder | UTILITY | 30 / 14 / 3 days before due |
+| 4 | Annual accounts reminder | UTILITY | 60 / 30 / 7 days before due |
+| 5 | Address renewal reminder | UTILITY | 30 / 7 days before expiry |
 
-### 3. Checkout + order creation (no functional change, just labelling)
+All five are **UTILITY** templates (Meta's safest category, no opt-in required for service messages, lowest policy risk). Reuses the same scheduler that already runs email reminders — one extra channel, same dedupe logic.
 
-`CheckoutFlow` already creates the order via `generate-invoice` with the selected items' prices. Confirm:
-- `source = 'checkout'`, `payment_status = 'unpaid'` (already set in last migration).
-- `amount_gbp` = sum of selected items (already correct when prices are real).
-- `status = 'New'` (not `Inquiry`).
+---
 
-### 4. Invoice generation
+## 4. Safety guardrails (hard-coded, not optional)
 
-Already implemented inside `generate-invoice` edge function (PDF stored in `invoices` bucket, row in `invoices`, email sent via `send-transactional-email` → `invoice-issued` template). No code change needed beyond confirming it fires for every checkout. The client portal Orders page already exposes invoice download — verify it shows the new orders.
+1. **Channel:** Official Meta Cloud API only. No third-party gateway, no scraping, no unofficial libs.
+2. **Templates only for outbound-initiated:** Cannot send free-form unless the contact messaged us in the last 24h (Meta's customer service window).
+3. **Cooldown:** No more than **1 automated message per contact per 24h**, **1 broadcast per contact per 14 days**. Enforced in DB via `last_message_at` / `last_broadcast_at` check before enqueue.
+4. **Duplicate prevention:** `(contact_id, template_name, related_id)` unique key on the send queue for 7 days.
+5. **Rate limit:** Outbound queue drains at **max 1 msg / 2 seconds** globally, 500/day soft cap (well under Meta's tier limits). Configurable.
+6. **Opt-out honoured instantly:** Any inbound "STOP" / "UNSUBSCRIBE" flips `opt_in_status` → `opted_out` and blocks all future sends except auth/OTP.
+7. **Marketing audience filter:** Broadcasts only target `opt_in_status = 'opted_in'` **AND** existing customers (have at least 1 paid order). Never cold contacts.
+8. **Quiet hours:** No sends 22:00–08:00 contact-local time (use stored `country`).
+9. **Audit log:** Every send, every consent change, every broadcast — immutable row.
 
-### 5. Contact form stays as a last-resort inquiry channel
+---
 
-`/contact` keeps creating inquiry orders via the existing trigger (so no submission is ever lost), but it is no longer the primary CTA for any priced service. Inquiry orders now only appear for genuine "talk to us" submissions, custom quotes, and WhatsApp escalations.
+## 5. Meta Cloud API setup (one-time)
 
-### 6. Backfill / cleanup (data only, optional)
+1. Create Meta Business Account → WhatsApp Business Account (WABA).
+2. Add the DigiFormation phone number, complete business verification.
+3. Generate **permanent System User access token** (not the 24h temp token).
+4. Configure webhook → new edge function `whatsapp-webhook` (verify token + signature check). Subscribe to `messages`, `message_template_status_update`, `message_status`.
+5. Submit the 5 utility templates for approval (EN + UR variants).
+6. Store as secrets: `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_BUSINESS_ACCOUNT_ID`, `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_WEBHOOK_VERIFY_TOKEN`, `WHATSAPP_APP_SECRET`.
 
-Existing £0 `Inquiry` orders for Zion and others remain in the system (as agreed last turn). No retroactive re-pricing — they were genuinely inquiries. Going forward, every new submission carries the right price.
+---
 
-### 7. Guardrail
+## 6. Edge functions
 
-Add a brief comment at the top of `serviceCatalog.ts`:
+- `whatsapp-webhook` (public, signature-verified) — receives inbound messages + status callbacks, updates `whatsapp_message_log`, auto-captures unknown senders into `whatsapp_contacts`, handles STOP/START.
+- `whatsapp-send` (admin-only) — single send: validates cooldown, opt-in, quiet hours, template variables, then calls Cloud API. Logs to `whatsapp_message_log`.
+- `whatsapp-broadcast-dispatch` (admin-only, cron-friendly) — drains `whatsapp_broadcasts` recipients respecting global rate limit.
+- `whatsapp-template-sync` (admin-only) — pulls approved templates from Meta nightly.
+- Extend `send-scheduled-reminders` — after email send, enqueue matching WhatsApp utility message if contact opted-in.
 
-> Every new service must be added here with its price. Service pages must CTA to `/checkout?service=<slug>`. Do not add new `/contact` CTAs for priced services.
+---
 
-## Files touched
+## 7. Business OS UI (new section `/admin/whatsapp`)
 
-- **new** `src/data/serviceCatalog.ts` — central price catalog
-- `src/pages/Checkout.tsx` — read catalog by slug, lock single-service checkout, keep multi-select groups
-- `src/components/ServicePage.tsx` — priced CTA from catalog
-- `src/pages/DynamicServicePage.tsx` — pass slug + price into ServicePage
-- `src/pages/UsaServicePage.tsx` — checkout link carries `?service=<slug>`
-- `src/pages/CompliancePage.tsx` — verify slug mapping matches catalog
-- `src/pages/RegisteredOfficeAddress.tsx`, `src/pages/UtrCodes.tsx`, `src/pages/CorePages.tsx` (web dev + packages), `src/components/SimplePage.tsx`, `src/components/DigiCTA.tsx` — primary CTA → checkout
-- No database migrations required — schema already supports this.
-- No edge function changes — `generate-invoice` already creates priced orders + invoices.
+- **Contacts** — searchable list, filter by source/tag/opt-in, click → drawer with linked customer, orders, invoices, message history.
+- **Inbox** — unified thread view (Meta 24h window indicator), reply free-form inside window, template picker outside window.
+- **Templates** — read-only list of approved Meta templates with preview.
+- **Broadcasts** — create campaign: pick template → pick audience (existing-customers filter is mandatory) → schedule → preview cooldown-blocked count → confirm.
+- **Reminders** — view scheduled compliance reminders before they fire.
+- **Logs** — sends, deliveries, failures, opt-outs.
 
-## Out of scope
+---
 
-- Payment collection (Stripe/Paddle). Orders stay `unpaid` until you wire a provider — separate request.
-- WhatsApp float / `wa.me` links — remain inquiry-only as agreed.
-- Past £0 inquiry orders — left untouched.
+## 8. Long-term safety & scaling strategy
+
+- **Stay in UTILITY category** for 90%+ of volume — lowest ban risk.
+- **Quality rating monitoring** — daily check of WABA quality rating via Cloud API; auto-pause marketing if rating drops to `MEDIUM`.
+- **Tier progression** — start at 250 unique/24h tier, naturally grow as quality stays GREEN. Don't push.
+- **One number, one purpose** — keep the business number for CRM only; never paste it in mass-marketing posts.
+- **Cost** — Meta charges per conversation (~$0.005–$0.04 depending on country/category). At low frequency this stays under £20/month for years.
+- **At 10k contacts:** partition `whatsapp_message_log` monthly, move webhook processing to background worker, no architectural rewrite.
+
+---
+
+## 9. Implementation phases
+
+1. **DB schema + RLS + types** (migration).
+2. **Webhook + inbound capture** (edge function + Meta setup checklist for you).
+3. **Outbound send + cooldown/opt-in enforcement**.
+4. **Auto-capture from existing checkout / inquiry flows** (no UI changes needed — server-side hook on insert).
+5. **5 utility automations wired into existing reminder scheduler**.
+6. **Admin UI: contacts + inbox + logs**.
+7. **Manual broadcast UI + dispatcher**.
+8. **Template sync + quality monitor**.
+
+---
+
+## 10. What I need from you to start
+
+1. Confirm you have (or will create) a **Meta Business Account + WABA** with a dedicated phone number. I cannot do this — Meta requires you personally.
+2. Confirm the **5 automations list above** is the complete set (no additions).
+3. Approve the schema in section 2.
+4. Approve safety rules in section 4 (especially the 1-broadcast-per-14-days cap — this is intentionally conservative).
+
+Once you approve, I'll start with phase 1 (database) and phase 2 (webhook + Meta setup checklist).
