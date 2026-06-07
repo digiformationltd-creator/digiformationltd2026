@@ -277,6 +277,12 @@ const CheckoutFlow = ({
   const [submitting, setSubmitting] = useState(false);
   const [authGateOpen, setAuthGateOpen] = useState(false);
   const pendingSubmitRef = useRef(false);
+  const submitInFlightRef = useRef(false);
+  const checkoutRequestIdRef = useRef<string>(
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `cri_${Date.now()}_${Math.random().toString(36).slice(2)}`
+  );
 
   const [successInfo, setSuccessInfo] = useState<{
     orderRef: string;
