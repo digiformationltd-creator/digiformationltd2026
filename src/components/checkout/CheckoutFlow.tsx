@@ -486,6 +486,13 @@ const CheckoutFlow = ({
       setAuthGateOpen(true);
       return;
     }
+    // Hard guard against duplicate submissions (double click, slow network
+    // retries, or the auth-resume effect firing more than once).
+    if (submitInFlightRef.current || submitting) {
+      console.warn("[checkout] duplicate submit blocked", checkoutRequestIdRef.current);
+      return;
+    }
+    submitInFlightRef.current = true;
     setSubmitting(true);
 
 
