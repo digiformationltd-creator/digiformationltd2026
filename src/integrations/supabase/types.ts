@@ -50,6 +50,36 @@ export type Database = {
         }
         Relationships: []
       }
+      cleanup_audit_log: {
+        Row: {
+          category: string
+          created_at: string
+          details: Json | null
+          error: string | null
+          id: string
+          removed_count: number
+          run_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          details?: Json | null
+          error?: string | null
+          id?: string
+          removed_count?: number
+          run_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          details?: Json | null
+          error?: string | null
+          id?: string
+          removed_count?: number
+          run_at?: string
+        }
+        Relationships: []
+      }
       client_addresses: {
         Row: {
           activation_code: string | null
@@ -1240,6 +1270,10 @@ export type Database = {
         }[]
       }
       resolve_service_price: { Args: { _title: string }; Returns: number }
+      run_temporary_cleanup: {
+        Args: { retention_days?: number }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "client"
