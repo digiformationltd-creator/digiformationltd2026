@@ -617,6 +617,95 @@ Deno.serve(async (req) => {
 
     const admin = createClient(supabaseUrl, serviceKey)
     const customerEmail = body.customer.email.trim().toLowerCase()
+
+    // ---------------- Idempotency / duplicate-prevention ----------------
+    // Helper: build the same response shape we normally return, given an
+    // existing order + invoice row. Reuses the stored PDF (no regeneration).
+    const respondFromExisting = async (
+      existingOrderRef: string,
+      existingInvoiceNumber: string,
+      existingPdfPath: string | null,
+    ) => {
+      let signedUrl: string | undefined
+      if (existingPdfPath) {
+        const { data: s } = await admin.storage
+          .from('invoices')
+          .createSignedUrl(existingPdfPath, 60 * 60 * 24 * 7)
+        signedUrl = s?.signedUrl
+      }
+      return new Response(
+        JSON.stringify({
+          orderRef: existingOrderRef,
+          invoiceNumber: existingInvoiceNumber,
+          invoiceUrl: signedUrl,
+          documentLinks: [],
+          deduped: true,
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      )
+    }
+
+    // 1) Same checkout_request_id → return the original order/invoice.
+    const checkoutRequestId = (body.checkout_request_id || '').trim() || null
+    if (checkoutRequestId) {
+      const { data: existing } = await admin
+        .from('client_orders')
+        .select('id, order_ref')
+        .eq('checkout_request_id', checkoutRequestId)
+        .maybeSingle()
+      if (existing) {
+        console.warn('[generate-invoice] duplicate by checkout_request_id', {
+          checkoutRequestId, orderRef: existing.order_ref,
+        })
+        const { data: inv } = await admin
+          .from('invoices')
+          .select('invoice_number, pdf_url')
+          .eq('order_id', existing.id)
+          .maybeSingle()
+        return respondFromExisting(
+          existing.order_ref,
+          inv?.invoice_number ?? '',
+          inv?.pdf_url ?? null,
+        )
+      }
+    }
+
+    // 2) Same email + service + amount in the last 2 minutes → reject as
+    //    duplicate (covers retried calls without a stable checkout id).
+    {
+      const twoMinAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString()
+      const serviceText = body.packageName
+        ? `${body.service} — ${body.packageName}`
+        : body.service
+      const { data: recent } = await admin
+        .from('client_orders')
+        .select('id, order_ref')
+        .ilike('customer_email', customerEmail)
+        .eq('service', serviceText)
+        .eq('amount_gbp', body.amount_gbp)
+        .gte('created_at', twoMinAgo)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+      if (recent) {
+        console.warn('[generate-invoice] duplicate by email+service+amount window', {
+          email: customerEmail, service: serviceText, amount: body.amount_gbp,
+          existingOrderRef: recent.order_ref,
+        })
+        const { data: inv } = await admin
+          .from('invoices')
+          .select('invoice_number, pdf_url')
+          .eq('order_id', recent.id)
+          .maybeSingle()
+        return respondFromExisting(
+          recent.order_ref,
+          inv?.invoice_number ?? '',
+          inv?.pdf_url ?? null,
+        )
+      }
+    }
+    // -------------------------------------------------------------------
+
     let orderUserId: string | null = null
     const { data: matchedProfile } = await admin
       .from('profiles')
