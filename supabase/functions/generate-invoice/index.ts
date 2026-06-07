@@ -32,6 +32,9 @@ interface Body {
   }
   notes?: string
   orderRef?: string
+  /** Unique per checkout submission. Used to make order + invoice creation
+   *  idempotent — repeat calls with the same id return the original result. */
+  checkout_request_id?: string
   /** Flat list of every field the customer filled in on the checkout form.
    *  Rendered as a structured "Customer & Order Details" page on the invoice. */
   details?: { label: string; value: string }[]
