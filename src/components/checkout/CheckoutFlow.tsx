@@ -569,22 +569,13 @@ const CheckoutFlow = ({
       (extraSummary ? `\n\nFiling requirements:${extraSummary}` : "");
 
 
-    const { error } = await supabase.from("contact_submissions").insert({
-      full_name: form.full_name,
-      email: form.email,
-      whatsapp: form.whatsapp,
-      country: form.country?.trim() ? form.country.trim() : "N/A",
-      service: `${serviceTitle} — ${packageName}`,
-      message: summary,
-      page_path: window.location.pathname + window.location.search,
-      referrer: document.referrer || null,
-      user_agent: navigator.userAgent,
-    });
-    if (error) {
-      setSubmitting(false);
-      toast({ title: "Submission failed", description: error.message, variant: "destructive" });
-      return;
-    }
+    // NOTE: We intentionally do NOT insert into `contact_submissions` here.
+    // The `mirror_inquiry_to_order` DB trigger would otherwise create a
+    // duplicate "Inquiry" row in client_orders alongside the real checkout
+    // order created by generate-invoice below — that was the source of the
+    // duplicate orders customers were seeing. The generate-invoice function
+    // now owns order + invoice + lead creation end-to-end.
+    void summary;
 
     // ---- Upload submitted documents (ID front/back, holding selfie) to
     // private storage so they reach the business inbox + invoice as
