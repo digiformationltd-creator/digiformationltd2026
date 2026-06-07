@@ -746,6 +746,7 @@ const CheckoutFlow = ({
       .catch((err) => console.error("order-notification failed", err));
 
     setSubmitting(false);
+    submitInFlightRef.current = false;
     setSuccessInfo({ orderRef: finalOrderRef, invoiceUrl, documents: documentLinks });
     toast({ title: "Order received", description: "Our team will contact you as soon as possible." });
     window.scrollTo({ top: 0, behavior: "smooth" });
