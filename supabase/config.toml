@@ -15,3 +15,5 @@ project_id = "ltxopeehtajwxpbwbqfr"
     verify_jwt = false
   [functions.send-scheduled-reminders]
     verify_jwt = true
+  [functions.cleanup-temporary-artifacts]
+    verify_jwt = true
