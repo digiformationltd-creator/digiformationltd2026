@@ -277,6 +277,12 @@ const CheckoutFlow = ({
   const [submitting, setSubmitting] = useState(false);
   const [authGateOpen, setAuthGateOpen] = useState(false);
   const pendingSubmitRef = useRef(false);
+  const submitInFlightRef = useRef(false);
+  const checkoutRequestIdRef = useRef<string>(
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `cri_${Date.now()}_${Math.random().toString(36).slice(2)}`
+  );
 
   const [successInfo, setSuccessInfo] = useState<{
     orderRef: string;
@@ -480,6 +486,13 @@ const CheckoutFlow = ({
       setAuthGateOpen(true);
       return;
     }
+    // Hard guard against duplicate submissions (double click, slow network
+    // retries, or the auth-resume effect firing more than once).
+    if (submitInFlightRef.current || submitting) {
+      console.warn("[checkout] duplicate submit blocked", checkoutRequestIdRef.current);
+      return;
+    }
+    submitInFlightRef.current = true;
     setSubmitting(true);
 
 
@@ -556,22 +569,13 @@ const CheckoutFlow = ({
       (extraSummary ? `\n\nFiling requirements:${extraSummary}` : "");
 
 
-    const { error } = await supabase.from("contact_submissions").insert({
-      full_name: form.full_name,
-      email: form.email,
-      whatsapp: form.whatsapp,
-      country: form.country?.trim() ? form.country.trim() : "N/A",
-      service: `${serviceTitle} — ${packageName}`,
-      message: summary,
-      page_path: window.location.pathname + window.location.search,
-      referrer: document.referrer || null,
-      user_agent: navigator.userAgent,
-    });
-    if (error) {
-      setSubmitting(false);
-      toast({ title: "Submission failed", description: error.message, variant: "destructive" });
-      return;
-    }
+    // NOTE: We intentionally do NOT insert into `contact_submissions` here.
+    // The `mirror_inquiry_to_order` DB trigger would otherwise create a
+    // duplicate "Inquiry" row in client_orders alongside the real checkout
+    // order created by generate-invoice below — that was the source of the
+    // duplicate orders customers were seeing. The generate-invoice function
+    // now owns order + invoice + lead creation end-to-end.
+    void summary;
 
     // ---- Upload submitted documents (ID front/back, holding selfie) to
     // private storage so they reach the business inbox + invoice as
@@ -676,6 +680,7 @@ const CheckoutFlow = ({
           notes: `${contextLabel ? contextLabel + "\n" : ""}${lines}${activityText ? `\nBusiness activity: ${activityText}` : ""}`,
           orderRef,
           documents: uploadedDocs,
+          checkout_request_id: checkoutRequestIdRef.current,
         },
       });
       if (invErr) throw invErr;
@@ -741,6 +746,7 @@ const CheckoutFlow = ({
       .catch((err) => console.error("order-notification failed", err));
 
     setSubmitting(false);
+    submitInFlightRef.current = false;
     setSuccessInfo({ orderRef: finalOrderRef, invoiceUrl, documents: documentLinks });
     toast({ title: "Order received", description: "Our team will contact you as soon as possible." });
     window.scrollTo({ top: 0, behavior: "smooth" });

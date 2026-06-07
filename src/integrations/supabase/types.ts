@@ -225,6 +225,7 @@ export type Database = {
         Row: {
           amount_gbp: number
           amount_mismatch: boolean
+          checkout_request_id: string | null
           country_code: string | null
           created_at: string
           customer_email: string | null
@@ -246,6 +247,7 @@ export type Database = {
         Insert: {
           amount_gbp?: number
           amount_mismatch?: boolean
+          checkout_request_id?: string | null
           country_code?: string | null
           created_at?: string
           customer_email?: string | null
@@ -267,6 +269,7 @@ export type Database = {
         Update: {
           amount_gbp?: number
           amount_mismatch?: boolean
+          checkout_request_id?: string | null
           country_code?: string | null
           created_at?: string
           customer_email?: string | null
