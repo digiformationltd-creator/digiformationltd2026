@@ -871,10 +871,37 @@ Deno.serve(async (req) => {
         amount_mismatch: amountMismatch,
         source: 'checkout',
         payment_status: 'unpaid',
+        checkout_request_id: checkoutRequestId,
       })
       .select('id')
       .single()
-    if (orderErr) throw orderErr
+    if (orderErr) {
+      // Race: another concurrent call inserted the same checkout_request_id
+      // a few ms ago. Return the existing order/invoice instead of erroring.
+      if (checkoutRequestId && (orderErr as any).code === '23505') {
+        console.warn('[generate-invoice] unique-violation race on checkout_request_id', {
+          checkoutRequestId,
+        })
+        const { data: existing } = await admin
+          .from('client_orders')
+          .select('id, order_ref')
+          .eq('checkout_request_id', checkoutRequestId)
+          .maybeSingle()
+        if (existing) {
+          const { data: inv } = await admin
+            .from('invoices')
+            .select('invoice_number, pdf_url')
+            .eq('order_id', existing.id)
+            .maybeSingle()
+          return respondFromExisting(
+            existing.order_ref,
+            inv?.invoice_number ?? '',
+            inv?.pdf_url ?? null,
+          )
+        }
+      }
+      throw orderErr
+    }
 
     // 4b. Auto-add to Lead Center (deduped by E.164 phone, fallback to email).
     //     A failure here must never break the checkout response.
