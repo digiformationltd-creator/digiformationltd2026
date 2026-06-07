@@ -14,6 +14,8 @@ import Placeholder from "@/businessos/pages/Placeholder";
 import OsEmailTest from "@/businessos/pages/OsEmailTest";
 import OsEmailOps from "@/businessos/pages/OsEmailOps";
 import OsCompliance from "@/businessos/pages/OsCompliance";
+import OsWhatsAppCRM from "@/businessos/pages/whatsapp/OsWhatsAppCRM";
+import OsWhatsAppContactDetail from "@/businessos/pages/whatsapp/OsWhatsAppContactDetail";
 import LegacyAdmin from "@/pages/LegacyAdmin";
 
 export default function Admin() {
@@ -30,7 +32,8 @@ export default function Admin() {
         <Route path="orders" element={<OsOrders />} />
         <Route path="invoices" element={<OsInvoices />} />
         <Route path="finance" element={<Placeholder title="Finance" />} />
-        <Route path="whatsapp" element={<Placeholder title="WhatsApp CRM" />} />
+        <Route path="whatsapp" element={<OsWhatsAppCRM />} />
+        <Route path="whatsapp/:id" element={<OsWhatsAppContactDetail />} />
         <Route path="email-marketing" element={<Placeholder title="Email Marketing" description="Campaigns dispatched through the existing email queue — no new sender." />} />
         <Route path="analytics" element={<Placeholder title="Analytics" />} />
         <Route path="tasks" element={<Placeholder title="Tasks" />} />
