@@ -380,11 +380,12 @@ const CheckoutFlow = ({
           selected: Array.from(selected),
           stepIdx,
           serviceMode,
+          declaredSource,
         }));
       } catch {}
     }, 300);
     return () => clearTimeout(t);
-  }, [form, extra, selected, stepIdx, serviceMode, successInfo, draftKey]);
+  }, [form, extra, selected, stepIdx, serviceMode, declaredSource, successInfo, draftKey]);
 
   // Clear draft after successful submit
   useEffect(() => {
