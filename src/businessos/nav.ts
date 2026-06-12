@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, Users, UserCheck, ShoppingBag, Package, FileText,
   Wallet, MessageCircle, Mail, BarChart3, CheckSquare, UsersRound,
-  LifeBuoy, FolderOpen, Zap, Settings, Building2, CalendarClock, Inbox,
+  LifeBuoy, FolderOpen, Zap, Settings, Building2, CalendarClock, Inbox, Sparkles,
 } from "lucide-react";
 
 export type NavItem = {
