@@ -1,140 +1,111 @@
-# WhatsApp CRM — Safe, Meta-Compliant Architecture
 
-A lightweight, relationship-focused CRM built on the **official Meta WhatsApp Cloud API**. No spam engine. Five transactional automations + manual broadcasts only. Designed to keep your WhatsApp Business number safe for years.
+# Phase V+ — Lead Attribution & AI Source Tracking
 
----
+A complete attribution engine answering: where does every lead, order, and pound come from — including which AI platform recommended us.
 
-## 1. Architecture (high level)
+## 1. Database (one migration)
 
-```text
-   Checkout / Portal / Inquiry
-            │  (E.164 phone already normalised by src/lib/phone.ts)
-            ▼
-   whatsapp_contacts  ◄──────── linked to ─────────►  profiles / client_orders /
-   (single source of truth)                            invoices / client_company_details
-            │
-            ├── whatsapp_threads (1 per contact)
-            │       └── whatsapp_messages (inbound + outbound history)
-            │
-            ├── whatsapp_templates (Meta-approved templates cache)
-            │
-            ├── whatsapp_send_queue (rate-limited outbox, pgmq)
-            │
-            ├── whatsapp_broadcasts (manual campaigns, audited)
-            │
-            └── whatsapp_consent (opt-in / opt-out / cooldown state)
-```
+New tables (admin-only RLS, service_role full, authenticated insert where noted):
 
-We already have `whatsapp_clicks`, `whatsapp_message_log`, `whatsapp_threads` — we will **reuse and extend** instead of duplicating.
+- `visitor_sessions` — anon-friendly session log
+  - `session_id` (uuid), `visitor_id` (uuid, cookie-persisted), `user_id` (nullable)
+  - `first_seen_at`, `last_seen_at`, `pages_viewed`, `referrer`, `landing_page`
+  - `utm_source/medium/campaign/content/term`
+  - `device_type`, `browser`, `country`, `ip_hash`
+  - `detected_source` (e.g. `chatgpt`, `gemini`, `google`, `facebook`, …)
+  - `detected_category` (`ai` | `search` | `social` | `direct` | `referral`)
+  - INSERT allowed for `anon` (telemetry); SELECT admin/staff only.
 
----
+- `visitor_attribution` — one row per `visitor_id`
+  - `first_*` snapshot (source, category, campaign, referrer, landing, date)
+  - `last_*` snapshot (refreshed every session)
+  - `session_count`, `total_pages`
 
-## 2. Database changes (new + extended)
+- `lead_attribution` — locks attribution onto a conversion event
+  - `entity_type` (`order` | `inquiry` | `lead` | `ticket` | `whatsapp_contact`)
+  - `entity_id` (uuid/text), `user_id` (nullable)
+  - `declared_source` (from the "How did you hear about us?" picker)
+  - `declared_source_label`, `declared_category`
+  - first_/last_ snapshot, utm_*, referrer, landing_page, device, country
+  - `converted_at`
+  - Unique on (`entity_type`, `entity_id`).
 
-**New tables**
-- `whatsapp_contacts` — canonical contact (E.164 phone PK), `user_id` (nullable, links to `profiles`), `display_name`, `country`, `source` (checkout/inquiry/manual/portal), `first_seen_at`, `last_seen_at`, `opt_in_status` (`pending` / `opted_in` / `opted_out`), `last_message_at`, `last_broadcast_at`, `tags[]`.
-- `whatsapp_consent_events` — append-only log of every opt-in / opt-out / template-acceptance for compliance audit.
-- `whatsapp_templates` — local cache of Meta-approved templates (name, language, category `UTILITY|MARKETING|AUTHENTICATION`, status, variables, last sync).
-- `whatsapp_broadcasts` — manual broadcast campaign (name, template, audience filter, scheduled_at, status, sent/failed counts, created_by).
-- `whatsapp_broadcast_recipients` — per-contact delivery row (status, wa_message_id, error).
+Extensions to existing tables (no destructive change):
+- `client_orders`: add `declared_source`, `attribution_id` (FK), `utm_source`, `utm_campaign`.
+- `contact_submissions`: add `declared_source`, `attribution_id`.
+- `leads`: add `declared_source`, `attribution_id`.
 
-**Extend existing**
-- `whatsapp_message_log` — add `contact_id`, `template_name`, `category`, `wa_message_id`, `direction` (`in`/`out`), `status` (`queued|sent|delivered|read|failed`).
-- `client_orders`, `invoices`, `leads` — already carry phone; add helper view `v_whatsapp_linked_contacts` that joins everything by E.164.
+DB function `record_lead_attribution(...)` (SECURITY DEFINER) used by the client/edge to upsert in one call.
 
-All tables get strict RLS: only `admin` / `staff` roles read/write; clients never see the CRM.
+Materialised view-style SQL functions (called from the dashboard):
+- `attribution_totals_by_source(range)` → leads/orders/revenue/conv%/AOV
+- `attribution_ai_breakdown(range)` → per-AI platform metrics
+- `attribution_insights(range)` → auto-generated text insights (top channel, top AI, highest AOV, etc.)
 
----
+## 2. Client-side tracker (`src/lib/attribution.ts`)
 
-## 3. The 5 (and only 5) automated messages
+Runs on every page load (mounted in `App.tsx`):
 
-| # | Trigger | Template category | When |
-|---|---|---|---|
-| 1 | Order processing started | UTILITY | `client_orders.status` → `In Progress` |
-| 2 | Order completed | UTILITY | `client_orders.status` → `Completed` |
-| 3 | Confirmation statement reminder | UTILITY | 30 / 14 / 3 days before due |
-| 4 | Annual accounts reminder | UTILITY | 60 / 30 / 7 days before due |
-| 5 | Address renewal reminder | UTILITY | 30 / 7 days before expiry |
+1. Read/create `df_visitor_id` cookie (180 days) + localStorage mirror.
+2. Parse `window.location.search` for utm_* + `ref=` / `src=`.
+3. Detect AI/search/social source from `document.referrer` (chat.openai.com, chatgpt.com, gemini.google.com, claude.ai, perplexity.ai, grok.com/x.ai, deepseek.com, copilot.microsoft.com, bing.com, duckduckgo.com, facebook.com, instagram.com, tiktok.com, youtube.com, linkedin.com, twitter.com/x.com).
+4. First visit → write `attribution_first_*` to localStorage + cookie + insert into `visitor_attribution`.
+5. Every visit → update `last_*` + insert `visitor_sessions` row (best-effort, never blocks UI).
+6. Expose `getAttributionSnapshot()` consumed by checkout/contact/lead forms.
 
-All five are **UTILITY** templates (Meta's safest category, no opt-in required for service messages, lowest policy risk). Reuses the same scheduler that already runs email reminders — one extra channel, same dedupe logic.
+## 3. "How did you hear about us?" picker
 
----
+New component `src/components/attribution/SourceHeardPicker.tsx`:
 
-## 4. Safety guardrails (hard-coded, not optional)
+- Grid of branded cards with official icons (lucide + small inline SVGs for AI brands).
+- Categories collapsed on mobile, expanded on desktop: AI / Search / Social / Direct.
+- Required field — submit blocked with inline error until chosen.
+- Returns `{ id, label, category }`.
 
-1. **Channel:** Official Meta Cloud API only. No third-party gateway, no scraping, no unofficial libs.
-2. **Templates only for outbound-initiated:** Cannot send free-form unless the contact messaged us in the last 24h (Meta's customer service window).
-3. **Cooldown:** No more than **1 automated message per contact per 24h**, **1 broadcast per contact per 14 days**. Enforced in DB via `last_message_at` / `last_broadcast_at` check before enqueue.
-4. **Duplicate prevention:** `(contact_id, template_name, related_id)` unique key on the send queue for 7 days.
-5. **Rate limit:** Outbound queue drains at **max 1 msg / 2 seconds** globally, 500/day soft cap (well under Meta's tier limits). Configurable.
-6. **Opt-out honoured instantly:** Any inbound "STOP" / "UNSUBSCRIBE" flips `opt_in_status` → `opted_out` and blocks all future sends except auth/OTP.
-7. **Marketing audience filter:** Broadcasts only target `opt_in_status = 'opted_in'` **AND** existing customers (have at least 1 paid order). Never cold contacts.
-8. **Quiet hours:** No sends 22:00–08:00 contact-local time (use stored `country`).
-9. **Audit log:** Every send, every consent change, every broadcast — immutable row.
+Wired into:
+- `CheckoutFlow.tsx` (mandatory before "Pay / Submit").
+- Contact/Inquiry forms.
+- Lead capture forms.
 
----
+On submit the form calls `record_lead_attribution` with the picker value + the visitor snapshot, then stores returned `attribution_id` on the order/inquiry/lead row.
 
-## 5. Meta Cloud API setup (one-time)
+## 4. Admin Dashboard — `/admin/attribution`
 
-1. Create Meta Business Account → WhatsApp Business Account (WABA).
-2. Add the DigiFormation phone number, complete business verification.
-3. Generate **permanent System User access token** (not the 24h temp token).
-4. Configure webhook → new edge function `whatsapp-webhook` (verify token + signature check). Subscribe to `messages`, `message_template_status_update`, `message_status`.
-5. Submit the 5 utility templates for approval (EN + UR variants).
-6. Store as secrets: `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_BUSINESS_ACCOUNT_ID`, `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_WEBHOOK_VERIFY_TOKEN`, `WHATSAPP_APP_SECRET`.
+New nav entry **Lead Attribution** (between Analytics and Tasks).
 
----
+Pages:
 
-## 6. Edge functions
+- **Overview**
+  - KPI cards: Total Leads, Total Orders, Revenue, Top Channel, Top AI Platform, Top Revenue Source, Best Conversion Rate, Highest AOV.
+  - Date range selector (7d / 30d / 90d / YTD / all).
+- **By Source** — sortable table: source, category, leads, orders, revenue, conv%, AOV.
+- **AI Platforms** — dedicated cards per AI (ChatGPT, Gemini, Claude, Perplexity, Grok, DeepSeek, Copilot, Other AI) with leads/orders/revenue/conv%.
+- **Campaigns** — UTM source/medium/campaign breakdown.
+- **Auto Insights** — bullet list generated from `attribution_insights` (e.g. "ChatGPT delivers your highest-quality leads — 31% conversion").
+- **Exports** — CSV (native), Excel (`xlsx` lib, already used), PDF (`jspdf`).
 
-- `whatsapp-webhook` (public, signature-verified) — receives inbound messages + status callbacks, updates `whatsapp_message_log`, auto-captures unknown senders into `whatsapp_contacts`, handles STOP/START.
-- `whatsapp-send` (admin-only) — single send: validates cooldown, opt-in, quiet hours, template variables, then calls Cloud API. Logs to `whatsapp_message_log`.
-- `whatsapp-broadcast-dispatch` (admin-only, cron-friendly) — drains `whatsapp_broadcasts` recipients respecting global rate limit.
-- `whatsapp-template-sync` (admin-only) — pulls approved templates from Meta nightly.
-- Extend `send-scheduled-reminders` — after email send, enqueue matching WhatsApp utility message if contact opted-in.
+## 5. CRM surfacing
 
----
+- `OsClientDetail` / `OsOrders` row drawer: show "Source", "First Touch", "Last Touch", "Campaign".
+- `OsWhatsAppContactDetail`: show declared source if captured.
 
-## 7. Business OS UI (new section `/admin/whatsapp`)
+## 6. Safety & compliance
 
-- **Contacts** — searchable list, filter by source/tag/opt-in, click → drawer with linked customer, orders, invoices, message history.
-- **Inbox** — unified thread view (Meta 24h window indicator), reply free-form inside window, template picker outside window.
-- **Templates** — read-only list of approved Meta templates with preview.
-- **Broadcasts** — create campaign: pick template → pick audience (existing-customers filter is mandatory) → schedule → preview cooldown-blocked count → confirm.
-- **Reminders** — view scheduled compliance reminders before they fire.
-- **Logs** — sends, deliveries, failures, opt-outs.
+- No PII in trackers; IP hashed (sha256 + salt) in edge, never stored raw.
+- All write endpoints rate-limited via existing `whatsapp_clicks` pattern.
+- Tracker fails silently — never blocks navigation or checkout.
+- RLS: telemetry tables admin-read-only; only `record_lead_attribution` accepts writes from authenticated/anon contexts.
 
----
+## Build order
 
-## 8. Long-term safety & scaling strategy
+1. Migration (tables, columns, function, grants, RLS).
+2. `src/lib/attribution.ts` + mount in `App.tsx`.
+3. `SourceHeardPicker` + wire into `CheckoutFlow`, contact form, lead form.
+4. Admin `/admin/attribution` pages + nav entry + exports.
+5. Add "Source" columns to existing Orders/Clients/WhatsApp drawers.
 
-- **Stay in UTILITY category** for 90%+ of volume — lowest ban risk.
-- **Quality rating monitoring** — daily check of WABA quality rating via Cloud API; auto-pause marketing if rating drops to `MEDIUM`.
-- **Tier progression** — start at 250 unique/24h tier, naturally grow as quality stays GREEN. Don't push.
-- **One number, one purpose** — keep the business number for CRM only; never paste it in mass-marketing posts.
-- **Cost** — Meta charges per conversation (~$0.005–$0.04 depending on country/category). At low frequency this stays under £20/month for years.
-- **At 10k contacts:** partition `whatsapp_message_log` monthly, move webhook processing to background worker, no architectural rewrite.
+## Out of scope (for now)
 
----
-
-## 9. Implementation phases
-
-1. **DB schema + RLS + types** (migration).
-2. **Webhook + inbound capture** (edge function + Meta setup checklist for you).
-3. **Outbound send + cooldown/opt-in enforcement**.
-4. **Auto-capture from existing checkout / inquiry flows** (no UI changes needed — server-side hook on insert).
-5. **5 utility automations wired into existing reminder scheduler**.
-6. **Admin UI: contacts + inbox + logs**.
-7. **Manual broadcast UI + dispatcher**.
-8. **Template sync + quality monitor**.
-
----
-
-## 10. What I need from you to start
-
-1. Confirm you have (or will create) a **Meta Business Account + WABA** with a dedicated phone number. I cannot do this — Meta requires you personally.
-2. Confirm the **5 automations list above** is the complete set (no additions).
-3. Approve the schema in section 2.
-4. Approve safety rules in section 4 (especially the 1-broadcast-per-14-days cap — this is intentionally conservative).
-
-Once you approve, I'll start with phase 1 (database) and phase 2 (webhook + Meta setup checklist).
+- Multi-touch (linear/time-decay) modelling — we store data needed for it, just don't compute yet.
+- Paid-ad cost ingestion (Google/Meta APIs) — future phase.
+- Server-side click ID resolution (gclid/fbclid lookups) — stored only.
