@@ -255,6 +255,7 @@ export type Database = {
         Row: {
           amount_gbp: number
           amount_mismatch: boolean
+          attribution_id: string | null
           checkout_request_id: string | null
           country_code: string | null
           created_at: string
@@ -262,6 +263,8 @@ export type Database = {
           customer_name: string | null
           customer_phone_e164: string | null
           customer_whatsapp: string | null
+          declared_source: string | null
+          declared_source_label: string | null
           id: string
           inquiry_id: string | null
           notes: string | null
@@ -273,10 +276,13 @@ export type Database = {
           source: string
           status: string
           user_id: string | null
+          utm_campaign: string | null
+          utm_source: string | null
         }
         Insert: {
           amount_gbp?: number
           amount_mismatch?: boolean
+          attribution_id?: string | null
           checkout_request_id?: string | null
           country_code?: string | null
           created_at?: string
@@ -284,6 +290,8 @@ export type Database = {
           customer_name?: string | null
           customer_phone_e164?: string | null
           customer_whatsapp?: string | null
+          declared_source?: string | null
+          declared_source_label?: string | null
           id?: string
           inquiry_id?: string | null
           notes?: string | null
@@ -295,10 +303,13 @@ export type Database = {
           source?: string
           status?: string
           user_id?: string | null
+          utm_campaign?: string | null
+          utm_source?: string | null
         }
         Update: {
           amount_gbp?: number
           amount_mismatch?: boolean
+          attribution_id?: string | null
           checkout_request_id?: string | null
           country_code?: string | null
           created_at?: string
@@ -306,6 +317,8 @@ export type Database = {
           customer_name?: string | null
           customer_phone_e164?: string | null
           customer_whatsapp?: string | null
+          declared_source?: string | null
+          declared_source_label?: string | null
           id?: string
           inquiry_id?: string | null
           notes?: string | null
@@ -317,8 +330,17 @@ export type Database = {
           source?: string
           status?: string
           user_id?: string | null
+          utm_campaign?: string | null
+          utm_source?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "client_orders_attribution_id_fkey"
+            columns: ["attribution_id"]
+            isOneToOne: false
+            referencedRelation: "lead_attribution"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "client_orders_inquiry_id_fkey"
             columns: ["inquiry_id"]
@@ -441,8 +463,11 @@ export type Database = {
       }
       contact_submissions: {
         Row: {
+          attribution_id: string | null
           country: string
           created_at: string
+          declared_source: string | null
+          declared_source_label: string | null
           email: string
           full_name: string
           id: string
@@ -454,8 +479,11 @@ export type Database = {
           whatsapp: string
         }
         Insert: {
+          attribution_id?: string | null
           country: string
           created_at?: string
+          declared_source?: string | null
+          declared_source_label?: string | null
           email: string
           full_name: string
           id?: string
@@ -467,8 +495,11 @@ export type Database = {
           whatsapp: string
         }
         Update: {
+          attribution_id?: string | null
           country?: string
           created_at?: string
+          declared_source?: string | null
+          declared_source_label?: string | null
           email?: string
           full_name?: string
           id?: string
@@ -479,7 +510,15 @@ export type Database = {
           user_agent?: string | null
           whatsapp?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "contact_submissions_attribution_id_fkey"
+            columns: ["attribution_id"]
+            isOneToOne: false
+            referencedRelation: "lead_attribution"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_campaigns: {
         Row: {
@@ -760,13 +799,109 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_attribution: {
+        Row: {
+          browser: string | null
+          converted_at: string
+          country: string | null
+          created_at: string
+          declared_category: string | null
+          declared_source: string | null
+          declared_source_label: string | null
+          device_type: string | null
+          entity_id: string
+          entity_type: string
+          first_campaign: string | null
+          first_category: string | null
+          first_landing_page: string | null
+          first_referrer: string | null
+          first_source: string | null
+          id: string
+          last_campaign: string | null
+          last_category: string | null
+          last_landing_page: string | null
+          last_referrer: string | null
+          last_source: string | null
+          user_id: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          visitor_id: string | null
+        }
+        Insert: {
+          browser?: string | null
+          converted_at?: string
+          country?: string | null
+          created_at?: string
+          declared_category?: string | null
+          declared_source?: string | null
+          declared_source_label?: string | null
+          device_type?: string | null
+          entity_id: string
+          entity_type: string
+          first_campaign?: string | null
+          first_category?: string | null
+          first_landing_page?: string | null
+          first_referrer?: string | null
+          first_source?: string | null
+          id?: string
+          last_campaign?: string | null
+          last_category?: string | null
+          last_landing_page?: string | null
+          last_referrer?: string | null
+          last_source?: string | null
+          user_id?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          visitor_id?: string | null
+        }
+        Update: {
+          browser?: string | null
+          converted_at?: string
+          country?: string | null
+          created_at?: string
+          declared_category?: string | null
+          declared_source?: string | null
+          declared_source_label?: string | null
+          device_type?: string | null
+          entity_id?: string
+          entity_type?: string
+          first_campaign?: string | null
+          first_category?: string | null
+          first_landing_page?: string | null
+          first_referrer?: string | null
+          first_source?: string | null
+          id?: string
+          last_campaign?: string | null
+          last_category?: string | null
+          last_landing_page?: string | null
+          last_referrer?: string | null
+          last_source?: string | null
+          user_id?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          visitor_id?: string | null
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           assigned_to: string | null
+          attribution_id: string | null
           country: string | null
           country_code: string | null
           created_at: string
           created_by: string | null
+          declared_source: string | null
+          declared_source_label: string | null
           email: string | null
           follow_up_date: string | null
           id: string
@@ -784,10 +919,13 @@ export type Database = {
         }
         Insert: {
           assigned_to?: string | null
+          attribution_id?: string | null
           country?: string | null
           country_code?: string | null
           created_at?: string
           created_by?: string | null
+          declared_source?: string | null
+          declared_source_label?: string | null
           email?: string | null
           follow_up_date?: string | null
           id?: string
@@ -805,10 +943,13 @@ export type Database = {
         }
         Update: {
           assigned_to?: string | null
+          attribution_id?: string | null
           country?: string | null
           country_code?: string | null
           created_at?: string
           created_by?: string | null
+          declared_source?: string | null
+          declared_source_label?: string | null
           email?: string | null
           follow_up_date?: string | null
           id?: string
@@ -824,7 +965,15 @@ export type Database = {
           value_gbp?: number
           whatsapp?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "leads_attribution_id_fkey"
+            columns: ["attribution_id"]
+            isOneToOne: false
+            referencedRelation: "lead_attribution"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       newsletter_subscribers: {
         Row: {
@@ -1105,6 +1254,135 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      visitor_attribution: {
+        Row: {
+          country: string | null
+          device_type: string | null
+          first_campaign: string | null
+          first_category: string | null
+          first_landing_page: string | null
+          first_referrer: string | null
+          first_source: string | null
+          first_visit_at: string
+          last_campaign: string | null
+          last_category: string | null
+          last_landing_page: string | null
+          last_referrer: string | null
+          last_source: string | null
+          last_visit_at: string
+          session_count: number
+          total_pages: number
+          updated_at: string
+          user_id: string | null
+          visitor_id: string
+        }
+        Insert: {
+          country?: string | null
+          device_type?: string | null
+          first_campaign?: string | null
+          first_category?: string | null
+          first_landing_page?: string | null
+          first_referrer?: string | null
+          first_source?: string | null
+          first_visit_at?: string
+          last_campaign?: string | null
+          last_category?: string | null
+          last_landing_page?: string | null
+          last_referrer?: string | null
+          last_source?: string | null
+          last_visit_at?: string
+          session_count?: number
+          total_pages?: number
+          updated_at?: string
+          user_id?: string | null
+          visitor_id: string
+        }
+        Update: {
+          country?: string | null
+          device_type?: string | null
+          first_campaign?: string | null
+          first_category?: string | null
+          first_landing_page?: string | null
+          first_referrer?: string | null
+          first_source?: string | null
+          first_visit_at?: string
+          last_campaign?: string | null
+          last_category?: string | null
+          last_landing_page?: string | null
+          last_referrer?: string | null
+          last_source?: string | null
+          last_visit_at?: string
+          session_count?: number
+          total_pages?: number
+          updated_at?: string
+          user_id?: string | null
+          visitor_id?: string
+        }
+        Relationships: []
+      }
+      visitor_sessions: {
+        Row: {
+          browser: string | null
+          country: string | null
+          created_at: string
+          detected_category: string | null
+          detected_source: string | null
+          device_type: string | null
+          id: string
+          landing_page: string | null
+          pages_viewed: number
+          referrer: string | null
+          session_started_at: string
+          user_id: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          visitor_id: string
+        }
+        Insert: {
+          browser?: string | null
+          country?: string | null
+          created_at?: string
+          detected_category?: string | null
+          detected_source?: string | null
+          device_type?: string | null
+          id?: string
+          landing_page?: string | null
+          pages_viewed?: number
+          referrer?: string | null
+          session_started_at?: string
+          user_id?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          visitor_id: string
+        }
+        Update: {
+          browser?: string | null
+          country?: string | null
+          created_at?: string
+          detected_category?: string | null
+          detected_source?: string | null
+          device_type?: string | null
+          id?: string
+          landing_page?: string | null
+          pages_viewed?: number
+          referrer?: string | null
+          session_started_at?: string
+          user_id?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          visitor_id?: string
         }
         Relationships: []
       }
@@ -1506,6 +1784,28 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      attribution_ai_breakdown: {
+        Args: { _since?: string }
+        Returns: {
+          conv_rate: number
+          leads: number
+          orders: number
+          revenue: number
+          source: string
+        }[]
+      }
+      attribution_totals_by_source: {
+        Args: { _since?: string }
+        Returns: {
+          aov: number
+          category: string
+          conv_rate: number
+          leads: number
+          orders: number
+          revenue: number
+          source: string
+        }[]
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -1539,6 +1839,7 @@ export type Database = {
           read_ct: number
         }[]
       }
+      record_lead_attribution: { Args: { payload: Json }; Returns: string }
       resolve_service_price: { Args: { _title: string }; Returns: number }
       run_temporary_cleanup: {
         Args: { retention_days?: number }
