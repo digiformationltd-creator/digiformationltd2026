@@ -705,6 +705,13 @@ const CheckoutFlow = ({
       console.error("invoice generation failed", err);
     }
 
+    // Record lead attribution onto this order (best-effort, never blocks UX).
+    void recordLeadAttribution({
+      entityType: "order",
+      entityId: finalOrderRef,
+      declared: declaredSource,
+    });
+
     const priceStr = formatMoney(total, currency);
     const pagePath = window.location.pathname + window.location.search;
     if (form.email) {
