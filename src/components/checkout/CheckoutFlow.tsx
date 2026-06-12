@@ -352,6 +352,10 @@ const CheckoutFlow = ({
   const [serviceMode, setServiceMode] = useState<"ltd-only" | "both">(draft?.serviceMode ?? "both");
   const [serviceModeOpen, setServiceModeOpen] = useState(true);
   const idVerificationActive = !showServiceMode || serviceMode === "both";
+  const [declaredSource, setDeclaredSource] = useState<DeclaredSource | null>(() => {
+    return draft?.declaredSource ?? null;
+  });
+  const [sourceError, setSourceError] = useState(false);
 
   const hasDraftData = !!draft;
   const clearDraft = () => {
