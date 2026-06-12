@@ -16,6 +16,7 @@ import OsEmailOps from "@/businessos/pages/OsEmailOps";
 import OsCompliance from "@/businessos/pages/OsCompliance";
 import OsWhatsAppCRM from "@/businessos/pages/whatsapp/OsWhatsAppCRM";
 import OsWhatsAppContactDetail from "@/businessos/pages/whatsapp/OsWhatsAppContactDetail";
+import OsAttribution from "@/businessos/pages/OsAttribution";
 import LegacyAdmin from "@/pages/LegacyAdmin";
 
 export default function Admin() {
