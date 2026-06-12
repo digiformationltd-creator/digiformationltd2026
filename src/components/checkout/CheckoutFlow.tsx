@@ -486,6 +486,12 @@ const CheckoutFlow = ({
 
   const submitOrder = async () => {
     if (selectedItems.length === 0) return;
+    if (!declaredSource) {
+      setSourceError(true);
+      toast({ title: "Please tell us how you heard about us", description: "Select an option in the “How did you hear about DigiFormation?” section.", variant: "destructive" });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
     // Defer login until the moment of placing the order. If not authed, open
     // the inline account dialog and remember to auto-resume submission.
     if (!isAuthed) {
