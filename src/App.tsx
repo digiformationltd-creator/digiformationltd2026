@@ -48,6 +48,7 @@ const App = () => (
       <BrowserRouter>
         <ScrollToTop />
         <RecoveryRedirect />
+        <AttributionTracker />
         <Routes>
           <Route path="/" element={<Index />} />
 
