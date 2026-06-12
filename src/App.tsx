@@ -30,6 +30,7 @@ import WhatsAppFloat from "./components/WhatsAppFloat";
 import AIAssistant from "./components/AIAssistant";
 import ScrollToTop from "./components/ScrollToTop";
 import RecoveryRedirect from "./components/RecoveryRedirect";
+import AttributionTracker from "./components/AttributionTracker";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import ResetPassword from "./pages/ResetPassword";
@@ -47,6 +48,7 @@ const App = () => (
       <BrowserRouter>
         <ScrollToTop />
         <RecoveryRedirect />
+        <AttributionTracker />
         <Routes>
           <Route path="/" element={<Index />} />
 

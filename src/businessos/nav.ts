@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, Users, UserCheck, ShoppingBag, Package, FileText,
   Wallet, MessageCircle, Mail, BarChart3, CheckSquare, UsersRound,
-  LifeBuoy, FolderOpen, Zap, Settings, Building2, CalendarClock, Inbox,
+  LifeBuoy, FolderOpen, Zap, Settings, Building2, CalendarClock, Inbox, Sparkles,
 } from "lucide-react";
 
 export type NavItem = {
@@ -23,6 +23,7 @@ export const NAV: NavItem[] = [
   { label: "WhatsApp CRM",    to: "/admin/whatsapp",        icon: MessageCircle,   glow: "green" },
   { label: "Email Marketing", to: "/admin/email-marketing", icon: Mail,            glow: "pink" },
   { label: "Analytics",       to: "/admin/analytics",       icon: BarChart3,       glow: "blue" },
+  { label: "Attribution",     to: "/admin/attribution",     icon: Sparkles,        glow: "purple" },
   { label: "Tasks",           to: "/admin/tasks",           icon: CheckSquare,     glow: "amber" },
   { label: "Team",            to: "/admin/team",            icon: UsersRound,      glow: "purple" },
   { label: "Support",         to: "/admin/support",         icon: LifeBuoy,        glow: "red" },

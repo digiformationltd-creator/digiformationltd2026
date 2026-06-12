@@ -25,6 +25,8 @@ import { toast } from "@/hooks/use-toast";
 import { buildOrderRef } from "@/lib/orderRef";
 import { COUNTRIES } from "@/lib/countries";
 import { normalizePhoneToE164 } from "@/lib/phone";
+import { recordLeadAttribution, type DeclaredSource } from "@/lib/attribution";
+import SourceHeardPicker from "@/components/attribution/SourceHeardPicker";
 import { SearchableCountrySelect } from "./SearchableCountrySelect";
 import exampleHoldingSelfie from "@/assets/example-holding-selfie.jpg";
 import exampleIdFront from "@/assets/example-id-front.jpg";
@@ -350,6 +352,10 @@ const CheckoutFlow = ({
   const [serviceMode, setServiceMode] = useState<"ltd-only" | "both">(draft?.serviceMode ?? "both");
   const [serviceModeOpen, setServiceModeOpen] = useState(true);
   const idVerificationActive = !showServiceMode || serviceMode === "both";
+  const [declaredSource, setDeclaredSource] = useState<DeclaredSource | null>(() => {
+    return draft?.declaredSource ?? null;
+  });
+  const [sourceError, setSourceError] = useState(false);
 
   const hasDraftData = !!draft;
   const clearDraft = () => {
@@ -374,11 +380,12 @@ const CheckoutFlow = ({
           selected: Array.from(selected),
           stepIdx,
           serviceMode,
+          declaredSource,
         }));
       } catch {}
     }, 300);
     return () => clearTimeout(t);
-  }, [form, extra, selected, stepIdx, serviceMode, successInfo, draftKey]);
+  }, [form, extra, selected, stepIdx, serviceMode, declaredSource, successInfo, draftKey]);
 
   // Clear draft after successful submit
   useEffect(() => {
@@ -479,6 +486,12 @@ const CheckoutFlow = ({
 
   const submitOrder = async () => {
     if (selectedItems.length === 0) return;
+    if (!declaredSource) {
+      setSourceError(true);
+      toast({ title: "Please tell us how you heard about us", description: "Select an option in the “How did you hear about DigiFormation?” section.", variant: "destructive" });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
     // Defer login until the moment of placing the order. If not authed, open
     // the inline account dialog and remember to auto-resume submission.
     if (!isAuthed) {
@@ -691,6 +704,13 @@ const CheckoutFlow = ({
     } catch (err) {
       console.error("invoice generation failed", err);
     }
+
+    // Record lead attribution onto this order (best-effort, never blocks UX).
+    void recordLeadAttribution({
+      entityType: "order",
+      entityId: finalOrderRef,
+      declared: declaredSource,
+    });
 
     const priceStr = formatMoney(total, currency);
     const pagePath = window.location.pathname + window.location.search;
@@ -1494,6 +1514,13 @@ const CheckoutFlow = ({
                     </div>
                   </div>
                 </div>
+
+                <SourceHeardPicker
+                  value={declaredSource}
+                  onChange={(v) => { setDeclaredSource(v); setSourceError(false); }}
+                  error={sourceError}
+                />
+
                 <p className="text-xs opacity-70">
                   By placing the order you agree to our terms. Our team will contact you as soon as possible with secure
                   payment instructions.

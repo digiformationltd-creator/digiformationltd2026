@@ -16,6 +16,7 @@ import OsEmailOps from "@/businessos/pages/OsEmailOps";
 import OsCompliance from "@/businessos/pages/OsCompliance";
 import OsWhatsAppCRM from "@/businessos/pages/whatsapp/OsWhatsAppCRM";
 import OsWhatsAppContactDetail from "@/businessos/pages/whatsapp/OsWhatsAppContactDetail";
+import OsAttribution from "@/businessos/pages/OsAttribution";
 import LegacyAdmin from "@/pages/LegacyAdmin";
 
 export default function Admin() {
@@ -36,6 +37,7 @@ export default function Admin() {
         <Route path="whatsapp/:id" element={<OsWhatsAppContactDetail />} />
         <Route path="email-marketing" element={<Placeholder title="Email Marketing" description="Campaigns dispatched through the existing email queue — no new sender." />} />
         <Route path="analytics" element={<Placeholder title="Analytics" />} />
+        <Route path="attribution" element={<OsAttribution />} />
         <Route path="tasks" element={<Placeholder title="Tasks" />} />
         <Route path="team" element={<Placeholder title="Team" />} />
         <Route path="support" element={<OsSupport />} />
