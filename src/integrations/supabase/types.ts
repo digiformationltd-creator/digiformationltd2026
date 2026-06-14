@@ -978,51 +978,81 @@ export type Database = {
       managed_companies: {
         Row: {
           accounts_filing_due: string | null
+          ad01_filing_date: string | null
           address_expire: string | null
+          address_status: string | null
+          auth_code: string | null
+          ch_address: string | null
           company_name: string
           company_number: string | null
           confirmation_due: string | null
           created_at: string
+          director: string | null
           id: string
           imported_batch: string | null
           incorporation_date: string | null
           notes: string | null
+          original_director: string | null
+          previous_address: string | null
+          previous_name: string | null
+          raw_status: string | null
           registered_address: string | null
           sic_code: string | null
           status: Database["public"]["Enums"]["managed_company_status"]
           updated_at: string
+          utr_number: string | null
         }
         Insert: {
           accounts_filing_due?: string | null
+          ad01_filing_date?: string | null
           address_expire?: string | null
+          address_status?: string | null
+          auth_code?: string | null
+          ch_address?: string | null
           company_name: string
           company_number?: string | null
           confirmation_due?: string | null
           created_at?: string
+          director?: string | null
           id?: string
           imported_batch?: string | null
           incorporation_date?: string | null
           notes?: string | null
+          original_director?: string | null
+          previous_address?: string | null
+          previous_name?: string | null
+          raw_status?: string | null
           registered_address?: string | null
           sic_code?: string | null
           status?: Database["public"]["Enums"]["managed_company_status"]
           updated_at?: string
+          utr_number?: string | null
         }
         Update: {
           accounts_filing_due?: string | null
+          ad01_filing_date?: string | null
           address_expire?: string | null
+          address_status?: string | null
+          auth_code?: string | null
+          ch_address?: string | null
           company_name?: string
           company_number?: string | null
           confirmation_due?: string | null
           created_at?: string
+          director?: string | null
           id?: string
           imported_batch?: string | null
           incorporation_date?: string | null
           notes?: string | null
+          original_director?: string | null
+          previous_address?: string | null
+          previous_name?: string | null
+          raw_status?: string | null
           registered_address?: string | null
           sic_code?: string | null
           status?: Database["public"]["Enums"]["managed_company_status"]
           updated_at?: string
+          utr_number?: string | null
         }
         Relationships: []
       }
