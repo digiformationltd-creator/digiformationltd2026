@@ -32,6 +32,7 @@ export default function OsClients() {
   const navigate = useNavigate();
   const [clients, setClients] = useState<ClientRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
   const [managedStats, setManagedStats] = useState({ total: 0, available: 0, reminders_active: 0, missing_dates: 0 });
 
   const load = async () => {
