@@ -10,6 +10,8 @@ import OsInvoices from "@/businessos/pages/OsInvoices";
 import OsDocuments from "@/businessos/pages/OsDocuments";
 import OsSupport from "@/businessos/pages/OsSupport";
 import OsCompanies from "@/businessos/pages/OsCompanies";
+import OsManagedCompanies from "@/businessos/pages/OsManagedCompanies";
+import OsManagedCompanyDetail from "@/businessos/pages/OsManagedCompanyDetail";
 import Placeholder from "@/businessos/pages/Placeholder";
 import OsEmailTest from "@/businessos/pages/OsEmailTest";
 import OsEmailOps from "@/businessos/pages/OsEmailOps";
@@ -30,6 +32,8 @@ export default function Admin() {
         <Route path="clients" element={<OsClients />} />
         <Route path="clients/:id" element={<OsClientDetail />} />
         <Route path="companies" element={<OsCompanies />} />
+        <Route path="managed-companies" element={<OsManagedCompanies />} />
+        <Route path="managed-companies/:id" element={<OsManagedCompanyDetail />} />
         <Route path="orders" element={<OsOrders />} />
         <Route path="invoices" element={<OsInvoices />} />
         <Route path="finance" element={<Placeholder title="Finance" />} />
