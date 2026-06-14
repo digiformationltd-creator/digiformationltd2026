@@ -35,30 +35,38 @@ const STATUS_META: Record<Status, { label: string; color: string; icon: any }> =
 };
 
 // Map flexible header names → DB columns
-const HEADER_MAP: Record<string, keyof Row> = {
+const HEADER_MAP: Record<string, string> = {
   "company name": "company_name", "name": "company_name", "company": "company_name",
   "company number": "company_number", "number": "company_number", "companies house number": "company_number", "crn": "company_number",
   "incorporation date": "incorporation_date", "incorporated": "incorporation_date", "incorporated on": "incorporation_date",
-  "sic": "sic_code", "sic code": "sic_code",
+  "sic": "sic_code", "sic code": "sic_code", "sic codes": "sic_code",
   "registered address": "registered_address", "address": "registered_address",
+  "ch address": "ch_address", "companies house address": "ch_address",
+  "previous address": "previous_address",
+  "previous name": "previous_name",
+  "director": "director", "current director": "director",
+  "original director": "original_director",
+  "auth code": "auth_code", "authentication code": "auth_code",
+  "utr": "utr_number", "utr number": "utr_number",
+  "ad01 filing date": "ad01_filing_date", "ad01 date": "ad01_filing_date",
+  "address status": "address_status",
   "confirmation due": "confirmation_due", "confirmation statement due": "confirmation_due", "cs due": "confirmation_due",
   "accounts due": "accounts_filing_due", "annual accounts due": "accounts_filing_due", "accounts filing due": "accounts_filing_due",
+  "accounts next due": "accounts_filing_due", "next accounts due": "accounts_filing_due",
   "address expire": "address_expire", "address renewal": "address_expire", "address expiry": "address_expire",
-  "status": "status",
+  "status": "raw_status",
   "notes": "notes",
 };
 
 function parseDate(v: any): string | null {
-  if (!v) return null;
+  if (v === null || v === undefined || v === "") return null;
   if (v instanceof Date) return v.toISOString().slice(0, 10);
   if (typeof v === "number") {
-    // Excel serial date
     const d = XLSX.SSF.parse_date_code(v);
     if (d) return `${d.y}-${String(d.m).padStart(2,"0")}-${String(d.d).padStart(2,"0")}`;
   }
   const s = String(v).trim();
   if (!s) return null;
-  // try various formats
   const dmy = s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})$/);
   if (dmy) {
     let [, d, m, y] = dmy;
@@ -72,13 +80,26 @@ function parseDate(v: any): string | null {
   return null;
 }
 
-function normaliseStatus(v: any): Status {
-  if (!v) return "available";
-  const s = String(v).toLowerCase().trim().replace(/[\s-]+/g, "_");
+function normaliseStatus(rawStatus: any, addressStatus: any): Status {
+  const s = String(rawStatus || "").toLowerCase().trim();
+  const a = String(addressStatus || "").toLowerCase().trim();
   if (s.includes("sold")) return "sold_out";
   if (s.includes("reserv")) return "reserved";
-  if (s.includes("unavail") || s.includes("no_longer")) return "unavailable";
+  if (s.includes("strike") || s.includes("dissolv") || s.includes("unavail") || s.includes("no longer")) return "unavailable";
+  if (a.includes("default")) return "unavailable";
   return "available";
+}
+
+function cleanStr(v: any): string | null {
+  if (v === null || v === undefined) return null;
+  const s = String(v).trim();
+  if (!s || s.toLowerCase() === "nan") return null;
+  // Convert scientific-notation numbers (e.g. UTR shown as 1.686100e+12)
+  if (/^\d+(\.\d+)?e[+-]?\d+$/i.test(s)) {
+    const n = Number(s);
+    if (!isNaN(n) && isFinite(n)) return String(Math.round(n));
+  }
+  return s;
 }
 
 export default function OsManagedCompanies() {
@@ -145,13 +166,27 @@ export default function OsManagedCompanies() {
           mapped[key] = v;
         }
         if (!mapped.company_name) { errors.push(`Row ${i+2}: missing company name`); continue; }
-        mapped.company_name = String(mapped.company_name).trim();
-        if (mapped.company_number) mapped.company_number = String(mapped.company_number).trim();
-        mapped.incorporation_date = parseDate(mapped.incorporation_date);
-        mapped.confirmation_due   = parseDate(mapped.confirmation_due);
+        mapped.company_name      = String(mapped.company_name).trim();
+        mapped.company_number    = cleanStr(mapped.company_number);
+        mapped.sic_code          = cleanStr(mapped.sic_code);
+        mapped.registered_address= cleanStr(mapped.registered_address);
+        mapped.ch_address        = cleanStr(mapped.ch_address);
+        mapped.previous_address  = cleanStr(mapped.previous_address);
+        mapped.previous_name     = cleanStr(mapped.previous_name);
+        mapped.director          = cleanStr(mapped.director);
+        mapped.original_director = cleanStr(mapped.original_director);
+        mapped.auth_code         = cleanStr(mapped.auth_code);
+        mapped.utr_number        = cleanStr(mapped.utr_number);
+        mapped.address_status    = cleanStr(mapped.address_status);
+        mapped.notes             = cleanStr(mapped.notes);
+        mapped.incorporation_date  = parseDate(mapped.incorporation_date);
+        mapped.confirmation_due    = parseDate(mapped.confirmation_due);
         mapped.accounts_filing_due = parseDate(mapped.accounts_filing_due);
-        mapped.address_expire     = parseDate(mapped.address_expire);
-        mapped.status             = normaliseStatus(mapped.status);
+        mapped.address_expire      = parseDate(mapped.address_expire);
+        mapped.ad01_filing_date    = parseDate(mapped.ad01_filing_date);
+        const rawStatus = mapped.raw_status;
+        mapped.raw_status = cleanStr(rawStatus);
+        mapped.status     = normaliseStatus(rawStatus, mapped.address_status);
         records.push(mapped);
       }
 
