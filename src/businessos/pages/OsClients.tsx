@@ -134,9 +134,42 @@ export default function OsClients() {
         {/* Legacy fallback removed — client management is now native at /admin/clients/:id */}
       </div>
 
+      {/* Pinned internal record: Usman Companies (DigiFormation inventory) */}
+      <button
+        onClick={() => navigate("/admin/managed-companies")}
+        className="w-full text-left os-glass p-4 sm:p-5 ring-1 ring-amber-400/30 hover:ring-amber-400/60 transition group relative overflow-hidden"
+      >
+        <div className="absolute top-0 right-0 px-3 py-1 rounded-bl-xl bg-amber-500/15 text-amber-200 text-[10px] uppercase tracking-widest font-bold flex items-center gap-1">
+          <Pin className="w-3 h-3" /> Pinned · Internal
+        </div>
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/40 to-orange-600/40 grid place-items-center text-sm font-bold shrink-0">
+            UC
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="font-bold text-base flex items-center gap-2">
+              Usman Companies
+              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-white/[0.06] text-white/60">DigiFormation inventory</span>
+            </div>
+            <div className="text-xs text-white/60 mt-0.5">
+              Internal company inventory · CSV/Excel import · Confirmation Statement & Annual Accounts reminders
+            </div>
+            <div className="flex flex-wrap items-center gap-3 mt-3 text-xs">
+              <span className="inline-flex items-center gap-1.5 text-white/70"><Building2 className="w-3.5 h-3.5 text-blue-300" /> {managedStats.total} companies</span>
+              <span className="inline-flex items-center gap-1.5 text-emerald-300">● {managedStats.available} available</span>
+              <span className="inline-flex items-center gap-1.5 text-cyan-300"><CalendarClock className="w-3.5 h-3.5" /> {managedStats.reminders_active} reminders active</span>
+              {managedStats.missing_dates > 0 && (
+                <span className="inline-flex items-center gap-1.5 text-orange-300"><AlertTriangle className="w-3.5 h-3.5" /> {managedStats.missing_dates} missing dates</span>
+              )}
+            </div>
+          </div>
+          <ChevronRight className="w-5 h-5 text-white/40 group-hover:text-white/80 shrink-0 mt-1" />
+        </div>
+      </button>
+
       {/* Results count */}
       <div className="text-xs text-white/50 px-1">
-        Showing <span className="text-white/80 font-semibold">{filtered.length}</span> of {total} clients
+        Showing <span className="text-white/80 font-semibold">{filtered.length}</span> of {total} clients (latest first, below pinned)
       </div>
 
       {/* Loading */}
