@@ -252,6 +252,72 @@ Deno.serve(async (req) => {
       } else summary.errors++
     }
 
+    // === MANAGED COMPANIES (internal admin inventory) ===
+    // Reminders go ONLY to digiformationltd@gmail.com — never to customers.
+    // Sold-out / unavailable companies are excluded.
+    const INTERNAL_RECIPIENT = 'digiformationltd@gmail.com'
+    const { data: managed } = await supabase
+      .from('managed_companies')
+      .select('id, company_name, company_number, registered_address, status, confirmation_due, accounts_filing_due, address_expire')
+      .in('status', ['available', 'reserved'])
+
+    const managedChecks: Array<{ field: keyof typeof managed[number]; type: ReminderType }> = [
+      { field: 'confirmation_due',    type: 'confirmation_statement' },
+      { field: 'accounts_filing_due', type: 'annual_accounts' },
+      { field: 'address_expire',      type: 'address_expiry' },
+    ]
+
+    for (const mc of managed || []) {
+      for (const check of managedChecks) {
+        const dateStr = (mc as any)[check.field] as string | null
+        if (!dateStr) continue
+        const due = new Date(dateStr + 'T00:00:00Z')
+        const days = daysBetween(today, due)
+        const stage = stageForDays(days)
+        if (!stage || days < 0) continue
+        summary.processed++
+
+        const { data: existing } = await supabase
+          .from('email_reminder_log')
+          .select('id')
+          .eq('target_type', 'managed_company')
+          .eq('target_id', mc.id)
+          .eq('reminder_type', check.type)
+          .eq('stage', stage.stage)
+          .eq('due_date', dateStr)
+          .maybeSingle()
+        if (existing) { summary.skipped++; continue }
+
+        const { error: sendErr } = await supabase.functions.invoke('send-transactional-email', {
+          body: {
+            templateName: 'internal-company-reminder',
+            recipientEmail: INTERNAL_RECIPIENT,
+            idempotencyKey: `mc-${check.type}-${mc.id}-${dateStr}-s${stage.stage}`,
+            templateData: {
+              companyName: mc.company_name,
+              companyNumber: mc.company_number,
+              reminderType: check.type,
+              dueDate: dateStr,
+              daysRemaining: days,
+              registeredAddress: mc.registered_address,
+              status: mc.status,
+            },
+          },
+        })
+        if (sendErr) { summary.errors++; console.error('managed reminder send failed', sendErr); continue }
+        summary.sent++
+        await logSent(supabase, {
+          user_id: null,
+          target_type: 'managed_company',
+          target_id: mc.id,
+          reminder_type: check.type,
+          stage: stage.stage,
+          due_date: dateStr,
+          recipient_email: INTERNAL_RECIPIENT,
+        })
+      }
+    }
+
     return new Response(JSON.stringify({ ok: true, summary }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
