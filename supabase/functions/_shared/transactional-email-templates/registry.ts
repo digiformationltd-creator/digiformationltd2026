@@ -22,6 +22,7 @@ import { template as addressRenewalReminder } from './address-renewal-reminder.t
 import { template as confirmationStatementReminder } from './confirmation-statement-reminder.tsx'
 import { template as annualAccountsReminder } from './annual-accounts-reminder.tsx'
 import { template as emailSystemCheck } from './email-system-check.tsx'
+import { template as internalCompanyReminder } from './internal-company-reminder.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'order-confirmation': orderConfirmation,
