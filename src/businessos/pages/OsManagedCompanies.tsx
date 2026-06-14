@@ -166,13 +166,27 @@ export default function OsManagedCompanies() {
           mapped[key] = v;
         }
         if (!mapped.company_name) { errors.push(`Row ${i+2}: missing company name`); continue; }
-        mapped.company_name = String(mapped.company_name).trim();
-        if (mapped.company_number) mapped.company_number = String(mapped.company_number).trim();
-        mapped.incorporation_date = parseDate(mapped.incorporation_date);
-        mapped.confirmation_due   = parseDate(mapped.confirmation_due);
+        mapped.company_name      = String(mapped.company_name).trim();
+        mapped.company_number    = cleanStr(mapped.company_number);
+        mapped.sic_code          = cleanStr(mapped.sic_code);
+        mapped.registered_address= cleanStr(mapped.registered_address);
+        mapped.ch_address        = cleanStr(mapped.ch_address);
+        mapped.previous_address  = cleanStr(mapped.previous_address);
+        mapped.previous_name     = cleanStr(mapped.previous_name);
+        mapped.director          = cleanStr(mapped.director);
+        mapped.original_director = cleanStr(mapped.original_director);
+        mapped.auth_code         = cleanStr(mapped.auth_code);
+        mapped.utr_number        = cleanStr(mapped.utr_number);
+        mapped.address_status    = cleanStr(mapped.address_status);
+        mapped.notes             = cleanStr(mapped.notes);
+        mapped.incorporation_date  = parseDate(mapped.incorporation_date);
+        mapped.confirmation_due    = parseDate(mapped.confirmation_due);
         mapped.accounts_filing_due = parseDate(mapped.accounts_filing_due);
-        mapped.address_expire     = parseDate(mapped.address_expire);
-        mapped.status             = normaliseStatus(mapped.status);
+        mapped.address_expire      = parseDate(mapped.address_expire);
+        mapped.ad01_filing_date    = parseDate(mapped.ad01_filing_date);
+        const rawStatus = mapped.raw_status;
+        mapped.raw_status = cleanStr(rawStatus);
+        mapped.status     = normaliseStatus(rawStatus, mapped.address_status);
         records.push(mapped);
       }
 
