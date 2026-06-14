@@ -38,4 +38,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'confirmation-statement-reminder': confirmationStatementReminder,
   'annual-accounts-reminder': annualAccountsReminder,
   'email-system-check': emailSystemCheck,
+  'internal-company-reminder': internalCompanyReminder,
 }
