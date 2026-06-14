@@ -54,10 +54,29 @@ export default function OsClients() {
       const clientId = order.user_id || (order.customer_email ? emailToClient.get(order.customer_email.toLowerCase()) : null);
       if (clientId) counts.set(clientId, (counts.get(clientId) || 0) + 1);
     }
-    setClients(baseClients.map((client) => ({ ...client, order_count: counts.get(client.user_id) || 0 })));
+    const enriched = baseClients
+      .map((client) => ({ ...client, order_count: counts.get(client.user_id) || 0 }))
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    setClients(enriched);
   };
 
-  useEffect(() => { load(); }, []);
+  const loadManagedStats = async () => {
+    const { data } = await supabase
+      .from("managed_companies")
+      .select("status, confirmation_due, accounts_filing_due, address_expire");
+    const s = { total: 0, available: 0, reminders_active: 0, missing_dates: 0 };
+    for (const r of data || []) {
+      s.total++;
+      if (r.status === "available") s.available++;
+      if (r.status !== "sold_out" && r.status !== "unavailable") {
+        s.reminders_active++;
+        if (!r.confirmation_due && !r.accounts_filing_due && !r.address_expire) s.missing_dates++;
+      }
+    }
+    setManagedStats(s);
+  };
+
+  useEffect(() => { load(); loadManagedStats(); }, []);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
