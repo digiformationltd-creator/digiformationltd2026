@@ -975,6 +975,57 @@ export type Database = {
           },
         ]
       }
+      managed_companies: {
+        Row: {
+          accounts_filing_due: string | null
+          address_expire: string | null
+          company_name: string
+          company_number: string | null
+          confirmation_due: string | null
+          created_at: string
+          id: string
+          imported_batch: string | null
+          incorporation_date: string | null
+          notes: string | null
+          registered_address: string | null
+          sic_code: string | null
+          status: Database["public"]["Enums"]["managed_company_status"]
+          updated_at: string
+        }
+        Insert: {
+          accounts_filing_due?: string | null
+          address_expire?: string | null
+          company_name: string
+          company_number?: string | null
+          confirmation_due?: string | null
+          created_at?: string
+          id?: string
+          imported_batch?: string | null
+          incorporation_date?: string | null
+          notes?: string | null
+          registered_address?: string | null
+          sic_code?: string | null
+          status?: Database["public"]["Enums"]["managed_company_status"]
+          updated_at?: string
+        }
+        Update: {
+          accounts_filing_due?: string | null
+          address_expire?: string | null
+          company_name?: string
+          company_number?: string | null
+          confirmation_due?: string | null
+          created_at?: string
+          id?: string
+          imported_batch?: string | null
+          incorporation_date?: string | null
+          notes?: string | null
+          registered_address?: string | null
+          sic_code?: string | null
+          status?: Database["public"]["Enums"]["managed_company_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       newsletter_subscribers: {
         Row: {
           created_at: string
@@ -1866,6 +1917,11 @@ export type Database = {
         | "converted"
         | "closed"
         | "rejected"
+      managed_company_status:
+        | "available"
+        | "reserved"
+        | "sold_out"
+        | "unavailable"
       task_priority: "low" | "medium" | "high" | "urgent"
       task_status: "todo" | "in_progress" | "done" | "cancelled"
       whatsapp_broadcast_status:
@@ -2019,6 +2075,12 @@ export const Constants = {
         "converted",
         "closed",
         "rejected",
+      ],
+      managed_company_status: [
+        "available",
+        "reserved",
+        "sold_out",
+        "unavailable",
       ],
       task_priority: ["low", "medium", "high", "urgent"],
       task_status: ["todo", "in_progress", "done", "cancelled"],
