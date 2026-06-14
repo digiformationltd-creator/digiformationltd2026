@@ -578,7 +578,7 @@ export type Database = {
           stage: number
           target_id: string
           target_type: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           due_date: string
@@ -589,7 +589,7 @@ export type Database = {
           stage: number
           target_id: string
           target_type: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           due_date?: string
@@ -600,7 +600,7 @@ export type Database = {
           stage?: number
           target_id?: string
           target_type?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
