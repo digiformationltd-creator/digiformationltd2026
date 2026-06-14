@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import * as XLSX from "xlsx";
 import {
   Building2, Upload, Plus, Search, AlertTriangle, CalendarClock,
-  CheckCircle2, XCircle, Clock, Loader2, FileSpreadsheet, Trash2,
+  CheckCircle2, XCircle, Clock, Loader2, FileSpreadsheet, Trash2, ArrowLeft, Pin,
 } from "lucide-react";
 
 type Status = "available" | "reserved" | "sold_out" | "unavailable";
@@ -241,11 +241,18 @@ export default function OsManagedCompanies() {
 
   return (
     <div className="space-y-6">
+      <Link to="/admin/clients" className="text-xs text-zinc-400 hover:text-zinc-200 inline-flex items-center gap-1">
+        <ArrowLeft className="w-3.5 h-3.5" /> Back to Clients
+      </Link>
       {/* Header */}
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2"><Building2 className="w-6 h-6 text-blue-400" /> Managed Companies</h1>
-          <p className="text-sm text-zinc-400 mt-1">Internal company inventory. Reminders are sent to <code className="text-zinc-300">digiformationltd@gmail.com</code> only — never to customers.</p>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <Pin className="w-5 h-5 text-amber-400" />
+            <Building2 className="w-6 h-6 text-blue-400" /> Usman Companies
+            <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">Internal · Pinned</span>
+          </h1>
+          <p className="text-sm text-zinc-400 mt-1">Internal DigiFormation company inventory. Reminders go to <code className="text-zinc-300">digiformationltd@gmail.com</code> only — never to customers.</p>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={downloadTemplate} className="px-3 py-2 rounded-lg bg-zinc-800/80 hover:bg-zinc-800 text-sm flex items-center gap-2 border border-zinc-700">
