@@ -16,6 +16,7 @@ export const NAV: NavItem[] = [
   { label: "Leads",           to: "/admin/leads",           icon: UserCheck,       glow: "purple" },
   { label: "Clients",         to: "/admin/clients",         icon: Users,           glow: "cyan" },
   { label: "Companies",       to: "/admin/companies",       icon: Building2,       glow: "blue" },
+  { label: "Managed Companies", to: "/admin/managed-companies", icon: Building2,    glow: "cyan" },
   { label: "Orders",          to: "/admin/orders",          icon: ShoppingBag,     glow: "green" },
   { label: "Services",        to: "/admin/services",        icon: Package,         glow: "amber" },
   { label: "Invoices",        to: "/admin/invoices",        icon: FileText,        glow: "lime" },

@@ -1,0 +1,1 @@
+ALTER TABLE public.email_reminder_log ALTER COLUMN user_id DROP NOT NULL;
