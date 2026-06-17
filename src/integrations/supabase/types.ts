@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_audit_log: {
+        Row: {
+          action: string
+          agent_name: string
+          amount_gbp: number | null
+          checkout_request_id: string | null
+          created_at: string
+          customer_email: string | null
+          error_message: string | null
+          flags: Json
+          id: string
+          invoice_number: string | null
+          ip_address: string | null
+          order_id: string | null
+          order_ref: string | null
+          request_id: string | null
+          request_payload: Json | null
+          response_payload: Json | null
+          service_slug: string | null
+          status: string
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          agent_name?: string
+          amount_gbp?: number | null
+          checkout_request_id?: string | null
+          created_at?: string
+          customer_email?: string | null
+          error_message?: string | null
+          flags?: Json
+          id?: string
+          invoice_number?: string | null
+          ip_address?: string | null
+          order_id?: string | null
+          order_ref?: string | null
+          request_id?: string | null
+          request_payload?: Json | null
+          response_payload?: Json | null
+          service_slug?: string | null
+          status: string
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          agent_name?: string
+          amount_gbp?: number | null
+          checkout_request_id?: string | null
+          created_at?: string
+          customer_email?: string | null
+          error_message?: string | null
+          flags?: Json
+          id?: string
+          invoice_number?: string | null
+          ip_address?: string | null
+          order_id?: string | null
+          order_ref?: string | null
+          request_id?: string | null
+          request_payload?: Json | null
+          response_payload?: Json | null
+          service_slug?: string | null
+          status?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       automation_rules: {
         Row: {
           action_config: Json
