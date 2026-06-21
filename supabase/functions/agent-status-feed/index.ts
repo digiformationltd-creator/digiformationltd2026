@@ -175,7 +175,7 @@ Deno.serve(async (req) => {
     const { data, error } = await supabase
       .from('invoices')
       .select(
-        'id, invoice_number, status, amount_gbp, bill_to_name, bill_to_email, due_date, paid_at, created_at, updated_at',
+        'id, invoice_number, status, amount_gbp, bill_to_name, bill_to_email, due_date, created_at, updated_at',
       )
       .in('status', ['Unpaid', 'Pending', 'Overdue', 'Draft'])
       .order('updated_at', { ascending: false })
