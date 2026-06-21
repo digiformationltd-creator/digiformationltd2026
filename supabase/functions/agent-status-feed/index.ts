@@ -162,10 +162,10 @@ Deno.serve(async (req) => {
     const { data, error } = await supabase
       .from('client_orders')
       .select(
-        'id, order_ref, service, status, payment_status, amount_gbp, customer_name, customer_email, customer_whatsapp, country_code, source, created_at, updated_at',
+        'id, order_ref, service, status, payment_status, amount_gbp, customer_name, customer_email, customer_whatsapp, country_code, source, created_at',
       )
       .not('status', 'in', '("Completed","Cancelled","Refunded")')
-      .order('updated_at', { ascending: false })
+      .order('created_at', { ascending: false })
       .limit(limit)
     sectionsOut.orders = error ? { error: error.message } : { count: data?.length ?? 0, items: data }
   }
@@ -175,7 +175,7 @@ Deno.serve(async (req) => {
     const { data, error } = await supabase
       .from('invoices')
       .select(
-        'id, invoice_number, status, amount_gbp, bill_to_name, bill_to_email, due_date, paid_at, created_at, updated_at',
+        'id, invoice_number, status, amount_gbp, bill_to_name, bill_to_email, due_date, created_at, updated_at',
       )
       .in('status', ['Unpaid', 'Pending', 'Overdue', 'Draft'])
       .order('updated_at', { ascending: false })
