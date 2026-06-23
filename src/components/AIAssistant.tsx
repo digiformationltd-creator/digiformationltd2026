@@ -26,6 +26,8 @@ const AIAssistant = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const nudgedCountRef = useRef<number>(0);
+  const nudgeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { pathname } = useLocation();
   const isMobile = useIsMobile();
 
