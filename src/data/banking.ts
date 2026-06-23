@@ -1,3 +1,6 @@
+export type BankingCategory = "Payment Gateways" | "Business Accounts" | "International Transfers";
+
+
 export type BankingProvider = {
   slug: string;
   name: string;
@@ -6,6 +9,8 @@ export type BankingProvider = {
   features: string[];
   requirements: string[];
   setupPrice: string;
+  category?: BankingCategory;
+  tag?: "Recommended" | "Popular" | "Best for Business" | "New";
   metaTitle: string;
   metaDescription: string;
   keywords: string;
@@ -230,4 +235,38 @@ export const bankingProviders: BankingProvider[] = [
     metaDescription: "Issue virtual and physical Visa cards instantly with Wallester. API-driven card issuing and payment solutions for businesses.",
     keywords: "Wallester, Visa card issuing, virtual cards, business payments, card API",
   },
+];
+
+// ---- Category + tag decoration (single source of truth for the hub page) ----
+const PROVIDER_META: Record<string, { category: BankingCategory; tag?: BankingProvider["tag"] }> = {
+  paypal:           { category: "Payment Gateways",       tag: "Popular" },
+  stripe:           { category: "Payment Gateways",       tag: "Recommended" },
+  mollie:           { category: "Payment Gateways" },
+  zionpe:           { category: "Payment Gateways" },
+  tide:             { category: "Business Accounts",      tag: "Best for Business" },
+  "nsave-business": { category: "Business Accounts" },
+  wallester:        { category: "Business Accounts" },
+  zyla:             { category: "Business Accounts" },
+  airwallex:        { category: "Business Accounts",      tag: "Popular" },
+  payoneer:         { category: "International Transfers", tag: "Popular" },
+  worldfirst:       { category: "International Transfers" },
+  wise:             { category: "International Transfers", tag: "Recommended" },
+  sunrate:          { category: "International Transfers" },
+  pingpong:         { category: "International Transfers" },
+  grey:             { category: "International Transfers" },
+  taptap:           { category: "International Transfers" },
+};
+
+for (const p of bankingProviders) {
+  const meta = PROVIDER_META[p.slug];
+  if (meta) {
+    p.category = meta.category;
+    p.tag = meta.tag;
+  }
+}
+
+export const BANKING_CATEGORIES: BankingCategory[] = [
+  "Payment Gateways",
+  "Business Accounts",
+  "International Transfers",
 ];
