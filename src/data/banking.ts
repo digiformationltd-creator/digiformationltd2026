@@ -1,6 +1,5 @@
 export type BankingCategory = "Payment Gateways" | "Business Accounts" | "International Transfers";
 
-export type BankingCategory = "Payment Gateways" | "Business Accounts" | "International Transfers";
 
 export type BankingProvider = {
   slug: string;
