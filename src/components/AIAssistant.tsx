@@ -117,7 +117,7 @@ const AIAssistant = () => {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  // Human-like nudge: if assistant asked a question and user hasn't replied in ~30–60s,
+  // Human-like nudge: if assistant asked a question and user hasn't replied in ~2 minutes,
   // ask the bot to send a gentle follow-up. Max 1 nudge per assistant turn.
   useEffect(() => {
     if (nudgeTimerRef.current) {
@@ -127,10 +127,11 @@ const AIAssistant = () => {
     if (!open || loading) return;
     if (input.trim().length > 0) return; // user is typing — cancel nudge
     const last = messages[messages.length - 1];
-    if (!last || last.role !== "assistant" || last === WELCOME) return;
+    if (!last || last.role !== "assistant") return;
     if (!last.content.includes("?")) return; // only nudge after a question
     if (nudgedCountRef.current >= messages.length) return; // already nudged for this turn
-    const delayMs = 30000 + Math.floor(Math.random() * 30000); // 30–60s
+    const delayMs = 120000; // 2 minutes
+
     nudgeTimerRef.current = setTimeout(() => {
       nudgedCountRef.current = messages.length + 1;
       send(
