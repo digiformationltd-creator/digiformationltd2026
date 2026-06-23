@@ -8,7 +8,7 @@ export type BankingProvider = {
   features: string[];
   requirements: string[];
   setupPrice: string;
-  category: BankingCategory;
+  category?: BankingCategory;
   tag?: "Recommended" | "Popular" | "Best for Business" | "New";
   metaTitle: string;
   metaDescription: string;
