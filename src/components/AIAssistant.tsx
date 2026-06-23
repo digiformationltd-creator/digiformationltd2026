@@ -72,7 +72,7 @@ const AIAssistant = () => {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messages, loading, open]);
+  }, [messages, loading, open, input]);
 
 
   // Hide entirely on client portal / admin pages on mobile (must be after all hooks)
