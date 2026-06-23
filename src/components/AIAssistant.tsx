@@ -292,10 +292,11 @@ const AIAssistant = () => {
           {/* Messages */}
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-muted/30">
             {messages.flatMap((m, i) => {
-              const chunks = m.role === "assistant"
-                ? m.content.split(/\s*<<<SPLIT>>>\s*/g).filter((c) => c.trim().length > 0).slice(0, 3)
-                : [m.content];
-              const safeChunks = chunks.length > 0 ? chunks : [m.content];
+              // Single-response enforcement: strip any legacy SPLIT markers and render as ONE bubble.
+              const content = m.role === "assistant"
+                ? m.content.replace(/\s*<<<SPLIT>>>\s*/g, "\n\n").trim()
+                : m.content;
+              const safeChunks = [content];
               return safeChunks.map((chunk, ci) => (
                 <div key={`${i}-${ci}`} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                   <div
