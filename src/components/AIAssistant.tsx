@@ -45,6 +45,36 @@ const AIAssistant = () => {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
+  // Human-like nudge: if assistant asked a question and user hasn't replied in ~30–60s,
+  // ask the bot to send a gentle follow-up. Max 1 nudge per assistant turn.
+  useEffect(() => {
+    if (nudgeTimerRef.current) {
+      clearTimeout(nudgeTimerRef.current);
+      nudgeTimerRef.current = null;
+    }
+    if (!open || loading) return;
+    const last = messages[messages.length - 1];
+    if (!last || last.role !== "assistant" || last === WELCOME) return;
+    if (!last.content.includes("?")) return; // only nudge after a question
+    if (nudgedCountRef.current >= messages.length) return; // already nudged for this turn
+    const delayMs = 30000 + Math.floor(Math.random() * 30000); // 30–60s
+    nudgeTimerRef.current = setTimeout(() => {
+      nudgedCountRef.current = messages.length + 1;
+      send(
+        "[internal:user-idle] The user hasn't replied for a while. Send ONE short, friendly nudge in their language — gently rephrase or simplify your last question, or offer help. Keep it 1–2 lines. Do not repeat earlier text verbatim.",
+        { hidden: true },
+      );
+    }, delayMs);
+    return () => {
+      if (nudgeTimerRef.current) {
+        clearTimeout(nudgeTimerRef.current);
+        nudgeTimerRef.current = null;
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages, loading, open]);
+
+
   // Hide entirely on client portal / admin pages on mobile (must be after all hooks)
   const hideOnThisRoute = isMobile && (pathname.startsWith("/dashboard") || pathname.startsWith("/admin"));
   if (hideOnThisRoute) return null;
