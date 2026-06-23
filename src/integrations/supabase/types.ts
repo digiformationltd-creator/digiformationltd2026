@@ -1992,6 +1992,10 @@ export type Database = {
         Args: { retention_days?: number }
         Returns: Json
       }
+      upsert_visitor_attribution: {
+        Args: { payload: Json }
+        Returns: undefined
+      }
       upsert_whatsapp_contact: {
         Args: {
           _country?: string
