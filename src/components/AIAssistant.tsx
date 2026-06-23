@@ -314,7 +314,7 @@ const AIAssistant = () => {
             <div className="px-3 pb-2 bg-muted/30 border-t border-border">
               <p className="text-xs text-muted-foreground py-2 font-medium">Quick questions:</p>
               <div className="flex flex-wrap gap-1.5 pb-2">
-                {QUICK_QUESTIONS.map((q) => (
+                {getHourlyQuickQuestions(6).map((q) => (
                   <button
                     key={q}
                     onClick={() => send(q)}
