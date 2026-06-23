@@ -6,37 +6,70 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
-// Pool of quick questions — rotates every hour (6 shown at a time)
+// Pool of 50+ quick questions — rotates every hour (6 shown at a time)
 const QUICK_QUESTIONS_POOL = [
-  "How do I register a UK LTD company?",
-  "Can I open a US LLC from Pakistan?",
-  "How to get a Stripe account?",
-  "Tell me about PayPal setup",
-  "What are your pricing packages?",
-  "How do I get an EIN number?",
+  // Banking & Payments
   "Best bank for eCommerce?",
   "Best account for eBay sellers?",
+  "Best account for Amazon sellers?",
+  "Best bank for UK LTD companies?",
+  "Best bank for freelancers?",
+  "Best bank for startups / SaaS?",
+  "Best bank for merchant card payments?",
+  "Stripe eligibility requirements?",
+  "Wise eligibility & approval time?",
+  "Payoneer eligibility?",
+  "PayPal Business approval requirements?",
+  "How long does bank account approval take?",
+  "Can non-residents open a UK business bank?",
+  "Crypto-friendly business banks?",
+  // UK LTD Formation
+  "UK LTD formation requirements?",
+  "How long to form a UK LTD?",
+  "Can foreigners open a UK LTD?",
+  "Do I need a UK address for my company?",
+  "What is ID Verification (Companies House)?",
+  "What's in Silver £170 vs Starter £140?",
+  "How do I get a UTR number?",
+  "What is the Companies House Auth Code?",
+  "What is HMRC Activation Code?",
+  // UK Compliance
+  "How do I file AD01 (address change)?",
+  "Common AD01 issues to avoid?",
+  "When are Annual Accounts due?",
+  "What is a Confirmation Statement?",
+  "How do I change my company name?",
+  "Do you help with VAT registration?",
+  "UK annual filing deadlines?",
+  // USA LLC
+  "USA LLC formation requirements?",
+  "Best US state for LLC formation?",
   "Cheapest US state for LLC?",
   "Best state for non-resident LLC?",
-  "How long does ID verification take?",
-  "What's included in the Silver £170 package?",
-  "How do I file AD01 (address change)?",
-  "Do I need a UK address for my company?",
-  "Wise vs Payoneer — which is better?",
-  "How long to form a UK LTD?",
-  "What is UTR and how do I get one?",
-  "Do you help with VAT registration?",
-  "Can foreigners open a UK LTD?",
-  "What is BOI report for LLC?",
-  "Stripe approval requirements?",
-  "How to get Airwallex account?",
-  "Annual filing deadlines for UK LTD?",
-  "Sunrate vs Airwallex for e-commerce?",
-  "Do you offer Shopify store setup?",
-  "What's the cheapest UK formation package?",
-  "How do I change my company name?",
-  "EIN application process for non-residents?",
+  "What is EIN and how do I get one?",
+  "What is ITIN and do I need it?",
+  "What is the BOI report?",
+  "Annual tax for US LLC?",
+  // Address services
   "Can I use your address for bank statements?",
+  "What is Director Service Address?",
+  "What's in the All-in-One address plan?",
+  // ID Verification
+  "How long does ID verification take?",
+  "What documents are needed for ID verification?",
+  "What if ID verification fails?",
+  // Payment policy
+  "Do you require advance payment?",
+  "What's your refund policy?",
+  "Do you offer discounts?",
+  "Which payment methods do you accept?",
+  // General
+  "Are you available 24/7?",
+  "Do you offer web development?",
+  "Do you handle accounting after formation?",
+  "How do I register a UK LTD company?",
+  "Can I open a US LLC from Pakistan?",
+  "What are your pricing packages?",
 ];
 
 function getHourlyQuickQuestions(count = 6): string[] {
@@ -50,6 +83,8 @@ function getHourlyQuickQuestions(count = 6): string[] {
   }
   return out;
 }
+
+
 
 
 const WELCOME: Msg = {
