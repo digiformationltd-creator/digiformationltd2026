@@ -52,7 +52,7 @@ const AIAssistant = () => {
       clearTimeout(nudgeTimerRef.current);
       nudgeTimerRef.current = null;
     }
-    if (!open || loading) return;
+    if (input.trim().length > 0) return; // user is typing — cancel nudge
     const last = messages[messages.length - 1];
     if (!last || last.role !== "assistant" || last === WELCOME) return;
     if (!last.content.includes("?")) return; // only nudge after a question
