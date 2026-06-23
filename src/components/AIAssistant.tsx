@@ -17,8 +17,7 @@ const QUICK_QUESTIONS = [
 
 const WELCOME: Msg = {
   role: "assistant",
-  content:
-    "👋 **Hi! I'm Digi Assistant.** I can answer questions about UK LTD & US LLC formation, banking (PayPal, Stripe, Wise, Payoneer…), compliance, and more. Pick a quick question below or type your own!",
+  content: "Hi! 👋 What would you like to start today?",
 };
 
 const AIAssistant = () => {
