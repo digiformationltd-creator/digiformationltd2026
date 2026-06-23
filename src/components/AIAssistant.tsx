@@ -84,8 +84,7 @@ function getHourlyQuickQuestions(count = 6): string[] {
   return out;
 }
 
-  return out;
-}
+
 
 
 const WELCOME: Msg = {
