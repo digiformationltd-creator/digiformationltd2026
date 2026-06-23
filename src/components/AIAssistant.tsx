@@ -47,10 +47,13 @@ const AIAssistant = () => {
   const hideOnThisRoute = isMobile && (pathname.startsWith("/dashboard") || pathname.startsWith("/admin"));
   if (hideOnThisRoute) return null;
 
-  const send = async (text: string) => {
+  const send = async (text: string, opts: { hidden?: boolean } = {}) => {
+    const { hidden = false } = opts;
     const userMsg: Msg = { role: "user", content: text };
-    setMessages((p) => [...p, userMsg]);
-    setInput("");
+    if (!hidden) {
+      setMessages((p) => [...p, userMsg]);
+      setInput("");
+    }
     setLoading(true);
 
     const history = [...messages.filter((m) => m !== WELCOME), userMsg];
