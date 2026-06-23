@@ -1,3 +1,5 @@
+export type BankingCategory = "Payment Gateways" | "Business Accounts" | "International Transfers";
+
 export type BankingProvider = {
   slug: string;
   name: string;
@@ -6,6 +8,8 @@ export type BankingProvider = {
   features: string[];
   requirements: string[];
   setupPrice: string;
+  category: BankingCategory;
+  tag?: "Recommended" | "Popular" | "Best for Business" | "New";
   metaTitle: string;
   metaDescription: string;
   keywords: string;
