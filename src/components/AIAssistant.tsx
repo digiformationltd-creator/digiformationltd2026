@@ -183,40 +183,46 @@ const AIAssistant = () => {
 
           {/* Messages */}
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-muted/30">
-            {messages.map((m, i) => (
-              <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-                <div
-                  className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${
-                    m.role === "user"
-                      ? "bg-primary text-primary-foreground rounded-br-sm"
-                      : "bg-card border border-border rounded-bl-sm"
-                  }`}
-                >
-                  <div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-1 prose-ul:my-1 prose-li:my-0 prose-a:text-primary prose-a:underline">
-                    <ReactMarkdown
-                      components={{
-                        a: ({ href, children }) => {
-                          if (href?.startsWith("/")) {
+            {messages.flatMap((m, i) => {
+              const chunks = m.role === "assistant"
+                ? m.content.split(/\s*<<<SPLIT>>>\s*/g).filter((c) => c.trim().length > 0)
+                : [m.content];
+              const safeChunks = chunks.length > 0 ? chunks : [m.content];
+              return safeChunks.map((chunk, ci) => (
+                <div key={`${i}-${ci}`} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+                  <div
+                    className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${
+                      m.role === "user"
+                        ? "bg-primary text-primary-foreground rounded-br-sm"
+                        : "bg-card border border-border rounded-bl-sm"
+                    }`}
+                  >
+                    <div className="prose prose-sm max-w-none dark:prose-invert prose-p:my-1 prose-ul:my-1 prose-li:my-0 prose-a:text-primary prose-a:underline">
+                      <ReactMarkdown
+                        components={{
+                          a: ({ href, children }) => {
+                            if (href?.startsWith("/")) {
+                              return (
+                                <Link to={href} onClick={() => setOpen(false)} className="text-primary underline">
+                                  {children}
+                                </Link>
+                              );
+                            }
                             return (
-                              <Link to={href} onClick={() => setOpen(false)} className="text-primary underline">
+                              <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary underline">
                                 {children}
-                              </Link>
+                              </a>
                             );
-                          }
-                          return (
-                            <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary underline">
-                              {children}
-                            </a>
-                          );
-                        },
-                      }}
-                    >
-                      {m.content}
-                    </ReactMarkdown>
+                          },
+                        }}
+                      >
+                        {chunk}
+                      </ReactMarkdown>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ));
+            })}
             {loading && messages[messages.length - 1]?.role === "user" && (
               <div className="flex justify-start">
                 <div className="bg-card border border-border rounded-2xl rounded-bl-sm px-4 py-3">
