@@ -185,7 +185,7 @@ const AIAssistant = () => {
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-muted/30">
             {messages.flatMap((m, i) => {
               const chunks = m.role === "assistant"
-                ? m.content.split(/\s*<<<SPLIT>>>\s*/g).filter((c) => c.trim().length > 0)
+                ? m.content.split(/\s*<<<SPLIT>>>\s*/g).filter((c) => c.trim().length > 0).slice(0, 2)
                 : [m.content];
               const safeChunks = chunks.length > 0 ? chunks : [m.content];
               return safeChunks.map((chunk, ci) => (
