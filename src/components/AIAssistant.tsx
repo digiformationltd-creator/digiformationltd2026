@@ -6,14 +6,51 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
-const QUICK_QUESTIONS = [
+// Pool of quick questions — rotates every hour (6 shown at a time)
+const QUICK_QUESTIONS_POOL = [
   "How do I register a UK LTD company?",
   "Can I open a US LLC from Pakistan?",
   "How to get a Stripe account?",
   "Tell me about PayPal setup",
   "What are your pricing packages?",
   "How do I get an EIN number?",
+  "Best bank for eCommerce?",
+  "Best account for eBay sellers?",
+  "Cheapest US state for LLC?",
+  "Best state for non-resident LLC?",
+  "How long does ID verification take?",
+  "What's included in the Silver £170 package?",
+  "How do I file AD01 (address change)?",
+  "Do I need a UK address for my company?",
+  "Wise vs Payoneer — which is better?",
+  "How long to form a UK LTD?",
+  "What is UTR and how do I get one?",
+  "Do you help with VAT registration?",
+  "Can foreigners open a UK LTD?",
+  "What is BOI report for LLC?",
+  "Stripe approval requirements?",
+  "How to get Airwallex account?",
+  "Annual filing deadlines for UK LTD?",
+  "Sunrate vs Airwallex for e-commerce?",
+  "Do you offer Shopify store setup?",
+  "What's the cheapest UK formation package?",
+  "How do I change my company name?",
+  "EIN application process for non-residents?",
+  "Can I use your address for bank statements?",
 ];
+
+function getHourlyQuickQuestions(count = 6): string[] {
+  // Deterministic rotation based on current hour — same for everyone, changes hourly.
+  const hour = Math.floor(Date.now() / (1000 * 60 * 60));
+  const pool = QUICK_QUESTIONS_POOL;
+  const start = hour % pool.length;
+  const out: string[] = [];
+  for (let i = 0; i < count; i++) {
+    out.push(pool[(start + i) % pool.length]);
+  }
+  return out;
+}
+
 
 const WELCOME: Msg = {
   role: "assistant",
@@ -277,7 +314,7 @@ const AIAssistant = () => {
             <div className="px-3 pb-2 bg-muted/30 border-t border-border">
               <p className="text-xs text-muted-foreground py-2 font-medium">Quick questions:</p>
               <div className="flex flex-wrap gap-1.5 pb-2">
-                {QUICK_QUESTIONS.map((q) => (
+                {getHourlyQuickQuestions(6).map((q) => (
                   <button
                     key={q}
                     onClick={() => send(q)}
