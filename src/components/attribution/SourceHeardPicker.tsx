@@ -11,9 +11,11 @@ export const SOURCE_OPTIONS: (DeclaredSource & { emoji?: string })[] = [
   { id: "grok", label: "Grok", category: "ai", emoji: "⚡" },
   { id: "deepseek", label: "DeepSeek", category: "ai", emoji: "🌊" },
   { id: "copilot", label: "Microsoft Copilot", category: "ai", emoji: "🧭" },
+  { id: "google_ai_overview", label: "Google AI / AI Overview", category: "ai", emoji: "🧬" },
   { id: "other_ai", label: "Other AI", category: "ai", emoji: "🤖" },
   // Search
   { id: "google", label: "Google Search", category: "search", emoji: "🔍" },
+  { id: "google_ads", label: "Google Ads", category: "search", emoji: "🅖" },
   { id: "bing", label: "Bing Search", category: "search", emoji: "🔍" },
   { id: "yahoo", label: "Yahoo Search", category: "search", emoji: "🔍" },
   { id: "other_search", label: "Other Search", category: "search", emoji: "🔍" },
