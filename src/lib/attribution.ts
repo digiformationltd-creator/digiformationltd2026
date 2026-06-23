@@ -207,23 +207,24 @@ export const trackPageView = async () => {
       browser,
     });
 
-    void supabase.from("visitor_attribution").upsert({
-      visitor_id,
-      first_source: first.source,
-      first_category: first.category,
-      first_campaign: first.campaign ?? null,
-      first_referrer: first.referrer ?? null,
-      first_landing_page: first.landing ?? null,
-      first_visit_at: first.at,
-      last_source: visit.source,
-      last_category: visit.category,
-      last_campaign: visit.campaign ?? null,
-      last_referrer: visit.referrer ?? null,
-      last_landing_page: visit.landing ?? null,
-      last_visit_at: new Date().toISOString(),
-      device_type: device,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: "visitor_id" });
+    void supabase.rpc("upsert_visitor_attribution", {
+      payload: {
+        visitor_id,
+        first_source: first.source,
+        first_category: first.category,
+        first_campaign: first.campaign ?? null,
+        first_referrer: first.referrer ?? null,
+        first_landing_page: first.landing ?? null,
+        first_visit_at: first.at,
+        last_source: visit.source,
+        last_category: visit.category,
+        last_campaign: visit.campaign ?? null,
+        last_referrer: visit.referrer ?? null,
+        last_landing_page: visit.landing ?? null,
+        last_visit_at: new Date().toISOString(),
+        device_type: device,
+      },
+    } as any);
   } catch (err) {
     // Silent fail — attribution must never break the app
     console.warn("[attribution] tracker failed", err);

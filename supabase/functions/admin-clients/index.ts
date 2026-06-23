@@ -129,20 +129,27 @@ Deno.serve(async (req) => {
       .select("user_id, full_name, email, phone, company_name, created_at")
       .order("created_at", { ascending: false });
 
-    if (profilesError) return json({ error: profilesError.message }, 500);
+    if (profilesError) {
+      console.error("admin-clients profiles error", profilesError);
+      return json({ error: "An internal error occurred" }, 500);
+    }
 
     const { data: roles, error: rolesError } = await adminClient
       .from("user_roles")
       .select("user_id, role");
 
-    if (rolesError) return json({ error: rolesError.message }, 500);
+    if (rolesError) {
+      console.error("admin-clients roles error", rolesError);
+      return json({ error: "An internal error occurred" }, 500);
+    }
 
     const adminIds = new Set((roles || []).filter((r: any) => r.role === "admin").map((r: any) => r.user_id));
     const clients = (profiles || []).filter((p: any) => !adminIds.has(p.user_id));
 
     return json({ clients, totalAuthUsers: authUsers.length, totalProfiles: profiles?.length || 0 });
   } catch (error) {
-    return json({ error: error instanceof Error ? error.message : "Unknown error" }, 500);
+    console.error("admin-clients unhandled error", error);
+    return json({ error: "An internal error occurred" }, 500);
   }
 });
 

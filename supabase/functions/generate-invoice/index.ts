@@ -706,16 +706,13 @@ Deno.serve(async (req) => {
     }
     // -------------------------------------------------------------------
 
+    // SECURITY: only attach an order to an existing user's account when the
+    // caller is authenticated AS that user. Unauthenticated/guest checkouts
+    // always get user_id = NULL — preventing account spoofing where an
+    // attacker would inject orders into a victim's portal by knowing their
+    // email address.
     let orderUserId: string | null = null
-    const { data: matchedProfile } = await admin
-      .from('profiles')
-      .select('user_id')
-      .ilike('email', customerEmail)
-      .limit(1)
-      .maybeSingle()
-    if (matchedProfile?.user_id) {
-      orderUserId = matchedProfile.user_id
-    } else if (user?.id && user.email?.toLowerCase() === customerEmail) {
+    if (user?.id && user.email?.toLowerCase() === customerEmail) {
       orderUserId = user.id
     }
 
@@ -1007,7 +1004,7 @@ Deno.serve(async (req) => {
     })
   } catch (e) {
     console.error('generate-invoice error', e)
-    return new Response(JSON.stringify({ error: (e as Error).message }), {
+    return new Response(JSON.stringify({ error: 'An internal error occurred' }), {
       status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   }
