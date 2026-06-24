@@ -97,7 +97,7 @@ const LtdIdVerification = () => {
               <p className="opacity-90 mb-8">If you hold any of these positions in a UK Limited Company, identity verification with Companies House is now required.</p>
               <div className="space-y-3">
                 {requiredFor.map((role) => (
-                  <div key={role} className="flex items-start gap-3 glass rounded-xl p-4">
+                  <div key={role} className="flex items-start gap-3 glass glass-tint-cyan rounded-xl p-4">
                     <CheckCircle2 className="w-5 h-5 mt-0.5 text-primary" />
                     <span className="font-medium">{role}</span>
                   </div>
@@ -105,7 +105,7 @@ const LtdIdVerification = () => {
               </div>
             </div>
 
-            <div className="glass rounded-2xl p-10">
+            <div className="glass glass-tint-cyan rounded-2xl p-10">
               <div className="text-[10px] uppercase tracking-[0.2em] mb-3 opacity-80">What this service covers</div>
               <ul className="space-y-5 mt-6">
                 {covers.map(({ icon: Icon, label }) => (
@@ -134,7 +134,7 @@ const LtdIdVerification = () => {
           <p className="opacity-80 mb-10 max-w-2xl">Please prepare the following documents before starting your verification. This ensures fast, smooth processing with Companies House.</p>
           <div className="grid sm:grid-cols-2 gap-4">
             {verificationRequirements.map((r, i) => (
-              <div key={r} className="glass rounded-xl p-5 flex gap-4 items-start">
+              <div key={r} className="glass glass-tint-cyan rounded-xl p-5 flex gap-4 items-start">
                 <div className="w-7 h-7 rounded-full bg-gradient-brand grid place-items-center text-xs font-bold flex-shrink-0">{i + 1}</div>
                 <span className="font-medium">{r}</span>
               </div>
@@ -152,7 +152,7 @@ const LtdIdVerification = () => {
           <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-10">Without ID verification…</h2>
           <div className="grid md:grid-cols-3 gap-5">
             {risks.map((r) => (
-              <div key={r} className="glass rounded-2xl p-7 border border-destructive/20">
+              <div key={r} className="glass glass-tint-cyan rounded-2xl p-7 border border-destructive/20">
                 <AlertTriangle className="w-7 h-7 text-destructive mb-4" />
                 <p className="font-medium">{r}</p>
               </div>
@@ -165,7 +165,7 @@ const LtdIdVerification = () => {
       {/* CTA */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <div className="glass rounded-3xl p-14 text-center max-w-3xl mx-auto">
+          <div className="glass glass-tint-cyan rounded-3xl p-14 text-center max-w-3xl mx-auto">
             <h3 className="text-3xl md:text-4xl font-bold">
               Verify your identity <em className="not-italic text-gradient">today</em>
             </h3>

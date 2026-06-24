@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import ServiceIcon, { ServiceIconName } from "@/components/icons/ServiceIcons";
+import { glassTintFor, inferGlassCategory } from "@/lib/glassCategory";
 
 export type RelatedItem = {
   name: string;
@@ -28,7 +29,7 @@ const RelatedServices = ({ title = "Related Services", eyebrow = "Explore More",
           <Link
             key={r.path}
             to={r.path}
-            className="glass rounded-2xl p-6 hover:-translate-y-1 hover:shadow-elegant transition-all group flex flex-col"
+            className={`glass ${glassTintFor(inferGlassCategory(`${r.name} ${r.path} ${r.description ?? ""}`))} rounded-2xl p-6 hover:-translate-y-1 hover:shadow-elegant transition-all group flex flex-col`}
           >
             {r.icon && (
               <div className="mb-4 w-14 h-14 rounded-xl bg-gradient-to-br from-primary/15 to-transparent grid place-items-center">

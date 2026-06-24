@@ -151,7 +151,7 @@ const ResetPassword = () => {
             </div>
           </div>
 
-          <div className="glass rounded-2xl p-5 sm:p-7 shadow-elegant">
+          <div className="glass glass-tint-sky rounded-2xl p-5 sm:p-7 shadow-elegant">
             {/* Header */}
             <div className="flex flex-col items-center mb-5 text-center">
               <div className="w-12 h-12 rounded-full bg-primary/15 grid place-items-center mb-2">

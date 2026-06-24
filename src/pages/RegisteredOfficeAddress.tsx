@@ -191,7 +191,7 @@ const RegisteredOfficeAddress = () => {
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {whoNeeds.map((w) => (
-              <div key={w.role} className="glass rounded-2xl p-7">
+              <div key={w.role} className="glass glass-tint-mustard rounded-2xl p-7">
                 <h3 className="font-semibold text-lg mb-2">{w.role}</h3>
                 <p className="text-sm opacity-80">{w.desc}</p>
               </div>

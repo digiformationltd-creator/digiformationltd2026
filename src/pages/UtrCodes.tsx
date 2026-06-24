@@ -162,7 +162,7 @@ const UtrCodes = () => {
             {cards.map((c) => {
               const Icon = c.icon;
               return (
-                <div key={c.id} id={c.id} className="glass rounded-3xl p-8 flex flex-col">
+                <div key={c.id} id={c.id} className="glass glass-tint-mustard rounded-3xl p-8 flex flex-col">
                   <div className="flex items-center justify-between mb-5">
                     <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                       <Icon className="w-6 h-6 text-primary" />
@@ -242,7 +242,7 @@ const UtrCodes = () => {
               "Re-issue authentication letters",
               "Full HMRC online setup",
             ].map((s) => (
-              <div key={s} className="flex items-start gap-3 glass rounded-xl p-4">
+              <div key={s} className="flex items-start gap-3 glass glass-tint-mustard rounded-xl p-4">
                 <CheckCircle2 className="w-5 h-5 mt-0.5 text-primary" />
                 <span className="font-medium">{s}</span>
               </div>

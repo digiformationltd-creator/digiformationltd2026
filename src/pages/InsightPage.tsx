@@ -93,7 +93,7 @@ const Article = ({ insight }: { insight: Insight }) => {
           <div className="container mx-auto px-4">
             <div className="grid lg:grid-cols-[1fr_320px] gap-12">
               <div className="max-w-3xl">
-                <div className="glass rounded-2xl p-8 mb-12">
+                <div className="glass glass-tint-pink rounded-2xl p-8 mb-12">
                   <h2 className="text-2xl font-bold mb-4">Key findings</h2>
                   <ul className="space-y-3">
                     {insight.keyFindings.map((f, i) => (
@@ -212,7 +212,7 @@ const Article = ({ insight }: { insight: Insight }) => {
               </div>
 
               <aside className="space-y-8">
-                <div className="glass rounded-2xl p-6 sticky top-28">
+                <div className="glass glass-tint-pink rounded-2xl p-6 sticky top-28">
                   <div className="text-xs uppercase tracking-[0.18em] mb-3 opacity-80">On this page</div>
                   <ul className="space-y-2 text-sm">
                     {insight.sections.map((s) => (
@@ -305,7 +305,7 @@ export const InsightsIndex = () => {
       <section className="py-16">
         <div className="container mx-auto px-4 grid md:grid-cols-2 gap-6">
           {insights.map((i) => (
-            <Link key={i.slug} to={`/insights/${i.slug}`} className="group glass rounded-2xl p-8 hover:scale-[1.01] transition">
+            <Link key={i.slug} to={`/insights/${i.slug}`} className="group glass glass-tint-pink rounded-2xl p-8 hover:scale-[1.01] transition">
               <div className="text-xs uppercase tracking-[0.18em] opacity-80 mb-3">{i.category} • {i.lastUpdated}</div>
               <h2 className="text-2xl font-bold mb-3 group-hover:text-primary">{i.title}</h2>
               <p className="opacity-80 mb-4">{i.metaDescription}</p>

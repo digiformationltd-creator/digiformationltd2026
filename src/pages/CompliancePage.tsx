@@ -93,7 +93,7 @@ const CompliancePage = () => {
               </h2>
               <ul className="space-y-4">
                 {page.overview.map((o) => (
-                  <li key={o} className="flex items-start gap-3 glass rounded-xl p-4">
+                  <li key={o} className="flex items-start gap-3 glass glass-tint-mustard rounded-xl p-4">
                     <CheckCircle2 className="w-5 h-5 mt-0.5 text-primary flex-shrink-0" />
                     <span className="font-medium">{o}</span>
                   </li>
@@ -101,7 +101,7 @@ const CompliancePage = () => {
               </ul>
             </div>
 
-            <div className="glass rounded-2xl p-10">
+            <div className="glass glass-tint-mustard rounded-2xl p-10">
               <div className="text-[10px] uppercase tracking-[0.18em] opacity-70 mb-2">Service Charge</div>
               <div className="text-5xl font-bold text-gradient">{page.price}</div>
             </div>
@@ -120,7 +120,7 @@ const CompliancePage = () => {
           <p className="opacity-80 mb-10 max-w-2xl">Please have the following details ready so we can complete your filing quickly with Companies House.</p>
           <div className="grid sm:grid-cols-2 gap-4">
             {page.requirements.map((r, i) => (
-              <div key={r} className="glass rounded-xl p-5 flex gap-4 items-start">
+              <div key={r} className="glass glass-tint-mustard rounded-xl p-5 flex gap-4 items-start">
                 <div className="w-7 h-7 rounded-full bg-gradient-brand grid place-items-center text-xs font-bold flex-shrink-0">{i + 1}</div>
                 <span className="font-medium">{r}</span>
               </div>

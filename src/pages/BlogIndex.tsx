@@ -75,7 +75,7 @@ const BlogIndex = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap gap-2 mb-10">
             {categories.map((c) => (
-              <span key={c} className="text-[11px] uppercase tracking-[0.14em] glass rounded-full px-3 py-1.5 opacity-90">
+              <span key={c} className="text-[11px] uppercase tracking-[0.14em] glass glass-tint-pink rounded-full px-3 py-1.5 opacity-90">
                 {c}
               </span>
             ))}
@@ -86,7 +86,7 @@ const BlogIndex = () => {
               <Link
                 key={p.slug}
                 to={`/blog/${p.slug}`}
-                className="group glass rounded-2xl p-6 flex flex-col hover:-translate-y-1 hover:shadow-elegant transition-all"
+                className="group glass glass-tint-pink rounded-2xl p-6 flex flex-col hover:-translate-y-1 hover:shadow-elegant transition-all"
               >
                 <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.14em] opacity-80 mb-3">
                   <span className="inline-flex items-center gap-1"><Tag className="w-3 h-3" /> {p.category}</span>

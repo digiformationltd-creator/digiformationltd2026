@@ -188,7 +188,7 @@ const UKChangeServices = () => {
           {cards.map((c) => (
             <div
               key={c.id}
-              className={`glass rounded-3xl p-8 md:p-10 grid md:grid-cols-2 gap-8 items-center ${c.side === "left" ? "md:[&>*:first-child]:order-2" : ""}`}
+              className={`glass glass-tint-mustard rounded-3xl p-8 md:p-10 grid md:grid-cols-2 gap-8 items-center ${c.side === "left" ? "md:[&>*:first-child]:order-2" : ""}`}
             >
               <div>
                 <div className="text-[10px] uppercase tracking-[0.18em] opacity-70 mb-2">Package</div>
@@ -229,7 +229,7 @@ const UKChangeServices = () => {
           <p className="opacity-80 mb-8">Selected package: <span className="font-semibold text-gradient">{selectedCard.price}</span></p>
           <ul className="space-y-3">
             {selectedCard.requirements.map((r) => (
-              <li key={r} className="flex items-start gap-3 glass rounded-xl p-4">
+              <li key={r} className="flex items-start gap-3 glass glass-tint-mustard rounded-xl p-4">
                 <CheckCircle2 className="w-5 h-5 mt-0.5 text-primary" />
                 <span className="font-medium">{r}</span>
               </li>
@@ -251,7 +251,7 @@ const UKChangeServices = () => {
             <p className="opacity-90">Selected: <span className="font-semibold">{selectedCard.title}</span> — <span className="text-gradient font-bold">{selectedCard.price}</span></p>
           </div>
           {submitted ? (
-            <div className="glass rounded-3xl p-10 md:p-12 text-center space-y-5">
+            <div className="glass glass-tint-mustard rounded-3xl p-10 md:p-12 text-center space-y-5">
               <div className="w-16 h-16 rounded-full bg-primary/15 flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-9 h-9 text-primary" />
               </div>
@@ -264,7 +264,7 @@ const UKChangeServices = () => {
               </Button>
             </div>
           ) : (
-          <form onSubmit={handleSubmit} className="glass rounded-3xl p-8 md:p-10 space-y-5">
+          <form onSubmit={handleSubmit} className="glass glass-tint-mustard rounded-3xl p-8 md:p-10 space-y-5">
             <div className="grid sm:grid-cols-2 gap-5">
               <input name="firstName" placeholder="First Name" className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none" maxLength={60} required />
               <input name="lastName" placeholder="Last Name" className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none" maxLength={60} required />
@@ -293,7 +293,7 @@ const UKChangeServices = () => {
           <h2 className="text-3xl font-bold mb-8">Related Services</h2>
           <div className="grid sm:grid-cols-3 gap-5">
             {related.map((r) => (
-              <Link key={r.path} to={r.path} className="glass rounded-2xl p-6 hover:-translate-y-1 hover:shadow-elegant transition-all group">
+              <Link key={r.path} to={r.path} className="glass glass-tint-mustard rounded-2xl p-6 hover:-translate-y-1 hover:shadow-elegant transition-all group">
                 <h3 className="font-semibold text-lg group-hover:text-gradient">{r.name}</h3>
                 <div className="mt-3 text-[11px] uppercase tracking-[0.14em]">Explore →</div>
               </Link>
