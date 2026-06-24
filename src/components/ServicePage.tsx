@@ -129,7 +129,7 @@ const ServicePage = ({ eyebrow, title, description, highlights, contactService, 
               </div>
             </div>
 
-            <div className="glass rounded-2xl p-10">
+            <div className={`glass ${glassTintFor(inferGlassCategory(eyebrow))} rounded-2xl p-10`}>
               <div className="text-[10px] uppercase tracking-[0.2em] mb-3 opacity-80">How it works</div>
               <ol className="space-y-6 mt-6">
                 {["Choose your service & checkout", "We collect your details securely", "Our team handles every step", "You receive your documents"].map((step, i) => (
