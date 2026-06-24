@@ -2,6 +2,7 @@ import Layout from "@/components/layout/Layout";
 import { Link } from "react-router-dom";
 import { ukServices, usaServices, banking, ukCompliance, type NavItem } from "@/data/navigation";
 import { useSeo } from "@/lib/seo";
+import { glassTintFor, inferGlassCategory } from "@/lib/glassCategory";
 
 type HubProps = {
   title: string;
