@@ -131,37 +131,60 @@ body p, body span, body li, body label, body small, body div {
     box-shadow: 0 12px 40px hsl(220 10% 4% / 0.5), inset 0 1px 0 hsl(220 12% 88% / 0.08);
   }
 
-  /* Static, light pastel glass tints (no animation, no blinking).
-     Use sparingly to differentiate cards across the site.
-     Skip on pricing/packages cards. */
-  .glass-tint-mustard { background: linear-gradient(135deg, hsl(45 70% 55% / 0.10), hsl(45 70% 55% / 0.04)); border-color: hsl(45 70% 60% / 0.22); }
-  .glass-tint-mustard:hover { background: linear-gradient(135deg, hsl(45 70% 55% / 0.16), hsl(45 70% 55% / 0.08)); border-color: hsl(45 70% 65% / 0.55); box-shadow: 0 0 0 1px hsl(45 80% 60% / 0.25), 0 12px 40px -8px hsl(45 90% 55% / 0.45), 0 0 60px -10px hsl(45 90% 55% / 0.55); }
-  .glass-tint-green   { background: linear-gradient(135deg, hsl(145 50% 50% / 0.10), hsl(145 50% 50% / 0.04)); border-color: hsl(145 50% 55% / 0.22); }
-  .glass-tint-green:hover   { background: linear-gradient(135deg, hsl(145 50% 50% / 0.16), hsl(145 50% 50% / 0.08)); border-color: hsl(145 50% 60% / 0.55); box-shadow: 0 0 0 1px hsl(145 60% 55% / 0.25), 0 12px 40px -8px hsl(145 70% 50% / 0.45), 0 0 60px -10px hsl(145 70% 50% / 0.55); }
-  .glass-tint-sky     { background: linear-gradient(135deg, hsl(205 70% 60% / 0.10), hsl(205 70% 60% / 0.04)); border-color: hsl(205 70% 65% / 0.22); }
-  .glass-tint-sky:hover     { background: linear-gradient(135deg, hsl(205 70% 60% / 0.16), hsl(205 70% 60% / 0.08)); border-color: hsl(205 70% 70% / 0.55); box-shadow: 0 0 0 1px hsl(205 80% 65% / 0.25), 0 12px 40px -8px hsl(205 85% 60% / 0.45), 0 0 60px -10px hsl(205 85% 60% / 0.55); }
-  .glass-tint-purple  { background: linear-gradient(135deg, hsl(270 55% 65% / 0.10), hsl(270 55% 65% / 0.04)); border-color: hsl(270 55% 70% / 0.22); }
-  .glass-tint-purple:hover  { background: linear-gradient(135deg, hsl(270 55% 65% / 0.16), hsl(270 55% 65% / 0.08)); border-color: hsl(270 55% 75% / 0.55); box-shadow: 0 0 0 1px hsl(270 65% 70% / 0.25), 0 12px 40px -8px hsl(270 70% 65% / 0.45), 0 0 60px -10px hsl(270 70% 65% / 0.55); }
-  .glass-tint-pink    { background: linear-gradient(135deg, hsl(335 70% 65% / 0.10), hsl(335 70% 65% / 0.04)); border-color: hsl(335 70% 70% / 0.22); }
-  .glass-tint-pink:hover    { background: linear-gradient(135deg, hsl(335 70% 65% / 0.16), hsl(335 70% 65% / 0.08)); border-color: hsl(335 70% 75% / 0.55); box-shadow: 0 0 0 1px hsl(335 80% 70% / 0.25), 0 12px 40px -8px hsl(335 85% 65% / 0.45), 0 0 60px -10px hsl(335 85% 65% / 0.55); }
-  .glass-tint-orange  { background: linear-gradient(135deg, hsl(25 85% 60% / 0.10), hsl(25 85% 60% / 0.04)); border-color: hsl(25 85% 65% / 0.22); }
-  .glass-tint-orange:hover  { background: linear-gradient(135deg, hsl(25 85% 60% / 0.16), hsl(25 85% 60% / 0.08)); border-color: hsl(25 85% 70% / 0.55); box-shadow: 0 0 0 1px hsl(25 90% 65% / 0.25), 0 12px 40px -8px hsl(25 95% 60% / 0.45), 0 0 60px -10px hsl(25 95% 60% / 0.55); }
-  .glass-tint-brown   { background: linear-gradient(135deg, hsl(20 35% 45% / 0.12), hsl(20 35% 45% / 0.05)); border-color: hsl(20 35% 55% / 0.24); }
-  .glass-tint-brown:hover   { background: linear-gradient(135deg, hsl(20 35% 45% / 0.18), hsl(20 35% 45% / 0.09)); border-color: hsl(20 35% 60% / 0.55); box-shadow: 0 0 0 1px hsl(20 45% 55% / 0.25), 0 12px 40px -8px hsl(20 55% 50% / 0.45), 0 0 60px -10px hsl(20 55% 50% / 0.5); }
-  .glass-tint-teal    { background: linear-gradient(135deg, hsl(180 55% 50% / 0.10), hsl(180 55% 50% / 0.04)); border-color: hsl(180 55% 55% / 0.22); }
-  .glass-tint-teal:hover    { background: linear-gradient(135deg, hsl(180 55% 50% / 0.16), hsl(180 55% 50% / 0.08)); border-color: hsl(180 55% 60% / 0.55); box-shadow: 0 0 0 1px hsl(180 65% 55% / 0.25), 0 12px 40px -8px hsl(180 70% 50% / 0.45), 0 0 60px -10px hsl(180 70% 50% / 0.55); }
-  .glass-tint-red     { background: linear-gradient(135deg, hsl(0 75% 60% / 0.10), hsl(0 75% 60% / 0.04)); border-color: hsl(0 75% 65% / 0.22); }
-  .glass-tint-red:hover     { background: linear-gradient(135deg, hsl(0 75% 60% / 0.16), hsl(0 75% 60% / 0.08)); border-color: hsl(0 75% 70% / 0.55); box-shadow: 0 0 0 1px hsl(0 85% 65% / 0.25), 0 12px 40px -8px hsl(0 90% 60% / 0.45), 0 0 60px -10px hsl(0 90% 60% / 0.55); }
-  .glass-tint-indigo  { background: linear-gradient(135deg, hsl(240 65% 65% / 0.10), hsl(240 65% 65% / 0.04)); border-color: hsl(240 65% 70% / 0.22); }
-  .glass-tint-indigo:hover  { background: linear-gradient(135deg, hsl(240 65% 65% / 0.16), hsl(240 65% 65% / 0.08)); border-color: hsl(240 65% 75% / 0.55); box-shadow: 0 0 0 1px hsl(240 75% 70% / 0.25), 0 12px 40px -8px hsl(240 80% 65% / 0.45), 0 0 60px -10px hsl(240 80% 65% / 0.55); }
-  .glass-tint-cyan    { background: linear-gradient(135deg, hsl(190 80% 55% / 0.10), hsl(190 80% 55% / 0.04)); border-color: hsl(190 80% 60% / 0.22); }
-  .glass-tint-cyan:hover    { background: linear-gradient(135deg, hsl(190 80% 55% / 0.16), hsl(190 80% 55% / 0.08)); border-color: hsl(190 80% 65% / 0.55); box-shadow: 0 0 0 1px hsl(190 85% 60% / 0.25), 0 12px 40px -8px hsl(190 90% 55% / 0.45), 0 0 60px -10px hsl(190 90% 55% / 0.55); }
-  .glass-tint-gold    { background: linear-gradient(135deg, hsl(42 90% 58% / 0.12), hsl(32 95% 55% / 0.05)); border-color: hsl(42 90% 62% / 0.28); }
-  .glass-tint-gold:hover    { background: linear-gradient(135deg, hsl(42 95% 58% / 0.20), hsl(32 95% 55% / 0.10)); border-color: hsl(42 95% 65% / 0.6); box-shadow: 0 0 0 1px hsl(42 95% 62% / 0.3), 0 12px 40px -8px hsl(38 95% 55% / 0.5), 0 0 60px -10px hsl(38 95% 55% / 0.6); }
+  /* ────────────────────────────────────────────────────────────
+     Unified glass tint system — only HUE varies between tints.
+     Saturation, lightness, alpha, border opacity, glow depth, and
+     hover lift are identical across every color for a calm,
+     premium "single design system" feel. Tune all tints at once
+     by editing the variables in [class*="glass-tint-"] below.
+     ──────────────────────────────────────────────────────────── */
+  [class*="glass-tint-"] {
+    --tint-s: 70%;            /* unified saturation */
+    --tint-l: 60%;            /* unified lightness  */
+    --bg-a-1: 0.09;           /* rest gradient stop a */
+    --bg-a-2: 0.03;           /* rest gradient stop b */
+    --bg-h-1: 0.15;           /* hover gradient stop a */
+    --bg-h-2: 0.06;           /* hover gradient stop b */
+    --border-a: 0.22;
+    --border-h: 0.50;
+    --ring-a: 0.22;
+    --glow-near: 0.38;
+    --glow-far: 0.45;
 
-  /* Apply a transition so the glow ramps in smoothly on every tinted card */
-  [class*="glass-tint-"] { transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.4s ease, transform 0.35s ease; }
-  [class*="glass-tint-"]:hover { transform: translateY(-2px); }
+    background: linear-gradient(135deg,
+      hsl(var(--tint-h) var(--tint-s) var(--tint-l) / var(--bg-a-1)),
+      hsl(var(--tint-h) var(--tint-s) var(--tint-l) / var(--bg-a-2)));
+    border-color: hsl(var(--tint-h) var(--tint-s) var(--tint-l) / var(--border-a));
+    transition: background 0.35s var(--transition-smooth),
+                border-color 0.35s var(--transition-smooth),
+                box-shadow 0.4s  var(--transition-smooth),
+                transform 0.35s var(--transition-smooth);
+  }
+  [class*="glass-tint-"]:hover {
+    background: linear-gradient(135deg,
+      hsl(var(--tint-h) var(--tint-s) var(--tint-l) / var(--bg-h-1)),
+      hsl(var(--tint-h) var(--tint-s) var(--tint-l) / var(--bg-h-2)));
+    border-color: hsl(var(--tint-h) var(--tint-s) var(--tint-l) / var(--border-h));
+    box-shadow:
+      0 0 0 1px   hsl(var(--tint-h) var(--tint-s) var(--tint-l) / var(--ring-a)),
+      0 12px 40px -8px hsl(var(--tint-h) var(--tint-s) var(--tint-l) / var(--glow-near)),
+      0 0 60px -10px hsl(var(--tint-h) var(--tint-s) var(--tint-l) / var(--glow-far));
+    transform: translateY(-2px);
+  }
+
+  /* Hue-only tint definitions (calm, professional palette). */
+  .glass-tint-cyan    { --tint-h: 190; }   /* Identity & Verification */
+  .glass-tint-sky     { --tint-h: 205; }   /* Support / Neutral       */
+  .glass-tint-indigo  { --tint-h: 235; }   /* AI / Interactive        */
+  .glass-tint-purple  { --tint-h: 268; }   /* Banking & Payments      */
+  .glass-tint-pink    { --tint-h: 332; }   /* Web / Editorial         */
+  .glass-tint-red     { --tint-h: 4;   }   /* Warnings                */
+  .glass-tint-orange  { --tint-h: 22;  }   /* Premium accent          */
+  .glass-tint-gold    { --tint-h: 40;  }   /* Premium / Pricing       */
+  .glass-tint-mustard { --tint-h: 48;  }   /* Compliance & Legal      */
+  .glass-tint-green   { --tint-h: 148; }   /* Formation / Success     */
+  .glass-tint-teal    { --tint-h: 178; }   /* Statistics              */
+  .glass-tint-brown   { --tint-h: 28; --tint-s: 35%; --tint-l: 50%; } /* legacy earth tone */
 
   .grid-pattern {
     background-image:
@@ -546,3 +569,51 @@ body p, body span, body li, body label, body small, body div {
     transition: none !important;
   }
 }
+
+/* ────────────────────────────────────────────────────────────
+   Final polish pass — unified motion + mobile glow protection
+   ──────────────────────────────────────────────────────────── */
+
+/* Prevent horizontal scroll from soft tinted glows on small screens */
+html, body { overflow-x: hidden; }
+
+/* All interactive surfaces use the same easing for a calm, premium feel */
+a, button, [role="button"], .glass, [class*="glass-tint-"] {
+  transition-timing-function: var(--transition-smooth);
+}
+
+/* Standardize CTA buttons: identical radius, hover lift, transition */
+.btn-cta,
+button[data-cta="primary"],
+a[data-cta="primary"] {
+  border-radius: 9999px;
+  transition: transform 0.25s var(--transition-smooth),
+              box-shadow 0.35s var(--transition-smooth),
+              background 0.35s var(--transition-smooth),
+              border-color 0.35s var(--transition-smooth);
+}
+.btn-cta:hover,
+button[data-cta="primary"]:hover,
+a[data-cta="primary"]:hover { transform: translateY(-1px); }
+
+/* Mobile polish: relax glow + lift on small screens to avoid overflow / crowding */
+@media (max-width: 640px) {
+  [class*="glass-tint-"] {
+    --glow-near: 0.28;
+    --glow-far: 0.32;
+  }
+  [class*="glass-tint-"]:hover { transform: translateY(-1px); }
+  /* Slightly tighter card padding so titles don't wrap awkwardly */
+  .glass.rounded-3xl { border-radius: 1.25rem; }
+}
+
+/* Tablet: keep glow intensity balanced */
+@media (min-width: 641px) and (max-width: 1024px) {
+  [class*="glass-tint-"] { --glow-far: 0.40; }
+}
+
+/* Touch devices: disable hover lift to avoid sticky-hover artifacts */
+@media (hover: none) {
+  [class*="glass-tint-"]:hover { transform: none; box-shadow: none; }
+}
+
