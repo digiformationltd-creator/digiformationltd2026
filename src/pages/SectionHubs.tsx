@@ -59,7 +59,7 @@ const SectionHub = ({ title, eyebrow, description, items, seo }: HubProps) => {
         <div className="container mx-auto px-4">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {items.map((item) => (
-              <Link key={item.path} to={item.path} className="glass glass-tint-sky rounded-2xl p-7 hover:-translate-y-1 hover:shadow-elegant transition-all duration-300 group block">
+              <Link key={item.path} to={item.path} className={`glass ${glassTintFor(inferGlassCategory(`${eyebrow} ${item.name} ${item.path}`))} rounded-2xl p-7 hover:-translate-y-1 hover:shadow-elegant transition-all duration-300 group block`}>
                 <h2 className="font-display text-2xl font-semibold mb-3 group-hover:text-gradient transition">{item.name}</h2>
                 <p className="text-sm opacity-90">Professional {item.name.toLowerCase()} — fully managed.</p>
                 <div className="mt-5 text-[11px] uppercase tracking-[0.14em]">Explore →</div>
