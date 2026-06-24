@@ -4,6 +4,7 @@ import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { useSeo, type Crumb } from "@/lib/seo";
 import { checkoutLinkForSlug, findServiceBySlug } from "@/data/serviceCatalog";
+import { glassTintFor, inferGlassCategory } from "@/lib/glassCategory";
 
 type ServicePageProps = {
   eyebrow: string;
