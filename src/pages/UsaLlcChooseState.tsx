@@ -171,7 +171,7 @@ const UsaLlcChooseState = () => {
               <Loader2 className="w-6 h-6 animate-spin" />
             </div>
           ) : (
-            <div className="glass rounded-3xl p-6 md:p-8 border border-border/50 shadow-elegant">
+            <div className="glass glass-tint-green rounded-3xl p-6 md:p-8 border border-border/50 shadow-elegant">
               <label className="block text-xs uppercase tracking-[0.18em] font-semibold opacity-80 mb-3">
                 Select your state
               </label>

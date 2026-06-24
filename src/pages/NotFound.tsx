@@ -68,7 +68,7 @@ const NotFound = () => {
               </Button>
             </div>
 
-            <div className="glass rounded-2xl p-6 md:p-8 text-left">
+            <div className="glass glass-tint-red rounded-2xl p-6 md:p-8 text-left">
               <div className="flex items-center gap-2 mb-4 justify-center">
                 <Search className="w-4 h-4 text-primary" />
                 <span className="text-xs uppercase tracking-[0.18em] font-semibold">Popular Pages</span>

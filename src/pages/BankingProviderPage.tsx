@@ -81,7 +81,7 @@ const BankingProviderPage = () => {
                     Apply Now <ArrowRight className="w-4 h-4" />
                   </Link>
                 </Button>
-                <div className="glass rounded-full px-5 py-2 text-sm flex items-center gap-2">
+                <div className="glass glass-tint-purple rounded-full px-5 py-2 text-sm flex items-center gap-2">
                   <Wallet className="w-4 h-4" />
                   Setup fee: <span className="font-bold text-gradient">{provider.setupPrice}</span>
                 </div>
@@ -109,7 +109,7 @@ const BankingProviderPage = () => {
           <p className="opacity-80 mb-10 max-w-2xl">Please prepare the following documents and details before starting your {provider.name} application. This helps us complete your setup quickly and without delays.</p>
           <div className="grid sm:grid-cols-2 gap-4">
             {provider.requirements.map((r, i) => (
-              <div key={r} className="glass rounded-xl p-5 flex gap-4 items-start">
+              <div key={r} className="glass glass-tint-purple rounded-xl p-5 flex gap-4 items-start">
                 <div className="w-7 h-7 rounded-full bg-gradient-brand grid place-items-center text-xs font-bold flex-shrink-0">{i + 1}</div>
                 <span className="font-medium text-sm leading-relaxed">{r}</span>
               </div>
@@ -133,7 +133,7 @@ const BankingProviderPage = () => {
           <h2 className="text-3xl font-bold mb-8">Other Payment Providers</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {bankingProviders.filter((p) => p.slug !== provider.slug).slice(0, 8).map((p) => (
-              <Link key={p.slug} to={`/banks-payment-solutions/${p.slug}`} className="glass rounded-2xl p-6 hover:-translate-y-1 hover:shadow-elegant transition-all group">
+              <Link key={p.slug} to={`/banks-payment-solutions/${p.slug}`} className="glass glass-tint-purple rounded-2xl p-6 hover:-translate-y-1 hover:shadow-elegant transition-all group">
                 <h3 className="font-semibold text-lg group-hover:text-gradient">{p.name}</h3>
                 <div className="text-xs opacity-70 mt-1">{p.setupPrice} setup</div>
                 <div className="mt-3 text-[11px] uppercase tracking-[0.14em]">Explore →</div>

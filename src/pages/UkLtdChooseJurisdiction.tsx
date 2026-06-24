@@ -179,7 +179,7 @@ const UkLtdChooseJurisdiction = () => {
       {/* Picker */}
       <section className="py-10 md:py-14 border-t border-border/60">
         <div className="container mx-auto px-4 max-w-3xl">
-          <div className="glass rounded-3xl p-6 md:p-8 border border-border/50 shadow-elegant">
+          <div className="glass glass-tint-green rounded-3xl p-6 md:p-8 border border-border/50 shadow-elegant">
             <label className="block text-xs uppercase tracking-[0.18em] font-semibold opacity-80 mb-3">
               Select your jurisdiction
             </label>

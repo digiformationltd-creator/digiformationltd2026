@@ -251,7 +251,7 @@ const UKLtdFormation = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {trustSignals.map(({ icon: Icon, label }) => (
-              <div key={label} className="glass rounded-xl p-5 flex flex-col items-center text-center gap-2">
+              <div key={label} className="glass glass-tint-green rounded-xl p-5 flex flex-col items-center text-center gap-2">
                 <Icon className="w-6 h-6 text-primary" />
                 <p className="text-xs md:text-sm opacity-90 leading-tight">{label}</p>
               </div>
@@ -275,7 +275,7 @@ const UKLtdFormation = () => {
                 A fully managed service that takes you from idea to incorporated company — without the paperwork headache.
               </p>
             </div>
-            <div className="glass rounded-2xl p-8 md:p-10">
+            <div className="glass glass-tint-green rounded-2xl p-8 md:p-10">
               <div className="space-y-4">
                 {whatYouGet.map((item) => (
                   <div key={item} className="flex items-start gap-3">

@@ -84,7 +84,7 @@ const DigiTestimonials = () => {
             >
               {testimonials.map((t) => (
                 <div key={t.name} className="w-full flex-shrink-0 px-2">
-                  <article className="glass rounded-2xl p-8 md:p-10 text-center">
+                  <article className="glass glass-tint-sky rounded-2xl p-8 md:p-10 text-center">
                     <Quote className="w-8 h-8 mx-auto mb-5 opacity-60" />
                     <p className="text-base md:text-lg leading-relaxed mb-6 italic">
                       "{t.quote}"

@@ -211,7 +211,7 @@ const Auth = () => {
             </div>
           </div>
 
-          <div className="glass rounded-2xl p-5 sm:p-6 shadow-elegant">
+          <div className="glass glass-tint-sky rounded-2xl p-5 sm:p-6 shadow-elegant">
             <div className="flex flex-col items-center mb-4">
               <UserCircle2 className="w-8 h-8 mb-1 opacity-80" />
               <h1 className="text-lg font-semibold">Client Dashboard</h1>

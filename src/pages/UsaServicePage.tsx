@@ -107,11 +107,11 @@ const UsaServicePage = () => {
                 <Button variant="hero" size="lg" className="rounded-full" onClick={() => scrollTo("apply")}>
                   Apply Now <ArrowRight className="w-4 h-4" />
                 </Button>
-                <div className="glass rounded-full px-5 py-2 text-sm flex items-center gap-2">
+                <div className="glass glass-tint-green rounded-full px-5 py-2 text-sm flex items-center gap-2">
                   <Wallet className="w-4 h-4" />
                   Service fee: <span className="font-bold text-gradient">${page.price} {page.currency}</span>
                 </div>
-                <div className="glass rounded-full px-5 py-2 text-sm">
+                <div className="glass glass-tint-green rounded-full px-5 py-2 text-sm">
                   Turnaround: <span className="font-semibold">{page.turnaround}</span>
                 </div>
               </div>
@@ -131,7 +131,7 @@ const UsaServicePage = () => {
           <h2 className="text-4xl font-bold mb-10">What's included</h2>
           <div className="grid sm:grid-cols-2 gap-5">
             {page.features.map((f) => (
-              <div key={f} className="glass rounded-2xl p-6 flex gap-4 hover:-translate-y-1 transition-transform">
+              <div key={f} className="glass glass-tint-green rounded-2xl p-6 flex gap-4 hover:-translate-y-1 transition-transform">
                 <CheckCircle2 className="w-5 h-5 mt-1 text-primary flex-shrink-0" />
                 <span className="font-medium">{f}</span>
               </div>
@@ -147,7 +147,7 @@ const UsaServicePage = () => {
           <p className="opacity-80 mb-10 max-w-2xl">Please prepare the following before starting your {page.title.replace(" Service", "")} application. This helps us complete your filing quickly and without delays.</p>
           <div className="grid sm:grid-cols-2 gap-4">
             {page.requirements.map((r, i) => (
-              <div key={r} className="glass rounded-xl p-5 flex gap-4 items-start">
+              <div key={r} className="glass glass-tint-green rounded-xl p-5 flex gap-4 items-start">
                 <div className="w-7 h-7 rounded-full bg-gradient-brand grid place-items-center text-xs font-bold flex-shrink-0">{i + 1}</div>
                 <span className="font-medium text-sm leading-relaxed">{r}</span>
               </div>
@@ -162,7 +162,7 @@ const UsaServicePage = () => {
           <h2 className="text-4xl font-bold mb-10">Simple 4-step process</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {page.process.map((p, i) => (
-              <div key={p} className="glass rounded-2xl p-6">
+              <div key={p} className="glass glass-tint-green rounded-2xl p-6">
                 <div className="w-9 h-9 rounded-full bg-gradient-brand grid place-items-center font-bold mb-4">{i + 1}</div>
                 <p className="text-sm leading-relaxed font-medium">{p}</p>
               </div>
@@ -187,7 +187,7 @@ const UsaServicePage = () => {
           <h2 className="text-3xl font-bold mb-8">Other USA Services</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {usaServicePages.filter((p) => p.slug !== page.slug).map((p) => (
-              <Link key={p.slug} to={`/usa-services/${p.slug}`} className="glass rounded-2xl p-6 hover:-translate-y-1 hover:shadow-elegant transition-all group">
+              <Link key={p.slug} to={`/usa-services/${p.slug}`} className="glass glass-tint-green rounded-2xl p-6 hover:-translate-y-1 hover:shadow-elegant transition-all group">
                 <h3 className="font-semibold text-lg group-hover:text-gradient">{p.title.replace(" Service", "")}</h3>
                 <div className="mt-3 text-[11px] uppercase tracking-[0.14em]">Explore →</div>
               </Link>

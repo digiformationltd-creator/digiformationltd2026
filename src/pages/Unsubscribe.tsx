@@ -63,7 +63,7 @@ const Unsubscribe = () => {
   return (
     <Layout>
       <section className="container mx-auto max-w-xl px-4 py-20 text-center">
-        <div className="glass rounded-3xl p-10">
+        <div className="glass glass-tint-sky rounded-3xl p-10">
           {state === "validating" && (
             <>
               <Loader2 className="w-10 h-10 mx-auto mb-4 animate-spin opacity-70" />

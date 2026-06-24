@@ -114,7 +114,7 @@ const BlogPost = () => {
               </section>
             ))
           ) : (
-            <div className="glass rounded-2xl p-10 text-center">
+            <div className="glass glass-tint-pink rounded-2xl p-10 text-center">
               <h2 className="font-display text-2xl font-bold mb-3">Full article coming soon</h2>
               <p className="opacity-80">
                 We're publishing the in-depth version of this guide shortly. In the meantime,
@@ -126,7 +126,7 @@ const BlogPost = () => {
             </div>
           )}
 
-          <section className="glass rounded-2xl p-8 mt-6">
+          <section className="glass glass-tint-pink rounded-2xl p-8 mt-6">
             <h3 className="font-display text-xl font-semibold mb-4">Helpful Digiformation services</h3>
             <ul className="space-y-2 text-sm">
               <li><Link to="/uk-services/uk-ltd-formation" className="text-primary hover:underline">→ UK LTD Formation</Link></li>
@@ -144,7 +144,7 @@ const BlogPost = () => {
             <h2 className="text-2xl md:text-3xl font-bold mb-8">Related articles</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {related.map((p) => (
-                <Link key={p.slug} to={`/blog/${p.slug}`} className="glass rounded-2xl p-6 hover:-translate-y-1 transition-all">
+                <Link key={p.slug} to={`/blog/${p.slug}`} className="glass glass-tint-pink rounded-2xl p-6 hover:-translate-y-1 transition-all">
                   <div className="text-[10px] uppercase tracking-[0.14em] opacity-80 mb-2">{p.category}</div>
                   <h3 className="font-semibold text-base leading-snug">{p.title}</h3>
                 </Link>
