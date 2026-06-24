@@ -569,3 +569,51 @@ body p, body span, body li, body label, body small, body div {
     transition: none !important;
   }
 }
+
+/* ────────────────────────────────────────────────────────────
+   Final polish pass — unified motion + mobile glow protection
+   ──────────────────────────────────────────────────────────── */
+
+/* Prevent horizontal scroll from soft tinted glows on small screens */
+html, body { overflow-x: hidden; }
+
+/* All interactive surfaces use the same easing for a calm, premium feel */
+a, button, [role="button"], .glass, [class*="glass-tint-"] {
+  transition-timing-function: var(--transition-smooth);
+}
+
+/* Standardize CTA buttons: identical radius, hover lift, transition */
+.btn-cta,
+button[data-cta="primary"],
+a[data-cta="primary"] {
+  border-radius: 9999px;
+  transition: transform 0.25s var(--transition-smooth),
+              box-shadow 0.35s var(--transition-smooth),
+              background 0.35s var(--transition-smooth),
+              border-color 0.35s var(--transition-smooth);
+}
+.btn-cta:hover,
+button[data-cta="primary"]:hover,
+a[data-cta="primary"]:hover { transform: translateY(-1px); }
+
+/* Mobile polish: relax glow + lift on small screens to avoid overflow / crowding */
+@media (max-width: 640px) {
+  [class*="glass-tint-"] {
+    --glow-near: 0.28;
+    --glow-far: 0.32;
+  }
+  [class*="glass-tint-"]:hover { transform: translateY(-1px); }
+  /* Slightly tighter card padding so titles don't wrap awkwardly */
+  .glass.rounded-3xl { border-radius: 1.25rem; }
+}
+
+/* Tablet: keep glow intensity balanced */
+@media (min-width: 641px) and (max-width: 1024px) {
+  [class*="glass-tint-"] { --glow-far: 0.40; }
+}
+
+/* Touch devices: disable hover lift to avoid sticky-hover artifacts */
+@media (hover: none) {
+  [class*="glass-tint-"]:hover { transform: none; box-shadow: none; }
+}
+
