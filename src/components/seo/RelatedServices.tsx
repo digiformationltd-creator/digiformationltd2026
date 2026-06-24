@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import ServiceIcon, { ServiceIconName } from "@/components/icons/ServiceIcons";
+import { glassTintFor, inferGlassCategory } from "@/lib/glassCategory";
 
 export type RelatedItem = {
   name: string;
