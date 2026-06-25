@@ -186,6 +186,38 @@ Deno.serve(async (req) => {
     )
   }
 
+  // Anti-phishing: anonymous callers may invoke ANON_ALLOWED_TEMPLATES, but
+  // some of those templates render user-supplied URL fields as <a href>.
+  // Restrict those fields to the site's own origins so attackers cannot send
+  // Digiformation-branded mail with attacker-controlled links.
+  if (!isAuthenticated && !isServiceRole) {
+    const ALLOWED_URL_HOSTS = new Set([
+      'digiformation.uk',
+      'www.digiformation.uk',
+      'formflow-digital-hub.lovable.app',
+    ])
+    const URL_FIELDS = ['loginUrl', 'invoiceUrl', 'liveSelfieLink', 'invoice_url', 'login_url']
+    const isSafeUrl = (raw: unknown): boolean => {
+      if (raw == null || raw === '') return true
+      if (typeof raw !== 'string') return false
+      try {
+        const u = new URL(raw)
+        if (u.protocol !== 'https:') return false
+        return ALLOWED_URL_HOSTS.has(u.hostname.toLowerCase())
+      } catch { return false }
+    }
+    for (const field of URL_FIELDS) {
+      if (field in templateData && !isSafeUrl(templateData[field])) {
+        console.warn('Blocked anon template URL injection', { templateName, field })
+        return new Response(
+          JSON.stringify({ error: `Invalid ${field}: must be a digiformation.uk URL` }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        )
+      }
+    }
+  }
+
+
   // Rate limiting (ad-hoc — backend has no shared limiter primitive).
   // Service role bypasses (cron, edge-to-edge). Admins get a higher ceiling.
   // Anonymous callers are throttled per source IP. A global cap protects cost.
