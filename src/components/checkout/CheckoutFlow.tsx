@@ -1515,11 +1515,12 @@ const CheckoutFlow = ({
                   </div>
                 </div>
 
-                <SourceHeardPicker
+                <SourceHeardSelect
                   value={declaredSource}
                   onChange={(v) => { setDeclaredSource(v); setSourceError(false); }}
                   error={sourceError}
                 />
+
 
                 <p className="text-xs opacity-70">
                   By placing the order you agree to our terms. Our team will contact you as soon as possible with secure
