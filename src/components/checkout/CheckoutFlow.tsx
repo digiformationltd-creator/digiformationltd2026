@@ -26,7 +26,7 @@ import { buildOrderRef } from "@/lib/orderRef";
 import { COUNTRIES } from "@/lib/countries";
 import { normalizePhoneToE164 } from "@/lib/phone";
 import { recordLeadAttribution, type DeclaredSource } from "@/lib/attribution";
-import SourceHeardPicker from "@/components/attribution/SourceHeardPicker";
+import SourceHeardSelect from "@/components/attribution/SourceHeardSelect";
 import { SearchableCountrySelect } from "./SearchableCountrySelect";
 import exampleHoldingSelfie from "@/assets/example-holding-selfie.jpg";
 import exampleIdFront from "@/assets/example-id-front.jpg";
@@ -1515,11 +1515,12 @@ const CheckoutFlow = ({
                   </div>
                 </div>
 
-                <SourceHeardPicker
+                <SourceHeardSelect
                   value={declaredSource}
                   onChange={(v) => { setDeclaredSource(v); setSourceError(false); }}
                   error={sourceError}
                 />
+
 
                 <p className="text-xs opacity-70">
                   By placing the order you agree to our terms. Our team will contact you as soon as possible with secure
