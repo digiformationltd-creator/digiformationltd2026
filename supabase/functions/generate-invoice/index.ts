@@ -608,7 +608,32 @@ Deno.serve(async (req) => {
       if (u) user = { id: u.id, email: u.email ?? undefined }
     }
 
+    // Capture client IP for audit + rate limiting (guest checkouts).
+    const clientIp =
+      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      req.headers.get('cf-connecting-ip') ||
+      null
+
+    // Per-IP rate limit for unauthenticated callers to prevent order/invoice flooding.
+    if (!user && clientIp) {
+      const tenMinAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString()
+      const { count } = await admin
+        .from('client_orders')
+        .select('id', { count: 'exact', head: true })
+        .eq('client_ip', clientIp)
+        .gte('created_at', tenMinAgo)
+      if ((count ?? 0) >= 5) {
+        console.warn('[generate-invoice] per-IP rate limit hit', { clientIp, count })
+        return new Response(
+          JSON.stringify({ error: 'Too many orders from this address. Please try again later.' }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '600' } },
+        )
+      }
+    }
+
+
     const body = (await req.json()) as Body
+
     if (!body?.service || typeof body.amount_gbp !== 'number' || !body.customer?.email) {
       return new Response(JSON.stringify({ error: 'Invalid payload' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },

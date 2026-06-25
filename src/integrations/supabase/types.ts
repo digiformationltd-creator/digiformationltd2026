@@ -323,6 +323,7 @@ export type Database = {
           amount_mismatch: boolean
           attribution_id: string | null
           checkout_request_id: string | null
+          client_ip: string | null
           country_code: string | null
           created_at: string
           customer_email: string | null
@@ -350,6 +351,7 @@ export type Database = {
           amount_mismatch?: boolean
           attribution_id?: string | null
           checkout_request_id?: string | null
+          client_ip?: string | null
           country_code?: string | null
           created_at?: string
           customer_email?: string | null
@@ -377,6 +379,7 @@ export type Database = {
           amount_mismatch?: boolean
           attribution_id?: string | null
           checkout_request_id?: string | null
+          client_ip?: string | null
           country_code?: string | null
           created_at?: string
           customer_email?: string | null
