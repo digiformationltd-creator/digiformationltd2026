@@ -16,15 +16,16 @@ import {
 /*  Overview KPIs                                                      */
 /* ------------------------------------------------------------------ */
 
-type Kpi = { label: string; value: string; sub: string; icon: any; tint: string };
+type Trend = "up" | "down" | "flat";
+type Kpi = { label: string; value: string; sub: string; icon: any; tint: string; trend: Trend; delta?: string };
 
 const OVERVIEW: Kpi[] = [
-  { label: "Active Automations", value: "12", sub: "3 paused", icon: Zap, tint: "lime" },
-  { label: "Pending Reminders",  value: "7",  sub: "2 overdue", icon: Bell, tint: "amber" },
-  { label: "Running Jobs",       value: "1",  sub: "queue healthy", icon: Activity, tint: "cyan" },
-  { label: "Scheduled Jobs",     value: "9",  sub: "next in 14m", icon: Clock, tint: "blue" },
-  { label: "AI Agents",          value: "6",  sub: "0 active · 6 planned", icon: Bot, tint: "purple" },
-  { label: "System Health",      value: "Healthy", sub: "All systems nominal", icon: ShieldCheck, tint: "green" },
+  { label: "Active Automations", value: "12",      sub: "3 paused",            icon: Zap,         tint: "lime",   trend: "up",   delta: "+2 this week" },
+  { label: "Active AI Agents",   value: "0 / 6",   sub: "6 planned",           icon: Bot,         tint: "purple", trend: "flat", delta: "Phase 2" },
+  { label: "Pending Reminders",  value: "7",       sub: "2 overdue",           icon: Bell,        tint: "amber",  trend: "up",   delta: "+3 today" },
+  { label: "Running Jobs",       value: "1",       sub: "queue healthy",       icon: Activity,    tint: "cyan",   trend: "flat", delta: "Stable" },
+  { label: "Failed Jobs (24h)",  value: "0",       sub: "no incidents",        icon: AlertTriangle, tint: "red",  trend: "down", delta: "−1 vs yesterday" },
+  { label: "System Health",      value: "Healthy", sub: "All systems nominal", icon: ShieldCheck, tint: "green",  trend: "flat", delta: "100% uptime" },
 ];
 
 const TINT: Record<string, string> = {
