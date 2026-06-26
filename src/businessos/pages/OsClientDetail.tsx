@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import OsOrderDrawer from "../components/OsOrderDrawer";
 import OsInvoiceDrawer from "../components/OsInvoiceDrawer";
+import OsEmailHistoryPanel from "../components/OsEmailHistoryPanel";
 
 type TabKey =
   | "company" | "addresses" | "orders" | "invoices" | "documents"
