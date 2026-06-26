@@ -6,13 +6,12 @@ type EmailRow = {
   id: string;
   template_name: string;
   recipient_email: string;
-  subject: string | null;
   status: string | null;
-  sent_at: string | null;
   created_at: string;
   trigger_source: string | null;
   message_id: string | null;
   error_message: string | null;
+  metadata: Record<string, any> | null;
 };
 
 type Scope =
