@@ -128,9 +128,19 @@ export default function OsAICommandCenter() {
   const [editingText, setEditingText] = useState("");
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
+  const [leftTab, setLeftTab] = useState<"history" | "library">("history");
+  const [paletteOpen, setPaletteOpen] = useState(false);
   const machine = useCommandMachine();
   const { state: ccState, action: pendingAction, isBusy: busy, canApprove, canCancel } = machine;
   const taRef = useRef<HTMLTextAreaElement>(null);
+
+  useCommandPaletteHotkey(useCallback(() => setPaletteOpen((v) => !v), []));
+
+  const insertPrompt = useCallback((prompt: string) => {
+    setInput(prompt);
+    // give the textarea a moment to receive the value, then focus
+    setTimeout(() => taRef.current?.focus(), 0);
+  }, []);
 
   // Phase 3 — Execution Safety Layer
   const UNDO_SECONDS = 10;
