@@ -1149,6 +1149,33 @@ export type Database = {
         }
         Relationships: []
       }
+      popup_dismissals: {
+        Row: {
+          action: string
+          created_at: string
+          declared_source: string | null
+          id: string
+          popup_key: string
+          visitor_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          declared_source?: string | null
+          id?: string
+          popup_key?: string
+          visitor_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          declared_source?: string | null
+          id?: string
+          popup_key?: string
+          visitor_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_initials: string | null
@@ -1960,6 +1987,7 @@ export type Database = {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
       }
+      delete_visitor_data: { Args: { _visitor_id: string }; Returns: Json }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
@@ -1998,6 +2026,16 @@ export type Database = {
       upsert_visitor_attribution: {
         Args: { payload: Json }
         Returns: undefined
+      }
+      upsert_visitor_declared_source: {
+        Args: {
+          _action?: string
+          _category?: string
+          _source: string
+          _source_label?: string
+          _visitor_id: string
+        }
+        Returns: Json
       }
       upsert_whatsapp_contact: {
         Args: {
