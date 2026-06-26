@@ -163,38 +163,6 @@ export default function OsInvoices() {
     }
   };
 
-  const sendInvoiceEmail = async (i: InvoiceRow) => {
-    if (!i.bill_to_email) { toast.error("Invoice has no recipient email."); return; }
-    setBusyId(i.id);
-    try {
-      const { error } = await supabase.functions.invoke("send-transactional-email", {
-        body: {
-          templateName: "invoice-issued",
-          recipientEmail: i.bill_to_email,
-          idempotencyKey: `invoice-issued-${i.invoice_number}`,
-          templateData: {
-            customerName: i.bill_to_name || "",
-            invoiceNumber: i.invoice_number,
-            amount: fmtMoney(Number(i.total_gbp), i.currency),
-            service: i.service_description,
-            pdfUrl: i.pdf_url || undefined,
-          },
-        },
-      });
-      if (error) throw error;
-      // Move to Sent if it was Unpaid
-      if (i.status === "Unpaid") {
-        await supabase.from("invoices").update({ status: "Sent" }).eq("id", i.id);
-      }
-      toast.success(`Invoice ${i.invoice_number} emailed to ${i.bill_to_email}`);
-      load();
-    } catch (e: any) {
-      toast.error(e?.message || "Failed to send invoice email");
-    } finally {
-      setBusyId(null);
-    }
-  };
-
   const togglePaid = async (i: InvoiceRow) => {
     setBusyId(i.id);
     try {
@@ -202,21 +170,6 @@ export default function OsInvoices() {
       const newStatus = goingPaid ? "Paid" : "Unpaid";
       const { error } = await supabase.from("invoices").update({ status: newStatus }).eq("id", i.id);
       if (error) throw error;
-      if (goingPaid && i.bill_to_email) {
-        supabase.functions.invoke("send-transactional-email", {
-          body: {
-            templateName: "invoice-paid",
-            recipientEmail: i.bill_to_email,
-            idempotencyKey: `invoice-paid-${i.id}`,
-            templateData: {
-              customerName: i.bill_to_name || "",
-              invoiceNumber: i.invoice_number,
-              amount: fmtMoney(Number(i.total_gbp), i.currency),
-              service: i.service_description,
-            },
-          },
-        }).catch(console.error);
-      }
       toast.success(`Marked ${i.invoice_number} as ${newStatus}`);
       load();
     } catch (e: any) {
@@ -361,9 +314,6 @@ export default function OsInvoices() {
                           <IconBtn title="Download PDF" disabled={busy} onClick={() => downloadPdf(i)}>
                             <Download className="w-3.5 h-3.5" />
                           </IconBtn>
-                          <IconBtn title="Send invoice email" disabled={busy || !i.bill_to_email} onClick={() => sendInvoiceEmail(i)}>
-                            {busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Mail className="w-3.5 h-3.5" />}
-                          </IconBtn>
                           <IconBtn
                             title={i.status === "Paid" ? "Mark unpaid" : "Mark paid"}
                             disabled={busy}
@@ -423,9 +373,8 @@ export default function OsInvoices() {
                     )}
                   </div>
                 </div>
-                <div className="grid grid-cols-4 gap-1.5 mt-3 pt-3 border-t border-white/5">
+                <div className="grid grid-cols-3 gap-1.5 mt-3 pt-3 border-t border-white/5">
                   <MobileAction icon={Download} label="PDF"   disabled={busy}                            onClick={() => downloadPdf(i)} />
-                  <MobileAction icon={Mail}     label="Email" disabled={busy || !i.bill_to_email}        onClick={() => sendInvoiceEmail(i)} loading={busy} />
                   <MobileAction
                     icon={i.status === "Paid" ? RotateCcw : CheckCircle2}
                     label={i.status === "Paid" ? "Unpaid" : "Paid"}

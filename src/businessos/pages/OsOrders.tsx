@@ -167,13 +167,13 @@ export default function OsOrders() {
   };
 
   /**
-   * Generate an invoice row for an order if none exists, then optionally
-   * email it. Mirrors Legacy Admin's addOrder→invoice insert pattern using
-   * the same invoice numbering helper. No PDF generation here (that's the
-   * checkout/edge-function flow); the row is created as Unpaid so the
-   * client can see it in their portal and Legacy Admin can attach a PDF.
+   * Generate an invoice row for an order if none exists.
+   * Mirrors Legacy Admin's addOrder→invoice insert pattern using the same
+   * invoice numbering helper. No PDF generation here (that's the
+   * checkout/edge-function flow). No email is sent — clients already received
+   * the invoice download link in the order-confirmation email at checkout.
    */
-  const generateInvoiceForOrder = async (o: OrderRow, alsoSend: boolean) => {
+  const generateInvoiceForOrder = async (o: OrderRow) => {
     setPendingId(o.id);
     try {
       // Idempotency: re-use existing invoice if one is already linked
@@ -211,32 +211,8 @@ export default function OsOrders() {
         if (insErr) throw insErr;
         invoice = inserted;
         toast.success(`Invoice ${invoice!.invoice_number} created`);
-      }
-
-      if (alsoSend) {
-        const to = invoice!.bill_to_email || o.customer_email;
-        if (!to) {
-          toast.error("Invoice created but no client email on file");
-        } else {
-          const { error } = await supabase.functions.invoke("send-transactional-email", {
-            body: {
-              templateName: "invoice-issued",
-              recipientEmail: to,
-              idempotencyKey: `invoice-issued-${invoice!.invoice_number}`,
-              templateData: {
-                customerName: invoice!.bill_to_name || o.customer_name || "",
-                invoiceNumber: invoice!.invoice_number,
-                amount: fmtGBP(Number(invoice!.total_gbp)),
-                service: invoice!.service_description,
-              },
-            },
-          });
-          if (error) throw error;
-          if (invoice!.status === "Unpaid") {
-            await supabase.from("invoices").update({ status: "Sent" }).eq("id", invoice!.id);
-          }
-          toast.success(`Invoice ${invoice!.invoice_number} emailed to ${to}`);
-        }
+      } else {
+        toast.info(`Invoice ${invoice.invoice_number} already exists`);
       }
       await load();
     } catch (e: any) {
@@ -577,22 +553,13 @@ export default function OsOrders() {
                         {!o.invoice_number ? (
                           <button
                             disabled={pendingId === o.id}
-                            onClick={() => generateInvoiceForOrder(o, true)}
+                            onClick={() => generateInvoiceForOrder(o)}
                             className="px-2 py-1 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 text-[11px] text-purple-200 ring-1 ring-purple-400/30 inline-flex items-center gap-1 disabled:opacity-50"
-                            title="Generate invoice + email client"
+                            title="Generate invoice row for this order"
                           >
                             {pendingId === o.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <FilePlus className="w-3 h-3" />} Generate
                           </button>
-                        ) : (
-                          <button
-                            disabled={pendingId === o.id}
-                            onClick={() => generateInvoiceForOrder(o, true)}
-                            className="px-2 py-1 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 text-[11px] text-purple-200 ring-1 ring-purple-400/30 inline-flex items-center gap-1 disabled:opacity-50"
-                            title="Resend invoice to client"
-                          >
-                            {pendingId === o.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />} Send
-                          </button>
-                        )}
+                        ) : null}
                         <button
                           onClick={() => openInvoiceForOrder(o)}
                           className="px-2 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-[11px] text-white/70 inline-flex items-center gap-1"
@@ -677,14 +644,16 @@ export default function OsOrders() {
                     {pendingId === o.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle2 className="w-3 h-3" />} Complete
                   </button>
                 )}
-                <button
-                  disabled={pendingId === o.id}
-                  onClick={() => generateInvoiceForOrder(o, true)}
-                  className="flex-1 min-w-[110px] text-[11px] font-semibold rounded-lg py-2 text-center bg-purple-500/15 ring-1 ring-purple-400/30 text-purple-200 inline-flex items-center justify-center gap-1 disabled:opacity-50"
-                >
-                  {pendingId === o.id ? <Loader2 className="w-3 h-3 animate-spin" /> : (o.invoice_number ? <Send className="w-3 h-3" /> : <FilePlus className="w-3 h-3" />)}
-                  {o.invoice_number ? `Send ${o.invoice_number}` : "Generate Invoice"}
-                </button>
+                {!o.invoice_number && (
+                  <button
+                    disabled={pendingId === o.id}
+                    onClick={() => generateInvoiceForOrder(o)}
+                    className="flex-1 min-w-[110px] text-[11px] font-semibold rounded-lg py-2 text-center bg-purple-500/15 ring-1 ring-purple-400/30 text-purple-200 inline-flex items-center justify-center gap-1 disabled:opacity-50"
+                  >
+                    {pendingId === o.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <FilePlus className="w-3 h-3" />}
+                    Generate Invoice
+                  </button>
+                )}
                 <button
                   onClick={() => openOrder(o)}
                   className="flex-1 min-w-[110px] text-[11px] font-medium rounded-lg py-2 text-center bg-white/[0.04] hover:bg-white/[0.08] text-white/70 inline-flex items-center justify-center gap-1"
