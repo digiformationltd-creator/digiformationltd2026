@@ -829,6 +829,9 @@ export default function OsAICommandCenter() {
         </div>
       </div>
 
+      {/* ⌘K Command Palette (Phase 5) */}
+      <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} onPick={insertPrompt} />
+
     </div>
   );
 }
