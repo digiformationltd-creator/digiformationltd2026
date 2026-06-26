@@ -1,8 +1,8 @@
-// Automation Dashboard — AI-first refactor.
-// Simplified surface: Active Reminders, Running Jobs, Recent Activity,
+// Automation Dashboard — AI-first command surface.
+// Simplified overview: Active Reminders, Running Jobs, Recent Activity,
 // System Health, lightweight Agent Status widget, and quick links to the
-// four kept sub-modules (AI Workspace, Email Marketing, Scheduled Jobs,
-// Business Automations). UI only. No backend changes.
+// four kept sub-modules (AI Command Center, Email Marketing, Scheduled
+// Jobs, Business Automations). UI only. No backend changes.
 
 import { NavLink } from "react-router-dom";
 import {
