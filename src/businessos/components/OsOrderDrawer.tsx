@@ -178,6 +178,9 @@ export default function OsOrderDrawer({
         templateName: template,
         recipientEmail: order.customer_email,
         idempotencyKey: `${template}-${order.id}-${Date.now()}`,
+        orderId: order.id,
+        clientUserId: order.user_id ?? undefined,
+        triggerSource: "admin",
         templateData: {
           customerName: order.customer_name || "",
           orderRef: order.order_ref,
