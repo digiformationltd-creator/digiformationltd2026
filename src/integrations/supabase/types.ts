@@ -2029,6 +2029,32 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      growth_overview: {
+        Args: { _since?: string; _until?: string }
+        Returns: Json
+      }
+      growth_records_by_source: {
+        Args: {
+          _category?: string
+          _since: string
+          _source?: string
+          _until: string
+        }
+        Returns: {
+          amount_gbp: number
+          category: string
+          converted_at: string
+          email: string
+          entity_id: string
+          entity_type: string
+          inquiry_id: string
+          name: string
+          order_id: string
+          service: string
+          source: string
+          status: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
