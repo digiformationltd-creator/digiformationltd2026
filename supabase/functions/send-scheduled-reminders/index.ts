@@ -251,6 +251,7 @@ Deno.serve(async (req) => {
           daysRemaining: days,
         },
         `addr-reminder-${a.id}-${a.expire_date}-s${stage.stage}`,
+        { clientUserId: a.user_id },
       )
       if (ok) {
         summary.sent++
