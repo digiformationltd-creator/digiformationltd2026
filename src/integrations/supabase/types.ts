@@ -572,7 +572,9 @@ export type Database = {
       command_actions: {
         Row: {
           admin_id: string | null
+          after_snapshot: Json | null
           approved_at: string | null
+          before_snapshot: Json | null
           created_at: string
           error: string | null
           executed_at: string | null
@@ -582,13 +584,19 @@ export type Database = {
           preview: Json | null
           prompt: string | null
           result: Json | null
+          risk_tier: string
+          rolled_back_at: string | null
+          rolled_back_by: string | null
+          state: string
           status: string
           target_id: string | null
           target_type: string | null
         }
         Insert: {
           admin_id?: string | null
+          after_snapshot?: Json | null
           approved_at?: string | null
+          before_snapshot?: Json | null
           created_at?: string
           error?: string | null
           executed_at?: string | null
@@ -598,13 +606,19 @@ export type Database = {
           preview?: Json | null
           prompt?: string | null
           result?: Json | null
+          risk_tier?: string
+          rolled_back_at?: string | null
+          rolled_back_by?: string | null
+          state?: string
           status?: string
           target_id?: string | null
           target_type?: string | null
         }
         Update: {
           admin_id?: string | null
+          after_snapshot?: Json | null
           approved_at?: string | null
+          before_snapshot?: Json | null
           created_at?: string
           error?: string | null
           executed_at?: string | null
@@ -614,6 +628,10 @@ export type Database = {
           preview?: Json | null
           prompt?: string | null
           result?: Json | null
+          risk_tier?: string
+          rolled_back_at?: string | null
+          rolled_back_by?: string | null
+          state?: string
           status?: string
           target_id?: string | null
           target_type?: string | null
@@ -2135,7 +2153,9 @@ export type Database = {
         Args: { _intent: string; _payload: Json; _prompt?: string }
         Returns: {
           admin_id: string | null
+          after_snapshot: Json | null
           approved_at: string | null
+          before_snapshot: Json | null
           created_at: string
           error: string | null
           executed_at: string | null
@@ -2145,6 +2165,10 @@ export type Database = {
           preview: Json | null
           prompt: string | null
           result: Json | null
+          risk_tier: string
+          rolled_back_at: string | null
+          rolled_back_by: string | null
+          state: string
           status: string
           target_id: string | null
           target_type: string | null
@@ -2160,7 +2184,9 @@ export type Database = {
         Args: { _id: string }
         Returns: {
           admin_id: string | null
+          after_snapshot: Json | null
           approved_at: string | null
+          before_snapshot: Json | null
           created_at: string
           error: string | null
           executed_at: string | null
@@ -2170,6 +2196,41 @@ export type Database = {
           preview: Json | null
           prompt: string | null
           result: Json | null
+          risk_tier: string
+          rolled_back_at: string | null
+          rolled_back_by: string | null
+          state: string
+          status: string
+          target_id: string | null
+          target_type: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "command_actions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      command_action_transition: {
+        Args: { _id: string; _to: string }
+        Returns: {
+          admin_id: string | null
+          after_snapshot: Json | null
+          approved_at: string | null
+          before_snapshot: Json | null
+          created_at: string
+          error: string | null
+          executed_at: string | null
+          id: string
+          intent: string
+          payload: Json | null
+          preview: Json | null
+          prompt: string | null
+          result: Json | null
+          risk_tier: string
+          rolled_back_at: string | null
+          rolled_back_by: string | null
+          state: string
           status: string
           target_id: string | null
           target_type: string | null
