@@ -703,10 +703,10 @@ function ActionBtn({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition disabled:opacity-40 disabled:cursor-not-allowed ${tint}`}
+      className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap shrink-0 ${tint}`}
     >
-      <Icon className="w-3.5 h-3.5" />
-      {label}
+      <Icon className="w-3.5 h-3.5 shrink-0" />
+      <span className="whitespace-nowrap">{label}</span>
     </button>
   );
 }
