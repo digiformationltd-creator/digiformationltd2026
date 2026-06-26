@@ -739,8 +739,6 @@ const EMAIL_TEMPLATES = [
   { name: "order-confirmation",               label: "Order confirmation" },
   { name: "order-in-progress",                label: "Order in progress" },
   { name: "order-completed",                  label: "Order completed" },
-  { name: "invoice-issued",                   label: "Invoice issued" },
-  { name: "invoice-paid",                     label: "Invoice paid receipt" },
   { name: "document-uploaded",                label: "Document uploaded" },
   { name: "address-renewal-reminder",         label: "Address renewal reminder" },
   { name: "confirmation-statement-reminder",  label: "Confirmation statement reminder" },

@@ -32,6 +32,6 @@ export const NAV: NavItem[] = [
   { label: "Compliance",      to: "/admin/compliance",      icon: CalendarClock,   glow: "amber" },
   { label: "Email Ops",       to: "/admin/email-ops",       icon: Inbox,           glow: "pink" },
   { label: "Automation",      to: "/admin/automation",      icon: Zap,             glow: "lime" },
-  { label: "Email Test",      to: "/admin/email-test",      icon: Mail,            glow: "cyan" },
+  
   { label: "Settings",        to: "/admin/settings",        icon: Settings,        glow: "blue" },
 ];

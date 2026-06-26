@@ -1,7 +1,7 @@
 // Native Business OS invoice drawer — keyed by invoice.id, guest-safe.
-// Reuses production tables (invoices, client_orders) and the
-// send-transactional-email edge function for invoice-issued / invoice-paid.
+// Reuses production tables (invoices, client_orders).
 // No schema changes, no new edge functions.
+// Invoice notifications are handled at checkout by the order-confirmation email.
 import { useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
@@ -120,46 +120,6 @@ export default function OsInvoiceDrawer({
     window.open(data.signedUrl, "_blank", "noopener,noreferrer");
   };
 
-  const resendIssued = async () => {
-    if (!invoice?.bill_to_email) { toast.error("No recipient email on invoice"); return; }
-    setBusy("issued");
-    // include a fresh signed URL if a PDF is stored
-    let signedUrl: string | undefined;
-    if (invoice.pdf_url && !invoice.pdf_url.startsWith("http")) {
-      const { data } = await supabase.storage.from("invoices").createSignedUrl(invoice.pdf_url, 60 * 60 * 24 * 7);
-      signedUrl = data?.signedUrl;
-    } else if (invoice.pdf_url) {
-      signedUrl = invoice.pdf_url;
-    }
-    const { error } = await supabase.functions.invoke("send-transactional-email", {
-      body: {
-        templateName: "invoice-issued",
-        recipientEmail: invoice.bill_to_email,
-        idempotencyKey: `invoice-issued:${invoice.invoice_number}-resend-${Date.now()}`,
-        invoiceId: invoice.id,
-        orderId: invoice.order_id ?? undefined,
-        clientUserId: invoice.user_id ?? undefined,
-        triggerSource: "admin",
-        templateData: {
-          customerName: invoice.bill_to_name || "",
-          invoiceNumber: invoice.invoice_number,
-          orderRef: order?.order_ref || "",
-          service: invoice.service_description,
-          amount: fmtMoney(Number(invoice.total_gbp), invoice.currency),
-          invoiceUrl: signedUrl,
-        },
-      },
-    });
-    setBusy(null);
-    if (error) toast.error(error.message);
-    else {
-      if (invoice.status === "Unpaid") await supabase.from("invoices").update({ status: "Sent" }).eq("id", invoice.id);
-      toast.success(`Invoice ${invoice.invoice_number} resent`);
-      load();
-      onChanged?.();
-    }
-  };
-
   const togglePaid = async () => {
     if (!invoice) return;
     setBusy("paid");
@@ -167,25 +127,6 @@ export default function OsInvoiceDrawer({
     const newStatus = goingPaid ? "Paid" : "Unpaid";
     const { error } = await supabase.from("invoices").update({ status: newStatus }).eq("id", invoice.id);
     if (error) { setBusy(null); toast.error(error.message); return; }
-    if (goingPaid && invoice.bill_to_email) {
-      supabase.functions.invoke("send-transactional-email", {
-        body: {
-          templateName: "invoice-paid",
-          recipientEmail: invoice.bill_to_email,
-          idempotencyKey: `invoice-paid-${invoice.id}`,
-          invoiceId: invoice.id,
-          orderId: invoice.order_id ?? undefined,
-          clientUserId: invoice.user_id ?? undefined,
-          triggerSource: "admin",
-          templateData: {
-            customerName: invoice.bill_to_name || "",
-            invoiceNumber: invoice.invoice_number,
-            amount: fmtMoney(Number(invoice.total_gbp), invoice.currency),
-            service: invoice.service_description,
-          },
-        },
-      }).catch(console.error);
-    }
     setBusy(null);
     toast.success(`Marked ${newStatus}`);
     load();
@@ -266,7 +207,7 @@ export default function OsInvoiceDrawer({
             {/* Actions */}
             <div className="os-glass p-4 space-y-3">
               <div className="text-[11px] uppercase tracking-widest text-white/50 font-semibold">Actions</div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <button
                   disabled={!invoice.pdf_url}
                   onClick={downloadPdf}
@@ -274,14 +215,6 @@ export default function OsInvoiceDrawer({
                   title={invoice.pdf_url ? "Download invoice PDF" : "No PDF stored"}
                 >
                   <Download className="w-3.5 h-3.5" /> Download PDF
-                </button>
-                <button
-                  disabled={!invoice.bill_to_email || busy !== null}
-                  onClick={resendIssued}
-                  className="px-3 py-2 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 ring-1 ring-blue-400/30 text-xs font-semibold text-blue-200 inline-flex items-center justify-center gap-2 disabled:opacity-40"
-                >
-                  {busy === "issued" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-                  Resend invoice
                 </button>
                 <button
                   disabled={busy !== null}
@@ -298,7 +231,7 @@ export default function OsInvoiceDrawer({
                 </button>
               </div>
               <div className="text-[11px] text-white/40">
-                Marking paid automatically emails the client the <span className="text-white/70">invoice-paid</span> receipt.
+                The client received the invoice download link in their order confirmation email at checkout.
               </div>
             </div>
 

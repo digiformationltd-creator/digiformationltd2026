@@ -13,7 +13,7 @@ import Layout from "@/components/layout/Layout";
 import { useSeo } from "@/lib/seo";
 import { SERVICE_CODES, generateInvoiceNumber, generateOrderNumber, downloadInvoicePdf } from "@/lib/invoice";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+
 
 interface ClientRow {
   user_id: string;
@@ -35,11 +35,6 @@ const LegacyAdmin = () => {
   const [initialTab, setInitialTab] = useState<"company" | "addresses" | "orders" | "invoices" | "wallet" | "docs" | "emails">((searchParams.get("tab") as any) || "company");
   const [loadingClients, setLoadingClients] = useState(false);
   // affiliate view removed
-  const [testEmailOpen, setTestEmailOpen] = useState(false);
-  const [testEmailTo, setTestEmailTo] = useState("info@digiformation.uk");
-  const [testEmailSending, setTestEmailSending] = useState(false);
-  const [testChecks, setTestChecks] = useState<Array<{ name: string; label: string; ok: boolean | null; error?: string }>>([]);
-  const [testSummaryMsg, setTestSummaryMsg] = useState<string | null>(null);
 
   useSeo({ title: "Admin Panel | Digiformation", description: "Internal admin panel", noindex: true });
 
@@ -108,14 +103,6 @@ const LegacyAdmin = () => {
           </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => { setTestChecks([]); setTestSummaryMsg(null); setTestEmailOpen(true); }}
-              title="Run a full email system check"
-            >
-              <Mail className="w-4 h-4 mr-1" /> Test Email
-            </Button>
             <Button variant="outline" onClick={loadClients} disabled={loadingClients}>
               {loadingClients ? <Loader2 className="w-4 h-4 animate-spin" /> : <Users className="w-4 h-4" />}
               Refresh Clients
@@ -124,189 +111,6 @@ const LegacyAdmin = () => {
 
         </div>
 
-        <Dialog open={testEmailOpen} onOpenChange={setTestEmailOpen}>
-          <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Email System Check</DialogTitle>
-              <DialogDescription>
-                Tests every email template the system uses (client confirmations, admin notifications, invoices,
-                renewals, etc.) and sends a single summary email with the full checklist.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-3">
-              <div>
-                <Label htmlFor="test-email-to">Send results to</Label>
-                <Input
-                  id="test-email-to"
-                  type="email"
-                  value={testEmailTo}
-                  onChange={(e) => setTestEmailTo(e.target.value)}
-                  placeholder="you@example.com"
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  A summary email with ✓ / ✗ for each template will be sent here.
-                </p>
-              </div>
-
-              {testChecks.length > 0 && (
-                <div className="border rounded-md divide-y">
-                  {testChecks.map((c) => (
-                    <div key={c.name} className="flex items-start gap-2 px-3 py-2 text-sm">
-                      <span className={`mt-0.5 font-bold w-5 inline-block ${c.ok === null ? "text-muted-foreground" : c.ok ? "text-green-600" : "text-red-600"}`}>
-                        {c.ok === null ? "…" : c.ok ? "✓" : "✗"}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium">{c.label}</div>
-                        <div className="text-xs text-muted-foreground font-mono truncate">{c.name}</div>
-                        {!c.ok && c.error && (
-                          <div className="text-xs text-red-700 bg-red-50 border border-red-200 rounded px-2 py-1 mt-1 break-words">
-                            {c.error}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {testSummaryMsg && (
-                <div className={`text-sm rounded-md p-3 ${testSummaryMsg.startsWith("✓") ? "bg-green-50 text-green-800 border border-green-200" : "bg-amber-50 text-amber-900 border border-amber-200"}`}>
-                  {testSummaryMsg}
-                </div>
-              )}
-            </div>
-            <DialogFooter className="gap-2 sm:gap-2 flex-wrap">
-              <Button variant="outline" onClick={() => setTestEmailOpen(false)} disabled={testEmailSending}>Close</Button>
-              <Button
-                variant="secondary"
-                onClick={async () => {
-                  try {
-                    await downloadInvoicePdf({
-                      invoice_number: `DFT-TEST-${Date.now().toString().slice(-6)}`,
-                      issue_date: new Date().toISOString().slice(0, 10),
-                      due_date: new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10),
-                      service_description: "TEST INVOICE — UK LTD Formation (Starter Package)",
-                      bill_to_name: "Test Client",
-                      bill_to_email: testEmailTo,
-                      bill_to_address: "123 Test Street, London, EC1A 1AA, United Kingdom",
-                      amount_gbp: 140,
-                      vat_rate: 0,
-                      vat_gbp: 0,
-                      total_gbp: 140,
-                      notes: "This is a TEST invoice generated from the admin panel for preview/QA purposes only.",
-                      status: "Unpaid",
-                    });
-                    toast.success("Test invoice PDF downloaded");
-                  } catch (e: any) {
-                    toast.error(`Failed to generate test invoice: ${e?.message || e}`);
-                  }
-                }}
-                disabled={testEmailSending}
-              >
-                <Mail className="w-4 h-4 mr-1" /> Download Test Invoice PDF
-              </Button>
-              <Button
-                onClick={async () => {
-                  if (!testEmailTo || !/.+@.+\..+/.test(testEmailTo)) {
-                    setTestSummaryMsg("Please enter a valid email address.");
-                    return;
-                  }
-                  setTestEmailSending(true);
-                  setTestSummaryMsg(null);
-
-                  const templates: Array<{ name: string; label: string }> = [
-                    { name: "welcome", label: "Welcome (signup)" },
-                    { name: "order-confirmation", label: "Order confirmation (client)" },
-                    { name: "order-notification", label: "Order notification (admin)" },
-                    { name: "order-in-progress", label: "Order in progress" },
-                    { name: "order-completed", label: "Order completed" },
-                    { name: "invoice-issued", label: "Invoice issued" },
-                    { name: "invoice-paid", label: "Invoice paid" },
-                    { name: "document-uploaded", label: "Document uploaded" },
-                    { name: "ticket-received", label: "Support ticket received" },
-                    { name: "address-renewal-reminder", label: "Address renewal reminder" },
-                    { name: "confirmation-statement-reminder", label: "Confirmation statement reminder" },
-                    { name: "annual-accounts-reminder", label: "Annual accounts reminder" },
-                  ];
-
-                  // Init checklist with pending state
-                  setTestChecks(templates.map((t) => ({ ...t, ok: null })));
-
-                  const baseData = {
-                    customerName: "Test User",
-                    orderRef: "TEST-0001",
-                    service: "Test Service",
-                    invoiceNumber: "DFT-TEST-001",
-                    amount: "£0.00",
-                    address: "Test Address, London",
-                    expireDate: new Date().toISOString().slice(0, 10),
-                    daysRemaining: 30,
-                    loginUrl: `${window.location.origin}/auth`,
-                    documentName: "Test Document.pdf",
-                    ticketSubject: "Test ticket subject",
-                    companyName: "Test Co Ltd",
-                  };
-
-                  const runId = Date.now();
-                  const results: Array<{ name: string; label: string; ok: boolean; error?: string }> = [];
-
-                  for (const t of templates) {
-                    try {
-                      const { error } = await supabase.functions.invoke("send-transactional-email", {
-                        body: {
-                          templateName: t.name,
-                          recipientEmail: testEmailTo,
-                          idempotencyKey: `admin-check-${runId}-${t.name}`,
-                          templateData: baseData,
-                          // Mark as dry-run so backend skips suppression-effect; still validates template
-                          purpose: "transactional",
-                        },
-                      });
-                      const ok = !error;
-                      results.push({ ...t, ok, error: error?.message });
-                    } catch (e: any) {
-                      results.push({ ...t, ok: false, error: e?.message || String(e) });
-                    }
-                    setTestChecks((prev) => prev.map((p) => (p.name === t.name ? { ...p, ok: results[results.length - 1].ok, error: results[results.length - 1].error } : p)));
-                  }
-
-                  const totalOk = results.filter((r) => r.ok).length;
-                  const totalFail = results.length - totalOk;
-
-                  // Send summary email
-                  const { error: sumErr } = await supabase.functions.invoke("send-transactional-email", {
-                    body: {
-                      templateName: "email-system-check",
-                      recipientEmail: testEmailTo,
-                      idempotencyKey: `admin-check-summary-${runId}`,
-                      templateData: {
-                        runAt: new Date().toLocaleString("en-GB"),
-                        totalOk,
-                        totalFail,
-                        checks: results,
-                      },
-                    },
-                  });
-
-                  setTestEmailSending(false);
-                  if (totalFail === 0 && !sumErr) {
-                    setTestSummaryMsg(`✓ All ${totalOk} templates passed. Summary email sent to ${testEmailTo}.`);
-                    toast.success("All email templates working");
-                  } else if (totalFail > 0) {
-                    setTestSummaryMsg(`${totalOk} passed, ${totalFail} failed. ${sumErr ? "Summary email also failed." : "Summary email sent."}`);
-                    toast.error(`${totalFail} email template(s) failed`);
-                  } else {
-                    setTestSummaryMsg(`Templates passed but summary email failed: ${sumErr?.message}`);
-                    toast.error("Summary email failed");
-                  }
-                }}
-                disabled={testEmailSending}
-              >
-                {testEmailSending ? <><Loader2 className="w-4 h-4 mr-1 animate-spin" />Checking…</> : <><Mail className="w-4 h-4 mr-1" />Run Full Check</>}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
 
         <>
 
@@ -624,19 +428,7 @@ const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: stri
         status: "Unpaid",
       });
       if (invErr) toast.error(`Order saved but invoice failed: ${invErr.message}`);
-      else {
-        toast.success(`Order ${ref} + Invoice ${number} created`);
-        if (profile.email) {
-          supabase.functions.invoke("send-transactional-email", {
-            body: {
-              templateName: "invoice-issued",
-              recipientEmail: profile.email,
-              idempotencyKey: `invoice-issued-${number}`,
-              templateData: { customerName: profile.full_name, invoiceNumber: number, service: description, amount: `£${total}` },
-            },
-          }).catch(console.error);
-        }
-      }
+      else toast.success(`Order ${ref} + Invoice ${number} created`);
     } else {
       toast.success(`Order ${ref} added`);
     }
@@ -702,16 +494,6 @@ const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: stri
     }
     const { error } = await supabase.from("invoices").update(patch).eq("id", id);
     if (error) { toast.error(error.message); return; }
-    if (patch.status && patch.status !== prevStatus && /paid/i.test(patch.status) && profile.email) {
-      supabase.functions.invoke("send-transactional-email", {
-        body: {
-          templateName: "invoice-paid",
-          recipientEmail: profile.email,
-          idempotencyKey: `invoice-paid-${id}`,
-          templateData: { customerName: profile.full_name, invoiceNumber: current?.invoice_number, amount: `£${current?.total_gbp}`, service: current?.service_description },
-        },
-      }).catch(console.error);
-    }
     reload();
   };
 
@@ -895,9 +677,9 @@ const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: stri
                           onClick={async () => {
                             await updateOrder(o.id, { status: "Paid" });
                             if (linkedInvoice) await updateInvoice(linkedInvoice.id, { status: "Paid" });
-                            toast.success("Marked as Paid — receipt email sent");
+                            toast.success("Marked as Paid");
                           }}
-                          title="Mark this order as Paid and notify the client by email"
+                          title="Mark this order as Paid"
                         >
                           <Mail className="w-3.5 h-3.5 mr-1" />Payment Received
                         </Button>
@@ -905,36 +687,17 @@ const ClientDetail = ({ userId, initialTab = "company", onBack }: { userId: stri
                       {isPaid && (
                         <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30">Paid</Badge>
                       )}
-                      {/* Payment Pending → mark Pending, resend the invoice/reminder */}
                       {!isPaid && (
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={async () => {
                             await updateOrder(o.id, { status: "Pending" });
-                            if (profile.email && linkedInvoice) {
-                              const { error } = await supabase.functions.invoke("send-transactional-email", {
-                                body: {
-                                  templateName: "invoice-issued",
-                                  recipientEmail: profile.email,
-                                  idempotencyKey: `invoice-pending-${linkedInvoice.id}-${Date.now()}`,
-                                  templateData: {
-                                    customerName: profile.full_name,
-                                    invoiceNumber: linkedInvoice.invoice_number,
-                                    service: linkedInvoice.service_description,
-                                    amount: `£${linkedInvoice.total_gbp}`,
-                                  },
-                                },
-                              });
-                              if (error) toast.error(error.message);
-                              else toast.success("Payment reminder sent");
-                            } else {
-                              toast.success("Marked Pending");
-                            }
+                            toast.success("Marked Pending");
                           }}
-                          title="Mark Pending and send the client a payment reminder"
+                          title="Mark this order as Pending"
                         >
-                          <Mail className="w-3.5 h-3.5 mr-1" />Payment Pending
+                          Mark Pending
                         </Button>
                       )}
                       {!isDone && !isInProgress && (
