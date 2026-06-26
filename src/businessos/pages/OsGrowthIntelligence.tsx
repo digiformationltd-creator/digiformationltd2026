@@ -1,0 +1,390 @@
+// Growth Intelligence
+// Decision-making dashboard. Every widget answers a single business question and
+// drills down into the underlying records. Powered by:
+//   - rpc('growth_overview',         { _since, _until })  → KPIs + by_source + by_category
+//   - rpc('growth_records_by_source',{ _since, _until, _source?, _category? })  → drill-down list
+// Reuses existing BUSINESS OS look (os-glass, os-glow-*, os-fade-in) for native feel.
+
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { SOURCE_OPTIONS } from "@/lib/attribution-sources";
+import {
+  Users, UserCheck, ShoppingBag, PoundSterling, Percent, Sparkles, Search,
+  Share2, Globe, HelpCircle, X, ExternalLink, Loader2, Download, Calendar,
+} from "lucide-react";
+
+type SourceRow = {
+  source: string; category: string;
+  leads: number; orders: number; revenue: number;
+  conv_rate: number; aov: number;
+};
+type CategoryRow = { category: string; leads: number; orders: number; revenue: number };
+type Overview = {
+  visitors: number; leads: number; orders: number; revenue: number; conv_rate: number;
+  by_source: SourceRow[]; by_category: CategoryRow[];
+};
+
+const labelFor = (id: string) => SOURCE_OPTIONS.find((s) => s.id === id)?.label || id;
+const emojiFor = (id: string) => SOURCE_OPTIONS.find((s) => s.id === id)?.emoji || "•";
+const fmtGBP = (n: number) => `£${Number(n || 0).toLocaleString("en-GB", { maximumFractionDigits: 0 })}`;
+const fmtPct = (n: number) => `${Number(n || 0).toFixed(1)}%`;
+
+const RANGES = [
+  { id: "today", label: "Today" },
+  { id: "7",     label: "Last 7 days" },
+  { id: "30",    label: "Last 30 days" },
+  { id: "90",    label: "Last 90 days" },
+  { id: "custom",label: "Custom" },
+] as const;
+
+function rangeToWindow(range: string, fromISO?: string, toISO?: string): { since: Date; until: Date } {
+  const now = new Date();
+  const startOfToday = new Date(now); startOfToday.setHours(0,0,0,0);
+  if (range === "today") return { since: startOfToday, until: now };
+  if (range === "custom" && fromISO && toISO) {
+    const since = new Date(fromISO); since.setHours(0,0,0,0);
+    const until = new Date(toISO);   until.setHours(23,59,59,999);
+    return { since, until };
+  }
+  const days = parseInt(range, 10) || 30;
+  return { since: new Date(now.getTime() - days * 86400000), until: now };
+}
+
+const CATEGORY_META: Record<string, { label: string; icon: any; tone: string; q: string }> = {
+  ai:       { label: "AI Referrals",     icon: Sparkles,   tone: "purple", q: "How much business is AI driving?" },
+  search:   { label: "Search Referrals", icon: Search,     tone: "blue",   q: "Is SEO bringing customers?" },
+  social:   { label: "Social Media",     icon: Share2,     tone: "pink",   q: "Are social channels paying off?" },
+  direct:   { label: "Direct & Referral",icon: Globe,      tone: "green",  q: "How strong is brand demand?" },
+  unknown:  { label: "Unknown",          icon: HelpCircle, tone: "amber",  q: "How much data is missing?" },
+};
+const CATEGORY_ORDER = ["ai","search","social","direct","unknown"];
+
+export default function OsGrowthIntelligence() {
+  const navigate = useNavigate();
+  const [range, setRange] = useState<string>("30");
+  const [fromDate, setFromDate] = useState<string>("");
+  const [toDate, setToDate]     = useState<string>("");
+  const [loading, setLoading]   = useState(true);
+  const [data, setData]         = useState<Overview | null>(null);
+
+  // Drill-down drawer state
+  const [drill, setDrill] = useState<{ kind: "source"|"category"; key: string; label: string } | null>(null);
+
+  const { since, until } = useMemo(
+    () => rangeToWindow(range, fromDate, toDate),
+    [range, fromDate, toDate]
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    supabase.rpc("growth_overview", { _since: since.toISOString(), _until: until.toISOString() })
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        if (error) { console.error(error); setData(null); }
+        else setData(data as unknown as Overview);
+        setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, [since.getTime(), until.getTime()]);
+
+  const ov = data;
+
+  const exportCSV = () => {
+    if (!ov) return;
+    const head = "Source,Category,Leads,Orders,Revenue (GBP),Conv %,AOV (GBP)\n";
+    const body = (ov.by_source || []).map((r) =>
+      [labelFor(r.source), r.category, r.leads, r.orders, r.revenue, r.conv_rate, r.aov].join(",")
+    ).join("\n");
+    const blob = new Blob([head + body], { type: "text/csv" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `growth-intelligence-${range}.csv`;
+    a.click();
+  };
+
+  return (
+    <div className="space-y-6 os-fade-in">
+      {/* Header + filters */}
+      <div className="flex items-start justify-between flex-wrap gap-3">
+        <div>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-purple-400" /> Growth Intelligence
+          </h1>
+          <p className="text-sm text-white/60">
+            Where customers come from, what they convert to, and which channels deserve more investment.
+          </p>
+        </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          <select
+            value={range}
+            onChange={(e) => setRange(e.target.value)}
+            className="bg-white/[0.04] border border-white/10 rounded-lg px-3 py-2 text-sm"
+          >
+            {RANGES.map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}
+          </select>
+          {range === "custom" && (
+            <div className="flex items-center gap-1 text-xs">
+              <Calendar className="w-3.5 h-3.5 text-white/50" />
+              <input type="date" value={fromDate} onChange={(e)=>setFromDate(e.target.value)}
+                className="bg-white/[0.04] border border-white/10 rounded-lg px-2 py-2" />
+              <span className="text-white/40">→</span>
+              <input type="date" value={toDate} onChange={(e)=>setToDate(e.target.value)}
+                className="bg-white/[0.04] border border-white/10 rounded-lg px-2 py-2" />
+            </div>
+          )}
+          <button onClick={exportCSV} disabled={!ov}
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-sm hover:bg-white/[0.08] disabled:opacity-40">
+            <Download className="w-4 h-4" /> CSV
+          </button>
+        </div>
+      </div>
+
+      {/* Priority KPIs — top of dashboard, business health in 1 second */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <Kpi label="Visitors" value={ov ? ov.visitors.toLocaleString() : "—"}
+             sub="Unique sessions" icon={Users} tone="cyan" loading={loading} />
+        <Kpi label="Leads" value={ov ? ov.leads.toLocaleString() : "—"}
+             sub="Inquiries + orders (deduped)" icon={UserCheck} tone="purple" loading={loading} />
+        <Kpi label="Orders" value={ov ? ov.orders.toLocaleString() : "—"}
+             sub="Paid + in-progress" icon={ShoppingBag} tone="green" loading={loading} />
+        <Kpi label="Conversion" value={ov ? fmtPct(ov.conv_rate) : "—"}
+             sub="Lead → order" icon={Percent} tone="amber" loading={loading} />
+        <Kpi label="Revenue" value={ov ? fmtGBP(ov.revenue) : "—"}
+             sub="Priced orders only" icon={PoundSterling} tone="lime" loading={loading} />
+      </div>
+
+      {/* Category breakdown — 5 cards covering the channels the user listed */}
+      <div className="os-glass os-glow-purple p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold">Lead Sources by Channel</h3>
+          <span className="text-[11px] text-white/40">Click any card to see the customers behind it</span>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          {CATEGORY_ORDER.map((cat) => {
+            const meta = CATEGORY_META[cat];
+            const row = ov?.by_category?.find((c) => c.category === cat);
+            const leads = row?.leads || 0;
+            const orders = row?.orders || 0;
+            const revenue = row?.revenue || 0;
+            const totalLeads = ov?.leads || 0;
+            const share = totalLeads > 0 ? Math.round((leads / totalLeads) * 100) : 0;
+            const Icon = meta.icon;
+            return (
+              <button
+                key={cat}
+                onClick={() => leads > 0 && setDrill({ kind: "category", key: cat, label: meta.label })}
+                disabled={leads === 0}
+                className={`text-left rounded-xl bg-white/[0.03] border border-white/5 p-4 hover:bg-white/[0.06] hover:border-white/10 transition disabled:opacity-50 disabled:hover:bg-white/[0.03] disabled:cursor-default`}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <div className={`w-7 h-7 rounded-lg grid place-items-center bg-${meta.tone}-500/10 text-${meta.tone}-400`}>
+                    <Icon className="w-3.5 h-3.5" />
+                  </div>
+                  <div className="font-semibold text-sm">{meta.label}</div>
+                </div>
+                <div className="text-2xl font-bold mono">{leads.toLocaleString()}</div>
+                <div className="text-[11px] text-white/50 mt-0.5">leads • {share}% share</div>
+                <div className="mt-2 flex items-center justify-between text-[11px]">
+                  <span className="text-white/60">{orders} orders</span>
+                  <span className="text-green-400 mono font-semibold">{fmtGBP(revenue)}</span>
+                </div>
+                <div className="text-[10px] text-white/30 mt-2 italic">{meta.q}</div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Top sources table — drill-down per source */}
+      <div className="os-glass os-glow-green p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold">Top Sources</h3>
+          <span className="text-[11px] text-white/40">Click any row to drill down</span>
+        </div>
+        {loading ? (
+          <div className="text-sm text-white/60 flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Loading…</div>
+        ) : !ov || ov.by_source.length === 0 ? (
+          <div className="text-sm text-white/60">No attribution data for this range yet.</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs uppercase text-white/50 border-b border-white/10">
+                  <th className="py-2 pr-3">Source</th>
+                  <th className="py-2 pr-3">Category</th>
+                  <th className="py-2 pr-3 text-right">Leads</th>
+                  <th className="py-2 pr-3 text-right">Orders</th>
+                  <th className="py-2 pr-3 text-right">Revenue</th>
+                  <th className="py-2 pr-3 text-right">Conv %</th>
+                  <th className="py-2 pr-3 text-right">AOV</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ov.by_source.map((r) => (
+                  <tr
+                    key={r.source}
+                    onClick={() => setDrill({ kind: "source", key: r.source, label: labelFor(r.source) })}
+                    className="border-b border-white/5 hover:bg-white/[0.03] cursor-pointer"
+                  >
+                    <td className="py-2 pr-3 font-medium">{emojiFor(r.source)} {labelFor(r.source)}</td>
+                    <td className="py-2 pr-3 text-xs uppercase text-white/50">{r.category}</td>
+                    <td className="py-2 pr-3 text-right mono">{r.leads}</td>
+                    <td className="py-2 pr-3 text-right mono">{r.orders}</td>
+                    <td className="py-2 pr-3 text-right mono text-green-400 font-semibold">{fmtGBP(Number(r.revenue))}</td>
+                    <td className="py-2 pr-3 text-right mono">{fmtPct(Number(r.conv_rate))}</td>
+                    <td className="py-2 pr-3 text-right mono">{fmtGBP(Number(r.aov))}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Drill-down drawer */}
+      {drill && (
+        <DrillDrawer
+          kind={drill.kind}
+          keyId={drill.key}
+          title={drill.label}
+          since={since}
+          until={until}
+          onClose={() => setDrill(null)}
+          onOpenOrder={(id) => navigate(`/admin/orders?focus=${id}`)}
+          onOpenInquiry={(id) => navigate(`/admin/leads?focus=${id}`)}
+        />
+      )}
+    </div>
+  );
+}
+
+/* ------------------------------ KPI card ------------------------------ */
+function Kpi({ label, value, sub, icon: Icon, tone, loading }:
+  { label: string; value: string; sub?: string; icon: any; tone: string; loading?: boolean }) {
+  return (
+    <div className={`os-glass os-glow-${tone} p-5`}>
+      <div className="flex items-start justify-between">
+        <div className="text-xs uppercase tracking-wider text-white/50 font-semibold">{label}</div>
+        <div className={`w-9 h-9 rounded-lg grid place-items-center bg-${tone}-500/10 text-${tone}-400`}>
+          <Icon className="w-4 h-4" />
+        </div>
+      </div>
+      <div className="mt-3 text-2xl font-bold mono truncate">
+        {loading ? <span className="inline-block w-16 h-6 bg-white/5 rounded animate-pulse" /> : value}
+      </div>
+      {sub && <div className="text-xs text-white/40 mt-1 truncate">{sub}</div>}
+    </div>
+  );
+}
+
+/* --------------------------- Drill-down drawer --------------------------- */
+type DrillRecord = {
+  entity_type: string;
+  entity_id: string;
+  name: string | null;
+  email: string | null;
+  service: string | null;
+  amount_gbp: number;
+  status: string;
+  converted_at: string;
+  source: string | null;
+  category: string | null;
+  order_id: string | null;
+  inquiry_id: string | null;
+};
+
+function DrillDrawer({
+  kind, keyId, title, since, until, onClose, onOpenOrder, onOpenInquiry,
+}: {
+  kind: "source" | "category";
+  keyId: string;
+  title: string;
+  since: Date;
+  until: Date;
+  onClose: () => void;
+  onOpenOrder: (id: string) => void;
+  onOpenInquiry: (id: string) => void;
+}) {
+  const [loading, setLoading] = useState(true);
+  const [rows, setRows] = useState<DrillRecord[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    supabase.rpc("growth_records_by_source", {
+      _since: since.toISOString(),
+      _until: until.toISOString(),
+      _source: kind === "source" ? keyId : null,
+      _category: kind === "category" ? keyId : null,
+    }).then(({ data, error }) => {
+      if (cancelled) return;
+      if (error) console.error(error);
+      setRows((data || []) as DrillRecord[]);
+      setLoading(false);
+    });
+    return () => { cancelled = true; };
+  }, [kind, keyId, since.getTime(), until.getTime()]);
+
+  return (
+    <div className="fixed inset-0 z-50 flex">
+      <div className="flex-1 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="w-full sm:max-w-2xl bg-[#0a0a14] border-l border-white/10 flex flex-col">
+        <div className="p-5 border-b border-white/10 flex items-start justify-between">
+          <div>
+            <div className="text-[11px] uppercase tracking-wider text-white/40">
+              {kind === "category" ? "Channel" : "Source"} • {rows.length} record{rows.length === 1 ? "" : "s"}
+            </div>
+            <h3 className="text-lg font-bold mt-1">{title}</h3>
+            <div className="text-[11px] text-white/40 mt-0.5">
+              {since.toLocaleDateString("en-GB")} → {until.toLocaleDateString("en-GB")}
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 rounded-lg hover:bg-white/5"><X className="w-4 h-4" /></button>
+        </div>
+        <div className="flex-1 overflow-y-auto p-5 space-y-2">
+          {loading ? (
+            <div className="text-sm text-white/60 flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Loading…</div>
+          ) : rows.length === 0 ? (
+            <div className="text-sm text-white/60">No records found for this selection.</div>
+          ) : rows.map((r) => {
+            const isOrder = r.order_id != null;
+            const id = r.order_id || r.inquiry_id || r.entity_id;
+            const open = () => isOrder ? onOpenOrder(r.order_id!) : r.inquiry_id ? onOpenInquiry(r.inquiry_id) : null;
+            return (
+              <button
+                key={r.entity_type + r.entity_id}
+                onClick={open}
+                className="w-full text-left rounded-xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] p-3.5 group"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className={`text-[10px] uppercase px-1.5 py-0.5 rounded font-semibold ${
+                        isOrder ? "bg-green-500/15 text-green-300" : "bg-purple-500/15 text-purple-300"
+                      }`}>
+                        {isOrder ? "Order" : "Inquiry"}
+                      </span>
+                      <span className="text-xs text-white/50">{r.status}</span>
+                    </div>
+                    <div className="font-medium mt-1.5 truncate">{r.name || "Unknown"}</div>
+                    <div className="text-xs text-white/50 truncate">{r.email || "—"}</div>
+                    <div className="text-xs text-white/40 truncate mt-1">{r.service || "—"}</div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div className="text-sm font-semibold mono text-green-400">{fmtGBP(Number(r.amount_gbp || 0))}</div>
+                    <div className="text-[11px] text-white/40 mt-1">
+                      {new Date(r.converted_at).toLocaleDateString("en-GB")}
+                    </div>
+                    <ExternalLink className="w-3.5 h-3.5 text-white/30 mt-2 ml-auto group-hover:text-white/70" />
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
