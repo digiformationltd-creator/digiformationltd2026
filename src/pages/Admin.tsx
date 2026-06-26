@@ -41,7 +41,7 @@ export default function Admin() {
         <Route path="whatsapp/:id" element={<OsWhatsAppContactDetail />} />
         <Route path="email-marketing" element={<Placeholder title="Email Marketing" description="Campaigns dispatched through the existing email queue — no new sender." />} />
         <Route path="analytics" element={<Placeholder title="Analytics" />} />
-        <Route path="attribution" element={<OsAttribution />} />
+        <Route path="attribution" element={<OsGrowthIntelligence />} />
         <Route path="tasks" element={<Placeholder title="Tasks" />} />
         <Route path="team" element={<Placeholder title="Team" />} />
         <Route path="support" element={<OsSupport />} />
