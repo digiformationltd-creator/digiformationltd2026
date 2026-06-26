@@ -301,6 +301,12 @@ Deno.serve(async (req) => {
 
   try {
     if (action === 'preview') {
+      if (SYSTEM_OWNED_INTENTS.has(body.intent)) {
+        return json({
+          error: `Intent "${body.intent}" is system-owned (auto-triggered by backend). Command Center cannot duplicate it.`,
+        }, 400)
+      }
+
       const { data, error } = await admin.rpc('command_action_preview', {
         _intent: body.intent, _payload: body.payload ?? {}, _prompt: body.prompt ?? null,
       }).single()
