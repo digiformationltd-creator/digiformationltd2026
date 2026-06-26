@@ -108,7 +108,14 @@ const SYSTEM_OWNED_INTENTS = new Set<string>([
 // Deterministic dispatcher. Reuses existing tables, RPCs and Edge Functions.
 async function executeIntent(admin: any, action: any, user: any) {
   const { intent, payload } = action
+  if (SYSTEM_OWNED_INTENTS.has(intent)) {
+    throw new Error(
+      `Intent "${intent}" is system-owned (auto-triggered by backend). ` +
+      `Command Center cannot duplicate it.`,
+    )
+  }
   switch (intent) {
+
     // ---------- Tasks / reminders ----------
     case 'create_task':
     case 'create_reminder':
