@@ -773,6 +773,8 @@ function EmailsTab({ userId, profile }: { userId: string; profile: any }) {
         templateName: template,
         recipientEmail: profile.email,
         idempotencyKey: `${template}-${userId}-${Date.now()}`,
+        clientUserId: userId,
+        triggerSource: "admin",
         templateData: {
           customerName: profile.full_name || "",
           companyName: profile.company_name || "",
