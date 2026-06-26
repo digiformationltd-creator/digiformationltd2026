@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Sparkles, TrendingUp, Award, Users, ShoppingBag, PoundSterling, Percent, Download } from "lucide-react";
-import { SOURCE_OPTIONS } from "@/components/attribution/SourceHeardPicker";
+import { SOURCE_OPTIONS } from "@/lib/attribution-sources";
 
 type Row = {
   source: string; category: string;

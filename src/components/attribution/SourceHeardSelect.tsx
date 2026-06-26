@@ -4,25 +4,20 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import type { DeclaredSource, SourceCategory } from "@/lib/attribution";
+import { SOURCE_OPTIONS } from "@/lib/attribution-sources";
 
-type Option = { id: string; label: string; category: SourceCategory; emoji: string };
-
-const OPTIONS: Option[] = [
-  { id: "google_ai_overview", label: "Google AI", category: "ai", emoji: "🧬" },
-  { id: "facebook", label: "Facebook", category: "social", emoji: "📘" },
-  { id: "linkedin", label: "LinkedIn", category: "social", emoji: "💼" },
-  { id: "pinterest", label: "Pinterest", category: "social", emoji: "📌" },
-  { id: "youtube", label: "YouTube", category: "social", emoji: "▶️" },
-  { id: "chatgpt", label: "ChatGPT", category: "ai", emoji: "🤖" },
-  { id: "gemini", label: "Gemini", category: "ai", emoji: "✨" },
-  { id: "claude", label: "Claude AI", category: "ai", emoji: "🧠" },
-  { id: "referral", label: "Referred by a Friend", category: "direct", emoji: "👥" },
-  { id: "other", label: "Other", category: "direct", emoji: "•" },
+const GROUPS: { key: SourceCategory; label: string }[] = [
+  { key: "ai", label: "AI Platforms" },
+  { key: "search", label: "Search Engines" },
+  { key: "social", label: "Social Media" },
+  { key: "direct", label: "Direct / Referral" },
 ];
 
 export type SourceHeardSelectProps = {
@@ -38,7 +33,7 @@ const SourceHeardSelect = ({ value, onChange, error }: SourceHeardSelectProps) =
   );
 
   const handleSelect = (id: string) => {
-    const opt = OPTIONS.find((o) => o.id === id);
+    const opt = SOURCE_OPTIONS.find((o) => o.id === id);
     if (!opt) return;
     if (opt.id === "other") {
       onChange({ id: "other", label: otherText ? `Other: ${otherText}` : "Other", category: "direct" });
@@ -70,15 +65,26 @@ const SourceHeardSelect = ({ value, onChange, error }: SourceHeardSelectProps) =
         >
           <SelectValue placeholder="Select an option…" />
         </SelectTrigger>
-        <SelectContent className="rounded-xl">
-          {OPTIONS.map((o) => (
-            <SelectItem key={o.id} value={o.id} className="text-sm">
-              <span className="inline-flex items-center gap-2">
-                <span className="text-base leading-none">{o.emoji}</span>
-                <span>{o.label}</span>
-              </span>
-            </SelectItem>
-          ))}
+        <SelectContent className="rounded-xl max-h-[320px]">
+          {GROUPS.map((g) => {
+            const items = SOURCE_OPTIONS.filter((o) => o.category === g.key);
+            if (items.length === 0) return null;
+            return (
+              <SelectGroup key={g.key}>
+                <SelectLabel className="text-[10px] uppercase tracking-[0.16em] opacity-60">
+                  {g.label}
+                </SelectLabel>
+                {items.map((o) => (
+                  <SelectItem key={o.id} value={o.id} className="text-sm">
+                    <span className="inline-flex items-center gap-2">
+                      <span className="text-base leading-none">{o.emoji ?? "•"}</span>
+                      <span>{o.label}</span>
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            );
+          })}
         </SelectContent>
       </Select>
 
@@ -94,7 +100,7 @@ const SourceHeardSelect = ({ value, onChange, error }: SourceHeardSelectProps) =
 
       {error && (
         <p className="text-xs text-destructive font-medium">
-          Please select how you found us before placing the order.
+          Please tell us how you found us before submitting.
         </p>
       )}
     </div>
