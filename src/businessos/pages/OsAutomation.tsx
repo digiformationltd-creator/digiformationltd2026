@@ -520,8 +520,80 @@ export default function OsAutomation() {
 
         <DiscordCard />
       </div>
+
+      {/* Future Modules */}
+      <div className="os-glass p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Workflow className="w-4 h-4 text-white/60" />
+            <h3 className="font-semibold">Future Modules</h3>
+          </div>
+          <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md bg-white/5 text-white/40">Roadmap</span>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
+          {FUTURE_MODULES.map((m) => {
+            const Icon = m.icon;
+            return (
+              <div
+                key={m.label}
+                className="rounded-xl border border-dashed border-white/10 bg-white/[0.02] p-3 flex flex-col items-center gap-2 text-center opacity-80"
+              >
+                <div className={`w-9 h-9 rounded-lg grid place-items-center ${TINT[m.tint]}`}>
+                  <Icon className="w-4 h-4" />
+                </div>
+                <div className="text-xs font-medium text-white/80">{m.label}</div>
+                <div className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-white/5 text-white/40">Coming Soon</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Status helpers                                                     */
+/* ------------------------------------------------------------------ */
+
+function StatusDot({ status }: { status: EventStatus }) {
+  const map: Record<EventStatus, { color: string; label: string }> = {
+    completed: { color: "bg-green-400",  label: "completed" },
+    running:   { color: "bg-cyan-400 animate-pulse",   label: "running" },
+    error:     { color: "bg-red-400",    label: "error" },
+    info:      { color: "bg-white/30",   label: "info" },
+  };
+  const m = map[status];
+  return (
+    <span className="inline-flex items-center gap-1 text-[10px] text-white/40">
+      <span className={`inline-block w-1.5 h-1.5 rounded-full ${m.color}`} /> {m.label}
+    </span>
+  );
+}
+
+function AgentStatusBadge({ status }: { status: Agent["status"] }) {
+  const map: Record<Agent["status"], string> = {
+    planned: "bg-white/5 text-white/50 border-white/10",
+    active:  "bg-green-500/10 text-green-300 border-green-500/20",
+    paused:  "bg-amber-500/10 text-amber-300 border-amber-500/20",
+    error:   "bg-red-500/10 text-red-300 border-red-500/20",
+  };
+  return (
+    <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md border ${map[status]}`}>
+      {status}
+    </span>
+  );
+}
+
+function HealthBadge({ health }: { health: Agent["health"] }) {
+  const map: Record<Agent["health"], { color: string; label: string }> = {
+    good: { color: "text-green-300",  label: "● Good" },
+    warn: { color: "text-amber-300",  label: "● Warn" },
+    down: { color: "text-red-300",    label: "● Down" },
+    "n/a":{ color: "text-white/30",   label: "● N/A" },
+  };
+  const m = map[health];
+  return <span className={`text-[11px] ${m.color}`}>{m.label}</span>;
 }
 
 /* ------------------------------------------------------------------ */
