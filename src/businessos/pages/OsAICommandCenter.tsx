@@ -350,31 +350,32 @@ export default function OsAICommandCenter() {
         </aside>
 
         {/* CENTER: Conversation */}
-        <section className="os-glass p-0 flex flex-col min-h-0">
+        <section className="os-glass p-0 flex flex-col min-h-0 min-w-0">
           {/* Quick prompts */}
-          <div className="p-3 border-b border-white/5">
+          <div className="p-3 border-b border-white/5 shrink-0">
             <div className="flex items-center gap-2 mb-2">
               <Zap className="w-3.5 h-3.5 text-amber-300" />
               <div className="text-[11px] uppercase tracking-wider text-white/40">Quick prompts</div>
             </div>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-1.5">
               {QUICK_PROMPTS.map((q) => {
                 const Icon = q.icon;
                 return (
                   <button
                     key={q.label}
                     onClick={() => setInput(q.label)}
-                    className="group inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20 px-2.5 py-1 text-[11px] text-white/80 transition"
+                    className="group inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20 px-2.5 py-1.5 text-[11px] text-white/80 transition min-w-0"
                   >
-                    <span className={`w-4 h-4 rounded grid place-items-center ${q.tint}`}>
+                    <span className={`w-4 h-4 rounded grid place-items-center shrink-0 ${q.tint}`}>
                       <Icon className="w-2.5 h-2.5" />
                     </span>
-                    {q.label}
+                    <span className="truncate">{q.label}</span>
                   </button>
                 );
               })}
             </div>
           </div>
+
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
