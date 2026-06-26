@@ -14,14 +14,11 @@ import { template as orderNotification } from './order-notification.tsx'
 import { template as welcome } from './welcome.tsx'
 import { template as orderCompleted } from './order-completed.tsx'
 import { template as orderInProgress } from './order-in-progress.tsx'
-import { template as invoiceIssued } from './invoice-issued.tsx'
-import { template as invoicePaid } from './invoice-paid.tsx'
 import { template as documentUploaded } from './document-uploaded.tsx'
 import { template as ticketReceived } from './ticket-received.tsx'
 import { template as addressRenewalReminder } from './address-renewal-reminder.tsx'
 import { template as confirmationStatementReminder } from './confirmation-statement-reminder.tsx'
 import { template as annualAccountsReminder } from './annual-accounts-reminder.tsx'
-import { template as emailSystemCheck } from './email-system-check.tsx'
 import { template as internalCompanyReminder } from './internal-company-reminder.tsx'
 import { template as contactConfirmation } from './contact-confirmation.tsx'
 import { template as ticketStatusUpdate } from './ticket-status-update.tsx'
@@ -32,14 +29,11 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'welcome': welcome,
   'order-completed': orderCompleted,
   'order-in-progress': orderInProgress,
-  'invoice-issued': invoiceIssued,
-  'invoice-paid': invoicePaid,
   'document-uploaded': documentUploaded,
   'ticket-received': ticketReceived,
   'address-renewal-reminder': addressRenewalReminder,
   'confirmation-statement-reminder': confirmationStatementReminder,
   'annual-accounts-reminder': annualAccountsReminder,
-  'email-system-check': emailSystemCheck,
   'internal-company-reminder': internalCompanyReminder,
   'contact-confirmation': contactConfirmation,
   'ticket-status-update': ticketStatusUpdate,

@@ -45,13 +45,10 @@ const ANON_ALLOWED_TEMPLATES = new Set([
 const ADMIN_ONLY_TEMPLATES = new Set([
   'order-completed',
   'order-in-progress',
-  'invoice-issued',
-  'invoice-paid',
   'document-uploaded',
   'address-renewal-reminder',
   'confirmation-statement-reminder',
   'annual-accounts-reminder',
-  'email-system-check',
   'ticket-status-update',
 ])
 
