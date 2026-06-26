@@ -4,6 +4,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import { useCommandMachine, STATE_LABELS, STATE_TINT, type CommandAction } from "@/businessos/lib/useCommandMachine";
+import { PreviewDiff } from "@/businessos/components/PreviewDiff";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Sparkles, Send, Paperclip, Bot, User, Eraser, RotateCcw,
@@ -606,6 +607,19 @@ export default function OsAICommandCenter() {
             </div>
           </div>
 
+          {/* Preview Diff (Phase 2) — renders only while awaiting_approval + snapshot exists */}
+          {ccState === "awaiting_approval" && pendingAction?.before_snapshot && (
+            <div className="mt-3 pt-3 border-t border-white/5">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-purple-300" />
+                  <h3 className="text-[11px] uppercase tracking-wider text-white/40">Change Diff</h3>
+                </div>
+              </div>
+              <PreviewDiff action={pendingAction} />
+            </div>
+          )}
+
           {/* Preview */}
           <div className="mt-3 pt-3 border-t border-white/5">
             <div className="flex items-center justify-between mb-2">
@@ -613,7 +627,7 @@ export default function OsAICommandCenter() {
                 <Sparkles className="w-3.5 h-3.5 text-purple-300" />
                 <h3 className="text-[11px] uppercase tracking-wider text-white/40">Preview</h3>
               </div>
-              <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-white/5 text-white/40">Mock</span>
+              <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-white/5 text-white/40">Live</span>
             </div>
             <div className="rounded-lg bg-black/30 border border-white/5 p-2.5 max-h-[160px] overflow-y-auto text-[11px] text-white/70 leading-relaxed">
               {lastAssistant ? (
@@ -623,6 +637,7 @@ export default function OsAICommandCenter() {
               )}
             </div>
           </div>
+
         </aside>
       </div>
 
