@@ -360,6 +360,11 @@ export default function OsInvoiceDrawer({
                 </div>
               </div>
             )}
+
+            {/* Email history for this invoice */}
+            <div className="os-glass p-4">
+              <OsEmailHistoryPanel scope={{ invoiceId: invoice.id }} />
+            </div>
           </div>
         )}
       </SheetContent>
