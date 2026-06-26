@@ -180,6 +180,14 @@ const HEALTH = [
 /* ================================================================== */
 
 export default function OsAutomation() {
+  const [timelineFilter, setTimelineFilter] = useState<TimelineFilter>("all");
+  const filteredActivity = ACTIVITY.filter((e) => {
+    if (timelineFilter === "all") return true;
+    if (timelineFilter === "today") return e.today;
+    if (timelineFilter === "errors") return e.status === "error";
+    if (timelineFilter === "completed") return e.status === "completed";
+    return true;
+  });
   return (
     <div className="space-y-6 os-fade-in">
       {/* Header */}
