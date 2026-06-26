@@ -55,7 +55,7 @@ const AGENTS = [
 ];
 
 const MODULES = [
-  { label: "AI Workspace",        to: "/admin/automation/workspace",       icon: Sparkles, desc: "Paste, instruct, preview, approve.",  tint: "bg-purple-500/10 text-purple-300", featured: true },
+  { label: "AI Command Center",   to: "/admin/automation/command-center",  icon: Sparkles, desc: "Talk to Business OS. Approve actions.", tint: "bg-purple-500/10 text-purple-300", featured: true },
   { label: "Email Marketing",     to: "/admin/automation/email-marketing", icon: Mail,     desc: "Campaigns and lead outreach.",         tint: "bg-pink-500/10 text-pink-300" },
   { label: "Scheduled Jobs",      to: "/admin/automation/jobs",            icon: Clock,    desc: "Cron and recurring tasks.",            tint: "bg-cyan-500/10 text-cyan-300" },
   { label: "Business Automations",to: "/admin/automation/workflows",       icon: Zap,      desc: "Follow-ups, reminders, lead rules.",   tint: "bg-lime-500/10 text-lime-300" },
