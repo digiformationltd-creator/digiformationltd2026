@@ -130,14 +130,37 @@ export default function OsAICommandCenter() {
 
   // Deterministic intent parser — no AI. Maps natural-language hints to
   // typed intents supported by `os-command-execute`. Defaults to create_task.
+  // "Reuse first": every intent listed here is handled by an existing table,
+  // RPC or edge function — no new backend is added.
   const parseIntent = (text: string): { intent: string; payload: Record<string, any> } => {
-    const t = text.toLowerCase();
-    if (t.startsWith("remind") || t.includes("reminder"))
-      return { intent: "create_reminder", payload: { title: text, priority: "high" } };
-    if (t.includes("send email") || t.includes("email template"))
-      return { intent: "send_email_template", payload: { template: "", recipient_email: "" } };
-    if (t.includes("update company") || t.includes("company field"))
-      return { intent: "update_company_field", payload: { company_id: "", field: "notes", value: text } };
+    const t = text.toLowerCase().trim();
+    const emailMatch = text.match(/[\w.+-]+@[\w-]+\.[\w.-]+/);
+    const email = emailMatch?.[0];
+
+    // Read-only "show / lookup / summarize" commands
+    if (/^show .*reminder/.test(t) || t === "show reminders") return { intent: "show_reminders", payload: {} };
+    if (/show .*(pending )?compliance|compliance due/.test(t)) return { intent: "show_pending_compliance", payload: {} };
+    if (/show .*(scheduled )?jobs|cron status/.test(t)) return { intent: "show_jobs", payload: {} };
+    if (/show .*(recent )?activity|automation runs|recent runs/.test(t)) return { intent: "show_recent_activity", payload: { limit: 25 } };
+    if (/show .*history|client history|customer history/.test(t) && email) return { intent: "show_client_history", payload: { customer_email: email } };
+    if (/summari[sz]e .*company/.test(t)) return { intent: "summarize_company", payload: { company_id: "" } };
+    if (/^(find|lookup|search) .*company/.test(t)) return { intent: "lookup_company", payload: { query: text.replace(/^(find|lookup|search)\s+(a\s+)?company\s*/i, "").trim() } };
+    if (/^(find|lookup|search) .*(customer|client)/.test(t)) return { intent: "lookup_customer", payload: { query: text.replace(/^(find|lookup|search)\s+(a\s+)?(customer|client)\s*/i, "").trim() || email || "" } };
+
+    // Mutations
+    if (/^remind|reminder|follow.?up tomorrow/.test(t)) return { intent: "create_reminder", payload: { title: text, priority: "high" } };
+    if (/^create .*follow.?up|follow.?up task/.test(t)) return { intent: "create_followup", payload: { title: text } };
+    if (/assign .*task/.test(t)) return { intent: "assign_task", payload: { task_id: "", assigned_to: "" } };
+    if (/draft .*email|write .*email|compose .*email/.test(t)) return { intent: "draft_email", payload: { subject: "", body: text, recipient_email: email ?? "" } };
+    if (/send email|send .*reminder email|email template/.test(t)) return { intent: "send_email_template", payload: { template: "", recipient_email: email ?? "" } };
+    if (/generate invoice|create invoice|issue invoice/.test(t)) return { intent: "create_invoice", payload: { order_id: "", customer_email: email ?? "" } };
+    if (/create .*order|new order/.test(t)) return { intent: "create_order", payload: { service: "", customer_email: email ?? "", amount_gbp: "" } };
+    if (/update .*order status|mark order/.test(t)) return { intent: "update_order_status", payload: { order_id: "", status: "" } };
+    if (/update .*(registered )?address|change .*address/.test(t)) return { intent: "update_company_address", payload: { company_id: "", registered_address: "" } };
+    if (/update .*(company )?status|set company status/.test(t)) return { intent: "update_company_status", payload: { company_id: "", status: "" } };
+    if (/add note|append note|note to company/.test(t)) return { intent: "add_note", payload: { company_id: "", note: text } };
+    if (/update company|company field|change company/.test(t)) return { intent: "update_company", payload: { company_id: "", field: "notes", value: text } };
+
     return { intent: "create_task", payload: { title: text, priority: "normal" } };
   };
 
