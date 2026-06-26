@@ -80,15 +80,81 @@ const SEV_TINT: Record<Reminder["severity"], string> = {
 /*  Activity timeline (mock)                                           */
 /* ------------------------------------------------------------------ */
 
-type Event = { id: string; kind: string; text: string; at: string; icon: any; tint: string };
+type EventStatus = "completed" | "running" | "error" | "info";
+type Event = {
+  id: string; kind: string; text: string; at: string;
+  icon: any; tint: string; status: EventStatus; today: boolean;
+};
 
 const ACTIVITY: Event[] = [
-  { id: "e1", kind: "reminder",   text: "Reminder created — Confirmation Statement for Ascend Ltd",  at: "2m ago",  icon: Bell,        tint: "amber" },
-  { id: "e2", kind: "automation", text: "Order Automation executed — Welcome flow for Nova Trading", at: "11m ago", icon: Zap,         tint: "lime" },
-  { id: "e3", kind: "email",      text: "Email scheduled — Annual Accounts reminder (3 recipients)", at: "26m ago", icon: Mail,        tint: "pink" },
-  { id: "e4", kind: "agent",      text: "Agent triggered — Compliance Agent (planned)",              at: "1h ago",  icon: Bot,         tint: "purple" },
-  { id: "e5", kind: "queue",      text: "Queue updated — 4 tasks moved from waiting to running",    at: "2h ago",  icon: RefreshCw,   tint: "cyan" },
-  { id: "e6", kind: "reminder",   text: "Reminder completed — Stripe follow-up (Helix Studios)",     at: "3h ago",  icon: CheckCircle2, tint: "green" },
+  { id: "e1", kind: "reminder",   text: "Reminder created — Confirmation Statement for Ascend Ltd",  at: "2m ago",  icon: Bell,         tint: "amber",  status: "info",      today: true  },
+  { id: "e2", kind: "automation", text: "Order Automation executed — Welcome flow for Nova Trading", at: "11m ago", icon: Zap,          tint: "lime",   status: "completed", today: true  },
+  { id: "e3", kind: "email",      text: "Email scheduled — Annual Accounts reminder (3 recipients)", at: "26m ago", icon: Mail,         tint: "pink",   status: "info",      today: true  },
+  { id: "e4", kind: "agent",      text: "Agent failed — OCR Agent timeout on document #4821",        at: "44m ago", icon: AlertTriangle,tint: "red",    status: "error",     today: true  },
+  { id: "e5", kind: "queue",      text: "Queue updated — 4 tasks moved from waiting to running",    at: "2h ago",  icon: RefreshCw,    tint: "cyan",   status: "running",   today: true  },
+  { id: "e6", kind: "reminder",   text: "Reminder completed — Stripe follow-up (Helix Studios)",     at: "3h ago",  icon: CheckCircle2, tint: "green",  status: "completed", today: true  },
+  { id: "e7", kind: "email",      text: "Email digest sent — Daily admin summary",                   at: "Yesterday", icon: Mail,       tint: "pink",   status: "completed", today: false },
+  { id: "e8", kind: "automation", text: "Workflow retried — Lead qualification (Orbit Labs)",        at: "Yesterday", icon: RefreshCw,  tint: "cyan",   status: "completed", today: false },
+  { id: "e9", kind: "agent",      text: "Reminder Agent error — SMTP timeout (auto-recovered)",      at: "2d ago",  icon: AlertTriangle,tint: "red",    status: "error",     today: false },
+];
+
+type TimelineFilter = "all" | "today" | "errors" | "completed";
+
+/* ------------------------------------------------------------------ */
+/*  Quick Actions                                                      */
+/* ------------------------------------------------------------------ */
+
+const QUICK_ACTIONS = [
+  { label: "View Reminders",       to: "/admin/automation",                 icon: Bell,     tint: "amber"  },
+  { label: "Open AI Agents",       to: "/admin/automation/agents",          icon: Bot,      tint: "purple" },
+  { label: "Scheduled Jobs",       to: "/admin/automation/jobs",            icon: Clock,    tint: "blue"   },
+  { label: "Business Automations", to: "/admin/automation/workflows",       icon: Zap,      tint: "lime"   },
+  { label: "Email Marketing",      to: "/admin/automation/email-marketing", icon: Mail,     tint: "pink"   },
+  { label: "Automation History",   to: "/admin/automation/history",         icon: Activity, tint: "cyan"   },
+];
+
+/* ------------------------------------------------------------------ */
+/*  Agent Status (mock)                                                */
+/* ------------------------------------------------------------------ */
+
+type Agent = {
+  name: string; status: "planned" | "active" | "paused" | "error";
+  health: "good" | "warn" | "down" | "n/a";
+  lastActivity: string; queue: number; success: string; tint: string; icon: any;
+};
+
+const AGENTS: Agent[] = [
+  { name: "Reminder Agent",   status: "planned", health: "n/a",  lastActivity: "—",          queue: 0, success: "—",     tint: "amber",  icon: Bell        },
+  { name: "OCR Agent",        status: "planned", health: "n/a",  lastActivity: "—",          queue: 0, success: "—",     tint: "cyan",   icon: ScanLine    },
+  { name: "Compliance Agent", status: "planned", health: "n/a",  lastActivity: "—",          queue: 0, success: "—",     tint: "lime",   icon: FileCheck2  },
+  { name: "Finance Agent",    status: "planned", health: "n/a",  lastActivity: "—",          queue: 0, success: "—",     tint: "green",  icon: Wallet      },
+  { name: "Command Agent",    status: "planned", health: "n/a",  lastActivity: "—",          queue: 0, success: "—",     tint: "purple", icon: Cpu         },
+  { name: "Knowledge Agent",  status: "planned", health: "n/a",  lastActivity: "—",          queue: 0, success: "—",     tint: "blue",   icon: Database    },
+];
+
+/* ------------------------------------------------------------------ */
+/*  Reminder summary (mock)                                            */
+/* ------------------------------------------------------------------ */
+
+const REMINDER_SUMMARY = [
+  { label: "Overdue",   value: 2,  tint: "red"   },
+  { label: "Today",     value: 5,  tint: "amber" },
+  { label: "This Week", value: 14, tint: "cyan"  },
+  { label: "Completed", value: 87, tint: "green" },
+];
+
+/* ------------------------------------------------------------------ */
+/*  Future modules                                                     */
+/* ------------------------------------------------------------------ */
+
+const FUTURE_MODULES = [
+  { label: "OCR",                icon: ScanLine,   tint: "cyan"   },
+  { label: "Compliance",         icon: FileCheck2, tint: "lime"   },
+  { label: "Finance",            icon: Wallet,     tint: "green"  },
+  { label: "WhatsApp",           icon: MessageSquare, tint: "lime" },
+  { label: "SEO",                icon: Search,     tint: "purple" },
+  { label: "Website Audit",      icon: Globe,      tint: "blue"   },
+  { label: "Content Automation", icon: PenLine,    tint: "pink"   },
 ];
 
 /* ------------------------------------------------------------------ */
