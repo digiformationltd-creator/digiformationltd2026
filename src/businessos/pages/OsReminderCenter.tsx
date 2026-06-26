@@ -108,7 +108,7 @@ export default function OsReminderCenter() {
         ))}
         <span className="text-white/20">·</span>
         {categories.map(c => (
-          <FilterChip key={c} active={filter===c} onClick={() => setFilter(c)}>{c.replaceAll("_"," ")}</FilterChip>
+          <FilterChip key={c} active={filter===c} onClick={() => setFilter(c)}>{c.split("_").join(" ")}</FilterChip>
         ))}
       </div>
 
@@ -128,7 +128,7 @@ export default function OsReminderCenter() {
               <div className="flex-1 min-w-0">
                 <div className="text-sm text-white/90 truncate">{r.title}</div>
                 <div className="text-[11px] text-white/40 mt-0.5">
-                  {r.category.replaceAll("_"," ")}
+                  {r.category.split("_").join(" ")}
                   {r.due_date && <> · due {r.due_date}</>}
                   {r.payload?.amount_gbp != null && <> · £{Number(r.payload.amount_gbp).toFixed(2)}</>}
                 </div>
