@@ -26,6 +26,7 @@ import OsSettings from "@/businessos/pages/OsSettings";
 import OsEmailMarketing from "@/businessos/pages/OsEmailMarketing";
 import OsAICommandCenter from "@/businessos/pages/OsAICommandCenter";
 import OsReminderCenter from "@/businessos/pages/OsReminderCenter";
+import OsHelpCenter from "@/businessos/pages/OsHelpCenter";
 import LegacyAdmin from "@/pages/LegacyAdmin";
 
 export default function Admin() {
@@ -57,6 +58,7 @@ export default function Admin() {
         <Route path="compliance" element={<OsCompliance />} />
         <Route path="settings" element={<OsSettings />} />
         <Route path="settings/services" element={<OsServices />} />
+        <Route path="help" element={<OsHelpCenter />} />
         {/* Legacy redirects-by-route for stability */}
         <Route path="services" element={<OsServices />} />
       </Route>
