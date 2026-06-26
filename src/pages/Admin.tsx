@@ -26,6 +26,7 @@ import OsAutomationJobs from "@/businessos/pages/OsAutomationJobs";
 import OsSettings from "@/businessos/pages/OsSettings";
 import OsEmailMarketing from "@/businessos/pages/OsEmailMarketing";
 import OsReminderCenter from "@/businessos/pages/OsReminderCenter";
+import OsAutomationAgentDetail from "@/businessos/pages/OsAutomationAgentDetail";
 import LegacyAdmin from "@/pages/LegacyAdmin";
 
 export default function Admin() {
@@ -53,6 +54,7 @@ export default function Admin() {
         <Route path="automation/history" element={<Placeholder title="Email Automation History" />} />
         <Route path="automation/jobs" element={<OsAutomationJobs />} />
         <Route path="automation/agents" element={<OsAutomationAgents />} />
+        <Route path="automation/agents/:id" element={<OsAutomationAgentDetail />} />
         <Route path="automation/workflows" element={<OsAutomationWorkflows />} />
         <Route path="email-ops" element={<OsEmailOps />} />
         <Route path="compliance" element={<OsCompliance />} />
