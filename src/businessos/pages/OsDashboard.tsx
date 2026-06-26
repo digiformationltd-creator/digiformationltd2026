@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  TrendingUp, ShoppingBag, Clock, Users, UserPlus, MailOpen, FileWarning, BadgePoundSterling,
+  TrendingUp, ShoppingBag, Clock, Users, UserPlus, FileWarning, BadgePoundSterling,
 } from "lucide-react";
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from "recharts";
-import { KpiGridSkeleton, ChartSkeleton, DonutSkeleton, ListSkeleton } from "../components/Skeletons";
+import { KpiGridSkeleton, ChartSkeleton, ListSkeleton } from "../components/Skeletons";
+
 
 type Glow = "blue"|"purple"|"green"|"amber"|"red"|"cyan"|"pink"|"lime";
 type Kpi = { label: string; value: string; sub?: string; icon: any; glow: Glow };
