@@ -628,18 +628,23 @@ export default function OsAICommandCenter() {
 
       {/* Bottom action bar */}
       <div className="os-glass px-3 py-2 flex items-center justify-between gap-3 shrink-0">
-        <div className="flex items-center gap-1.5 text-[11px] text-white/40 min-w-0 shrink-0">
-          <span className="inline-flex items-center gap-1 shrink-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            {busy ? "Running" : pendingAction ? "Awaiting" : "Idle"}
+        <div className="flex items-center gap-2 text-[11px] text-white/40 min-w-0 shrink-0">
+          <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium ${STATE_TINT[ccState]}`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${busy ? "bg-current animate-pulse" : "bg-current"}`} />
+            {STATE_LABELS[ccState]}
           </span>
+          {pendingAction?.risk_tier && pendingAction.risk_tier !== "safe" && (
+            <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-medium ${pendingAction.risk_tier === "destructive" ? "bg-red-500/15 text-red-300" : "bg-amber-500/15 text-amber-300"}`}>
+              {pendingAction.risk_tier}
+            </span>
+          )}
           <span className="text-white/20 hidden md:inline">·</span>
           <span className="hidden md:inline truncate">Agent: <span className="text-white/70">{agent}</span></span>
         </div>
         <div className="flex items-center gap-1.5 overflow-x-auto min-w-0">
-          <ActionBtn icon={CheckCircle2} label="Approve & Execute" disabled={!pendingAction || busy} onClick={executePending} tint="bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25" />
-          <ActionBtn icon={Play}         label="Execute" disabled={!pendingAction || busy} onClick={executePending} tint="bg-purple-500/20 text-purple-200 hover:bg-purple-500/30" />
-          <ActionBtn icon={XCircle}      label="Cancel"  disabled={!pendingAction || busy} onClick={rejectPending} tint="bg-red-500/10 text-red-300 hover:bg-red-500/20" />
+          <ActionBtn icon={CheckCircle2} label="Approve & Execute" disabled={!canApprove} onClick={executePending} tint="bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25" />
+          <ActionBtn icon={Play}         label="Execute" disabled={!canApprove} onClick={executePending} tint="bg-purple-500/20 text-purple-200 hover:bg-purple-500/30" />
+          <ActionBtn icon={XCircle}      label="Cancel"  disabled={!canCancel} onClick={rejectPending} tint="bg-red-500/10 text-red-300 hover:bg-red-500/20" />
           <ActionBtn icon={RotateCcw}    label="Run Again" tint="bg-white/5 text-white/70 hover:bg-white/10" />
           <ActionBtn icon={Eraser}       label="Clear"    tint="bg-white/5 text-white/70 hover:bg-white/10" onClick={clearChat} />
           <ActionBtn icon={Save}         label="Save Prompt" tint="bg-white/5 text-white/70 hover:bg-white/10" />
