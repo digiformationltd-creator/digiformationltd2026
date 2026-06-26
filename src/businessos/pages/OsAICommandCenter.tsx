@@ -659,12 +659,13 @@ function FuturePill({ icon: Icon, label, desc }: { icon: any; label: string; des
 }
 
 function ActionBtn({
-  icon: Icon, label, tint, onClick,
-}: { icon: any; label: string; tint: string; onClick?: () => void }) {
+  icon: Icon, label, tint, onClick, disabled,
+}: { icon: any; label: string; tint: string; onClick?: () => void; disabled?: boolean }) {
   return (
     <button
       onClick={onClick}
-      className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition ${tint}`}
+      disabled={disabled}
+      className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition disabled:opacity-40 disabled:cursor-not-allowed ${tint}`}
     >
       <Icon className="w-3.5 h-3.5" />
       {label}
