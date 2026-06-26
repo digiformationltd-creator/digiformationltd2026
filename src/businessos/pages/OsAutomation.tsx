@@ -214,8 +214,10 @@ export default function OsAutomation() {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         {OVERVIEW.map((k) => {
           const Icon = k.icon;
+          const TrendIcon = k.trend === "up" ? TrendingUp : k.trend === "down" ? TrendingDown : Minus;
+          const trendColor = k.trend === "up" ? "text-green-300" : k.trend === "down" ? "text-red-300" : "text-white/40";
           return (
-            <div key={k.label} className="os-glass p-4">
+            <div key={k.label} className="os-glass p-4 hover:translate-y-[-1px] transition">
               <div className="flex items-start justify-between">
                 <span className="text-[11px] text-white/50">{k.label}</span>
                 <div className={`w-7 h-7 rounded-lg grid place-items-center ${TINT[k.tint]}`}>
@@ -224,9 +226,40 @@ export default function OsAutomation() {
               </div>
               <div className="mt-2 text-xl font-bold">{k.value}</div>
               <div className="text-[11px] text-white/40 mt-0.5">{k.sub}</div>
+              {k.delta && (
+                <div className={`mt-2 inline-flex items-center gap-1 text-[10px] ${trendColor}`}>
+                  <TrendIcon className="w-3 h-3" />
+                  <span>{k.delta}</span>
+                </div>
+              )}
             </div>
           );
         })}
+      </div>
+
+      {/* Quick Actions */}
+      <div className="os-glass p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <ListChecks className="w-4 h-4 text-lime-300" />
+          <h3 className="font-semibold">Quick Actions</h3>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
+          {QUICK_ACTIONS.map((a) => {
+            const Icon = a.icon;
+            return (
+              <NavLink
+                key={a.label}
+                to={a.to}
+                className="group rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10 p-3 flex items-center gap-2.5 transition"
+              >
+                <div className={`w-8 h-8 rounded-lg grid place-items-center ${TINT[a.tint]}`}>
+                  <Icon className="w-4 h-4" />
+                </div>
+                <span className="text-xs font-medium text-white/80 group-hover:text-white truncate">{a.label}</span>
+              </NavLink>
+            );
+          })}
+        </div>
       </div>
 
       {/* Section cards */}
