@@ -1,15 +1,25 @@
-// AI Workspace — Phase 1 UI only.
-// The heart of the Automation module. No backend, no AI calls.
-// Future: connect to local Ollama / agent router.
+// AI Workspace — Phase 2 UI upgrade.
+// Professional ChatGPT/Claude/Cursor-style operating surface.
+// UI only — no backend, no AI calls, no persistence.
 
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   Sparkles, Send, Paperclip, Bot, User, Eraser, RotateCcw,
-  CheckCircle2, XCircle, ClipboardPaste, Upload, ChevronDown,
-  Building2, FileSearch, Bell, Mail, UserCog, Globe, MessageSquare, ListChecks,
+  CheckCircle2, XCircle, ClipboardPaste, ChevronDown, Plus, Search,
+  Pin, MessageSquarePlus, Copy, Pencil, Play, Save, Building2, FileSearch,
+  Bell, Mail, UserCog, Globe, MessageSquare, ListChecks, Briefcase, Receipt,
+  Brain, History, Zap, PanelLeftClose, PanelRightClose,
 } from "lucide-react";
 
-type Msg = { id: string; role: "user" | "assistant"; text: string; at: string };
+type Msg = {
+  id: string;
+  role: "user" | "assistant";
+  text: string;
+  at: string;
+  kind?: "text" | "code" | "table";
+};
+
+type Thread = { id: string; title: string; updatedAt: string; pinned?: boolean };
 
 const QUICK_PROMPTS = [
   { label: "Update Company Details",    icon: Building2,    tint: "bg-blue-500/10 text-blue-300" },
@@ -24,19 +34,96 @@ const QUICK_PROMPTS = [
 
 const AGENTS = ["Auto (default)", "Reminder Agent", "Email Agent", "Company Agent", "Customer Agent"];
 
+const PINNED: Thread[] = [
+  { id: "p1", title: "Daily reminder triage SOP", updatedAt: "Pinned", pinned: true },
+  { id: "p2", title: "Companies House parser", updatedAt: "Pinned", pinned: true },
+];
+
+const RECENT: Thread[] = [
+  { id: "r1", title: "Update Acme Ltd registered address", updatedAt: "2m ago" },
+  { id: "r2", title: "Draft reply to invoice dispute", updatedAt: "1h ago" },
+  { id: "r3", title: "Extract directors from CH filing", updatedAt: "Today" },
+  { id: "r4", title: "Reminder: VAT return for Nova LLC", updatedAt: "Yesterday" },
+  { id: "r5", title: "Summarise website — bluemoon.co.uk", updatedAt: "Tue" },
+  { id: "r6", title: "Customer note from WhatsApp thread", updatedAt: "Mon" },
+];
+
+const SEED_MESSAGES: Msg[] = [
+  {
+    id: "seed-1",
+    role: "assistant",
+    text:
+      "Hi. Paste any text — a website, an email, Companies House data — and tell me what to do. I'll prepare a preview for you to approve before anything is saved.",
+    at: "now",
+  },
+];
+
+function MarkdownPreview({ text }: { text: string }) {
+  // Lightweight UI-only renderer: **bold**, `code`, and ```fenced``` blocks.
+  const blocks = useMemo(() => {
+    const parts: { type: "text" | "code"; value: string; lang?: string }[] = [];
+    const re = /```(\w+)?\n?([\s\S]*?)```/g;
+    let last = 0;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(text)) !== null) {
+      if (m.index > last) parts.push({ type: "text", value: text.slice(last, m.index) });
+      parts.push({ type: "code", value: m[2], lang: m[1] });
+      last = m.index + m[0].length;
+    }
+    if (last < text.length) parts.push({ type: "text", value: text.slice(last) });
+    return parts;
+  }, [text]);
+
+  return (
+    <div className="space-y-2">
+      {blocks.map((b, i) =>
+        b.type === "code" ? (
+          <div key={i} className="rounded-lg bg-black/40 border border-white/10 overflow-hidden">
+            <div className="flex items-center justify-between px-3 py-1.5 border-b border-white/5 text-[10px] uppercase tracking-wider text-white/40">
+              <span>{b.lang || "code"}</span>
+              <button
+                onClick={() => navigator.clipboard.writeText(b.value)}
+                className="inline-flex items-center gap-1 hover:text-white/80"
+              >
+                <Copy className="w-3 h-3" /> Copy
+              </button>
+            </div>
+            <pre className="p-3 text-xs text-white/80 overflow-x-auto font-mono">{b.value}</pre>
+          </div>
+        ) : (
+          <div key={i} className="text-sm leading-relaxed whitespace-pre-wrap">
+            {b.value.split(/(\*\*[^*]+\*\*|`[^`]+`)/g).map((seg, j) => {
+              if (seg.startsWith("**") && seg.endsWith("**"))
+                return <strong key={j} className="text-white">{seg.slice(2, -2)}</strong>;
+              if (seg.startsWith("`") && seg.endsWith("`"))
+                return (
+                  <code key={j} className="px-1 py-0.5 rounded bg-white/10 text-[12px] font-mono text-cyan-200">
+                    {seg.slice(1, -1)}
+                  </code>
+                );
+              return <span key={j}>{seg}</span>;
+            })}
+          </div>
+        ),
+      )}
+    </div>
+  );
+}
+
 export default function OsAIWorkspace() {
-  const [messages, setMessages] = useState<Msg[]>([
-    {
-      id: "seed",
-      role: "assistant",
-      text: "Hi. Paste any text — a website, an email, Companies House data — and tell me what to do. I'll prepare a preview for you to approve before anything is saved.",
-      at: "now",
-    },
-  ]);
+  const [messages, setMessages] = useState<Msg[]>(SEED_MESSAGES);
   const [input, setInput] = useState("");
   const [paste, setPaste] = useState("");
   const [agent, setAgent] = useState(AGENTS[0]);
+  const [activeThread, setActiveThread] = useState<string>("r1");
+  const [search, setSearch] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingText, setEditingText] = useState("");
+  const [leftOpen, setLeftOpen] = useState(true);
+  const [rightOpen, setRightOpen] = useState(true);
   const taRef = useRef<HTMLTextAreaElement>(null);
+
+  const MAX_CHARS = 4000;
 
   const send = () => {
     const t = input.trim();
@@ -49,7 +136,7 @@ export default function OsAIWorkspace() {
         id: id + "-a",
         role: "assistant",
         text:
-          "Preview ready (mock). I would apply this instruction once connected to the AI backend. Use **Approve** to commit or **Cancel** to discard.",
+          "Preview ready (mock). Once connected I'd apply this instruction. Use **Approve** to commit or **Cancel** to discard.\n\n```json\n{\n  \"action\": \"update_company\",\n  \"company\": \"Acme Ltd\",\n  \"field\": \"registered_address\"\n}\n```",
         at: "just now",
       },
     ]);
@@ -60,62 +147,134 @@ export default function OsAIWorkspace() {
   const clearChat = () =>
     setMessages([{ id: "seed", role: "assistant", text: "Workspace cleared. Ready for a new instruction.", at: "now" }]);
 
+  const newChat = () => {
+    clearChat();
+    setActiveThread("new");
+  };
+
   const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant");
+  const filteredRecent = RECENT.filter((t) => t.title.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="space-y-6 os-fade-in">
-      {/* Header */}
-      <div className="os-glass os-glow-purple p-6">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-2xl grid place-items-center bg-purple-500/10 text-purple-300">
-              <Sparkles className="w-5 h-5" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold">AI Workspace</h2>
-              <p className="text-sm text-white/50 mt-1 max-w-2xl">
-                Paste text, give a natural-language instruction, review the preview, then approve. The administrator's
-                primary surface for running Business OS through conversation.
-              </p>
-            </div>
+    <div className="os-fade-in h-[calc(100vh-9rem)] min-h-[640px] flex flex-col gap-3">
+      {/* Compact header */}
+      <div className="os-glass os-glow-purple px-4 py-3 flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-3 min-w-0">
+          <button
+            onClick={() => setLeftOpen((v) => !v)}
+            className="lg:hidden inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-white/70"
+            aria-label="Toggle history"
+          >
+            <PanelLeftClose className="w-4 h-4" />
+          </button>
+          <div className="w-9 h-9 rounded-xl grid place-items-center bg-purple-500/10 text-purple-300 shrink-0">
+            <Sparkles className="w-4 h-4" />
           </div>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <select
-                value={agent}
-                onChange={(e) => setAgent(e.target.value)}
-                className="appearance-none bg-white/5 border border-white/10 rounded-lg pl-3 pr-8 py-1.5 text-xs text-white/80 focus:outline-none focus:border-purple-400/40"
-              >
-                {AGENTS.map((a) => (
-                  <option key={a} value={a} className="bg-[#0b0d10]">{a}</option>
-                ))}
-              </select>
-              <ChevronDown className="w-3.5 h-3.5 text-white/40 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
-            </div>
-            <span className="text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-md bg-purple-500/10 text-purple-300 border border-purple-500/20">
-              UI Preview
-            </span>
+          <div className="min-w-0">
+            <h2 className="text-sm font-bold leading-tight truncate">AI Workspace</h2>
+            <p className="text-[11px] text-white/40 truncate">Conversational control surface for Business OS</p>
           </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <select
+              value={agent}
+              onChange={(e) => setAgent(e.target.value)}
+              className="appearance-none bg-white/5 border border-white/10 rounded-lg pl-3 pr-8 py-1.5 text-xs text-white/80 focus:outline-none focus:border-purple-400/40"
+            >
+              {AGENTS.map((a) => (
+                <option key={a} value={a} className="bg-[#0b0d10]">{a}</option>
+              ))}
+            </select>
+            <ChevronDown className="w-3.5 h-3.5 text-white/40 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+          </div>
+          <button
+            onClick={() => setRightOpen((v) => !v)}
+            className="lg:hidden inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-white/70"
+            aria-label="Toggle context"
+          >
+            <PanelRightClose className="w-4 h-4" />
+          </button>
+          <span className="hidden sm:inline text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-md bg-purple-500/10 text-purple-300 border border-purple-500/20">
+            UI Preview
+          </span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Conversation */}
-        <div className="os-glass p-0 lg:col-span-2 flex flex-col min-h-[540px]">
+      {/* Three-pane workspace */}
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)_300px] gap-3 min-h-0">
+        {/* LEFT: History */}
+        <aside
+          className={`os-glass p-3 flex-col min-h-0 ${leftOpen ? "flex" : "hidden"} lg:flex`}
+        >
+          <button
+            onClick={newChat}
+            className="inline-flex items-center justify-center gap-2 w-full rounded-lg bg-purple-500/20 text-purple-100 hover:bg-purple-500/30 px-3 py-2 text-xs font-medium transition"
+          >
+            <MessageSquarePlus className="w-3.5 h-3.5" />
+            New Chat
+          </button>
+
+          <div className="relative mt-3">
+            <Search className="w-3.5 h-3.5 text-white/30 absolute left-2.5 top-1/2 -translate-y-1/2" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search conversations…"
+              className="w-full bg-white/5 border border-white/10 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-purple-400/40"
+            />
+          </div>
+
+          <div className="flex-1 overflow-y-auto mt-3 -mr-1 pr-1 space-y-4 min-h-0">
+            <div>
+              <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-white/40 mb-1.5 px-1">
+                <Pin className="w-3 h-3" /> Pinned
+              </div>
+              <div className="space-y-0.5">
+                {PINNED.map((t) => (
+                  <ThreadRow key={t.id} thread={t} active={activeThread === t.id} onClick={() => setActiveThread(t.id)} />
+                ))}
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-white/40 mb-1.5 px-1">
+                <History className="w-3 h-3" /> Recent
+              </div>
+              <div className="space-y-0.5">
+                {filteredRecent.map((t) => (
+                  <ThreadRow key={t.id} thread={t} active={activeThread === t.id} onClick={() => setActiveThread(t.id)} />
+                ))}
+                {filteredRecent.length === 0 && (
+                  <div className="text-[11px] text-white/30 px-2 py-1">No matches</div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-3 pt-3 border-t border-white/5 text-[10px] text-white/30 px-1">
+            Local-only · UI preview
+          </div>
+        </aside>
+
+        {/* CENTER: Conversation */}
+        <section className="os-glass p-0 flex flex-col min-h-0">
           {/* Quick prompts */}
-          <div className="p-4 border-b border-white/5">
-            <div className="text-[11px] uppercase tracking-wider text-white/40 mb-2">Quick prompts</div>
-            <div className="flex flex-wrap gap-2">
+          <div className="p-3 border-b border-white/5">
+            <div className="flex items-center gap-2 mb-2">
+              <Zap className="w-3.5 h-3.5 text-amber-300" />
+              <div className="text-[11px] uppercase tracking-wider text-white/40">Quick prompts</div>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
               {QUICK_PROMPTS.map((q) => {
                 const Icon = q.icon;
                 return (
                   <button
                     key={q.label}
                     onClick={() => setInput(q.label)}
-                    className="group inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20 px-3 py-1.5 text-xs text-white/80 transition"
+                    className="group inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20 px-2.5 py-1 text-[11px] text-white/80 transition"
                   >
-                    <span className={`w-5 h-5 rounded-md grid place-items-center ${q.tint}`}>
-                      <Icon className="w-3 h-3" />
+                    <span className={`w-4 h-4 rounded grid place-items-center ${q.tint}`}>
+                      <Icon className="w-2.5 h-2.5" />
                     </span>
                     {q.label}
                   </button>
@@ -125,23 +284,82 @@ export default function OsAIWorkspace() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
             {messages.map((m) => (
-              <div key={m.id} className={`flex gap-3 ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+              <div key={m.id} className={`group flex gap-3 ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                 {m.role === "assistant" && (
                   <div className="w-7 h-7 shrink-0 rounded-lg grid place-items-center bg-purple-500/10 text-purple-300">
                     <Bot className="w-3.5 h-3.5" />
                   </div>
                 )}
-                <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                    m.role === "user"
-                      ? "bg-white/10 text-white rounded-br-sm"
-                      : "bg-white/[0.03] border border-white/5 text-white/80 rounded-bl-sm"
-                  }`}
-                >
-                  {m.text}
-                  <div className="text-[10px] text-white/30 mt-1">{m.at}</div>
+                <div className={`max-w-[80%] ${m.role === "user" ? "items-end" : "items-start"} flex flex-col gap-1`}>
+                  <div
+                    className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+                      m.role === "user"
+                        ? "bg-white/10 text-white rounded-br-sm"
+                        : "bg-white/[0.03] border border-white/5 text-white/85 rounded-bl-sm"
+                    }`}
+                  >
+                    {editingId === m.id ? (
+                      <div className="space-y-2 min-w-[260px]">
+                        <textarea
+                          value={editingText}
+                          onChange={(e) => setEditingText(e.target.value)}
+                          rows={3}
+                          className="w-full resize-none bg-black/30 border border-white/10 rounded-lg p-2 text-sm focus:outline-none focus:border-purple-400/40"
+                        />
+                        <div className="flex gap-2 justify-end">
+                          <button
+                            onClick={() => setEditingId(null)}
+                            className="text-[11px] text-white/50 hover:text-white/80"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={() => {
+                              setMessages((prev) =>
+                                prev.map((x) => (x.id === m.id ? { ...x, text: editingText } : x)),
+                              );
+                              setEditingId(null);
+                            }}
+                            className="text-[11px] px-2 py-1 rounded bg-purple-500/30 text-purple-100 hover:bg-purple-500/40"
+                          >
+                            Save
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <MarkdownPreview text={m.text} />
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 px-1 opacity-0 group-hover:opacity-100 transition">
+                    <span className="text-[10px] text-white/30">{m.at}</span>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(m.text)}
+                      className="inline-flex items-center gap-1 text-[10px] text-white/40 hover:text-white/80"
+                    >
+                      <Copy className="w-3 h-3" /> Copy
+                    </button>
+                    {m.role === "assistant" && (
+                      <button
+                        onClick={send}
+                        className="inline-flex items-center gap-1 text-[10px] text-white/40 hover:text-white/80"
+                      >
+                        <RotateCcw className="w-3 h-3" /> Regenerate
+                      </button>
+                    )}
+                    {m.role === "user" && (
+                      <button
+                        onClick={() => {
+                          setEditingId(m.id);
+                          setEditingText(m.text);
+                        }}
+                        className="inline-flex items-center gap-1 text-[10px] text-white/40 hover:text-white/80"
+                      >
+                        <Pencil className="w-3 h-3" /> Edit
+                      </button>
+                    )}
+                  </div>
                 </div>
                 {m.role === "user" && (
                   <div className="w-7 h-7 shrink-0 rounded-lg grid place-items-center bg-white/5 text-white/70">
@@ -153,116 +371,245 @@ export default function OsAIWorkspace() {
           </div>
 
           {/* Composer */}
-          <div className="border-t border-white/5 p-3">
-            <div className="flex items-end gap-2">
+          <div className="border-t border-white/5 p-3 space-y-2">
+            {/* Paste area collapsed inline */}
+            <details className="group rounded-xl bg-white/[0.02] border border-white/5">
+              <summary className="cursor-pointer list-none flex items-center justify-between px-3 py-2 text-[11px] uppercase tracking-wider text-white/40">
+                <span className="inline-flex items-center gap-2">
+                  <ClipboardPaste className="w-3.5 h-3.5 text-cyan-300" />
+                  Paste area
+                  <span className="text-white/30 normal-case tracking-normal">
+                    {paste ? `· ${paste.length.toLocaleString()} chars` : ""}
+                  </span>
+                </span>
+                <ChevronDown className="w-3.5 h-3.5 transition group-open:rotate-180" />
+              </summary>
+              <div className="px-3 pb-3">
+                <textarea
+                  value={paste}
+                  onChange={(e) => setPaste(e.target.value)}
+                  placeholder="Paste a website, an email thread, Companies House data, a document…"
+                  rows={4}
+                  className="w-full resize-none bg-black/30 border border-white/10 focus:border-cyan-400/40 rounded-lg px-3 py-2 text-xs text-white placeholder:text-white/30 focus:outline-none"
+                />
+                <div className="flex items-center justify-between mt-1.5">
+                  <span className="text-[10px] text-white/40">{paste.length.toLocaleString()} characters</span>
+                  <button
+                    onClick={() => setPaste("")}
+                    disabled={!paste}
+                    className="text-[11px] text-white/50 hover:text-white/80 disabled:opacity-30"
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </details>
+
+            <div className="relative rounded-2xl bg-white/5 border border-white/10 focus-within:border-purple-400/40 transition">
               <textarea
                 ref={taRef}
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={(e) => setInput(e.target.value.slice(0, MAX_CHARS))}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
                     send();
                   }
                 }}
-                placeholder="Ask anything, or describe an update… (Shift+Enter for new line)"
-                rows={2}
-                className="flex-1 resize-none bg-white/5 border border-white/10 focus:border-purple-400/40 rounded-xl px-3 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none"
+                placeholder="Ask anything, or describe an update…   (Shift+Enter for new line)"
+                rows={3}
+                className="w-full resize-none bg-transparent rounded-2xl px-4 pt-3 pb-10 text-sm text-white placeholder:text-white/30 focus:outline-none"
               />
-              <button
-                onClick={send}
-                disabled={!input.trim()}
-                className="h-10 px-4 inline-flex items-center gap-2 rounded-xl bg-purple-500/20 text-purple-200 hover:bg-purple-500/30 disabled:opacity-40 transition"
-              >
-                <Send className="w-4 h-4" />
-                <span className="text-xs font-medium">Run</span>
-              </button>
-            </div>
-            <div className="flex items-center justify-between mt-2">
-              <div className="flex items-center gap-2 text-[11px] text-white/40">
-                <Paperclip className="w-3.5 h-3.5" />
-                File upload coming soon
+              <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-[11px] text-white/40">
+                  <button className="inline-flex items-center gap-1 hover:text-white/80">
+                    <Paperclip className="w-3.5 h-3.5" />
+                    Attach
+                  </button>
+                  <span className="text-white/20">·</span>
+                  <span>{input.length}/{MAX_CHARS}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={clearChat}
+                    className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] text-white/50 hover:text-white/80 hover:bg-white/5"
+                  >
+                    <Eraser className="w-3 h-3" /> Clear
+                  </button>
+                  <button
+                    onClick={send}
+                    disabled={!input.trim()}
+                    className="h-8 px-3 inline-flex items-center gap-1.5 rounded-lg bg-purple-500/30 text-purple-100 hover:bg-purple-500/40 disabled:opacity-40 transition"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    <span className="text-xs font-medium">Run</span>
+                  </button>
+                </div>
               </div>
-              <button
-                onClick={clearChat}
-                className="inline-flex items-center gap-1 text-[11px] text-white/50 hover:text-white/80 transition"
-              >
-                <Eraser className="w-3 h-3" />
-                Clear conversation
-              </button>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Side panel: Paste area + Preview */}
-        <div className="space-y-4">
-          {/* Paste area */}
-          <div className="os-glass p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <ClipboardPaste className="w-4 h-4 text-cyan-300" />
-              <h3 className="font-semibold text-sm">Large Paste Area</h3>
-            </div>
-            <textarea
-              value={paste}
-              onChange={(e) => setPaste(e.target.value)}
-              placeholder="Paste a website, an email thread, Companies House data, a document…"
-              rows={8}
-              className="w-full resize-none bg-white/5 border border-white/10 focus:border-cyan-400/40 rounded-xl px-3 py-2 text-xs text-white placeholder:text-white/30 focus:outline-none"
+        {/* RIGHT: Context */}
+        <aside className={`os-glass p-3 flex-col min-h-0 ${rightOpen ? "flex" : "hidden"} lg:flex`}>
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-[11px] uppercase tracking-wider text-white/40">Context</div>
+            <button className="text-[10px] text-white/40 hover:text-white/80 inline-flex items-center gap-1">
+              <Plus className="w-3 h-3" /> Attach
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto -mr-1 pr-1 space-y-2 min-h-0">
+            <ContextCard
+              icon={User}
+              label="Current Customer"
+              title="Sarah Johnson"
+              subtitle="sarah@acme.co.uk · UK"
+              tint="bg-cyan-500/10 text-cyan-300"
             />
-            <div className="flex items-center justify-between mt-2">
-              <span className="text-[10px] text-white/40">{paste.length.toLocaleString()} characters</span>
-              <button
-                onClick={() => setPaste("")}
-                disabled={!paste}
-                className="text-[11px] text-white/50 hover:text-white/80 disabled:opacity-30"
-              >
-                Clear
-              </button>
+            <ContextCard
+              icon={Building2}
+              label="Current Company"
+              title="Acme Holdings Ltd"
+              subtitle="#14829203 · Active"
+              tint="bg-blue-500/10 text-blue-300"
+            />
+            <ContextCard
+              icon={Briefcase}
+              label="Selected Order"
+              title="ORD-2026-0481"
+              subtitle="UK LTD Formation · £170"
+              tint="bg-purple-500/10 text-purple-300"
+            />
+            <ContextCard
+              icon={Bell}
+              label="Current Reminder"
+              title="Confirmation Statement due"
+              subtitle="In 12 days · Acme Holdings Ltd"
+              tint="bg-amber-500/10 text-amber-300"
+            />
+            <ContextCard
+              icon={Receipt}
+              label="Recent Invoice"
+              title="INV-2026-0931"
+              subtitle="£204 · Paid"
+              tint="bg-emerald-500/10 text-emerald-300"
+            />
+
+            <div className="pt-2">
+              <div className="text-[10px] uppercase tracking-wider text-white/30 mb-1.5 px-1">Future</div>
+              <FuturePill icon={Brain} label="Memory" desc="Persistent agent recall" />
+              <FuturePill icon={Sparkles} label="Context" desc="Auto-injected entities" />
+              <FuturePill icon={Play} label="Actions" desc="One-click executions" />
             </div>
           </div>
 
-          {/* File upload placeholder */}
-          <div className="os-glass p-4 border-dashed">
-            <div className="flex flex-col items-center justify-center text-center py-4 border border-dashed border-white/10 rounded-xl">
-              <Upload className="w-5 h-5 text-white/40 mb-2" />
-              <div className="text-xs font-medium text-white/70">Drop files here</div>
-              <div className="text-[10px] text-white/40 mt-1">PDF, images, docs · Coming soon</div>
-            </div>
-          </div>
-
-          {/* Preview panel */}
-          <div className="os-glass p-4">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-purple-300" />
-                <h3 className="font-semibold text-sm">Preview</h3>
+          {/* Preview */}
+          <div className="mt-3 pt-3 border-t border-white/5">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-purple-300" />
+                <h3 className="text-[11px] uppercase tracking-wider text-white/40">Preview</h3>
               </div>
-              <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md bg-white/5 text-white/40">Mock</span>
+              <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-white/5 text-white/40">Mock</span>
             </div>
-            <div className="rounded-xl bg-white/[0.02] border border-white/5 p-3 min-h-[110px] text-xs text-white/70 leading-relaxed">
-              {lastAssistant?.text ?? "Run a prompt to see the preview here."}
-            </div>
-            <div className="grid grid-cols-2 gap-2 mt-3">
-              <button className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-green-500/15 text-green-300 hover:bg-green-500/25 py-2 text-xs font-medium transition">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                Approve
-              </button>
-              <button className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-red-500/10 text-red-300 hover:bg-red-500/20 py-2 text-xs font-medium transition">
-                <XCircle className="w-3.5 h-3.5" />
-                Cancel
-              </button>
-              <button className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-white/5 text-white/70 hover:bg-white/10 py-2 text-xs font-medium transition">
-                <Eraser className="w-3.5 h-3.5" />
-                Clear
-              </button>
-              <button className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-white/5 text-white/70 hover:bg-white/10 py-2 text-xs font-medium transition">
-                <RotateCcw className="w-3.5 h-3.5" />
-                Run Again
-              </button>
+            <div className="rounded-lg bg-black/30 border border-white/5 p-2.5 min-h-[70px] max-h-[120px] overflow-y-auto text-[11px] text-white/70 leading-relaxed">
+              {lastAssistant ? (
+                <MarkdownPreview text={lastAssistant.text} />
+              ) : (
+                "Run a prompt to see the preview here."
+              )}
             </div>
           </div>
+        </aside>
+      </div>
+
+      {/* Bottom action bar */}
+      <div className="os-glass px-3 py-2 flex items-center justify-between gap-2 flex-wrap">
+        <div className="flex items-center gap-1.5 text-[11px] text-white/40">
+          <span className="inline-flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            Idle
+          </span>
+          <span className="text-white/20">·</span>
+          <span>Agent: <span className="text-white/70">{agent}</span></span>
+        </div>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <ActionBtn icon={CheckCircle2} label="Approve" tint="bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25" />
+          <ActionBtn icon={Play}         label="Execute" tint="bg-purple-500/20 text-purple-200 hover:bg-purple-500/30" />
+          <ActionBtn icon={XCircle}      label="Cancel"  tint="bg-red-500/10 text-red-300 hover:bg-red-500/20" />
+          <ActionBtn icon={RotateCcw}    label="Run Again" tint="bg-white/5 text-white/70 hover:bg-white/10" />
+          <ActionBtn icon={Eraser}       label="Clear"    tint="bg-white/5 text-white/70 hover:bg-white/10" onClick={clearChat} />
+          <ActionBtn icon={Save}         label="Save Prompt" tint="bg-white/5 text-white/70 hover:bg-white/10" />
         </div>
       </div>
     </div>
+  );
+}
+
+/* ---------- Sub-components ---------- */
+
+function ThreadRow({ thread, active, onClick }: { thread: Thread; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full text-left px-2 py-1.5 rounded-lg flex items-start gap-2 transition ${
+        active ? "bg-purple-500/15 border border-purple-400/20" : "hover:bg-white/5 border border-transparent"
+      }`}
+    >
+      {thread.pinned ? (
+        <Pin className="w-3 h-3 text-amber-300 mt-0.5 shrink-0" />
+      ) : (
+        <MessageSquare className="w-3 h-3 text-white/40 mt-0.5 shrink-0" />
+      )}
+      <div className="min-w-0 flex-1">
+        <div className="text-xs text-white/85 truncate">{thread.title}</div>
+        <div className="text-[10px] text-white/30">{thread.updatedAt}</div>
+      </div>
+    </button>
+  );
+}
+
+function ContextCard({
+  icon: Icon, label, title, subtitle, tint,
+}: { icon: any; label: string; title: string; subtitle: string; tint: string }) {
+  return (
+    <div className="rounded-lg bg-white/[0.02] border border-white/5 p-2.5 hover:border-white/15 transition cursor-pointer">
+      <div className="flex items-center gap-2 mb-1">
+        <span className={`w-5 h-5 rounded grid place-items-center ${tint}`}>
+          <Icon className="w-3 h-3" />
+        </span>
+        <span className="text-[10px] uppercase tracking-wider text-white/40">{label}</span>
+      </div>
+      <div className="text-xs font-medium text-white/90 truncate">{title}</div>
+      <div className="text-[10px] text-white/40 truncate">{subtitle}</div>
+    </div>
+  );
+}
+
+function FuturePill({ icon: Icon, label, desc }: { icon: any; label: string; desc: string }) {
+  return (
+    <div className="flex items-center gap-2 px-2 py-1.5 rounded-lg border border-dashed border-white/10 bg-white/[0.01] mb-1">
+      <Icon className="w-3.5 h-3.5 text-white/40" />
+      <div className="min-w-0 flex-1">
+        <div className="text-[11px] text-white/70">{label}</div>
+        <div className="text-[10px] text-white/30 truncate">{desc}</div>
+      </div>
+      <span className="text-[9px] uppercase tracking-wider text-white/30">Soon</span>
+    </div>
+  );
+}
+
+function ActionBtn({
+  icon: Icon, label, tint, onClick,
+}: { icon: any; label: string; tint: string; onClick?: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition ${tint}`}
+    >
+      <Icon className="w-3.5 h-3.5" />
+      {label}
+    </button>
   );
 }
