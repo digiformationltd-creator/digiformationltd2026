@@ -27,6 +27,7 @@ import OsEmailMarketing from "@/businessos/pages/OsEmailMarketing";
 import OsAICommandCenter from "@/businessos/pages/OsAICommandCenter";
 import OsReminderCenter from "@/businessos/pages/OsReminderCenter";
 import OsHelpCenter from "@/businessos/pages/OsHelpCenter";
+import OsAnalytics from "@/businessos/pages/OsAnalytics";
 import LegacyAdmin from "@/pages/LegacyAdmin";
 
 export default function Admin() {
