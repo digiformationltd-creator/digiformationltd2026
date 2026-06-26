@@ -479,9 +479,20 @@ export default function OsAICommandCenter() {
         <section className="os-glass p-0 flex flex-col min-h-0 min-w-0">
           {/* Quick prompts */}
           <div className="p-3 border-b border-white/5 shrink-0">
-            <div className="flex items-center gap-2 mb-2">
-              <Zap className="w-3.5 h-3.5 text-amber-300" />
-              <div className="text-[11px] uppercase tracking-wider text-white/40">Quick prompts</div>
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <Zap className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+                <div className="text-[11px] uppercase tracking-wider text-white/40 truncate">Quick prompts</div>
+              </div>
+              <button
+                onClick={() => setPaletteOpen(true)}
+                className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] px-2 py-0.5 text-[10.5px] text-white/70 shrink-0"
+                title="Open Command Library"
+              >
+                <BookOpen className="w-3 h-3 text-purple-300" />
+                <span className="hidden sm:inline">Library</span>
+                <kbd className="font-mono text-[9.5px] bg-black/40 border border-white/10 rounded px-1 py-0.5">⌘K</kbd>
+              </button>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-1.5">
               {QUICK_PROMPTS.map((q) => {
