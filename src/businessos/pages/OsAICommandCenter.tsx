@@ -546,7 +546,7 @@ export default function OsAICommandCenter() {
 
 
         {/* RIGHT: Context */}
-        <aside className={`os-glass p-3 flex-col min-h-0 ${rightOpen ? "flex" : "hidden"} lg:flex`}>
+        <aside className={`os-glass p-3 flex-col min-h-0 min-w-0 ${rightOpen ? "flex" : "hidden"} lg:flex`}>
           <div className="flex items-center justify-between mb-2">
             <div className="text-[11px] uppercase tracking-wider text-white/40">Context</div>
             <button className="text-[10px] text-white/40 hover:text-white/80 inline-flex items-center gap-1">
