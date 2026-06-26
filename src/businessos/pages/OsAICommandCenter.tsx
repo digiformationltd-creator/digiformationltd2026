@@ -238,6 +238,7 @@ export default function OsAICommandCenter() {
     const uid = crypto.randomUUID();
     setMessages((p) => [...p, { id: uid, role: "user", text: t, at: "just now" }]);
     setInput("");
+    pushRecent(t);
 
     const { intent, payload } = parseIntent(t);
     const { data, error } = await supabase.functions.invoke("os-command-execute", {
