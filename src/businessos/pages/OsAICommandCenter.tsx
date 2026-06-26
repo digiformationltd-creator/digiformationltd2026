@@ -620,16 +620,16 @@ export default function OsAICommandCenter() {
       </div>
 
       {/* Bottom action bar */}
-      <div className="os-glass px-3 py-2 flex items-center justify-between gap-2 flex-wrap">
-        <div className="flex items-center gap-1.5 text-[11px] text-white/40">
-          <span className="inline-flex items-center gap-1">
+      <div className="os-glass px-3 py-2 flex items-center justify-between gap-3 shrink-0">
+        <div className="flex items-center gap-1.5 text-[11px] text-white/40 min-w-0 shrink-0">
+          <span className="inline-flex items-center gap-1 shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            Idle
+            {busy ? "Running" : pendingAction ? "Awaiting" : "Idle"}
           </span>
-          <span className="text-white/20">·</span>
-          <span>Agent: <span className="text-white/70">{agent}</span></span>
+          <span className="text-white/20 hidden md:inline">·</span>
+          <span className="hidden md:inline truncate">Agent: <span className="text-white/70">{agent}</span></span>
         </div>
-        <div className="flex items-center gap-1.5 flex-wrap">
+        <div className="flex items-center gap-1.5 overflow-x-auto min-w-0">
           <ActionBtn icon={CheckCircle2} label="Approve & Execute" disabled={!pendingAction || busy} onClick={executePending} tint="bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25" />
           <ActionBtn icon={Play}         label="Execute" disabled={!pendingAction || busy} onClick={executePending} tint="bg-purple-500/20 text-purple-200 hover:bg-purple-500/30" />
           <ActionBtn icon={XCircle}      label="Cancel"  disabled={!pendingAction || busy} onClick={rejectPending} tint="bg-red-500/10 text-red-300 hover:bg-red-500/20" />
@@ -638,6 +638,7 @@ export default function OsAICommandCenter() {
           <ActionBtn icon={Save}         label="Save Prompt" tint="bg-white/5 text-white/70 hover:bg-white/10" />
         </div>
       </div>
+
     </div>
   );
 }
