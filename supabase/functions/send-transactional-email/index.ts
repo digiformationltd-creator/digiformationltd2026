@@ -52,7 +52,10 @@ const ADMIN_ONLY_TEMPLATES = new Set([
   'confirmation-statement-reminder',
   'annual-accounts-reminder',
   'email-system-check',
+  'ticket-status-update',
 ])
+
+const VALID_TRIGGER_SOURCES = new Set(['system','admin','automation','cron','agent'])
 
 Deno.serve(async (req) => {
   // Handle CORS preflight
