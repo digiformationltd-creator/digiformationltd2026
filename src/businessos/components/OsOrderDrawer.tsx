@@ -352,6 +352,11 @@ export default function OsOrderDrawer({
               ))}
             </div>
 
+            {/* Email history for this order */}
+            <div className="os-glass p-4">
+              <OsEmailHistoryPanel scope={{ orderId: order.id }} />
+            </div>
+
             {isGuest && (
               <div className="rounded-xl border border-amber-400/30 bg-amber-500/[0.06] p-3 text-[11px] text-amber-100 flex items-start gap-2">
                 <Building2 className="w-4 h-4 mt-0.5 shrink-0" />
