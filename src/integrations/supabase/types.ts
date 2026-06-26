@@ -2211,6 +2211,10 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      command_action_set_after_snapshot: {
+        Args: { _after: Json; _id: string }
+        Returns: undefined
+      }
       command_action_transition: {
         Args: { _id: string; _to: string }
         Returns: {
