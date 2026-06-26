@@ -55,7 +55,7 @@ export default function OsEmailHistoryPanel({ scope, title = "Email History", de
 
   const load = async () => {
     setLoading(true);
-    const cols = "id, template_name, recipient_email, subject, status, sent_at, created_at, trigger_source, message_id, error_message";
+    const cols = "id, template_name, recipient_email, status, created_at, trigger_source, message_id, error_message, metadata";
     let q = supabase.from("email_send_log").select(cols).order("created_at", { ascending: false }).limit(50);
 
     if ("orderId" in scope) q = q.eq("order_id", scope.orderId);
