@@ -159,9 +159,9 @@ export default function OsAutomation() {
           <h3 className="font-semibold">System</h3>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
-          <Row icon={Database} label="Database" status="Operational" ok />
-          <Row icon={Clock} label="Scheduler" status="Operational" ok />
-          <Row icon={Cpu} label="Automation Engine" status={kpi.failures ? "Warnings" : "Operational"} ok={!kpi.failures} />
+          <Row icon={Database} label="Database" status={loading ? "Checking…" : "Reachable"} ok={!loading} />
+          <Row icon={Clock} label="Scheduler" status={loading ? "Checking…" : (kpi.jobs ? `${kpi.jobs} active` : "Idle")} ok={!loading && kpi.jobs > 0} />
+          <Row icon={Cpu} label="Automation Engine" status={kpi.failures ? `${kpi.failures} failed (24h)` : (kpi.recent ? "Operational" : "Idle")} ok={!kpi.failures} />
         </div>
       </div>
     </div>
