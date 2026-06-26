@@ -1,32 +1,135 @@
-// Email Marketing — Phase 1 UI scaffold (mock data only).
-// Central Lead Generation & Email Campaign Center.
-// No backend, no AI, no email sending, no third-party integrations.
+// Email Marketing — LIVE backend wiring (Phase 8).
+// All KPIs, queue, logs and campaign data come from public.email_send_log,
+// public.email_campaigns and public.leads. Tabs without a backend show
+// "No live data available" empty states. NO fake/mock data.
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-  Mail, Users, Send, Inbox, CheckCircle2, Clock, Search, Filter,
+  Mail, Users, Send, Inbox, Clock, Search,
   Sparkles, FileText, Activity, BarChart3, Compass, ListChecks,
-  Megaphone, ShieldCheck, ChevronRight, Eye, Check, X, Globe,
-  TrendingUp, TrendingDown, Minus, Cpu, Zap,
+  Megaphone, TrendingUp, RefreshCw, AlertCircle,
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 type Tab =
-  | "overview" | "discovery" | "review" | "campaigns"
-  | "templates" | "queue" | "logs" | "analytics";
+  | "overview" | "campaigns" | "templates"
+  | "queue" | "logs" | "analytics" | "discovery" | "review";
 
 const TABS: { id: Tab; label: string; icon: any }[] = [
-  { id: "overview",   label: "Overview",   icon: BarChart3 },
+  { id: "overview",   label: "Overview",       icon: BarChart3 },
+  { id: "campaigns",  label: "Campaigns",      icon: Megaphone },
+  { id: "templates",  label: "Templates",      icon: FileText },
+  { id: "queue",      label: "Queue",          icon: Clock },
+  { id: "logs",       label: "Logs",           icon: Activity },
+  { id: "analytics",  label: "Analytics",      icon: TrendingUp },
   { id: "discovery",  label: "Lead Discovery", icon: Compass },
   { id: "review",     label: "Lead Review",    icon: ListChecks },
-  { id: "campaigns",  label: "Campaigns",  icon: Megaphone },
-  { id: "templates",  label: "Templates",  icon: FileText },
-  { id: "queue",      label: "Queue",      icon: Clock },
-  { id: "logs",       label: "Logs",       icon: Activity },
-  { id: "analytics",  label: "Analytics",  icon: TrendingUp },
 ];
+
+const TINT: Record<string, string> = {
+  cyan:    "bg-cyan-500/10 text-cyan-300",
+  emerald: "bg-emerald-500/10 text-emerald-300",
+  pink:    "bg-pink-500/10 text-pink-300",
+  indigo:  "bg-indigo-500/10 text-indigo-300",
+  gold:    "bg-amber-500/10 text-amber-300",
+  purple:  "bg-purple-500/10 text-purple-300",
+  red:     "bg-red-500/10 text-red-300",
+};
+
+type LogRow = {
+  message_id: string | null;
+  template_name: string | null;
+  recipient_email: string | null;
+  status: string;
+  error_message: string | null;
+  created_at: string;
+};
+
+type Campaign = {
+  id: string; name: string; subject: string; status: string;
+  scheduled_at: string | null; sent_count: number;
+  opened_count: number; clicked_count: number;
+  template_name: string | null; updated_at: string;
+};
+
+type Counts = {
+  totalLeads: number;
+  newLeads7d: number;
+  activeCampaigns: number;
+  sent: number;
+  failed: number;
+  pending: number;
+  suppressed: number;
+};
 
 export default function OsEmailMarketing() {
   const [tab, setTab] = useState<Tab>("overview");
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState<string | null>(null);
+  const [logs, setLogs] = useState<LogRow[]>([]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [counts, setCounts] = useState<Counts>({
+    totalLeads: 0, newLeads7d: 0, activeCampaigns: 0,
+    sent: 0, failed: 0, pending: 0, suppressed: 0,
+  });
+
+  const load = async () => {
+    setLoading(true); setErr(null);
+    try {
+      const since7d = new Date(Date.now() - 7 * 86400000).toISOString();
+
+      const [leadsAll, leadsNew, camps, logsRecent, sentC, failedC, pendingC, suppressedC] = await Promise.all([
+        supabase.from("leads").select("id", { count: "exact", head: true }),
+        supabase.from("leads").select("id", { count: "exact", head: true }).gte("created_at", since7d),
+        supabase.from("email_campaigns").select("*").order("updated_at", { ascending: false }).limit(50),
+        supabase
+          .from("email_send_log")
+          .select("message_id,template_name,recipient_email,status,error_message,created_at")
+          .order("created_at", { ascending: false })
+          .limit(500),
+        supabase.from("email_send_log").select("message_id", { count: "exact", head: true }).eq("status", "sent"),
+        supabase.from("email_send_log").select("message_id", { count: "exact", head: true }).in("status", ["failed", "dlq", "bounced"]),
+        supabase.from("email_send_log").select("message_id", { count: "exact", head: true }).eq("status", "pending"),
+        supabase.from("email_send_log").select("message_id", { count: "exact", head: true }).eq("status", "suppressed"),
+      ]);
+
+      if (leadsAll.error) throw leadsAll.error;
+      if (camps.error) throw camps.error;
+      if (logsRecent.error) throw logsRecent.error;
+
+      const campaignsData = (camps.data ?? []) as Campaign[];
+      setCampaigns(campaignsData);
+      setLogs((logsRecent.data ?? []) as LogRow[]);
+      setCounts({
+        totalLeads: leadsAll.count ?? 0,
+        newLeads7d: leadsNew.count ?? 0,
+        activeCampaigns: campaignsData.filter(c => ["running", "scheduled", "sending"].includes(c.status)).length,
+        sent: sentC.count ?? 0,
+        failed: failedC.count ?? 0,
+        pending: pendingC.count ?? 0,
+        suppressed: suppressedC.count ?? 0,
+      });
+    } catch (e: any) {
+      setErr(e?.message ?? "Failed to load");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { load(); }, []);
+
+  // Deduplicate by message_id, keep newest (logs are already DESC-ordered)
+  const dedupLogs = useMemo(() => {
+    const seen = new Set<string>();
+    const out: LogRow[] = [];
+    for (const r of logs) {
+      const key = r.message_id ?? `${r.recipient_email}-${r.created_at}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(r);
+    }
+    return out;
+  }, [logs]);
 
   return (
     <div className="space-y-6 os-fade-in">
@@ -39,20 +142,21 @@ export default function OsEmailMarketing() {
           <div className="flex-1 min-w-[240px]">
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-xl font-bold">Email Marketing</h2>
-              <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-pink-500/15 text-pink-200 border border-pink-400/20">
-                Lead Generation Center
-              </span>
-              <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/5 text-white/50 border border-white/10">
-                Phase 1 · UI
+              <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-400/20">
+                Live
               </span>
             </div>
             <p className="text-sm text-white/50 mt-1 max-w-2xl">
-              Central lead generation and outbound campaign system. Discover prospects, review quality, queue campaigns, and track every send across Business OS. Backend wiring lands in later phases.
+              Read-only view over <code className="text-white/70">email_send_log</code>,{" "}
+              <code className="text-white/70">email_campaigns</code> and <code className="text-white/70">leads</code>.
+              No fake data, no duplicated logic.
             </p>
           </div>
+          <button onClick={load} className="inline-flex items-center gap-2 rounded-lg bg-white/5 hover:bg-white/10 px-3 py-1.5 text-xs">
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} /> Refresh
+          </button>
         </div>
 
-        {/* Tab strip */}
         <div className="mt-5 flex gap-1.5 flex-wrap">
           {TABS.map((t) => {
             const Icon = t.icon;
@@ -75,632 +179,343 @@ export default function OsEmailMarketing() {
         </div>
       </div>
 
-      {tab === "overview"   && <Overview />}
-      {tab === "discovery"  && <Discovery />}
-      {tab === "review"     && <Review />}
-      {tab === "campaigns"  && <Campaigns />}
-      {tab === "templates"  && <Templates />}
-      {tab === "queue"      && <Queue />}
-      {tab === "logs"       && <Logs />}
-      {tab === "analytics"  && <Analytics />}
+      {err && (
+        <div className="os-glass p-4 text-sm text-red-300 flex items-center gap-2">
+          <AlertCircle className="w-4 h-4" /> {err}
+        </div>
+      )}
 
-      <FutureReady />
+      {tab === "overview"  && <Overview counts={counts} loading={loading} />}
+      {tab === "campaigns" && <Campaigns campaigns={campaigns} loading={loading} />}
+      {tab === "templates" && <Templates logs={dedupLogs} />}
+      {tab === "queue"     && <Queue logs={dedupLogs} pending={counts.pending} sent={counts.sent} failed={counts.failed} />}
+      {tab === "logs"      && <Logs logs={dedupLogs} loading={loading} />}
+      {tab === "analytics" && <Analytics campaigns={campaigns} counts={counts} />}
+      {tab === "discovery" && <NoBackend title="Lead Discovery" detail="No lead-discovery backend is connected. Categories, scans, and quality scoring will appear here once an outbound discovery service is wired in." />}
+      {tab === "review"    && <NoBackend title="Lead Review" detail="No lead-review queue exists yet. When a discovery engine populates candidate leads, they will appear here for approval." />}
     </div>
   );
 }
 
-/* ------------------------------ 1. OVERVIEW ----------------------------- */
+/* ------------------------------ OVERVIEW -------------------------------- */
 
-const KPIS = [
-  { label: "Total Leads",      value: "12,486", delta: "+438",  trend: "up",   tint: "cyan",    icon: Users },
-  { label: "New Leads",        value: "327",    delta: "+62",   trend: "up",   tint: "emerald", icon: Sparkles },
-  { label: "Active Campaigns", value: "5",      delta: "+1",    trend: "up",   tint: "pink",    icon: Megaphone },
-  { label: "Emails Sent",      value: "8,914",  delta: "+1,204",trend: "up",   tint: "indigo",  icon: Send },
-  { label: "Replies Received", value: "412",    delta: "+27",   trend: "up",   tint: "gold",    icon: Inbox },
-  { label: "Pending Approval", value: "89",     delta: "-12",   trend: "down", tint: "purple",  icon: ShieldCheck },
-];
-
-const TINT: Record<string, string> = {
-  cyan:    "bg-cyan-500/10 text-cyan-300",
-  emerald: "bg-emerald-500/10 text-emerald-300",
-  pink:    "bg-pink-500/10 text-pink-300",
-  indigo:  "bg-indigo-500/10 text-indigo-300",
-  gold:    "bg-amber-500/10 text-amber-300",
-  purple:  "bg-purple-500/10 text-purple-300",
-  mustard: "bg-yellow-500/10 text-yellow-300",
-};
-
-function TrendBadge({ trend, delta }: { trend: string; delta: string }) {
-  const Icon = trend === "up" ? TrendingUp : trend === "down" ? TrendingDown : Minus;
-  const tone = trend === "up" ? "text-emerald-300" : trend === "down" ? "text-red-300" : "text-white/40";
+function KPI({ label, value, sub, icon: Icon, tint }: any) {
   return (
-    <span className={`inline-flex items-center gap-1 text-[11px] ${tone}`}>
-      <Icon className="w-3 h-3" /> {delta}
-    </span>
+    <div className="os-glass p-4">
+      <div className="flex items-center justify-between">
+        <div className={`w-9 h-9 rounded-xl grid place-items-center ${TINT[tint]}`}>
+          <Icon className="w-4 h-4" />
+        </div>
+      </div>
+      <div className="mt-3 text-2xl font-bold">{value}</div>
+      <div className="text-xs text-white/50">{label}</div>
+      {sub && <div className="text-[10px] text-white/40 mt-0.5">{sub}</div>}
+    </div>
   );
 }
 
-function Overview() {
+function Overview({ counts, loading }: { counts: Counts; loading: boolean }) {
+  const items = [
+    { label: "Total Leads",       value: counts.totalLeads,     sub: `${counts.newLeads7d} new (7d)`, icon: Users,    tint: "cyan" },
+    { label: "Active Campaigns",  value: counts.activeCampaigns, sub: "running / scheduled / sending", icon: Megaphone, tint: "pink" },
+    { label: "Emails Sent",       value: counts.sent,           sub: "all-time (unique)",             icon: Send,     tint: "indigo" },
+    { label: "Pending",           value: counts.pending,        sub: "in queue",                      icon: Clock,    tint: "gold" },
+    { label: "Failed",            value: counts.failed,         sub: "incl. bounced / DLQ",           icon: AlertCircle, tint: "red" },
+    { label: "Suppressed",        value: counts.suppressed,     sub: "unsubscribed / blocked",        icon: Inbox,    tint: "purple" },
+  ];
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
-        {KPIS.map((k) => {
-          const Icon = k.icon;
-          return (
-            <div key={k.label} className="os-glass p-4">
-              <div className="flex items-center justify-between">
-                <div className={`w-9 h-9 rounded-xl grid place-items-center ${TINT[k.tint]}`}>
-                  <Icon className="w-4 h-4" />
-                </div>
-                <TrendBadge trend={k.trend} delta={k.delta} />
-              </div>
-              <div className="mt-3 text-2xl font-bold">{k.value}</div>
-              <div className="text-xs text-white/50">{k.label}</div>
-            </div>
-          );
-        })}
+        {items.map((k) => (
+          <KPI key={k.label} {...k} value={loading ? "—" : k.value.toLocaleString()} />
+        ))}
       </div>
-
-      {/* Snapshot strip */}
-      <div className="grid md:grid-cols-3 gap-4">
-        <div className="os-glass p-5">
-          <div className="text-xs uppercase tracking-wider text-white/40">Approval Queue</div>
-          <div className="text-2xl font-bold mt-1">89 leads</div>
-          <p className="text-xs text-white/50 mt-1">Awaiting human review before next campaign batch.</p>
-        </div>
-        <div className="os-glass p-5">
-          <div className="text-xs uppercase tracking-wider text-white/40">Next Scheduled Campaign</div>
-          <div className="text-2xl font-bold mt-1">UK Formation · Wave 3</div>
-          <p className="text-xs text-white/50 mt-1">Mon 09:00 UTC · 240 recipients · template v1.4</p>
-        </div>
-        <div className="os-glass p-5">
-          <div className="text-xs uppercase tracking-wider text-white/40">Best Performer (30d)</div>
-          <div className="text-2xl font-bold mt-1">Website Proposal</div>
-          <p className="text-xs text-white/50 mt-1">38% open · 12% reply across 1,840 sends.</p>
-        </div>
+      <div className="os-glass p-5 text-xs text-white/50">
+        Source: <code className="text-white/70">email_send_log</code> (deduplicated by <code>message_id</code>),{" "}
+        <code className="text-white/70">email_campaigns</code>, <code className="text-white/70">leads</code>.
       </div>
     </div>
   );
 }
 
-/* --------------------------- 2. LEAD DISCOVERY -------------------------- */
+/* ------------------------------ CAMPAIGNS ------------------------------- */
 
-const DIGITAL = [
-  { name: "Digital Marketing Agencies", est: 1240, last: "2h ago",  status: "ready" },
-  { name: "SEO Agencies",               est: 860,  last: "2h ago",  status: "ready" },
-  { name: "Google Ads Agencies",        est: 540,  last: "Today",   status: "ready" },
-  { name: "Web Design Companies",       est: 1880, last: "5h ago",  status: "ready" },
-  { name: "Software Companies",         est: 2310, last: "Yesterday", status: "scanning" },
-  { name: "Freelancers",                est: 4120, last: "3 days ago", status: "idle" },
-];
-
-const PHYSICAL = [
-  { name: "Restaurants",   est: 3210, last: "Today",      status: "ready" },
-  { name: "Dental Clinics",est: 980,  last: "Today",      status: "ready" },
-  { name: "Medical Clinics",est: 1140,last: "Yesterday",  status: "ready" },
-  { name: "Law Firms",     est: 720,  last: "2 days ago", status: "idle" },
-  { name: "Accountants",   est: 1430, last: "Today",      status: "ready" },
-  { name: "Architects",    est: 410,  last: "3 days ago", status: "idle" },
-  { name: "Gyms",          est: 690,  last: "Today",      status: "ready" },
-  { name: "Salons",        est: 1520, last: "Yesterday",  status: "ready" },
-  { name: "Hotels",        est: 880,  last: "Today",      status: "scanning" },
-  { name: "Real Estate",   est: 2110, last: "Today",      status: "ready" },
-  { name: "Car Dealers",   est: 760,  last: "2 days ago", status: "idle" },
-];
-
-const SCAN_TINT: Record<string, string> = {
-  ready:    "bg-emerald-500/10 text-emerald-300 border-emerald-400/20",
-  scanning: "bg-cyan-500/10 text-cyan-300 border-cyan-400/20",
-  idle:     "bg-white/5 text-white/50 border-white/10",
+const CAMP_STATUS: Record<string, string> = {
+  running:   "bg-emerald-500/10 text-emerald-300",
+  sending:   "bg-emerald-500/10 text-emerald-300",
+  scheduled: "bg-cyan-500/10 text-cyan-300",
+  draft:     "bg-white/5 text-white/60",
+  paused:    "bg-amber-500/10 text-amber-300",
+  completed: "bg-purple-500/10 text-purple-300",
 };
 
-function CategoryGrid({ title, items }: { title: string; items: typeof DIGITAL }) {
+function Campaigns({ campaigns, loading }: { campaigns: Campaign[]; loading: boolean }) {
+  if (!loading && campaigns.length === 0) {
+    return <NoData title="No campaigns yet" detail="Campaigns created in the AI Command Center or backend will appear here." />;
+  }
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-white/80">{title}</h3>
-        <span className="text-xs text-white/40">{items.length} categories</span>
-      </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {items.map((c) => (
-          <div key={c.name} className="os-glass p-4 hover:bg-white/5 transition">
-            <div className="flex items-start justify-between gap-2">
-              <div className="font-medium text-sm">{c.name}</div>
-              <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full border ${SCAN_TINT[c.status]}`}>
+    <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+      {campaigns.map((c) => {
+        const totalKnown = c.sent_count || 0;
+        const openPct = totalKnown ? Math.round((c.opened_count / totalKnown) * 100) : 0;
+        return (
+          <div key={c.id} className="os-glass p-5">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="font-semibold truncate">{c.name}</div>
+                <div className="text-xs text-white/50 mt-0.5 truncate">{c.subject}</div>
+              </div>
+              <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${CAMP_STATUS[c.status] ?? "bg-white/5 text-white/60"}`}>
                 {c.status}
               </span>
             </div>
-            <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-              <div>
-                <div className="text-white/40">Estimated Leads</div>
-                <div className="font-semibold text-white/90">{c.est.toLocaleString()}</div>
-              </div>
-              <div>
-                <div className="text-white/40">Last Scan</div>
-                <div className="font-semibold text-white/90">{c.last}</div>
-              </div>
+            <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
+              <Stat label="Sent" value={c.sent_count} />
+              <Stat label="Opened" value={c.opened_count} />
+              <Stat label="Clicked" value={c.clicked_count} />
+            </div>
+            <div className="mt-3 flex items-center justify-between text-[11px] text-white/40">
+              <span>{c.scheduled_at ? new Date(c.scheduled_at).toLocaleString() : "—"}</span>
+              <span>{openPct}% open</span>
             </div>
           </div>
-        ))}
-      </div>
+        );
+      })}
     </div>
   );
 }
 
-function Discovery() {
+function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="space-y-6">
-      <div className="os-glass p-5 flex items-start gap-4">
-        <div className={`w-10 h-10 rounded-xl grid place-items-center ${TINT.cyan}`}>
-          <Compass className="w-4 h-4" />
-        </div>
-        <div className="flex-1">
-          <div className="font-semibold">Lead Discovery</div>
-          <p className="text-xs text-white/50 mt-0.5">
-            Categories the discovery engine will scan once connected. Scan runs are queued by an admin operator and reviewed before any outreach.
-          </p>
-        </div>
-        <button disabled className="px-3 py-1.5 rounded-xl text-sm bg-white/5 border border-white/10 text-white/40 cursor-not-allowed">
-          Run Scan · Soon
-        </button>
-      </div>
-      <CategoryGrid title="Digital Businesses" items={DIGITAL} />
-      <CategoryGrid title="Physical Businesses" items={PHYSICAL} />
+    <div>
+      <div className="text-white/40">{label}</div>
+      <div className="font-semibold text-white/90">{value.toLocaleString()}</div>
     </div>
   );
 }
 
-/* ----------------------------- 3. LEAD REVIEW --------------------------- */
+/* ------------------------------ TEMPLATES ------------------------------- */
 
-const LEADS = [
-  { company: "Aurora Web Studio",   web: "aurorawebstudio.co.uk",  email: "hello@aurorawebstudio.co.uk", category: "Web Design",      score: 92, status: "pending" },
-  { company: "Northwind Dental",    web: "northwinddental.co.uk",  email: "info@northwinddental.co.uk",  category: "Dental Clinics",  score: 88, status: "pending" },
-  { company: "Pixel & Pine SEO",    web: "pixelandpine.io",        email: "team@pixelandpine.io",        category: "SEO Agencies",    score: 81, status: "pending" },
-  { company: "Bramley Law",         web: "bramleylaw.uk",          email: "contact@bramleylaw.uk",       category: "Law Firms",       score: 76, status: "approved" },
-  { company: "Quokka Kitchen",      web: "quokka-kitchen.com",     email: "manager@quokka-kitchen.com",  category: "Restaurants",     score: 64, status: "pending" },
-  { company: "Vertex Software",     web: "vertexsoftware.dev",     email: "sales@vertexsoftware.dev",    category: "Software",        score: 95, status: "approved" },
-  { company: "Highland Salon Co",   web: "highlandsalon.co.uk",    email: "bookings@highlandsalon.co.uk",category: "Salons",          score: 58, status: "rejected" },
-  { company: "Cobalt Marketing",    web: "cobaltmarketing.io",     email: "hi@cobaltmarketing.io",       category: "Digital Marketing", score: 89, status: "pending" },
-];
+function Templates({ logs }: { logs: LogRow[] }) {
+  const usage = useMemo(() => {
+    const m = new Map<string, { name: string; count: number; lastUsed: string }>();
+    for (const r of logs) {
+      const name = r.template_name ?? "(unknown)";
+      const cur = m.get(name);
+      if (cur) { cur.count++; if (r.created_at > cur.lastUsed) cur.lastUsed = r.created_at; }
+      else m.set(name, { name, count: 1, lastUsed: r.created_at });
+    }
+    return [...m.values()].sort((a, b) => b.count - a.count);
+  }, [logs]);
 
-const LEAD_STATUS: Record<string, string> = {
-  pending:  "bg-amber-500/10 text-amber-300",
-  approved: "bg-emerald-500/10 text-emerald-300",
-  rejected: "bg-red-500/10 text-red-300",
+  if (usage.length === 0) return <NoData title="No templates used yet" detail="Templates appear here once transactional or campaign emails have been sent." />;
+
+  return (
+    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {usage.map((t) => (
+        <div key={t.name} className="os-glass p-5">
+          <div className="font-medium text-sm">{t.name}</div>
+          <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+            <Stat label="Sends (recent)" value={t.count} />
+            <div>
+              <div className="text-white/40">Last used</div>
+              <div className="font-semibold text-white/90">{new Date(t.lastUsed).toLocaleDateString()}</div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* -------------------------------- QUEUE --------------------------------- */
+
+const Q_STATUS: Record<string, string> = {
+  pending:    "bg-cyan-500/10 text-cyan-300",
+  sent:       "bg-emerald-500/10 text-emerald-300",
+  failed:     "bg-red-500/10 text-red-300",
+  dlq:        "bg-red-500/10 text-red-300",
+  bounced:    "bg-red-500/10 text-red-300",
+  suppressed: "bg-amber-500/10 text-amber-300",
 };
 
-function Review() {
+function Queue({ logs, pending, sent, failed }: { logs: LogRow[]; pending: number; sent: number; failed: number }) {
+  const rows = logs.filter(l => l.status === "pending").slice(0, 50);
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-3 gap-4">
+        <KPI label="Pending" value={pending.toLocaleString()} icon={Clock} tint="cyan" />
+        <KPI label="Sent (all-time)" value={sent.toLocaleString()} icon={Send} tint="emerald" />
+        <KPI label="Failed" value={failed.toLocaleString()} icon={AlertCircle} tint="red" />
+      </div>
+      {rows.length === 0 ? (
+        <NoData title="Queue is empty" detail="No pending sends in email_send_log." />
+      ) : (
+        <LogTable rows={rows} />
+      )}
+    </div>
+  );
+}
+
+/* --------------------------------- LOGS --------------------------------- */
+
+function Logs({ logs, loading }: { logs: LogRow[]; loading: boolean }) {
+  const [q, setQ] = useState("");
+  const filtered = useMemo(() => {
+    if (!q) return logs;
+    const lc = q.toLowerCase();
+    return logs.filter(l =>
+      (l.recipient_email ?? "").toLowerCase().includes(lc) ||
+      (l.template_name ?? "").toLowerCase().includes(lc) ||
+      (l.status ?? "").toLowerCase().includes(lc)
+    );
+  }, [logs, q]);
+
   return (
     <div className="space-y-4">
       <div className="os-glass p-3 flex gap-2 flex-wrap items-center">
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 flex-1 min-w-[200px]">
           <Search className="w-4 h-4 text-white/40" />
           <input
-            placeholder="Search company, email, category…"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search recipient, template, status…"
             className="bg-transparent text-sm outline-none flex-1 placeholder:text-white/30"
           />
         </div>
-        <button className="px-3 py-1.5 rounded-lg text-sm bg-white/5 border border-white/10 inline-flex items-center gap-2">
-          <Filter className="w-3.5 h-3.5" /> Filters
-        </button>
-        <span className="text-xs text-white/40 px-2">{LEADS.length} results</span>
+        <span className="text-xs text-white/40 px-2">{filtered.length} of {logs.length}</span>
       </div>
+      {!loading && filtered.length === 0 ? (
+        <NoData title="No logs" detail="Nothing matched your filter." />
+      ) : (
+        <LogTable rows={filtered.slice(0, 200)} />
+      )}
+    </div>
+  );
+}
 
-      <div className="os-glass overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-white/5 text-white/50 text-xs uppercase tracking-wider">
-              <tr>
-                <th className="text-left px-4 py-3">Company</th>
-                <th className="text-left px-4 py-3">Website</th>
-                <th className="text-left px-4 py-3">Email</th>
-                <th className="text-left px-4 py-3">Category</th>
-                <th className="text-left px-4 py-3">Quality</th>
-                <th className="text-left px-4 py-3">Status</th>
-                <th className="text-right px-4 py-3">Actions</th>
+function LogTable({ rows }: { rows: LogRow[] }) {
+  return (
+    <div className="os-glass overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="bg-white/5 text-white/50 text-xs uppercase tracking-wider">
+            <tr>
+              <th className="text-left px-4 py-3">Recipient</th>
+              <th className="text-left px-4 py-3">Template</th>
+              <th className="text-left px-4 py-3">Status</th>
+              <th className="text-left px-4 py-3">Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr key={(r.message_id ?? "") + i} className="border-t border-white/5">
+                <td className="px-4 py-3 text-white/80 truncate max-w-[260px]">{r.recipient_email ?? "—"}</td>
+                <td className="px-4 py-3 text-white/60">{r.template_name ?? "—"}</td>
+                <td className="px-4 py-3">
+                  <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${Q_STATUS[r.status] ?? "bg-white/5 text-white/60"}`}>
+                    {r.status}
+                  </span>
+                  {r.error_message && <div className="text-[10px] text-red-300/70 mt-1 truncate max-w-[320px]" title={r.error_message}>{r.error_message}</div>}
+                </td>
+                <td className="px-4 py-3 text-white/60">{new Date(r.created_at).toLocaleString()}</td>
               </tr>
-            </thead>
-            <tbody>
-              {LEADS.map((l) => (
-                <tr key={l.email} className="border-t border-white/5 hover:bg-white/[0.03]">
-                  <td className="px-4 py-3 font-medium">{l.company}</td>
-                  <td className="px-4 py-3 text-white/60">
-                    <span className="inline-flex items-center gap-1"><Globe className="w-3 h-3" />{l.web}</span>
-                  </td>
-                  <td className="px-4 py-3 text-white/60">{l.email}</td>
-                  <td className="px-4 py-3 text-white/60">{l.category}</td>
-                  <td className="px-4 py-3">
-                    <span className={`font-semibold ${l.score >= 85 ? "text-emerald-300" : l.score >= 70 ? "text-cyan-300" : "text-amber-300"}`}>
-                      {l.score}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${LEAD_STATUS[l.status]}`}>
-                      {l.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <div className="inline-flex gap-1">
-                      <button className="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 grid place-items-center" title="Approve">
-                        <Check className="w-3.5 h-3.5" />
-                      </button>
-                      <button className="w-7 h-7 rounded-lg bg-red-500/10 text-red-300 hover:bg-red-500/20 grid place-items-center" title="Reject">
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                      <button className="w-7 h-7 rounded-lg bg-white/5 text-white/70 hover:bg-white/10 grid place-items-center" title="View">
-                        <Eye className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
 }
 
-/* --------------------------- 4. CAMPAIGNS ------------------------------- */
+/* ------------------------------ ANALYTICS ------------------------------- */
 
-const CAMPAIGNS = [
-  { name: "Website Development Push", service: "Website Development",   audience: "Restaurants · 320",   status: "running",   date: "Mon 09:00 UTC", progress: 64 },
-  { name: "UK Formation Wave 3",      service: "UK Company Formation",  audience: "Freelancers · 240",   status: "scheduled", date: "Wed 09:00 UTC", progress: 0  },
-  { name: "Banking Outreach",         service: "Business Bank Accounts",audience: "Software Cos · 180",  status: "draft",     date: "—",             progress: 0  },
-  { name: "SEO Cold Wave",            service: "SEO Services",          audience: "Dental Clinics · 410",status: "running",   date: "Daily · 11:00", progress: 38 },
-  { name: "Digital Marketing Intro",  service: "Digital Marketing",     audience: "Hotels · 150",        status: "paused",    date: "—",             progress: 22 },
-];
+function Analytics({ campaigns, counts }: { campaigns: Campaign[]; counts: Counts }) {
+  const totalAttempts = counts.sent + counts.failed + counts.suppressed;
+  const deliveryRate = totalAttempts ? (counts.sent / totalAttempts) * 100 : 0;
+  const failureRate  = totalAttempts ? (counts.failed / totalAttempts) * 100 : 0;
+  const supRate      = totalAttempts ? (counts.suppressed / totalAttempts) * 100 : 0;
 
-const CAMP_STATUS: Record<string, string> = {
-  running:   "bg-emerald-500/10 text-emerald-300",
-  scheduled: "bg-cyan-500/10 text-cyan-300",
-  draft:     "bg-white/5 text-white/60",
-  paused:    "bg-amber-500/10 text-amber-300",
-};
+  const rates = [
+    { label: "Delivery Rate", value: deliveryRate, tint: "emerald" },
+    { label: "Failure Rate",  value: failureRate,  tint: "red" },
+    { label: "Suppression",   value: supRate,      tint: "gold" },
+  ];
 
-function Campaigns() {
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-white/60">{CAMPAIGNS.length} campaigns</div>
-        <button disabled className="px-3 py-1.5 rounded-lg text-sm bg-white/5 border border-white/10 text-white/40 cursor-not-allowed">
-          New Campaign · Soon
-        </button>
-      </div>
-      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {CAMPAIGNS.map((c) => (
-          <div key={c.name} className="os-glass p-5">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="font-semibold">{c.name}</div>
-                <div className="text-xs text-white/50 mt-0.5">{c.service}</div>
-              </div>
-              <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${CAMP_STATUS[c.status]}`}>
-                {c.status}
-              </span>
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
-              <div>
-                <div className="text-white/40">Audience</div>
-                <div className="text-white/90">{c.audience}</div>
-              </div>
-              <div>
-                <div className="text-white/40">Scheduled</div>
-                <div className="text-white/90">{c.date}</div>
-              </div>
-            </div>
-            <div className="mt-4">
-              <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="text-white/40">Progress</span>
-                <span className="text-white/70">{c.progress}%</span>
-              </div>
-              <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
-                <div className="h-full bg-pink-400/70" style={{ width: `${c.progress}%` }} />
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* --------------------------- 5. EMAIL TEMPLATES ------------------------ */
-
-const TEMPLATES = [
-  { name: "Website Proposal · Long Form", category: "Website Proposal",    updated: "2d ago", version: "v1.4", status: "active" },
-  { name: "Website Proposal · Short",     category: "Website Proposal",    updated: "1w ago", version: "v1.1", status: "active" },
-  { name: "UK LTD Formation Intro",       category: "Company Formation",   updated: "3d ago", version: "v2.0", status: "active" },
-  { name: "US LLC Formation Intro",       category: "Company Formation",   updated: "5d ago", version: "v1.2", status: "draft"  },
-  { name: "Stripe / Wise Setup Offer",    category: "Bank Account",        updated: "1w ago", version: "v1.0", status: "active" },
-  { name: "SEO Audit Pitch",              category: "SEO",                 updated: "4d ago", version: "v1.3", status: "active" },
-  { name: "Follow-up · No Reply (3d)",    category: "Follow-up",           updated: "2d ago", version: "v1.5", status: "active" },
-  { name: "Follow-up · Soft Close",       category: "Follow-up",           updated: "1w ago", version: "v1.1", status: "draft"  },
-  { name: "General Introduction",         category: "General Introduction",updated: "2w ago", version: "v1.0", status: "active" },
-];
-
-const TPL_STATUS: Record<string, string> = {
-  active: "bg-emerald-500/10 text-emerald-300",
-  draft:  "bg-amber-500/10 text-amber-300",
-};
-
-function Templates() {
-  const cats = Array.from(new Set(TEMPLATES.map(t => t.category)));
-  return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap gap-2">
-        {["All", ...cats].map((c, i) => (
-          <button key={c} className={`px-3 py-1 rounded-full text-xs border ${i === 0 ? "bg-pink-500/15 border-pink-400/30 text-pink-100" : "bg-white/5 border-white/10 text-white/60 hover:text-white"}`}>
-            {c}
-          </button>
-        ))}
-      </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {TEMPLATES.map((t) => (
-          <div key={t.name} className="os-glass p-5">
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex-1">
-                <div className="font-medium text-sm">{t.name}</div>
-                <div className="text-[11px] text-white/40 mt-0.5">{t.category}</div>
-              </div>
-              <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${TPL_STATUS[t.status]}`}>
-                {t.status}
-              </span>
-            </div>
-            <div className="mt-4 rounded-lg border border-white/10 bg-black/20 p-3 text-xs text-white/50 line-clamp-3">
-              Hi {"{{first_name}}"}, I came across {"{{company}}"} and noticed a few quick wins we could ship for your team. Open to a 10-min intro this week?
-            </div>
-            <div className="mt-4 flex items-center justify-between text-[11px] text-white/40">
-              <span>Updated {t.updated}</span>
-              <span>{t.version}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ------------------------------ 6. QUEUE -------------------------------- */
-
-const QUEUE_KPI = [
-  { label: "Waiting", value: 312, tint: "cyan",    icon: Clock },
-  { label: "Sending", value: 24,  tint: "indigo",  icon: Zap },
-  { label: "Sent",    value: 8914,tint: "emerald", icon: CheckCircle2 },
-  { label: "Failed",  value: 41,  tint: "gold",    icon: X },
-];
-
-const QUEUE_ROWS = [
-  { recipient: "hello@aurorawebstudio.co.uk", campaign: "Website Development Push", status: "waiting", at: "In 14 min" },
-  { recipient: "info@northwinddental.co.uk",  campaign: "SEO Cold Wave",            status: "sending", at: "Now" },
-  { recipient: "sales@vertexsoftware.dev",    campaign: "UK Formation Wave 3",      status: "waiting", at: "Wed 09:00" },
-  { recipient: "team@pixelandpine.io",        campaign: "Website Development Push", status: "sent",    at: "5m ago" },
-  { recipient: "manager@quokka-kitchen.com",  campaign: "SEO Cold Wave",            status: "failed",  at: "12m ago" },
-  { recipient: "hi@cobaltmarketing.io",       campaign: "Banking Outreach",         status: "waiting", at: "Tomorrow" },
-];
-
-const Q_STATUS: Record<string, string> = {
-  waiting: "bg-cyan-500/10 text-cyan-300",
-  sending: "bg-indigo-500/10 text-indigo-300",
-  sent:    "bg-emerald-500/10 text-emerald-300",
-  failed:  "bg-red-500/10 text-red-300",
-};
-
-function Queue() {
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {QUEUE_KPI.map((k) => {
-          const Icon = k.icon;
-          return (
-            <div key={k.label} className="os-glass p-4">
-              <div className={`w-9 h-9 rounded-xl grid place-items-center ${TINT[k.tint]}`}><Icon className="w-4 h-4" /></div>
-              <div className="mt-3 text-2xl font-bold">{k.value.toLocaleString()}</div>
-              <div className="text-xs text-white/50">{k.label}</div>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="os-glass overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-white/5 text-white/50 text-xs uppercase tracking-wider">
-              <tr>
-                <th className="text-left px-4 py-3">Recipient</th>
-                <th className="text-left px-4 py-3">Campaign</th>
-                <th className="text-left px-4 py-3">Status</th>
-                <th className="text-left px-4 py-3">Scheduled Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {QUEUE_ROWS.map((r, i) => (
-                <tr key={i} className="border-t border-white/5">
-                  <td className="px-4 py-3 text-white/80">{r.recipient}</td>
-                  <td className="px-4 py-3 text-white/60">{r.campaign}</td>
-                  <td className="px-4 py-3">
-                    <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${Q_STATUS[r.status]}`}>{r.status}</span>
-                  </td>
-                  <td className="px-4 py-3 text-white/60">{r.at}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ------------------------------ 7. LOGS --------------------------------- */
-
-const LOGS_ROWS = [
-  { company: "Aurora Web Studio", campaign: "Website Development Push", delivered: true,  opened: true,  clicked: true,  replied: false, failed: false },
-  { company: "Vertex Software",   campaign: "UK Formation Wave 3",      delivered: true,  opened: true,  clicked: false, replied: true,  failed: false },
-  { company: "Bramley Law",       campaign: "SEO Cold Wave",            delivered: true,  opened: false, clicked: false, replied: false, failed: false },
-  { company: "Pixel & Pine SEO",  campaign: "Website Development Push", delivered: true,  opened: true,  clicked: true,  replied: false, failed: false },
-  { company: "Quokka Kitchen",    campaign: "SEO Cold Wave",            delivered: false, opened: false, clicked: false, replied: false, failed: true  },
-  { company: "Cobalt Marketing",  campaign: "Banking Outreach",         delivered: true,  opened: true,  clicked: false, replied: true,  failed: false },
-];
-
-function Dot({ on, tone = "emerald" }: { on: boolean; tone?: string }) {
-  const tones: Record<string, string> = {
-    emerald: "bg-emerald-400", cyan: "bg-cyan-400", pink: "bg-pink-400", gold: "bg-amber-400", red: "bg-red-400",
-  };
-  return <span className={`inline-block w-2 h-2 rounded-full ${on ? tones[tone] : "bg-white/15"}`} />;
-}
-
-function Logs() {
-  return (
-    <div className="space-y-4">
-      <div className="os-glass p-3 flex gap-2 flex-wrap items-center">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 flex-1 min-w-[200px]">
-          <Search className="w-4 h-4 text-white/40" />
-          <input placeholder="Search company or campaign…" className="bg-transparent text-sm outline-none flex-1 placeholder:text-white/30" />
-        </div>
-        <button className="px-3 py-1.5 rounded-lg text-sm bg-white/5 border border-white/10 inline-flex items-center gap-2">
-          <Filter className="w-3.5 h-3.5" /> Filters
-        </button>
-      </div>
-
-      <div className="os-glass overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-white/5 text-white/50 text-xs uppercase tracking-wider">
-              <tr>
-                <th className="text-left px-4 py-3">Company</th>
-                <th className="text-left px-4 py-3">Campaign</th>
-                <th className="text-center px-3 py-3">Delivered</th>
-                <th className="text-center px-3 py-3">Opened</th>
-                <th className="text-center px-3 py-3">Clicked</th>
-                <th className="text-center px-3 py-3">Replied</th>
-                <th className="text-center px-3 py-3">Failed</th>
-              </tr>
-            </thead>
-            <tbody>
-              {LOGS_ROWS.map((r, i) => (
-                <tr key={i} className="border-t border-white/5">
-                  <td className="px-4 py-3 font-medium">{r.company}</td>
-                  <td className="px-4 py-3 text-white/60">{r.campaign}</td>
-                  <td className="px-3 py-3 text-center"><Dot on={r.delivered} tone="emerald" /></td>
-                  <td className="px-3 py-3 text-center"><Dot on={r.opened} tone="cyan" /></td>
-                  <td className="px-3 py-3 text-center"><Dot on={r.clicked} tone="pink" /></td>
-                  <td className="px-3 py-3 text-center"><Dot on={r.replied} tone="gold" /></td>
-                  <td className="px-3 py-3 text-center"><Dot on={r.failed} tone="red" /></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ----------------------------- 8. ANALYTICS ----------------------------- */
-
-const RATES = [
-  { label: "Delivery Rate", value: 96.8, tint: "emerald" },
-  { label: "Open Rate",     value: 34.2, tint: "cyan" },
-  { label: "Click Rate",    value: 11.7, tint: "pink" },
-  { label: "Reply Rate",    value: 4.6,  tint: "gold" },
-];
-
-const CAMPAIGN_PERF = [
-  { name: "Website Development Push", open: 38, reply: 12 },
-  { name: "UK Formation Wave 3",      open: 31, reply: 7  },
-  { name: "Banking Outreach",         open: 22, reply: 3  },
-  { name: "SEO Cold Wave",            open: 28, reply: 6  },
-  { name: "Digital Marketing Intro",  open: 19, reply: 2  },
-];
-
-function Analytics() {
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {RATES.map((r) => (
-          <div key={r.label} className="os-glass p-5">
-            <div className="text-xs text-white/50">{r.label}</div>
-            <div className="text-3xl font-bold mt-2">{r.value}%</div>
-            <div className="mt-3 h-1.5 rounded-full bg-white/10 overflow-hidden">
-              <div className={`h-full ${
-                r.tint === "emerald" ? "bg-emerald-400/70" :
-                r.tint === "cyan"    ? "bg-cyan-400/70"    :
-                r.tint === "pink"    ? "bg-pink-400/70"    : "bg-amber-400/70"
-              }`} style={{ width: `${Math.min(100, r.value * 2)}%` }} />
+      {totalAttempts === 0 ? (
+        <NoData title="No live data available" detail="email_send_log has no rows yet." />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {rates.map((r) => (
+            <div key={r.label} className="os-glass p-5">
+              <div className="text-xs text-white/50">{r.label}</div>
+              <div className="text-3xl font-bold mt-2">{r.value.toFixed(1)}%</div>
+              <div className="mt-3 h-1.5 rounded-full bg-white/10 overflow-hidden">
+                <div className={`h-full ${
+                  r.tint === "emerald" ? "bg-emerald-400/70" :
+                  r.tint === "red"     ? "bg-red-400/70"     : "bg-amber-400/70"
+                }`} style={{ width: `${Math.min(100, r.value)}%` }} />
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       <div className="os-glass p-5">
         <div className="flex items-center justify-between mb-4">
           <div>
             <div className="font-semibold">Campaign Performance</div>
-            <div className="text-xs text-white/50">Open vs reply rate across the last 30 days.</div>
+            <div className="text-xs text-white/50">Open rate per campaign (live data from email_campaigns).</div>
           </div>
-          <span className="text-[11px] text-white/40">Mock data</span>
         </div>
-        <div className="space-y-3">
-          {CAMPAIGN_PERF.map((c) => (
-            <div key={c.name}>
-              <div className="flex items-center justify-between text-xs mb-1">
-                <span className="text-white/80">{c.name}</span>
-                <span className="text-white/40">{c.open}% open · {c.reply}% reply</span>
-              </div>
-              <div className="flex gap-1">
-                <div className="h-2 rounded-full bg-cyan-400/60" style={{ width: `${c.open * 1.5}%` }} />
-                <div className="h-2 rounded-full bg-pink-400/70" style={{ width: `${c.reply * 1.5}%` }} />
-              </div>
-            </div>
-          ))}
-        </div>
+        {campaigns.length === 0 ? (
+          <div className="text-sm text-white/50">No campaigns yet.</div>
+        ) : (
+          <div className="space-y-3">
+            {campaigns.slice(0, 10).map((c) => {
+              const open = c.sent_count ? Math.round((c.opened_count / c.sent_count) * 100) : 0;
+              const reply = 0;
+              return (
+                <div key={c.id}>
+                  <div className="flex items-center justify-between text-xs mb-1">
+                    <span className="text-white/80 truncate">{c.name}</span>
+                    <span className="text-white/40">{c.sent_count.toLocaleString()} sent · {open}% open</span>
+                  </div>
+                  <div className="flex gap-1">
+                    <div className="h-2 rounded-full bg-cyan-400/60" style={{ width: `${Math.min(100, open)}%` }} />
+                    {reply > 0 && <div className="h-2 rounded-full bg-pink-400/70" style={{ width: `${reply}%` }} />}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-/* --------------------------- FUTURE READY ------------------------------- */
+/* ------------------------------ EMPTY STATES ---------------------------- */
 
-const FUTURE = [
-  { label: "Google Lead Discovery",     icon: Compass,  tint: "cyan"    },
-  { label: "AI Lead Qualification",     icon: Sparkles, tint: "purple"  },
-  { label: "Automatic Email Sequences", icon: Send,     tint: "pink"    },
-  { label: "CRM Integration",           icon: Users,    tint: "emerald" },
-  { label: "Reminder Agent",            icon: Clock,    tint: "gold"    },
-  { label: "AI Personalisation",        icon: Cpu,      tint: "indigo"  },
-  { label: "Follow-up Automation",      icon: ChevronRight, tint: "cyan" },
-];
-
-function FutureReady() {
+function NoData({ title, detail }: { title: string; detail: string }) {
   return (
-    <div className="os-glass p-6">
-      <div className="flex items-center gap-3 mb-4">
-        <div className={`w-10 h-10 rounded-xl grid place-items-center ${TINT.purple}`}>
-          <Sparkles className="w-4 h-4" />
-        </div>
-        <div>
-          <div className="font-semibold">Future Ready</div>
-          <div className="text-xs text-white/50">Modules that plug into this page without a redesign.</div>
-        </div>
-      </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-        {FUTURE.map((f) => {
-          const Icon = f.icon;
-          return (
-            <div key={f.label} className="rounded-xl border border-white/10 bg-white/[0.03] p-4 flex items-center gap-3">
-              <div className={`w-9 h-9 rounded-lg grid place-items-center ${TINT[f.tint]}`}>
-                <Icon className="w-4 h-4" />
-              </div>
-              <div className="flex-1">
-                <div className="text-sm font-medium">{f.label}</div>
-                <div className="text-[10px] uppercase tracking-wider text-white/40 mt-0.5">Coming Soon</div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+    <div className="os-glass p-8 text-center">
+      <Inbox className="w-8 h-8 text-white/30 mx-auto mb-3" />
+      <div className="font-semibold">{title}</div>
+      <div className="text-sm text-white/50 mt-1 max-w-md mx-auto">{detail}</div>
+    </div>
+  );
+}
+
+function NoBackend({ title, detail }: { title: string; detail: string }) {
+  return (
+    <div className="os-glass p-8 text-center">
+      <Sparkles className="w-8 h-8 text-white/30 mx-auto mb-3" />
+      <div className="font-semibold">{title}</div>
+      <div className="text-sm text-white/50 mt-2 max-w-md mx-auto">{detail}</div>
+      <div className="text-[11px] uppercase tracking-wider text-white/40 mt-3">No live data available</div>
     </div>
   );
 }
