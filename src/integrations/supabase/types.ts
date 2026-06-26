@@ -2128,6 +2128,22 @@ export type Database = {
           source: string
         }[]
       }
+      audit_search: {
+        Args: {
+          _admin?: string
+          _from?: string
+          _intent?: string
+          _limit?: number
+          _module?: string
+          _offset?: number
+          _q?: string
+          _risk?: string
+          _status?: string
+          _to?: string
+        }
+        Returns: Json
+      }
+      automation_health: { Args: never; Returns: Json }
       automation_runs_recent: {
         Args: { _limit?: number }
         Returns: {
@@ -2255,6 +2271,8 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      command_insights: { Args: { _since?: string }; Returns: Json }
+      command_performance_metrics: { Args: { _since?: string }; Returns: Json }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -2307,6 +2325,7 @@ export type Database = {
         Returns: number
       }
       next_order_number: { Args: never; Returns: number }
+      ops_dashboard_summary: { Args: never; Returns: Json }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
         Returns: {

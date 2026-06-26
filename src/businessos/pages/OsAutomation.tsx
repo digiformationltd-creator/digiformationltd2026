@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
   Sparkles, Bell, Activity, ShieldCheck, Mail, Clock, Zap,
-  ArrowRight, Database, Cpu, RefreshCw,
+  ArrowRight, Database, Cpu, RefreshCw, BarChart3,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -13,6 +13,7 @@ const MODULES = [
   { label: "Email Marketing",      to: "/admin/automation/email-marketing", icon: Mail,     desc: "Campaigns and outreach.",              tint: "bg-pink-500/10 text-pink-300" },
   { label: "Scheduled Jobs",       to: "/admin/automation/jobs",            icon: Clock,    desc: "Cron and recurring tasks.",            tint: "bg-cyan-500/10 text-cyan-300" },
   { label: "Business Automations", to: "/admin/automation/workflows",       icon: Zap,      desc: "Rule-based workflows + history.",      tint: "bg-lime-500/10 text-lime-300" },
+  { label: "Operations Analytics", to: "/admin/automation/analytics",       icon: BarChart3, desc: "Read-only metrics, health & audit.",  tint: "bg-blue-500/10 text-blue-300" },
 ];
 
 export default function OsAutomation() {
