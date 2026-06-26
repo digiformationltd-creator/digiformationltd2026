@@ -123,8 +123,8 @@ export default function OsAICommandCenter() {
   const [editingText, setEditingText] = useState("");
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
-  const [pendingAction, setPendingAction] = useState<any | null>(null);
-  const [busy, setBusy] = useState(false);
+  const machine = useCommandMachine();
+  const { state: ccState, action: pendingAction, isBusy: busy, canApprove, canCancel } = machine;
   const taRef = useRef<HTMLTextAreaElement>(null);
 
   const MAX_CHARS = 4000;
