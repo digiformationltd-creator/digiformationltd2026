@@ -329,15 +329,34 @@ export default function OsAutomation() {
         </div>
 
         <div className="os-glass p-5">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
             <div className="flex items-center gap-2">
               <Activity className="w-4 h-4 text-cyan-300" />
               <h3 className="font-semibold">Activity</h3>
             </div>
             <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md bg-white/5 text-white/40">Mock</span>
           </div>
-          <div className="space-y-3">
-            {ACTIVITY.map((e) => {
+          <div className="flex items-center gap-1.5 mb-3 flex-wrap">
+            {(["all","today","errors","completed"] as TimelineFilter[]).map((f) => (
+              <button
+                key={f}
+                type="button"
+                onClick={() => setTimelineFilter(f)}
+                className={`text-[10px] uppercase tracking-wider px-2 py-1 rounded-md border transition ${
+                  timelineFilter === f
+                    ? "bg-cyan-500/10 text-cyan-300 border-cyan-500/20"
+                    : "bg-white/[0.02] text-white/50 border-white/5 hover:text-white/80"
+                }`}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+          <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+            {filteredActivity.length === 0 && (
+              <div className="text-xs text-white/40 py-6 text-center">No events match this filter.</div>
+            )}
+            {filteredActivity.map((e) => {
               const Icon = e.icon;
               return (
                 <div key={e.id} className="flex items-start gap-3">
@@ -346,12 +365,114 @@ export default function OsAutomation() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-xs text-white/80 leading-snug">{e.text}</div>
-                    <div className="text-[10px] text-white/40 mt-0.5">{e.at}</div>
+                    <div className="text-[10px] text-white/40 mt-0.5 flex items-center gap-2">
+                      <span>{e.at}</span>
+                      <StatusDot status={e.status} />
+                    </div>
                   </div>
                 </div>
               );
             })}
           </div>
+        </div>
+      </div>
+
+      {/* Agent Status + Reminder Summary */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="os-glass p-5 lg:col-span-2">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Bot className="w-4 h-4 text-purple-300" />
+              <h3 className="font-semibold">Agent Status</h3>
+              <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md bg-white/5 text-white/40">Mock</span>
+            </div>
+            <NavLink to="/admin/automation/agents" className="text-[11px] text-white/50 hover:text-white inline-flex items-center gap-1">
+              Manage <ArrowRight className="w-3 h-3" />
+            </NavLink>
+          </div>
+
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-[10px] uppercase tracking-wider text-white/40 border-b border-white/5">
+                  <th className="text-left font-medium py-2 pl-1">Agent</th>
+                  <th className="text-left font-medium py-2">Status</th>
+                  <th className="text-left font-medium py-2">Health</th>
+                  <th className="text-left font-medium py-2">Last Activity</th>
+                  <th className="text-right font-medium py-2">Queue</th>
+                  <th className="text-right font-medium py-2 pr-1">Success</th>
+                </tr>
+              </thead>
+              <tbody>
+                {AGENTS.map((a) => {
+                  const Icon = a.icon;
+                  return (
+                    <tr key={a.name} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02]">
+                      <td className="py-2.5 pl-1">
+                        <div className="flex items-center gap-2.5">
+                          <div className={`w-7 h-7 rounded-lg grid place-items-center ${TINT[a.tint]}`}>
+                            <Icon className="w-3.5 h-3.5" />
+                          </div>
+                          <span className="text-xs font-medium">{a.name}</span>
+                        </div>
+                      </td>
+                      <td className="py-2.5"><AgentStatusBadge status={a.status} /></td>
+                      <td className="py-2.5"><HealthBadge health={a.health} /></td>
+                      <td className="py-2.5 text-xs text-white/50">{a.lastActivity}</td>
+                      <td className="py-2.5 text-xs text-right text-white/60">{a.queue}</td>
+                      <td className="py-2.5 text-xs text-right text-white/60 pr-1">{a.success}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="md:hidden space-y-2">
+            {AGENTS.map((a) => {
+              const Icon = a.icon;
+              return (
+                <div key={a.name} className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
+                  <div className="flex items-center gap-2.5 mb-2">
+                    <div className={`w-8 h-8 rounded-lg grid place-items-center ${TINT[a.tint]}`}>
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <span className="text-sm font-medium flex-1">{a.name}</span>
+                    <AgentStatusBadge status={a.status} />
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-[11px] text-white/50">
+                    <div><div className="text-white/30">Health</div><div className="mt-0.5"><HealthBadge health={a.health} /></div></div>
+                    <div><div className="text-white/30">Queue</div><div className="text-white/70 mt-0.5">{a.queue}</div></div>
+                    <div><div className="text-white/30">Success</div><div className="text-white/70 mt-0.5">{a.success}</div></div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="os-glass p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Bell className="w-4 h-4 text-amber-300" />
+              <h3 className="font-semibold">Reminder Summary</h3>
+            </div>
+            <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md bg-white/5 text-white/40">Mock</span>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {REMINDER_SUMMARY.map((r) => (
+              <div key={r.label} className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
+                <div className="text-[11px] text-white/50">{r.label}</div>
+                <div className={`mt-1 text-2xl font-bold ${TINT[r.tint].split(" ")[1]}`}>{r.value}</div>
+              </div>
+            ))}
+          </div>
+          <NavLink
+            to="/admin/automation"
+            className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/20 text-amber-200 text-sm py-2.5 transition"
+          >
+            <Bell className="w-4 h-4" /> View all reminders
+          </NavLink>
         </div>
       </div>
 
