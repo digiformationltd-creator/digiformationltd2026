@@ -368,10 +368,11 @@ Deno.serve(async (req) => {
       if (act.status === 'executed') return json({ ok: true, action: act, deduped: true })
       if (act.status === 'rejected') throw new Error('Action was rejected')
 
-      // mark approved
+      // mark approved + transition state machine to executing (Phase 3)
       await admin.from('command_actions').update({
         status: 'approved', approved_at: new Date().toISOString(), admin_id: user.id,
       }).eq('id', act.id)
+      await admin.rpc('command_action_mark_executing', { _id: act.id })
 
       let result: any, errMsg: string | null = null
       try {
