@@ -1,8 +1,8 @@
-// Automation Dashboard — AI-first refactor.
-// Simplified surface: Active Reminders, Running Jobs, Recent Activity,
+// Automation Dashboard — AI-first command surface.
+// Simplified overview: Active Reminders, Running Jobs, Recent Activity,
 // System Health, lightweight Agent Status widget, and quick links to the
-// four kept sub-modules (AI Workspace, Email Marketing, Scheduled Jobs,
-// Business Automations). UI only. No backend changes.
+// four kept sub-modules (AI Command Center, Email Marketing, Scheduled
+// Jobs, Business Automations). UI only. No backend changes.
 
 import { NavLink } from "react-router-dom";
 import {
@@ -55,7 +55,7 @@ const AGENTS = [
 ];
 
 const MODULES = [
-  { label: "AI Workspace",        to: "/admin/automation/workspace",       icon: Sparkles, desc: "Paste, instruct, preview, approve.",  tint: "bg-purple-500/10 text-purple-300", featured: true },
+  { label: "AI Command Center",   to: "/admin/automation/command-center",  icon: Sparkles, desc: "Talk to Business OS. Approve actions.", tint: "bg-purple-500/10 text-purple-300", featured: true },
   { label: "Email Marketing",     to: "/admin/automation/email-marketing", icon: Mail,     desc: "Campaigns and lead outreach.",         tint: "bg-pink-500/10 text-pink-300" },
   { label: "Scheduled Jobs",      to: "/admin/automation/jobs",            icon: Clock,    desc: "Cron and recurring tasks.",            tint: "bg-cyan-500/10 text-cyan-300" },
   { label: "Business Automations",to: "/admin/automation/workflows",       icon: Zap,      desc: "Follow-ups, reminders, lead rules.",   tint: "bg-lime-500/10 text-lime-300" },
@@ -76,17 +76,17 @@ export default function OsAutomation() {
             <div>
               <h2 className="text-xl font-bold">Automation</h2>
               <p className="text-sm text-white/50 mt-1 max-w-2xl">
-                A simple overview of what's running. Spend most of your time in the AI Workspace — everything else
-                supports it.
+                A simple overview of what's running. Spend most of your time in the AI Command Center — everything
+                else supports it.
               </p>
             </div>
           </div>
           <NavLink
-            to="/admin/automation/workspace"
+            to="/admin/automation/command-center"
             className="inline-flex items-center gap-2 rounded-xl bg-purple-500/15 text-purple-200 hover:bg-purple-500/25 px-4 py-2 text-sm font-medium transition"
           >
             <Sparkles className="w-4 h-4" />
-            Open AI Workspace
+            Open AI Command Center
             <ArrowRight className="w-3.5 h-3.5" />
           </NavLink>
         </div>
@@ -149,9 +149,7 @@ export default function OsAutomation() {
               <Bell className="w-4 h-4 text-amber-300" />
               <h3 className="font-semibold">Active Reminders</h3>
             </div>
-            <NavLink to="/admin/automation/reminders" className="text-xs text-white/40 hover:text-white/70">
-              View all
-            </NavLink>
+            <span className="text-[10px] uppercase tracking-wider text-white/30">Today</span>
           </div>
           <div className="space-y-2">
             {REMINDERS.map((r) => (

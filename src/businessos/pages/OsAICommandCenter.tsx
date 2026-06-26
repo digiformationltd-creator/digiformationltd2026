@@ -1,5 +1,5 @@
-// AI Workspace — Phase 2 UI upgrade.
-// Professional ChatGPT/Claude/Cursor-style operating surface.
+// AI Command Center — the heart of Business OS.
+// Professional ChatGPT/Claude/Gemini-style operating surface.
 // UI only — no backend, no AI calls, no persistence.
 
 import { useMemo, useRef, useState } from "react";
@@ -110,7 +110,7 @@ function MarkdownPreview({ text }: { text: string }) {
   );
 }
 
-export default function OsAIWorkspace() {
+export default function OsAICommandCenter() {
   const [messages, setMessages] = useState<Msg[]>(SEED_MESSAGES);
   const [input, setInput] = useState("");
   const [paste, setPaste] = useState("");
@@ -171,7 +171,7 @@ export default function OsAIWorkspace() {
             <Sparkles className="w-4 h-4" />
           </div>
           <div className="min-w-0">
-            <h2 className="text-sm font-bold leading-tight truncate">AI Workspace</h2>
+            <h2 className="text-sm font-bold leading-tight truncate">AI Command Center</h2>
             <p className="text-[11px] text-white/40 truncate">Conversational control surface for Business OS</p>
           </div>
         </div>
