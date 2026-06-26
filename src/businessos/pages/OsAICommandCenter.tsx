@@ -397,41 +397,78 @@ export default function OsAICommandCenter() {
             New Chat
           </button>
 
-          <div className="relative mt-3">
-            <Search className="w-3.5 h-3.5 text-white/30 absolute left-2.5 top-1/2 -translate-y-1/2" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search conversations…"
-              className="w-full bg-white/5 border border-white/10 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-purple-400/40"
-            />
+          {/* Tabs: History / Library */}
+          <div className="mt-3 grid grid-cols-2 gap-1 rounded-lg bg-white/5 p-1">
+            <button
+              onClick={() => setLeftTab("history")}
+              className={`inline-flex items-center justify-center gap-1.5 rounded-md py-1 text-[11px] transition ${
+                leftTab === "history" ? "bg-white/10 text-white" : "text-white/50 hover:text-white/80"
+              }`}
+            >
+              <History className="w-3 h-3" /> History
+            </button>
+            <button
+              onClick={() => setLeftTab("library")}
+              className={`inline-flex items-center justify-center gap-1.5 rounded-md py-1 text-[11px] transition ${
+                leftTab === "library" ? "bg-white/10 text-white" : "text-white/50 hover:text-white/80"
+              }`}
+            >
+              <BookOpen className="w-3 h-3" /> Library
+            </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto mt-3 -mr-1 pr-1 space-y-4 min-h-0">
-            <div>
-              <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-white/40 mb-1.5 px-1">
-                <Pin className="w-3 h-3" /> Pinned
+          {leftTab === "history" ? (
+            <>
+              <div className="relative mt-3">
+                <Search className="w-3.5 h-3.5 text-white/30 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search conversations…"
+                  className="w-full bg-white/5 border border-white/10 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-purple-400/40"
+                />
               </div>
-              <div className="space-y-0.5">
-                {PINNED.map((t) => (
-                  <ThreadRow key={t.id} thread={t} active={activeThread === t.id} onClick={() => setActiveThread(t.id)} />
-                ))}
+
+              <div className="flex-1 overflow-y-auto mt-3 -mr-1 pr-1 space-y-4 min-h-0">
+                <div>
+                  <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-white/40 mb-1.5 px-1">
+                    <Pin className="w-3 h-3" /> Pinned
+                  </div>
+                  <div className="space-y-0.5">
+                    {PINNED.map((t) => (
+                      <ThreadRow key={t.id} thread={t} active={activeThread === t.id} onClick={() => setActiveThread(t.id)} />
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-white/40 mb-1.5 px-1">
+                    <History className="w-3 h-3" /> Recent
+                  </div>
+                  <div className="space-y-0.5">
+                    {filteredRecent.map((t) => (
+                      <ThreadRow key={t.id} thread={t} active={activeThread === t.id} onClick={() => setActiveThread(t.id)} />
+                    ))}
+                    {filteredRecent.length === 0 && (
+                      <div className="text-[11px] text-white/30 px-2 py-1">No matches</div>
+                    )}
+                  </div>
+                </div>
               </div>
+            </>
+          ) : (
+            <div className="mt-3 flex-1 min-h-0 flex flex-col">
+              <button
+                onClick={() => setPaletteOpen(true)}
+                className="w-full inline-flex items-center justify-between gap-2 rounded-lg border border-purple-400/30 bg-purple-500/10 hover:bg-purple-500/20 px-2.5 py-1.5 text-[11px] text-purple-100 mb-2"
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  <CommandIcon className="w-3.5 h-3.5" /> Search all commands
+                </span>
+                <kbd className="font-mono text-[10px] bg-black/30 border border-white/10 rounded px-1.5 py-0.5">⌘K</kbd>
+              </button>
+              <CommandLibraryPanel onPick={insertPrompt} />
             </div>
-            <div>
-              <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-white/40 mb-1.5 px-1">
-                <History className="w-3 h-3" /> Recent
-              </div>
-              <div className="space-y-0.5">
-                {filteredRecent.map((t) => (
-                  <ThreadRow key={t.id} thread={t} active={activeThread === t.id} onClick={() => setActiveThread(t.id)} />
-                ))}
-                {filteredRecent.length === 0 && (
-                  <div className="text-[11px] text-white/30 px-2 py-1">No matches</div>
-                )}
-              </div>
-            </div>
-          </div>
+          )}
 
           <div className="mt-3 pt-3 border-t border-white/5 text-[10px] text-white/30 px-1">
             Local-only · UI preview
