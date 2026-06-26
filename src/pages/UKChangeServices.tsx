@@ -6,6 +6,9 @@ import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import SourceHeardSelect from "@/components/attribution/SourceHeardSelect";
+import { recordLeadAttribution, type DeclaredSource } from "@/lib/attribution";
 
 type Card = {
   id: string;
@@ -114,6 +117,9 @@ const UKChangeServices = () => {
   const [selected, setSelected] = useState<string>("name-change");
   const [submitted, setSubmitted] = useState(false);
   const [submittedName, setSubmittedName] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [declaredSource, setDeclaredSource] = useState<DeclaredSource | null>(null);
+  const [sourceError, setSourceError] = useState(false);
 
   useSeo({
     title: "UK Company Changes — Director, Name & Address Change | Digiformation",
@@ -138,17 +144,103 @@ const UKChangeServices = () => {
 
   const selectedCard = cards.find((c) => c.id === selected) ?? cards[0];
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
-    const data = Object.fromEntries(fd.entries());
+    const data = Object.fromEntries(fd.entries()) as Record<string, string>;
     const result = orderSchema.safeParse(data);
     if (!result.success) {
       toast({ title: "Please check your details", description: result.error.errors[0]?.message, variant: "destructive" });
       return;
     }
-    setSubmittedName(String(data.firstName || ""));
+    if (!declaredSource) {
+      setSourceError(true);
+      toast({ title: "How did you find us?", description: "Please tell us where you heard about Digiformation.", variant: "destructive" });
+      return;
+    }
+
+    setSubmitting(true);
+    const fullName = `${result.data.firstName} ${result.data.lastName}`.trim();
+    const message = [
+      `Service: ${selectedCard.title} (${selectedCard.price})`,
+      `Company: ${result.data.companyName}`,
+      `CRN: ${result.data.crn}`,
+      `Auth Code: ${result.data.authCode}`,
+      result.data.notes ? `Notes: ${result.data.notes}` : null,
+    ].filter(Boolean).join("\n");
+
+    const { data: inserted, error: dbError } = await supabase
+      .from("contact_submissions")
+      .insert({
+        full_name: fullName,
+        email: result.data.email,
+        whatsapp: result.data.phone,
+        country: "United Kingdom",
+        service: selectedCard.title,
+        message,
+        page_path: window.location.pathname,
+        referrer: document.referrer || null,
+        user_agent: navigator.userAgent.slice(0, 500),
+        declared_source: declaredSource.id,
+        declared_source_label: declaredSource.label,
+      })
+      .select("id")
+      .single();
+
+    if (dbError) {
+      console.error("Failed to save UK change order:", dbError);
+      toast({ title: "Could not submit", description: "Please try again or contact us on WhatsApp.", variant: "destructive" });
+      setSubmitting(false);
+      return;
+    }
+
+    if (inserted?.id) {
+      void recordLeadAttribution({
+        entityType: "inquiry",
+        entityId: inserted.id,
+        declared: declaredSource,
+      });
+    }
+
+    // Notify ops (best-effort, never block UX).
+    void supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: "order-notification",
+        idempotencyKey: `uk-change-${inserted?.id ?? Date.now()}`,
+        triggerSource: "system",
+        templateData: {
+          customerName: fullName,
+          customerEmail: result.data.email,
+          whatsapp: result.data.phone,
+          country: "United Kingdom",
+          service: selectedCard.title,
+          orderRef: inserted?.id ?? "",
+          pagePath: window.location.pathname,
+          notes: message,
+        },
+      },
+    }).catch((err) => console.error("order-notification failed", err));
+
+    if (result.data.email) {
+      void supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "contact-confirmation",
+          recipientEmail: result.data.email,
+          idempotencyKey: `uk-change-ack-${inserted?.id ?? Date.now()}`,
+          triggerSource: "system",
+          templateData: {
+            customerName: fullName,
+            ticketRef: inserted?.id ?? "",
+            subject: selectedCard.title,
+            message,
+          },
+        },
+      }).catch((err) => console.error("contact-confirmation failed", err));
+    }
+
+    setSubmittedName(result.data.firstName);
     setSubmitted(true);
+    setSubmitting(false);
     toast({ title: "Order received", description: `We'll be in touch about your "${selectedCard.title}" request.` });
     (e.target as HTMLFormElement).reset();
     setTimeout(() => {
@@ -279,8 +371,15 @@ const UKChangeServices = () => {
               <input name="phone" placeholder="Phone" className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none" maxLength={30} required />
             </div>
             <textarea name="notes" placeholder="Additional notes (optional)" rows={4} maxLength={1000} className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border/40 focus:border-primary outline-none resize-none" />
-            <Button type="submit" variant="hero" size="lg" className="rounded-full w-full">
-              Submit Order <ArrowRight className="w-4 h-4" />
+
+            <SourceHeardSelect
+              value={declaredSource}
+              onChange={(v) => { setDeclaredSource(v); setSourceError(false); }}
+              error={sourceError}
+            />
+
+            <Button type="submit" variant="hero" size="lg" className="rounded-full w-full" disabled={submitting}>
+              {submitting ? "Submitting…" : "Submit Order"} <ArrowRight className="w-4 h-4" />
             </Button>
           </form>
           )}
