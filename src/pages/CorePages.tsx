@@ -140,6 +140,8 @@ export const Contact = () => {
   const [website, setWebsite] = useState(""); // honeypot
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [declaredSource, setDeclaredSource] = useState<DeclaredSource | null>(null);
+  const [sourceError, setSourceError] = useState(false);
 
   useEffect(() => {
     setMeta(
