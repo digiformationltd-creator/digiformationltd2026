@@ -3,6 +3,7 @@
 // UI only — no backend, no AI calls, no persistence.
 
 import { useMemo, useRef, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Sparkles, Send, Paperclip, Bot, User, Eraser, RotateCcw,
   CheckCircle2, XCircle, ClipboardPaste, ChevronDown, Plus, Search,
@@ -121,31 +122,86 @@ export default function OsAICommandCenter() {
   const [editingText, setEditingText] = useState("");
   const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
+  const [pendingAction, setPendingAction] = useState<any | null>(null);
+  const [busy, setBusy] = useState(false);
   const taRef = useRef<HTMLTextAreaElement>(null);
 
   const MAX_CHARS = 4000;
 
-  const send = () => {
+  // Deterministic intent parser — no AI. Maps natural-language hints to
+  // typed intents supported by `os-command-execute`. Defaults to create_task.
+  const parseIntent = (text: string): { intent: string; payload: Record<string, any> } => {
+    const t = text.toLowerCase();
+    if (t.startsWith("remind") || t.includes("reminder"))
+      return { intent: "create_reminder", payload: { title: text, priority: "high" } };
+    if (t.includes("send email") || t.includes("email template"))
+      return { intent: "send_email_template", payload: { template: "", recipient_email: "" } };
+    if (t.includes("update company") || t.includes("company field"))
+      return { intent: "update_company_field", payload: { company_id: "", field: "notes", value: text } };
+    return { intent: "create_task", payload: { title: text, priority: "normal" } };
+  };
+
+  const send = async () => {
     const t = input.trim();
-    if (!t) return;
-    const id = crypto.randomUUID();
-    setMessages((p) => [
-      ...p,
-      { id, role: "user", text: t, at: "just now" },
-      {
-        id: id + "-a",
-        role: "assistant",
-        text:
-          "Preview ready (mock). Once connected I'd apply this instruction. Use **Approve** to commit or **Cancel** to discard.\n\n```json\n{\n  \"action\": \"update_company\",\n  \"company\": \"Acme Ltd\",\n  \"field\": \"registered_address\"\n}\n```",
-        at: "just now",
-      },
-    ]);
+    if (!t || busy) return;
+    setBusy(true);
+    const uid = crypto.randomUUID();
+    setMessages((p) => [...p, { id: uid, role: "user", text: t, at: "just now" }]);
     setInput("");
+
+    const { intent, payload } = parseIntent(t);
+    const { data, error } = await supabase.functions.invoke("os-command-execute", {
+      body: { action: "preview", intent, payload, prompt: t },
+    });
+    if (error || !data?.ok) {
+      setMessages((p) => [...p, {
+        id: uid + "-err", role: "assistant", at: "just now",
+        text: `Preview failed: ${error?.message ?? data?.error ?? "unknown error"}`,
+      }]);
+    } else {
+      setPendingAction(data.action);
+      setMessages((p) => [...p, {
+        id: uid + "-a", role: "assistant", at: "just now",
+        text: `**Preview ready.** Intent: \`${intent}\`\n\n\`\`\`json\n${JSON.stringify(data.action.preview, null, 2)}\n\`\`\`\n\nReview the preview, then press **Execute** to run it.`,
+      }]);
+    }
+    setBusy(false);
     taRef.current?.focus();
   };
 
-  const clearChat = () =>
+  const executePending = async () => {
+    if (!pendingAction || busy) return;
+    setBusy(true);
+    const { data, error } = await supabase.functions.invoke("os-command-execute", {
+      body: { action: "execute", id: pendingAction.id },
+    });
+    const ok = !error && data?.ok;
+    setMessages((p) => [...p, {
+      id: crypto.randomUUID(), role: "assistant", at: "just now",
+      text: ok
+        ? `✅ Executed.\n\n\`\`\`json\n${JSON.stringify(data.result, null, 2)}\n\`\`\``
+        : `❌ Execution failed: ${error?.message ?? data?.error ?? "unknown"}`,
+    }]);
+    setPendingAction(null);
+    setBusy(false);
+  };
+
+  const rejectPending = async () => {
+    if (!pendingAction) return;
+    await supabase.functions.invoke("os-command-execute", {
+      body: { action: "reject", id: pendingAction.id },
+    });
+    setMessages((p) => [...p, {
+      id: crypto.randomUUID(), role: "assistant", at: "just now",
+      text: "Action cancelled.",
+    }]);
+    setPendingAction(null);
+  };
+
+  const clearChat = () => {
     setMessages([{ id: "seed", role: "assistant", text: "Workspace cleared. Ready for a new instruction.", at: "now" }]);
+    setPendingAction(null);
+  };
 
   const newChat = () => {
     clearChat();
@@ -195,8 +251,10 @@ export default function OsAICommandCenter() {
           >
             <PanelRightClose className="w-4 h-4" />
           </button>
-          <span className="hidden sm:inline text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-md bg-purple-500/10 text-purple-300 border border-purple-500/20">
-            UI Preview
+          <span className={`hidden sm:inline text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-md border ${
+            pendingAction ? "bg-amber-500/15 text-amber-200 border-amber-500/20"
+                          : "bg-purple-500/10 text-purple-300 border-purple-500/20"}`}>
+            {pendingAction ? "Awaiting approval" : "Ready"}
           </span>
         </div>
       </div>
@@ -535,9 +593,9 @@ export default function OsAICommandCenter() {
           <span>Agent: <span className="text-white/70">{agent}</span></span>
         </div>
         <div className="flex items-center gap-1.5 flex-wrap">
-          <ActionBtn icon={CheckCircle2} label="Approve" tint="bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25" />
-          <ActionBtn icon={Play}         label="Execute" tint="bg-purple-500/20 text-purple-200 hover:bg-purple-500/30" />
-          <ActionBtn icon={XCircle}      label="Cancel"  tint="bg-red-500/10 text-red-300 hover:bg-red-500/20" />
+          <ActionBtn icon={CheckCircle2} label="Approve & Execute" disabled={!pendingAction || busy} onClick={executePending} tint="bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25" />
+          <ActionBtn icon={Play}         label="Execute" disabled={!pendingAction || busy} onClick={executePending} tint="bg-purple-500/20 text-purple-200 hover:bg-purple-500/30" />
+          <ActionBtn icon={XCircle}      label="Cancel"  disabled={!pendingAction || busy} onClick={rejectPending} tint="bg-red-500/10 text-red-300 hover:bg-red-500/20" />
           <ActionBtn icon={RotateCcw}    label="Run Again" tint="bg-white/5 text-white/70 hover:bg-white/10" />
           <ActionBtn icon={Eraser}       label="Clear"    tint="bg-white/5 text-white/70 hover:bg-white/10" onClick={clearChat} />
           <ActionBtn icon={Save}         label="Save Prompt" tint="bg-white/5 text-white/70 hover:bg-white/10" />
@@ -601,12 +659,13 @@ function FuturePill({ icon: Icon, label, desc }: { icon: any; label: string; des
 }
 
 function ActionBtn({
-  icon: Icon, label, tint, onClick,
-}: { icon: any; label: string; tint: string; onClick?: () => void }) {
+  icon: Icon, label, tint, onClick, disabled,
+}: { icon: any; label: string; tint: string; onClick?: () => void; disabled?: boolean }) {
   return (
     <button
       onClick={onClick}
-      className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition ${tint}`}
+      disabled={disabled}
+      className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition disabled:opacity-40 disabled:cursor-not-allowed ${tint}`}
     >
       <Icon className="w-3.5 h-3.5" />
       {label}
