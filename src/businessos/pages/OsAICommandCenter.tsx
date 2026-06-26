@@ -250,9 +250,12 @@ export default function OsAICommandCenter() {
 
   const executePending = async () => {
     if (!pendingAction || !canApprove) return;
+    if (isDestructive && !confirmOk) return; // gated by typed confirmation
+    const tier = (pendingAction.risk_tier ?? "safe") as "safe" | "sensitive" | "destructive";
+    const actionId = pendingAction.id;
     machine.set("executing");
     const { data, error } = await supabase.functions.invoke("os-command-execute", {
-      body: { action: "execute", id: pendingAction.id },
+      body: { action: "execute", id: actionId },
     });
     const ok = !error && data?.ok;
     setMessages((p) => [...p, {
@@ -262,6 +265,29 @@ export default function OsAICommandCenter() {
         : `❌ Execution failed: ${error?.message ?? data?.error ?? "unknown"}`,
     }]);
     machine.set(ok ? "success" : "error", null);
+    setConfirmText("");
+    if (ok && tier !== "destructive") startUndoWindow(actionId, tier);
+    setTimeout(() => machine.reset(), 1500);
+  };
+
+  const undoLast = async () => {
+    if (!undoableId || rolling || undoLeft <= 0) return;
+    setRolling(true);
+    const { data, error } = await supabase.functions.invoke("os-command-execute", {
+      body: { action: "rollback", id: undoableId },
+    });
+    setRolling(false);
+    const ok = !error && data?.ok;
+    setMessages((p) => [...p, {
+      id: crypto.randomUUID(), role: "assistant", at: "just now",
+      text: ok
+        ? "↩️ **Changes successfully restored.**"
+        : `❌ Rollback failed: ${error?.message ?? data?.error ?? "unknown"}`,
+    }]);
+    if (ok) machine.set("rolled_back", null);
+    setUndoableId(null);
+    setUndoableTier(null);
+    setUndoLeft(0);
     setTimeout(() => machine.reset(), 1500);
   };
 
