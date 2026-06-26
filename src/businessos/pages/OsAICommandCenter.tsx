@@ -2,7 +2,7 @@
 // Professional ChatGPT/Claude/Gemini-style operating surface.
 // UI only — no backend, no AI calls, no persistence.
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useCommandMachine, STATE_LABELS, STATE_TINT, type CommandAction } from "@/businessos/lib/useCommandMachine";
 import { PreviewDiff } from "@/businessos/components/PreviewDiff";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,7 +11,7 @@ import {
   CheckCircle2, XCircle, ClipboardPaste, ChevronDown, Plus, Search,
   Pin, MessageSquarePlus, Copy, Pencil, Play, Save, Building2, FileSearch,
   Bell, Mail, UserCog, Globe, MessageSquare, ListChecks, Briefcase, Receipt,
-  Brain, History, Zap, PanelLeftClose, PanelRightClose,
+  Brain, History, Zap, PanelLeftClose, PanelRightClose, Undo2, ShieldAlert,
 } from "lucide-react";
 
 type Msg = {
