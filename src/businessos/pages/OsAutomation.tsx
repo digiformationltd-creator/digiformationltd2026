@@ -1,12 +1,15 @@
-// Automation Hub — Phase 1 (UI scaffold)
-// Pure UI with mock data. No backend yet. Designed to receive real
-// signals later from agent_tasks / reminders / pg_cron without rework.
+// Automation Hub — Phase 1.1 (UI polish)
+// Pure UI with mock data. No backend. Adds Quick Actions, Agent Status,
+// Timeline filters, Reminder Summary, and Future Modules.
 
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
   Mail, Zap, Clock, Bot, Workflow, Activity, Bell, CheckCircle2,
   AlertTriangle, Database, Cpu, MessageSquare, ArrowRight, Play,
   PauseCircle, RefreshCw, Eye, SkipForward, ShieldCheck, Send,
+  TrendingUp, TrendingDown, Minus, ScanLine, FileCheck2, Wallet,
+  Search, Globe, PenLine, ListChecks,
 } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
