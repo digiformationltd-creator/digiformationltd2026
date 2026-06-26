@@ -128,7 +128,47 @@ export default function OsAICommandCenter() {
   const { state: ccState, action: pendingAction, isBusy: busy, canApprove, canCancel } = machine;
   const taRef = useRef<HTMLTextAreaElement>(null);
 
+  // Phase 3 — Execution Safety Layer
+  const UNDO_SECONDS = 10;
+  const [undoableId, setUndoableId] = useState<string | null>(null);
+  const [undoableTier, setUndoableTier] = useState<"safe" | "sensitive" | "destructive" | null>(null);
+  const [undoLeft, setUndoLeft] = useState(0);
+  const [confirmText, setConfirmText] = useState("");
+  const [rolling, setRolling] = useState(false);
+  const undoTimer = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (undoLeft <= 0) {
+      if (undoTimer.current) window.clearInterval(undoTimer.current);
+      return;
+    }
+    undoTimer.current = window.setInterval(() => {
+      setUndoLeft((s) => {
+        if (s <= 1) {
+          if (undoTimer.current) window.clearInterval(undoTimer.current);
+          setUndoableId(null);
+          setUndoableTier(null);
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+    return () => { if (undoTimer.current) window.clearInterval(undoTimer.current); };
+  }, [undoLeft > 0 ? 1 : 0]); // re-arm only when window opens
+
+  const startUndoWindow = (id: string, tier: "safe" | "sensitive" | "destructive") => {
+    if (tier === "destructive") return; // never auto-undo destructive
+    setUndoableId(id);
+    setUndoableTier(tier);
+    setUndoLeft(UNDO_SECONDS);
+  };
+
   const MAX_CHARS = 4000;
+  const isDestructive = pendingAction?.risk_tier === "destructive";
+  const confirmRequired = isDestructive
+    ? (pendingAction?.intent === "create_order" ? "CONFIRM" : "CONFIRM")
+    : null;
+  const confirmOk = !confirmRequired || confirmText.trim() === confirmRequired;
 
   // Deterministic intent parser — no AI. Maps natural-language hints to
   // typed intents supported by `os-command-execute`. Defaults to create_task.
