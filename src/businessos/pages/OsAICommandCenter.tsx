@@ -110,7 +110,7 @@ function MarkdownPreview({ text }: { text: string }) {
   );
 }
 
-export default function OsAIWorkspace() {
+export default function OsAICommandCenter() {
   const [messages, setMessages] = useState<Msg[]>(SEED_MESSAGES);
   const [input, setInput] = useState("");
   const [paste, setPaste] = useState("");
