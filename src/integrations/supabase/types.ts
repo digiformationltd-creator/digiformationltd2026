@@ -675,42 +675,79 @@ export type Database = {
       }
       email_send_log: {
         Row: {
+          client_user_id: string | null
           created_at: string
           error_message: string | null
           id: string
+          invoice_id: string | null
           message_id: string | null
           metadata: Json | null
+          order_id: string | null
           recipient_email: string
           status: string
           template_name: string
+          ticket_id: string | null
+          trigger_source: string | null
           triggered_by_ip: string | null
           triggered_by_user_id: string | null
         }
         Insert: {
+          client_user_id?: string | null
           created_at?: string
           error_message?: string | null
           id?: string
+          invoice_id?: string | null
           message_id?: string | null
           metadata?: Json | null
+          order_id?: string | null
           recipient_email: string
           status: string
           template_name: string
+          ticket_id?: string | null
+          trigger_source?: string | null
           triggered_by_ip?: string | null
           triggered_by_user_id?: string | null
         }
         Update: {
+          client_user_id?: string | null
           created_at?: string
           error_message?: string | null
           id?: string
+          invoice_id?: string | null
           message_id?: string | null
           metadata?: Json | null
+          order_id?: string | null
           recipient_email?: string
           status?: string
           template_name?: string
+          ticket_id?: string | null
+          trigger_source?: string | null
           triggered_by_ip?: string | null
           triggered_by_user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "email_send_log_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_send_log_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "client_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_send_log_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "client_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_send_state: {
         Row: {
