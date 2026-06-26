@@ -149,9 +149,7 @@ export default function OsAutomation() {
               <Bell className="w-4 h-4 text-amber-300" />
               <h3 className="font-semibold">Active Reminders</h3>
             </div>
-            <NavLink to="/admin/automation/reminders" className="text-xs text-white/40 hover:text-white/70">
-              View all
-            </NavLink>
+            <span className="text-[10px] uppercase tracking-wider text-white/30">Today</span>
           </div>
           <div className="space-y-2">
             {REMINDERS.map((r) => (
