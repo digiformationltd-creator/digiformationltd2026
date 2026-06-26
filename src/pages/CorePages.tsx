@@ -194,23 +194,43 @@ export const Contact = () => {
       toast.error(result.error.issues[0]?.message ?? "Please check the form.");
       return;
     }
+    if (!declaredSource) {
+      setSourceError(true);
+      toast.error("Please tell us how you found us.");
+      return;
+    }
     setSubmitting(true);
     const orderRef = await buildOrderRef({ service: form.service });
 
     // Save to database (non-blocking for UX — log error but still proceed)
-    const { error: dbError } = await supabase.from("contact_submissions").insert({
-      full_name: form.fullName,
-      email: form.email,
-      whatsapp: form.whatsapp,
-      country: form.country,
-      service: form.service?.trim() ? form.service.trim() : "General Inquiry",
-      message: form.message,
-      page_path: window.location.pathname,
-      referrer: document.referrer || null,
-      user_agent: navigator.userAgent.slice(0, 500),
-    });
+    const { data: inserted, error: dbError } = await supabase
+      .from("contact_submissions")
+      .insert({
+        full_name: form.fullName,
+        email: form.email,
+        whatsapp: form.whatsapp,
+        country: form.country,
+        service: form.service?.trim() ? form.service.trim() : "General Inquiry",
+        message: form.message,
+        page_path: window.location.pathname,
+        referrer: document.referrer || null,
+        user_agent: navigator.userAgent.slice(0, 500),
+        declared_source: declaredSource.id,
+        declared_source_label: declaredSource.label,
+      })
+      .select("id")
+      .single();
     if (dbError) {
       console.error("Failed to save submission:", dbError);
+    }
+
+    // Link attribution to this inquiry — surfaces it inside Growth Intelligence.
+    if (inserted?.id) {
+      void recordLeadAttribution({
+        entityType: "inquiry",
+        entityId: inserted.id,
+        declared: declaredSource,
+      });
     }
 
     if (form.email) {
