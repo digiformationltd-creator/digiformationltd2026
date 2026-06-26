@@ -173,6 +173,7 @@ Deno.serve(async (req) => {
                 daysRemaining: days,
               },
               `cs-reminder-${c.id}-${c.confirmation_due}-s${stage.stage}`,
+              { clientUserId: c.user_id },
             )
             if (ok) {
               summary.sent++
