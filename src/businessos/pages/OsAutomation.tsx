@@ -108,6 +108,31 @@ export default function OsAutomation() {
         })}
       </div>
 
+      <div className="os-glass p-5 ring-1 ring-amber-500/15">
+        <div className="flex items-center gap-2 mb-3">
+          <ShieldCheck className="w-4 h-4 text-amber-300" />
+          <h3 className="font-semibold">System-Owned Automations <span className="text-[10px] text-white/40 font-normal ml-1">read-only · always win</span></h3>
+        </div>
+        <p className="text-xs text-white/50 mb-3">
+          These automations run automatically in the backend. The Automation Center will <span className="text-white/80">never</span> duplicate, re-trigger, or override them.
+        </p>
+        <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+          {[
+            ["Invoice auto-issue", "on client_orders insert"],
+            ["Order confirmation email", "on order create trigger"],
+            ["Invoice email (bundled)", "with order confirmation"],
+            ["Ticket update email", "on client_tickets status change"],
+            ["Inquiry → Order mirroring", "DB trigger on contact_submissions"],
+            ["Scheduled reminders", "cron-driven, see Scheduled Jobs"],
+          ].map(([name, sub]) => (
+            <li key={name} className="flex items-center justify-between rounded-lg bg-white/[0.02] border border-white/5 px-3 py-2">
+              <span className="text-white/80">{name}</span>
+              <span className="text-[10px] text-white/40">{sub}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
       <div className="os-glass p-5">
         <div className="flex items-center gap-2 mb-4">
           <Activity className="w-4 h-4 text-cyan-300" />
