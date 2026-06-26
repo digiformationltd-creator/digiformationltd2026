@@ -246,13 +246,13 @@ export default function OsAICommandCenter() {
   const filteredRecent = RECENT.filter((t) => t.title.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="os-fade-in h-[calc(100vh-9rem)] min-h-[640px] flex flex-col gap-3">
+    <div className="os-fade-in h-[calc(100vh-9rem)] min-h-[640px] flex flex-col gap-3 overflow-hidden">
       {/* Compact header */}
-      <div className="os-glass os-glow-purple px-4 py-3 flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-3 min-w-0">
+      <div className="os-glass os-glow-purple px-4 py-3 flex items-center justify-between gap-3 shrink-0">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
           <button
             onClick={() => setLeftOpen((v) => !v)}
-            className="lg:hidden inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-white/70"
+            className="lg:hidden inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 shrink-0"
             aria-label="Toggle history"
           >
             <PanelLeftClose className="w-4 h-4" />
@@ -260,17 +260,17 @@ export default function OsAICommandCenter() {
           <div className="w-9 h-9 rounded-xl grid place-items-center bg-purple-500/10 text-purple-300 shrink-0">
             <Sparkles className="w-4 h-4" />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 hidden sm:block">
             <h2 className="text-sm font-bold leading-tight truncate">AI Command Center</h2>
             <p className="text-[11px] text-white/40 truncate">Conversational control surface for Business OS</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="relative">
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="relative w-[148px]">
             <select
               value={agent}
               onChange={(e) => setAgent(e.target.value)}
-              className="appearance-none bg-white/5 border border-white/10 rounded-lg pl-3 pr-8 py-1.5 text-xs text-white/80 focus:outline-none focus:border-purple-400/40"
+              className="appearance-none w-full bg-white/5 border border-white/10 rounded-lg pl-3 pr-8 py-1.5 text-xs text-white/80 focus:outline-none focus:border-purple-400/40 truncate"
             >
               {AGENTS.map((a) => (
                 <option key={a} value={a} className="bg-[#0b0d10]">{a}</option>
@@ -285,13 +285,14 @@ export default function OsAICommandCenter() {
           >
             <PanelRightClose className="w-4 h-4" />
           </button>
-          <span className={`hidden sm:inline text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-md border ${
+          <span className={`hidden md:inline text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-md border whitespace-nowrap ${
             pendingAction ? "bg-amber-500/15 text-amber-200 border-amber-500/20"
                           : "bg-purple-500/10 text-purple-300 border-purple-500/20"}`}>
             {pendingAction ? "Awaiting approval" : "Ready"}
           </span>
         </div>
       </div>
+
 
       {/* Three-pane workspace */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)_300px] gap-3 min-h-0">
