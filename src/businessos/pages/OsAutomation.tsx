@@ -1,496 +1,213 @@
-// Automation Hub — Phase 1.1 (UI polish)
-// Pure UI with mock data. No backend. Adds Quick Actions, Agent Status,
-// Timeline filters, Reminder Summary, and Future Modules.
+// Automation Dashboard — AI-first refactor.
+// Simplified surface: Active Reminders, Running Jobs, Recent Activity,
+// System Health, lightweight Agent Status widget, and quick links to the
+// four kept sub-modules (AI Workspace, Email Marketing, Scheduled Jobs,
+// Business Automations). UI only. No backend changes.
 
-import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
-  Mail, Zap, Clock, Bot, Workflow, Activity, Bell, CheckCircle2,
-  AlertTriangle, Database, Cpu, MessageSquare, ArrowRight, Play,
-  PauseCircle, RefreshCw, Eye, SkipForward, ShieldCheck, Send,
-  TrendingUp, TrendingDown, Minus, ScanLine, FileCheck2, Wallet,
-  Search, Globe, PenLine, ListChecks,
+  Sparkles, Bell, Activity, ShieldCheck, Bot, Mail, Clock, Zap,
+  CheckCircle2, AlertTriangle, RefreshCw, ArrowRight, Database, Cpu,
 } from "lucide-react";
 
-/* ------------------------------------------------------------------ */
-/*  Overview KPIs                                                      */
-/* ------------------------------------------------------------------ */
+/* -- Mock data ----------------------------------------------------- */
 
-type Trend = "up" | "down" | "flat";
-type Kpi = { label: string; value: string; sub: string; icon: any; tint: string; trend: Trend; delta?: string };
-
-const OVERVIEW: Kpi[] = [
-  { label: "Active Automations", value: "12",      sub: "3 paused",            icon: Zap,         tint: "lime",   trend: "up",   delta: "+2 this week" },
-  { label: "Active AI Agents",   value: "0 / 6",   sub: "6 planned",           icon: Bot,         tint: "purple", trend: "flat", delta: "Phase 2" },
-  { label: "Pending Reminders",  value: "7",       sub: "2 overdue",           icon: Bell,        tint: "amber",  trend: "up",   delta: "+3 today" },
-  { label: "Running Jobs",       value: "1",       sub: "queue healthy",       icon: Activity,    tint: "cyan",   trend: "flat", delta: "Stable" },
-  { label: "Failed Jobs (24h)",  value: "0",       sub: "no incidents",        icon: AlertTriangle, tint: "red",  trend: "down", delta: "−1 vs yesterday" },
-  { label: "System Health",      value: "Healthy", sub: "All systems nominal", icon: ShieldCheck, tint: "green",  trend: "flat", delta: "100% uptime" },
+const KPIS = [
+  { label: "Active Reminders", value: "7",       sub: "2 overdue",      icon: Bell,       tint: "bg-amber-500/10 text-amber-300" },
+  { label: "Running Jobs",     value: "1",       sub: "queue healthy",  icon: Activity,   tint: "bg-cyan-500/10 text-cyan-300"   },
+  { label: "Recent Activity",  value: "12",      sub: "today",          icon: RefreshCw,  tint: "bg-purple-500/10 text-purple-300" },
+  { label: "System Health",    value: "Healthy", sub: "100% uptime",    icon: ShieldCheck,tint: "bg-green-500/10 text-green-300" },
 ];
 
-const TINT: Record<string, string> = {
-  lime:   "bg-lime-500/10 text-lime-300",
-  amber:  "bg-amber-500/10 text-amber-300",
-  cyan:   "bg-cyan-500/10 text-cyan-300",
-  blue:   "bg-blue-500/10 text-blue-300",
-  purple: "bg-purple-500/10 text-purple-300",
-  green:  "bg-green-500/10 text-green-300",
-  red:    "bg-red-500/10 text-red-300",
-  pink:   "bg-pink-500/10 text-pink-300",
-};
-
-/* ------------------------------------------------------------------ */
-/*  Section cards (existing — kept)                                    */
-/* ------------------------------------------------------------------ */
-
-type Section = {
-  label: string; to: string; icon: any; status: "available"|"coming";
-  desc: string; meta: string; tint: string;
-};
-
-const SECTIONS: Section[] = [
-  { label: "Email Marketing",         to: "/admin/automation/email-marketing", icon: Mail,     status: "coming",    desc: "Campaign builder powered by the existing email engine.", meta: "0 campaigns", tint: "pink" },
-  { label: "Email Automation History",to: "/admin/automation/history",         icon: Clock,    status: "coming",    desc: "Logs of every automated email sent across Business OS.",  meta: "Logs ready",  tint: "blue" },
-  { label: "Scheduled Jobs",          to: "/admin/automation/jobs",            icon: Workflow, status: "available", desc: "Cron and scheduled internal workflows.",                  meta: "9 jobs",      tint: "cyan" },
-  { label: "AI Agents",               to: "/admin/automation/agents",          icon: Bot,      status: "available", desc: "Specialist agents for compliance, formation and ops.",    meta: "6 planned",   tint: "purple" },
-  { label: "Business Automations",    to: "/admin/automation/workflows",       icon: Zap,      status: "available", desc: "Follow-ups, reminders, lead qualification and more.",     meta: "12 rules",    tint: "lime" },
+const REMINDERS = [
+  { title: "Confirmation Statement due — Ascend Ltd",     due: "Overdue · 2d", sev: "overdue" },
+  { title: "Follow up Stripe application — Nova Trading", due: "Today",        sev: "today"   },
+  { title: "VAT documents — Helix Studios",               due: "Today",        sev: "today"   },
+  { title: "Annual Accounts — Bramble & Co",              due: "In 3 days",    sev: "soon"    },
 ];
 
-/* ------------------------------------------------------------------ */
-/*  Reminder Center (mock)                                             */
-/* ------------------------------------------------------------------ */
-
-type Reminder = { id: string; title: string; due: string; severity: "overdue"|"today"|"soon"; entity: string };
-
-const REMINDERS: Reminder[] = [
-  { id: "r1", title: "Confirmation Statement due — Ascend Ltd",     due: "Overdue · 2d",   severity: "overdue", entity: "Ascend Ltd" },
-  { id: "r2", title: "Follow up Stripe application — Nova Trading", due: "Today",          severity: "today",   entity: "Nova Trading" },
-  { id: "r3", title: "VAT registration documents — Helix Studios",  due: "Today",          severity: "today",   entity: "Helix Studios" },
-  { id: "r4", title: "Annual Accounts reminder — Bramble & Co",     due: "In 3 days",      severity: "soon",    entity: "Bramble & Co" },
-  { id: "r5", title: "Renewal — Registered Address (Orbit Labs)",   due: "In 6 days",      severity: "soon",    entity: "Orbit Labs" },
-];
-
-const SEV_TINT: Record<Reminder["severity"], string> = {
+const SEV: Record<string, string> = {
   overdue: "bg-red-500/10 text-red-300 border-red-500/20",
   today:   "bg-amber-500/10 text-amber-300 border-amber-500/20",
   soon:    "bg-white/5 text-white/60 border-white/10",
 };
 
-/* ------------------------------------------------------------------ */
-/*  Activity timeline (mock)                                           */
-/* ------------------------------------------------------------------ */
-
-type EventStatus = "completed" | "running" | "error" | "info";
-type Event = {
-  id: string; kind: string; text: string; at: string;
-  icon: any; tint: string; status: EventStatus; today: boolean;
-};
-
-const ACTIVITY: Event[] = [
-  { id: "e1", kind: "reminder",   text: "Reminder created — Confirmation Statement for Ascend Ltd",  at: "2m ago",  icon: Bell,         tint: "amber",  status: "info",      today: true  },
-  { id: "e2", kind: "automation", text: "Order Automation executed — Welcome flow for Nova Trading", at: "11m ago", icon: Zap,          tint: "lime",   status: "completed", today: true  },
-  { id: "e3", kind: "email",      text: "Email scheduled — Annual Accounts reminder (3 recipients)", at: "26m ago", icon: Mail,         tint: "pink",   status: "info",      today: true  },
-  { id: "e4", kind: "agent",      text: "Agent failed — OCR Agent timeout on document #4821",        at: "44m ago", icon: AlertTriangle,tint: "red",    status: "error",     today: true  },
-  { id: "e5", kind: "queue",      text: "Queue updated — 4 tasks moved from waiting to running",    at: "2h ago",  icon: RefreshCw,    tint: "cyan",   status: "running",   today: true  },
-  { id: "e6", kind: "reminder",   text: "Reminder completed — Stripe follow-up (Helix Studios)",     at: "3h ago",  icon: CheckCircle2, tint: "green",  status: "completed", today: true  },
-  { id: "e7", kind: "email",      text: "Email digest sent — Daily admin summary",                   at: "Yesterday", icon: Mail,       tint: "pink",   status: "completed", today: false },
-  { id: "e8", kind: "automation", text: "Workflow retried — Lead qualification (Orbit Labs)",        at: "Yesterday", icon: RefreshCw,  tint: "cyan",   status: "completed", today: false },
-  { id: "e9", kind: "agent",      text: "Reminder Agent error — SMTP timeout (auto-recovered)",      at: "2d ago",  icon: AlertTriangle,tint: "red",    status: "error",     today: false },
-];
-
-type TimelineFilter = "all" | "today" | "errors" | "completed";
-
-/* ------------------------------------------------------------------ */
-/*  Quick Actions                                                      */
-/* ------------------------------------------------------------------ */
-
-const QUICK_ACTIONS = [
-  { label: "View Reminders",       to: "/admin/automation",                 icon: Bell,     tint: "amber"  },
-  { label: "Open AI Agents",       to: "/admin/automation/agents",          icon: Bot,      tint: "purple" },
-  { label: "Scheduled Jobs",       to: "/admin/automation/jobs",            icon: Clock,    tint: "blue"   },
-  { label: "Business Automations", to: "/admin/automation/workflows",       icon: Zap,      tint: "lime"   },
-  { label: "Email Marketing",      to: "/admin/automation/email-marketing", icon: Mail,     tint: "pink"   },
-  { label: "Automation History",   to: "/admin/automation/history",         icon: Activity, tint: "cyan"   },
-];
-
-/* ------------------------------------------------------------------ */
-/*  Agent Status (mock)                                                */
-/* ------------------------------------------------------------------ */
-
-type Agent = {
-  name: string; status: "planned" | "active" | "paused" | "error";
-  health: "good" | "warn" | "down" | "n/a";
-  lastActivity: string; queue: number; success: string; tint: string; icon: any;
-};
-
-const AGENTS: Agent[] = [
-  { name: "Reminder Agent",   status: "planned", health: "n/a",  lastActivity: "—",          queue: 0, success: "—",     tint: "amber",  icon: Bell        },
-  { name: "OCR Agent",        status: "planned", health: "n/a",  lastActivity: "—",          queue: 0, success: "—",     tint: "cyan",   icon: ScanLine    },
-  { name: "Compliance Agent", status: "planned", health: "n/a",  lastActivity: "—",          queue: 0, success: "—",     tint: "lime",   icon: FileCheck2  },
-  { name: "Finance Agent",    status: "planned", health: "n/a",  lastActivity: "—",          queue: 0, success: "—",     tint: "green",  icon: Wallet      },
-  { name: "Command Agent",    status: "planned", health: "n/a",  lastActivity: "—",          queue: 0, success: "—",     tint: "purple", icon: Cpu         },
-  { name: "Knowledge Agent",  status: "planned", health: "n/a",  lastActivity: "—",          queue: 0, success: "—",     tint: "blue",   icon: Database    },
-];
-
-/* ------------------------------------------------------------------ */
-/*  Reminder summary (mock)                                            */
-/* ------------------------------------------------------------------ */
-
-const REMINDER_SUMMARY = [
-  { label: "Overdue",   value: 2,  tint: "red"   },
-  { label: "Today",     value: 5,  tint: "amber" },
-  { label: "This Week", value: 14, tint: "cyan"  },
-  { label: "Completed", value: 87, tint: "green" },
-];
-
-/* ------------------------------------------------------------------ */
-/*  Future modules                                                     */
-/* ------------------------------------------------------------------ */
-
-const FUTURE_MODULES = [
-  { label: "OCR",                icon: ScanLine,   tint: "cyan"   },
-  { label: "Compliance",         icon: FileCheck2, tint: "lime"   },
-  { label: "Finance",            icon: Wallet,     tint: "green"  },
-  { label: "WhatsApp",           icon: MessageSquare, tint: "lime" },
-  { label: "SEO",                icon: Search,     tint: "purple" },
-  { label: "Website Audit",      icon: Globe,      tint: "blue"   },
-  { label: "Content Automation", icon: PenLine,    tint: "pink"   },
-];
-
-/* ------------------------------------------------------------------ */
-/*  Queue + System Health (mock)                                       */
-/* ------------------------------------------------------------------ */
-
-const QUEUE = [
-  { label: "Waiting",   value: 3, tint: "amber" },
-  { label: "Running",   value: 1, tint: "cyan" },
-  { label: "Completed", value: 142, tint: "green" },
-  { label: "Failed",    value: 0, tint: "red" },
+const ACTIVITY = [
+  { text: "Reminder created — Confirmation Statement (Ascend Ltd)", at: "2m ago",  icon: Bell,         tint: "text-amber-300" },
+  { text: "Welcome flow executed — Nova Trading",                   at: "11m ago", icon: Zap,          tint: "text-lime-300"  },
+  { text: "Email scheduled — Annual Accounts reminder (×3)",        at: "26m ago", icon: Mail,         tint: "text-pink-300"  },
+  { text: "Reminder completed — Stripe follow-up (Helix Studios)",  at: "3h ago",  icon: CheckCircle2, tint: "text-green-300" },
+  { text: "Workflow retried — Lead qualification (Orbit Labs)",     at: "Yesterday", icon: RefreshCw,  tint: "text-cyan-300"  },
 ];
 
 const HEALTH = [
-  { label: "Database",           status: "Operational", ok: true,  icon: Database },
-  { label: "Scheduler",          status: "Operational", ok: true,  icon: Clock },
-  { label: "Automation Engine",  status: "Operational", ok: true,  icon: Cpu },
-  { label: "Discord Connection", status: "Not Connected", ok: false, icon: MessageSquare },
+  { label: "Database",          status: "Operational",   ok: true,  icon: Database },
+  { label: "Scheduler",         status: "Operational",   ok: true,  icon: Clock    },
+  { label: "Automation Engine", status: "Operational",   ok: true,  icon: Cpu      },
+  { label: "Discord Bridge",    status: "Not Connected", ok: false, icon: AlertTriangle },
 ];
 
-/* ================================================================== */
-/*  Page                                                               */
-/* ================================================================== */
+const AGENTS = [
+  { name: "Reminder Agent", status: "Planned", health: "n/a", last: "—" },
+  { name: "Email Agent",    status: "Planned", health: "n/a", last: "—" },
+  { name: "Company Agent",  status: "Planned", health: "n/a", last: "—" },
+  { name: "Customer Agent", status: "Planned", health: "n/a", last: "—" },
+];
+
+const MODULES = [
+  { label: "AI Workspace",        to: "/admin/automation/workspace",       icon: Sparkles, desc: "Paste, instruct, preview, approve.",  tint: "bg-purple-500/10 text-purple-300", featured: true },
+  { label: "Email Marketing",     to: "/admin/automation/email-marketing", icon: Mail,     desc: "Campaigns and lead outreach.",         tint: "bg-pink-500/10 text-pink-300" },
+  { label: "Scheduled Jobs",      to: "/admin/automation/jobs",            icon: Clock,    desc: "Cron and recurring tasks.",            tint: "bg-cyan-500/10 text-cyan-300" },
+  { label: "Business Automations",to: "/admin/automation/workflows",       icon: Zap,      desc: "Follow-ups, reminders, lead rules.",   tint: "bg-lime-500/10 text-lime-300" },
+];
+
+/* -- Page ---------------------------------------------------------- */
 
 export default function OsAutomation() {
-  const [timelineFilter, setTimelineFilter] = useState<TimelineFilter>("all");
-  const filteredActivity = ACTIVITY.filter((e) => {
-    if (timelineFilter === "all") return true;
-    if (timelineFilter === "today") return e.today;
-    if (timelineFilter === "errors") return e.status === "error";
-    if (timelineFilter === "completed") return e.status === "completed";
-    return true;
-  });
   return (
     <div className="space-y-6 os-fade-in">
       {/* Header */}
       <div className="os-glass os-glow-lime p-6">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-2xl grid place-items-center bg-lime-500/10 text-lime-400">
+            <div className="w-12 h-12 rounded-2xl grid place-items-center bg-lime-500/10 text-lime-300">
               <Zap className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-xl font-bold">Automation Center</h2>
+              <h2 className="text-xl font-bold">Automation</h2>
               <p className="text-sm text-white/50 mt-1 max-w-2xl">
-                A single command surface for every automated workflow inside Business OS — reminders, scheduled jobs, AI agents and downstream integrations. Phase 1 ships the interface; native backend wiring follows.
+                A simple overview of what's running. Spend most of your time in the AI Workspace — everything else
+                supports it.
               </p>
             </div>
           </div>
-          <span className="text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-md bg-lime-500/10 text-lime-300 border border-lime-500/20">
-            Phase 1 · UI Live
-          </span>
+          <NavLink
+            to="/admin/automation/workspace"
+            className="inline-flex items-center gap-2 rounded-xl bg-purple-500/15 text-purple-200 hover:bg-purple-500/25 px-4 py-2 text-sm font-medium transition"
+          >
+            <Sparkles className="w-4 h-4" />
+            Open AI Workspace
+            <ArrowRight className="w-3.5 h-3.5" />
+          </NavLink>
         </div>
       </div>
 
-      {/* Overview KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        {OVERVIEW.map((k) => {
+      {/* KPIs */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {KPIS.map((k) => {
           const Icon = k.icon;
-          const TrendIcon = k.trend === "up" ? TrendingUp : k.trend === "down" ? TrendingDown : Minus;
-          const trendColor = k.trend === "up" ? "text-green-300" : k.trend === "down" ? "text-red-300" : "text-white/40";
           return (
-            <div key={k.label} className="os-glass p-4 hover:translate-y-[-1px] transition">
+            <div key={k.label} className="os-glass p-4">
               <div className="flex items-start justify-between">
                 <span className="text-[11px] text-white/50">{k.label}</span>
-                <div className={`w-7 h-7 rounded-lg grid place-items-center ${TINT[k.tint]}`}>
+                <div className={`w-7 h-7 rounded-lg grid place-items-center ${k.tint}`}>
                   <Icon className="w-3.5 h-3.5" />
                 </div>
               </div>
               <div className="mt-2 text-xl font-bold">{k.value}</div>
               <div className="text-[11px] text-white/40 mt-0.5">{k.sub}</div>
-              {k.delta && (
-                <div className={`mt-2 inline-flex items-center gap-1 text-[10px] ${trendColor}`}>
-                  <TrendIcon className="w-3 h-3" />
-                  <span>{k.delta}</span>
-                </div>
-              )}
             </div>
           );
         })}
       </div>
 
-      {/* Quick Actions */}
-      <div className="os-glass p-5">
-        <div className="flex items-center gap-2 mb-4">
-          <ListChecks className="w-4 h-4 text-lime-300" />
-          <h3 className="font-semibold">Quick Actions</h3>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
-          {QUICK_ACTIONS.map((a) => {
-            const Icon = a.icon;
-            return (
-              <NavLink
-                key={a.label}
-                to={a.to}
-                className="group rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10 p-3 flex items-center gap-2.5 transition"
-              >
-                <div className={`w-8 h-8 rounded-lg grid place-items-center ${TINT[a.tint]}`}>
-                  <Icon className="w-4 h-4" />
-                </div>
-                <span className="text-xs font-medium text-white/80 group-hover:text-white truncate">{a.label}</span>
-              </NavLink>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Section cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {SECTIONS.map((s) => {
-          const Icon = s.icon;
-          const card = (
-            <div className="os-glass p-5 h-full hover:translate-y-[-2px] transition group">
-              <div className="flex items-start justify-between">
-                <div className={`w-10 h-10 rounded-xl grid place-items-center ${TINT[s.tint]}`}>
-                  <Icon className="w-4 h-4" />
-                </div>
-                <span className={`text-[10px] uppercase tracking-wider px-2 py-1 rounded-md ${
-                  s.status === "available"
-                    ? "bg-green-500/10 text-green-300"
-                    : "bg-white/5 text-white/40"
-                }`}>
-                  {s.status === "available" ? "Open" : "Coming soon"}
-                </span>
+      {/* Modules */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {MODULES.map((m) => {
+          const Icon = m.icon;
+          return (
+            <NavLink
+              key={m.to}
+              to={m.to}
+              className={`os-glass p-5 hover:translate-y-[-2px] transition group ${
+                m.featured ? "os-glow-purple ring-1 ring-purple-500/20" : ""
+              }`}
+            >
+              <div className={`w-10 h-10 rounded-xl grid place-items-center ${m.tint}`}>
+                <Icon className="w-4 h-4" />
               </div>
               <div className="mt-3 font-semibold flex items-center gap-2">
-                {s.label}
-                {s.status === "available" && (
-                  <ArrowRight className="w-3.5 h-3.5 text-white/30 group-hover:text-white/70 group-hover:translate-x-0.5 transition" />
-                )}
+                {m.label}
+                <ArrowRight className="w-3.5 h-3.5 text-white/30 group-hover:text-white/70 group-hover:translate-x-0.5 transition" />
               </div>
-              <div className="text-xs text-white/50 mt-1">{s.desc}</div>
-              <div className="text-[11px] text-white/40 mt-3">{s.meta}</div>
-            </div>
+              <div className="text-xs text-white/50 mt-1">{m.desc}</div>
+              {m.featured && (
+                <div className="mt-3 inline-block text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-300">
+                  Primary
+                </div>
+              )}
+            </NavLink>
           );
-          return s.status === "available"
-            ? <NavLink key={s.to} to={s.to}>{card}</NavLink>
-            : <div key={s.to} className="opacity-70 cursor-default">{card}</div>;
         })}
       </div>
 
-      {/* Reminder Center + Activity */}
+      {/* Reminders + Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="os-glass p-5 lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <Bell className="w-4 h-4 text-amber-300" />
-              <h3 className="font-semibold">Reminder Center</h3>
-              <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md bg-white/5 text-white/40">Mock</span>
+              <h3 className="font-semibold">Active Reminders</h3>
             </div>
-            <span className="text-xs text-white/40">{REMINDERS.length} open</span>
+            <NavLink to="/admin/automation/reminders" className="text-xs text-white/40 hover:text-white/70">
+              View all
+            </NavLink>
           </div>
           <div className="space-y-2">
             {REMINDERS.map((r) => (
-              <div key={r.id} className="rounded-xl border border-white/5 bg-white/[0.02] p-3 flex items-start gap-3">
-                <div className={`shrink-0 mt-0.5 text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md border ${SEV_TINT[r.severity]}`}>
+              <div key={r.title} className="rounded-xl border border-white/5 bg-white/[0.02] p-3 flex items-center gap-3">
+                <span className={`shrink-0 text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md border ${SEV[r.sev]}`}>
                   {r.due}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium truncate">{r.title}</div>
-                  <div className="text-[11px] text-white/40">{r.entity}</div>
-                </div>
-                <div className="flex items-center gap-1 shrink-0">
-                  <ReminderBtn icon={CheckCircle2} label="Done" tint="green" />
-                  <ReminderBtn icon={Clock}        label="Later" tint="amber" />
-                  <ReminderBtn icon={SkipForward}  label="Skip"  tint="white" />
-                  <ReminderBtn icon={Eye}          label="View"  tint="cyan" />
-                </div>
+                </span>
+                <span className="text-sm text-white/80 truncate">{r.title}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="os-glass p-5">
-          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-            <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-cyan-300" />
-              <h3 className="font-semibold">Activity</h3>
-            </div>
-            <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md bg-white/5 text-white/40">Mock</span>
-          </div>
-          <div className="flex items-center gap-1.5 mb-3 flex-wrap">
-            {(["all","today","errors","completed"] as TimelineFilter[]).map((f) => (
-              <button
-                key={f}
-                type="button"
-                onClick={() => setTimelineFilter(f)}
-                className={`text-[10px] uppercase tracking-wider px-2 py-1 rounded-md border transition ${
-                  timelineFilter === f
-                    ? "bg-cyan-500/10 text-cyan-300 border-cyan-500/20"
-                    : "bg-white/[0.02] text-white/50 border-white/5 hover:text-white/80"
-                }`}
-              >
-                {f}
-              </button>
-            ))}
-          </div>
-          <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
-            {filteredActivity.length === 0 && (
-              <div className="text-xs text-white/40 py-6 text-center">No events match this filter.</div>
-            )}
-            {filteredActivity.map((e) => {
-              const Icon = e.icon;
-              return (
-                <div key={e.id} className="flex items-start gap-3">
-                  <div className={`shrink-0 w-7 h-7 rounded-lg grid place-items-center ${TINT[e.tint]}`}>
-                    <Icon className="w-3.5 h-3.5" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xs text-white/80 leading-snug">{e.text}</div>
-                    <div className="text-[10px] text-white/40 mt-0.5 flex items-center gap-2">
-                      <span>{e.at}</span>
-                      <StatusDot status={e.status} />
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* Agent Status + Reminder Summary */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="os-glass p-5 lg:col-span-2">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Bot className="w-4 h-4 text-purple-300" />
-              <h3 className="font-semibold">Agent Status</h3>
-              <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md bg-white/5 text-white/40">Mock</span>
-            </div>
-            <NavLink to="/admin/automation/agents" className="text-[11px] text-white/50 hover:text-white inline-flex items-center gap-1">
-              Manage <ArrowRight className="w-3 h-3" />
-            </NavLink>
-          </div>
-
-          <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-[10px] uppercase tracking-wider text-white/40 border-b border-white/5">
-                  <th className="text-left font-medium py-2 pl-1">Agent</th>
-                  <th className="text-left font-medium py-2">Status</th>
-                  <th className="text-left font-medium py-2">Health</th>
-                  <th className="text-left font-medium py-2">Last Activity</th>
-                  <th className="text-right font-medium py-2">Queue</th>
-                  <th className="text-right font-medium py-2 pr-1">Success</th>
-                </tr>
-              </thead>
-              <tbody>
-                {AGENTS.map((a) => {
-                  const Icon = a.icon;
-                  return (
-                    <tr key={a.name} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02]">
-                      <td className="py-2.5 pl-1">
-                        <div className="flex items-center gap-2.5">
-                          <div className={`w-7 h-7 rounded-lg grid place-items-center ${TINT[a.tint]}`}>
-                            <Icon className="w-3.5 h-3.5" />
-                          </div>
-                          <span className="text-xs font-medium">{a.name}</span>
-                        </div>
-                      </td>
-                      <td className="py-2.5"><AgentStatusBadge status={a.status} /></td>
-                      <td className="py-2.5"><HealthBadge health={a.health} /></td>
-                      <td className="py-2.5 text-xs text-white/50">{a.lastActivity}</td>
-                      <td className="py-2.5 text-xs text-right text-white/60">{a.queue}</td>
-                      <td className="py-2.5 text-xs text-right text-white/60 pr-1">{a.success}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="md:hidden space-y-2">
-            {AGENTS.map((a) => {
-              const Icon = a.icon;
-              return (
-                <div key={a.name} className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
-                  <div className="flex items-center gap-2.5 mb-2">
-                    <div className={`w-8 h-8 rounded-lg grid place-items-center ${TINT[a.tint]}`}>
-                      <Icon className="w-4 h-4" />
-                    </div>
-                    <span className="text-sm font-medium flex-1">{a.name}</span>
-                    <AgentStatusBadge status={a.status} />
-                  </div>
-                  <div className="grid grid-cols-3 gap-2 text-[11px] text-white/50">
-                    <div><div className="text-white/30">Health</div><div className="mt-0.5"><HealthBadge health={a.health} /></div></div>
-                    <div><div className="text-white/30">Queue</div><div className="text-white/70 mt-0.5">{a.queue}</div></div>
-                    <div><div className="text-white/30">Success</div><div className="text-white/70 mt-0.5">{a.success}</div></div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="os-glass p-5">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Bell className="w-4 h-4 text-amber-300" />
-              <h3 className="font-semibold">Reminder Summary</h3>
-            </div>
-            <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md bg-white/5 text-white/40">Mock</span>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {REMINDER_SUMMARY.map((r) => (
-              <div key={r.label} className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
-                <div className="text-[11px] text-white/50">{r.label}</div>
-                <div className={`mt-1 text-2xl font-bold ${TINT[r.tint].split(" ")[1]}`}>{r.value}</div>
-              </div>
-            ))}
-          </div>
-          <NavLink
-            to="/admin/automation/reminders"
-            className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/20 text-amber-200 text-sm py-2.5 transition"
-          >
-            <Bell className="w-4 h-4" /> View all reminders
-          </NavLink>
-        </div>
-      </div>
-
-      {/* Queue + Health + Discord */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Agent Status widget */}
         <div className="os-glass p-5">
           <div className="flex items-center gap-2 mb-4">
-            <RefreshCw className="w-4 h-4 text-cyan-300" />
-            <h3 className="font-semibold">Queue Monitor</h3>
+            <Bot className="w-4 h-4 text-purple-300" />
+            <h3 className="font-semibold">Agent Status</h3>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            {QUEUE.map((q) => (
-              <div key={q.label} className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
-                <div className="text-[11px] text-white/50">{q.label}</div>
-                <div className={`mt-1 text-2xl font-bold ${TINT[q.tint].split(" ")[1]}`}>{q.value}</div>
+          <div className="space-y-2">
+            {AGENTS.map((a) => (
+              <div key={a.name} className="flex items-center justify-between text-sm">
+                <div>
+                  <div className="text-white/80">{a.name}</div>
+                  <div className="text-[10px] text-white/40">Last activity: {a.last}</div>
+                </div>
+                <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md bg-white/5 text-white/40">
+                  {a.status}
+                </span>
               </div>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* Activity + Health */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="os-glass p-5 lg:col-span-2">
+          <div className="flex items-center gap-2 mb-4">
+            <Activity className="w-4 h-4 text-cyan-300" />
+            <h3 className="font-semibold">Recent Activity</h3>
+          </div>
+          <ul className="space-y-2.5">
+            {ACTIVITY.map((e, i) => {
+              const Icon = e.icon;
+              return (
+                <li key={i} className="flex items-start gap-3 text-sm">
+                  <Icon className={`w-4 h-4 mt-0.5 ${e.tint}`} />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-white/80 truncate">{e.text}</div>
+                    <div className="text-[10px] text-white/40">{e.at}</div>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
         </div>
 
         <div className="os-glass p-5">
@@ -502,10 +219,10 @@ export default function OsAutomation() {
             {HEALTH.map((h) => {
               const Icon = h.icon;
               return (
-                <div key={h.label} className="flex items-center justify-between rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2.5">
-                  <div className="flex items-center gap-2.5">
-                    <Icon className="w-4 h-4 text-white/60" />
-                    <span className="text-sm">{h.label}</span>
+                <div key={h.label} className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    <Icon className="w-3.5 h-3.5 text-white/50" />
+                    <span className="text-white/80">{h.label}</span>
                   </div>
                   <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md ${
                     h.ok ? "bg-green-500/10 text-green-300" : "bg-white/5 text-white/40"
@@ -517,157 +234,6 @@ export default function OsAutomation() {
             })}
           </div>
         </div>
-
-        <DiscordCard />
-      </div>
-
-      {/* Future Modules */}
-      <div className="os-glass p-5">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <Workflow className="w-4 h-4 text-white/60" />
-            <h3 className="font-semibold">Future Modules</h3>
-          </div>
-          <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md bg-white/5 text-white/40">Roadmap</span>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
-          {FUTURE_MODULES.map((m) => {
-            const Icon = m.icon;
-            return (
-              <div
-                key={m.label}
-                className="rounded-xl border border-dashed border-white/10 bg-white/[0.02] p-3 flex flex-col items-center gap-2 text-center opacity-80"
-              >
-                <div className={`w-9 h-9 rounded-lg grid place-items-center ${TINT[m.tint]}`}>
-                  <Icon className="w-4 h-4" />
-                </div>
-                <div className="text-xs font-medium text-white/80">{m.label}</div>
-                <div className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-white/5 text-white/40">Coming Soon</div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Status helpers                                                     */
-/* ------------------------------------------------------------------ */
-
-function StatusDot({ status }: { status: EventStatus }) {
-  const map: Record<EventStatus, { color: string; label: string }> = {
-    completed: { color: "bg-green-400",  label: "completed" },
-    running:   { color: "bg-cyan-400 animate-pulse",   label: "running" },
-    error:     { color: "bg-red-400",    label: "error" },
-    info:      { color: "bg-white/30",   label: "info" },
-  };
-  const m = map[status];
-  return (
-    <span className="inline-flex items-center gap-1 text-[10px] text-white/40">
-      <span className={`inline-block w-1.5 h-1.5 rounded-full ${m.color}`} /> {m.label}
-    </span>
-  );
-}
-
-function AgentStatusBadge({ status }: { status: Agent["status"] }) {
-  const map: Record<Agent["status"], string> = {
-    planned: "bg-white/5 text-white/50 border-white/10",
-    active:  "bg-green-500/10 text-green-300 border-green-500/20",
-    paused:  "bg-amber-500/10 text-amber-300 border-amber-500/20",
-    error:   "bg-red-500/10 text-red-300 border-red-500/20",
-  };
-  return (
-    <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md border ${map[status]}`}>
-      {status}
-    </span>
-  );
-}
-
-function HealthBadge({ health }: { health: Agent["health"] }) {
-  const map: Record<Agent["health"], { color: string; label: string }> = {
-    good: { color: "text-green-300",  label: "● Good" },
-    warn: { color: "text-amber-300",  label: "● Warn" },
-    down: { color: "text-red-300",    label: "● Down" },
-    "n/a":{ color: "text-white/30",   label: "● N/A" },
-  };
-  const m = map[health];
-  return <span className={`text-[11px] ${m.color}`}>{m.label}</span>;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Helpers                                                            */
-/* ------------------------------------------------------------------ */
-
-function ReminderBtn({ icon: Icon, label, tint }: { icon: any; label: string; tint: string }) {
-  const tints: Record<string, string> = {
-    green: "hover:bg-green-500/10 hover:text-green-300",
-    amber: "hover:bg-amber-500/10 hover:text-amber-300",
-    cyan:  "hover:bg-cyan-500/10 hover:text-cyan-300",
-    white: "hover:bg-white/10 hover:text-white",
-  };
-  return (
-    <button
-      type="button"
-      title={label}
-      className={`w-7 h-7 rounded-md grid place-items-center text-white/40 transition ${tints[tint]}`}
-    >
-      <Icon className="w-3.5 h-3.5" />
-    </button>
-  );
-}
-
-function DiscordCard() {
-  return (
-    <div className="os-glass p-5">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <MessageSquare className="w-4 h-4 text-indigo-300" />
-          <h3 className="font-semibold">Discord Integration</h3>
-        </div>
-        <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md bg-white/5 text-white/40">Planned</span>
-      </div>
-
-      <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3 mb-3">
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-white/60">Status</span>
-          <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md bg-white/5 text-white/40">
-            Not Connected
-          </span>
-        </div>
-      </div>
-
-      <button
-        type="button"
-        className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/15 border border-indigo-500/20 text-indigo-200 text-sm py-2.5 transition"
-      >
-        <MessageSquare className="w-4 h-4" /> Connect Discord
-      </button>
-
-      <div className="mt-3 space-y-2 text-xs">
-        <Toggle label="Reminders" enabled />
-        <Toggle label="Order alerts" enabled />
-        <Toggle label="System errors" enabled={false} />
-      </div>
-
-      <button
-        type="button"
-        disabled
-        className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-white/[0.03] border border-white/5 text-white/30 text-xs py-2 cursor-not-allowed"
-      >
-        <Send className="w-3.5 h-3.5" /> Test notification (backend pending)
-      </button>
-    </div>
-  );
-}
-
-function Toggle({ label, enabled }: { label: string; enabled: boolean }) {
-  return (
-    <div className="flex items-center justify-between">
-      <span className="text-white/60">{label}</span>
-      <div className={`w-9 h-5 rounded-full relative transition ${enabled ? "bg-indigo-500/40" : "bg-white/10"}`}>
-        <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition ${enabled ? "left-[18px]" : "left-0.5"}`} />
       </div>
     </div>
   );
