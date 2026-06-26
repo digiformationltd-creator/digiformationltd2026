@@ -47,16 +47,10 @@ export default function Admin() {
         <Route path="support" element={<OsSupport />} />
         <Route path="documents" element={<OsDocuments />} />
         <Route path="automation" element={<OsAutomation />} />
-        <Route path="automation/workspace" element={<OsAIWorkspace />} />
-        <Route path="automation/reminders" element={<OsReminderCenter />} />
+        <Route path="automation/command-center" element={<OsAICommandCenter />} />
         <Route path="automation/email-marketing" element={<OsEmailMarketing />} />
-        <Route path="automation/history" element={<Placeholder title="Email Automation History" />} />
         <Route path="automation/jobs" element={<OsAutomationJobs />} />
-        <Route path="automation/agents" element={<OsAutomationAgents />} />
-        <Route path="automation/agents/:id" element={<OsAutomationAgentDetail />} />
         <Route path="automation/workflows" element={<OsAutomationWorkflows />} />
-        <Route path="automation/ocr" element={<OsOcrCenter />} />
-        <Route path="automation/knowledge" element={<OsKnowledgeCenter />} />
         <Route path="email-ops" element={<OsEmailOps />} />
         <Route path="compliance" element={<OsCompliance />} />
         <Route path="settings" element={<OsSettings />} />
