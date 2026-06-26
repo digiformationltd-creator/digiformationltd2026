@@ -425,8 +425,21 @@ Deno.serve(async (req) => {
     }
 
     if (action === 'rollback') {
-      const { data, error } = await admin.rpc('command_action_rollback', { _id: body.id })
+      // Call rollback via user-scoped client so auth.uid() resolves to the admin.
+      const authHeader = req.headers.get('Authorization') ?? ''
+      const userClient = createClient(SUPABASE_URL, ANON_KEY, {
+        global: { headers: { Authorization: authHeader } },
+      })
+      const { data, error } = await userClient.rpc('command_action_rollback', { _id: body.id })
       if (error) return json({ ok: false, error: error.message }, 400)
+      // Audit row for the rollback itself
+      await admin.from('agent_audit_log').insert({
+        agent_name: 'command-center',
+        action: 'rollback',
+        status: 'executed',
+        request_payload: { action_id: body.id },
+        response_payload: data ?? null,
+      })
       return json({ ok: true, result: data })
     }
 
