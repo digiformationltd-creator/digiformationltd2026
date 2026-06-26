@@ -246,13 +246,13 @@ export default function OsAICommandCenter() {
   const filteredRecent = RECENT.filter((t) => t.title.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="os-fade-in h-[calc(100vh-9rem)] min-h-[640px] flex flex-col gap-3">
+    <div className="os-fade-in h-[calc(100vh-9rem)] min-h-[640px] flex flex-col gap-3 overflow-hidden">
       {/* Compact header */}
-      <div className="os-glass os-glow-purple px-4 py-3 flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-3 min-w-0">
+      <div className="os-glass os-glow-purple px-4 py-3 flex items-center justify-between gap-3 shrink-0">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
           <button
             onClick={() => setLeftOpen((v) => !v)}
-            className="lg:hidden inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-white/70"
+            className="lg:hidden inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 shrink-0"
             aria-label="Toggle history"
           >
             <PanelLeftClose className="w-4 h-4" />
@@ -260,17 +260,17 @@ export default function OsAICommandCenter() {
           <div className="w-9 h-9 rounded-xl grid place-items-center bg-purple-500/10 text-purple-300 shrink-0">
             <Sparkles className="w-4 h-4" />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 hidden sm:block">
             <h2 className="text-sm font-bold leading-tight truncate">AI Command Center</h2>
             <p className="text-[11px] text-white/40 truncate">Conversational control surface for Business OS</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="relative">
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="relative w-[148px]">
             <select
               value={agent}
               onChange={(e) => setAgent(e.target.value)}
-              className="appearance-none bg-white/5 border border-white/10 rounded-lg pl-3 pr-8 py-1.5 text-xs text-white/80 focus:outline-none focus:border-purple-400/40"
+              className="appearance-none w-full bg-white/5 border border-white/10 rounded-lg pl-3 pr-8 py-1.5 text-xs text-white/80 focus:outline-none focus:border-purple-400/40 truncate"
             >
               {AGENTS.map((a) => (
                 <option key={a} value={a} className="bg-[#0b0d10]">{a}</option>
@@ -285,7 +285,7 @@ export default function OsAICommandCenter() {
           >
             <PanelRightClose className="w-4 h-4" />
           </button>
-          <span className={`hidden sm:inline text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-md border ${
+          <span className={`hidden md:inline text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-md border whitespace-nowrap ${
             pendingAction ? "bg-amber-500/15 text-amber-200 border-amber-500/20"
                           : "bg-purple-500/10 text-purple-300 border-purple-500/20"}`}>
             {pendingAction ? "Awaiting approval" : "Ready"}
@@ -293,11 +293,12 @@ export default function OsAICommandCenter() {
         </div>
       </div>
 
+
       {/* Three-pane workspace */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)_300px] gap-3 min-h-0">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)_300px] gap-3 min-h-0 overflow-hidden">
         {/* LEFT: History */}
         <aside
-          className={`os-glass p-3 flex-col min-h-0 ${leftOpen ? "flex" : "hidden"} lg:flex`}
+          className={`os-glass p-3 flex-col min-h-0 min-w-0 ${leftOpen ? "flex" : "hidden"} lg:flex`}
         >
           <button
             onClick={newChat}
@@ -349,31 +350,32 @@ export default function OsAICommandCenter() {
         </aside>
 
         {/* CENTER: Conversation */}
-        <section className="os-glass p-0 flex flex-col min-h-0">
+        <section className="os-glass p-0 flex flex-col min-h-0 min-w-0">
           {/* Quick prompts */}
-          <div className="p-3 border-b border-white/5">
+          <div className="p-3 border-b border-white/5 shrink-0">
             <div className="flex items-center gap-2 mb-2">
               <Zap className="w-3.5 h-3.5 text-amber-300" />
               <div className="text-[11px] uppercase tracking-wider text-white/40">Quick prompts</div>
             </div>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-1.5">
               {QUICK_PROMPTS.map((q) => {
                 const Icon = q.icon;
                 return (
                   <button
                     key={q.label}
                     onClick={() => setInput(q.label)}
-                    className="group inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20 px-2.5 py-1 text-[11px] text-white/80 transition"
+                    className="group inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20 px-2.5 py-1.5 text-[11px] text-white/80 transition min-w-0"
                   >
-                    <span className={`w-4 h-4 rounded grid place-items-center ${q.tint}`}>
+                    <span className={`w-4 h-4 rounded grid place-items-center shrink-0 ${q.tint}`}>
                       <Icon className="w-2.5 h-2.5" />
                     </span>
-                    {q.label}
+                    <span className="truncate">{q.label}</span>
                   </button>
                 );
               })}
             </div>
           </div>
+
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
@@ -463,18 +465,18 @@ export default function OsAICommandCenter() {
           </div>
 
           {/* Composer */}
-          <div className="border-t border-white/5 p-3 space-y-2">
+          <div className="border-t border-white/5 p-3 space-y-2 shrink-0">
             {/* Paste area collapsed inline */}
             <details className="group rounded-xl bg-white/[0.02] border border-white/5">
               <summary className="cursor-pointer list-none flex items-center justify-between px-3 py-2 text-[11px] uppercase tracking-wider text-white/40">
-                <span className="inline-flex items-center gap-2">
-                  <ClipboardPaste className="w-3.5 h-3.5 text-cyan-300" />
-                  Paste area
-                  <span className="text-white/30 normal-case tracking-normal">
+                <span className="inline-flex items-center gap-2 min-w-0">
+                  <ClipboardPaste className="w-3.5 h-3.5 text-cyan-300 shrink-0" />
+                  <span className="truncate">Paste area</span>
+                  <span className="text-white/30 normal-case tracking-normal truncate">
                     {paste ? `· ${paste.length.toLocaleString()} chars` : ""}
                   </span>
                 </span>
-                <ChevronDown className="w-3.5 h-3.5 transition group-open:rotate-180" />
+                <ChevronDown className="w-3.5 h-3.5 transition group-open:rotate-180 shrink-0" />
               </summary>
               <div className="px-3 pb-3">
                 <textarea
@@ -497,7 +499,7 @@ export default function OsAICommandCenter() {
               </div>
             </details>
 
-            <div className="relative rounded-2xl bg-white/5 border border-white/10 focus-within:border-purple-400/40 transition">
+            <div className="flex flex-col rounded-2xl bg-white/5 border border-white/10 focus-within:border-purple-400/40 transition overflow-hidden">
               <textarea
                 ref={taRef}
                 value={input}
@@ -510,27 +512,27 @@ export default function OsAICommandCenter() {
                 }}
                 placeholder="Ask anything, or describe an update…   (Shift+Enter for new line)"
                 rows={3}
-                className="w-full resize-none bg-transparent rounded-2xl px-4 pt-3 pb-10 text-sm text-white placeholder:text-white/30 focus:outline-none"
+                className="w-full resize-none bg-transparent px-4 pt-3 pb-2 text-sm text-white placeholder:text-white/30 focus:outline-none border-0"
               />
-              <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-[11px] text-white/40">
-                  <button className="inline-flex items-center gap-1 hover:text-white/80">
+              <div className="flex items-center justify-between gap-2 px-3 py-2 border-t border-white/5">
+                <div className="flex items-center gap-2 text-[11px] text-white/40 min-w-0">
+                  <button className="inline-flex items-center gap-1 hover:text-white/80 shrink-0">
                     <Paperclip className="w-3.5 h-3.5" />
-                    Attach
+                    <span className="hidden sm:inline">Attach</span>
                   </button>
-                  <span className="text-white/20">·</span>
-                  <span>{input.length}/{MAX_CHARS}</span>
+                  <span className="text-white/20 hidden sm:inline">·</span>
+                  <span className="truncate tabular-nums">{input.length}/{MAX_CHARS}</span>
                 </div>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 shrink-0">
                   <button
                     onClick={clearChat}
                     className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] text-white/50 hover:text-white/80 hover:bg-white/5"
                   >
-                    <Eraser className="w-3 h-3" /> Clear
+                    <Eraser className="w-3 h-3" /> <span className="hidden sm:inline">Clear</span>
                   </button>
                   <button
                     onClick={send}
-                    disabled={!input.trim()}
+                    disabled={!input.trim() || busy}
                     className="h-8 px-3 inline-flex items-center gap-1.5 rounded-lg bg-purple-500/30 text-purple-100 hover:bg-purple-500/40 disabled:opacity-40 transition"
                   >
                     <Send className="w-3.5 h-3.5" />
@@ -542,8 +544,9 @@ export default function OsAICommandCenter() {
           </div>
         </section>
 
+
         {/* RIGHT: Context */}
-        <aside className={`os-glass p-3 flex-col min-h-0 ${rightOpen ? "flex" : "hidden"} lg:flex`}>
+        <aside className={`os-glass p-3 flex-col min-h-0 min-w-0 ${rightOpen ? "flex" : "hidden"} lg:flex`}>
           <div className="flex items-center justify-between mb-2">
             <div className="text-[11px] uppercase tracking-wider text-white/40">Context</div>
             <button className="text-[10px] text-white/40 hover:text-white/80 inline-flex items-center gap-1">
@@ -605,7 +608,7 @@ export default function OsAICommandCenter() {
               </div>
               <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-white/5 text-white/40">Mock</span>
             </div>
-            <div className="rounded-lg bg-black/30 border border-white/5 p-2.5 min-h-[70px] max-h-[120px] overflow-y-auto text-[11px] text-white/70 leading-relaxed">
+            <div className="rounded-lg bg-black/30 border border-white/5 p-2.5 max-h-[160px] overflow-y-auto text-[11px] text-white/70 leading-relaxed">
               {lastAssistant ? (
                 <MarkdownPreview text={lastAssistant.text} />
               ) : (
@@ -617,16 +620,16 @@ export default function OsAICommandCenter() {
       </div>
 
       {/* Bottom action bar */}
-      <div className="os-glass px-3 py-2 flex items-center justify-between gap-2 flex-wrap">
-        <div className="flex items-center gap-1.5 text-[11px] text-white/40">
-          <span className="inline-flex items-center gap-1">
+      <div className="os-glass px-3 py-2 flex items-center justify-between gap-3 shrink-0">
+        <div className="flex items-center gap-1.5 text-[11px] text-white/40 min-w-0 shrink-0">
+          <span className="inline-flex items-center gap-1 shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            Idle
+            {busy ? "Running" : pendingAction ? "Awaiting" : "Idle"}
           </span>
-          <span className="text-white/20">·</span>
-          <span>Agent: <span className="text-white/70">{agent}</span></span>
+          <span className="text-white/20 hidden md:inline">·</span>
+          <span className="hidden md:inline truncate">Agent: <span className="text-white/70">{agent}</span></span>
         </div>
-        <div className="flex items-center gap-1.5 flex-wrap">
+        <div className="flex items-center gap-1.5 overflow-x-auto min-w-0">
           <ActionBtn icon={CheckCircle2} label="Approve & Execute" disabled={!pendingAction || busy} onClick={executePending} tint="bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25" />
           <ActionBtn icon={Play}         label="Execute" disabled={!pendingAction || busy} onClick={executePending} tint="bg-purple-500/20 text-purple-200 hover:bg-purple-500/30" />
           <ActionBtn icon={XCircle}      label="Cancel"  disabled={!pendingAction || busy} onClick={rejectPending} tint="bg-red-500/10 text-red-300 hover:bg-red-500/20" />
@@ -635,6 +638,7 @@ export default function OsAICommandCenter() {
           <ActionBtn icon={Save}         label="Save Prompt" tint="bg-white/5 text-white/70 hover:bg-white/10" />
         </div>
       </div>
+
     </div>
   );
 }
@@ -699,10 +703,10 @@ function ActionBtn({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition disabled:opacity-40 disabled:cursor-not-allowed ${tint}`}
+      className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap shrink-0 ${tint}`}
     >
-      <Icon className="w-3.5 h-3.5" />
-      {label}
+      <Icon className="w-3.5 h-3.5 shrink-0" />
+      <span className="whitespace-nowrap">{label}</span>
     </button>
   );
 }

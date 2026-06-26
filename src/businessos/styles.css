@@ -39,6 +39,9 @@
   border-radius: 16px;
   box-shadow: 0 8px 32px -8px hsla(0, 0%, 0%, 0.5);
   transition: border-color .25s ease, box-shadow .35s ease, transform .25s ease;
+  overflow: hidden;
+  isolation: isolate;
+  min-width: 0;
 }
 
 .businessos .os-glass-strong {
