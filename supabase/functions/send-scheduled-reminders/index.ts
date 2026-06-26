@@ -208,6 +208,7 @@ Deno.serve(async (req) => {
                 daysRemaining: days,
               },
               `aa-reminder-${c.id}-${c.accounts_filing_due}-s${stage.stage}`,
+              { clientUserId: c.user_id },
             )
             if (ok) {
               summary.sent++
