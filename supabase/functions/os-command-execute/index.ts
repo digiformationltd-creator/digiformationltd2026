@@ -86,6 +86,25 @@ const ALLOWED_COMPANY_FIELDS = new Set([
   'company_name', 'company_number', 'incorporation_date',
 ])
 
+// 🔒 SAFETY RULE — System-owned automations. CC must NEVER re-trigger these.
+// They already fire automatically via backend triggers / scheduled jobs.
+//   - create_invoice          → auto on client_orders insert
+//   - send_order_confirmation → auto via order trigger
+//   - send_invoice_email      → bundled with order confirmation
+//   - send_ticket_update      → auto on ticket status change
+//   - send_scheduled_reminder → cron: send-scheduled-reminders
+//   - mirror_inquiry_to_order → DB trigger
+// CC scope = manual overrides, admin retries, gap actions, explicit commands only.
+const SYSTEM_OWNED_INTENTS = new Set<string>([
+  'create_invoice',
+  'send_order_confirmation',
+  'send_invoice_email',
+  'send_ticket_update',
+  'send_scheduled_reminder',
+  'mirror_inquiry_to_order',
+])
+
+
 // Deterministic dispatcher. Reuses existing tables, RPCs and Edge Functions.
 async function executeIntent(admin: any, action: any, user: any) {
   const { intent, payload } = action
