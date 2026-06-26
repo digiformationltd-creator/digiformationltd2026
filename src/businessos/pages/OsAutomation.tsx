@@ -45,9 +45,9 @@ export default function OsAutomation() {
 
   const KPIS = [
     { label: "Active Reminders", value: String(kpi.reminders), sub: `${kpi.overdue} overdue`, icon: Bell,        tint: "bg-amber-500/10 text-amber-300" },
-    { label: "Running Jobs",     value: String(kpi.jobs),      sub: kpi.failures ? `${kpi.failures} failed (24h)` : "healthy", icon: Activity, tint: "bg-cyan-500/10 text-cyan-300" },
+    { label: "Running Jobs",     value: String(kpi.jobs),      sub: kpi.failures ? `${kpi.failures} failed (24h)` : "no failures (24h)", icon: Activity, tint: "bg-cyan-500/10 text-cyan-300" },
     { label: "Recent Runs",      value: String(kpi.recent),    sub: "last 12",  icon: RefreshCw,  tint: "bg-purple-500/10 text-purple-300" },
-    { label: "System Health",    value: kpi.failures ? "Warn" : "Healthy", sub: kpi.failures ? "see failures" : "100% uptime", icon: ShieldCheck, tint: kpi.failures ? "bg-amber-500/10 text-amber-300" : "bg-green-500/10 text-green-300" },
+    { label: "System Health",    value: kpi.failures ? "Warn" : (kpi.jobs ? "Healthy" : "Idle"), sub: kpi.failures ? `${kpi.failures} failed (24h)` : (kpi.jobs ? `${kpi.jobs} active jobs` : "no active jobs"), icon: ShieldCheck, tint: kpi.failures ? "bg-amber-500/10 text-amber-300" : (kpi.jobs ? "bg-green-500/10 text-green-300" : "bg-white/5 text-white/50") },
   ];
 
   return (
