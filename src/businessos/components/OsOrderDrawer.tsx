@@ -12,6 +12,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import OsEmailHistoryPanel from "./OsEmailHistoryPanel";
 import {
   Loader2, Mail, User, PoundSterling, Calendar, FileText, Download,
   Play, CheckCircle2, Ban, Save, RefreshCw, Hash, Phone, Building2,
