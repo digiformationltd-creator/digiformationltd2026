@@ -172,6 +172,10 @@ export default function OsInvoiceDrawer({
           templateName: "invoice-paid",
           recipientEmail: invoice.bill_to_email,
           idempotencyKey: `invoice-paid-${invoice.id}`,
+          invoiceId: invoice.id,
+          orderId: invoice.order_id ?? undefined,
+          clientUserId: invoice.user_id ?? undefined,
+          triggerSource: "admin",
           templateData: {
             customerName: invoice.bill_to_name || "",
             invoiceNumber: invoice.invoice_number,
