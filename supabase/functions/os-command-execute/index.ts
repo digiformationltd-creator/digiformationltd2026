@@ -380,11 +380,31 @@ Deno.serve(async (req) => {
       } catch (e) { errMsg = (e as Error).message }
 
       const finalStatus = errMsg ? 'failed' : 'executed'
+      // Capture after_snapshot for update_* intents (Phase 2 diff lifecycle)
+      let afterSnapshot: any = null
+      if (!errMsg) {
+        try {
+          if (act.intent === 'update_invoice_status' || act.intent === 'update_invoice_meta') {
+            const { data } = await admin.from('invoices').select('*').eq('id', act.payload?.invoice_id).maybeSingle()
+            afterSnapshot = data ?? null
+          } else if (['update_company','update_company_field','update_company_address','update_company_status','add_note'].includes(act.intent)) {
+            const { data } = await admin.from('managed_companies').select('*').eq('id', act.payload?.company_id).maybeSingle()
+            afterSnapshot = data ?? null
+          } else if (act.intent === 'update_order_status') {
+            const { data } = await admin.from('client_orders').select('*').eq('id', act.payload?.order_id).maybeSingle()
+            afterSnapshot = data ?? null
+          } else if (act.intent === 'assign_task') {
+            const { data } = await admin.from('tasks').select('*').eq('id', act.payload?.task_id).maybeSingle()
+            afterSnapshot = data ?? null
+          }
+        } catch { /* snapshot is best-effort */ }
+      }
       await admin.from('command_actions').update({
         status: finalStatus,
         executed_at: new Date().toISOString(),
         result: result ?? null,
         error: errMsg,
+        after_snapshot: afterSnapshot,
       }).eq('id', act.id)
 
       // Audit
