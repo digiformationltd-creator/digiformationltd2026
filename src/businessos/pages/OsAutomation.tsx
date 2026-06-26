@@ -468,7 +468,7 @@ export default function OsAutomation() {
             ))}
           </div>
           <NavLink
-            to="/admin/automation"
+            to="/admin/automation/reminders"
             className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/20 text-amber-200 text-sm py-2.5 transition"
           >
             <Bell className="w-4 h-4" /> View all reminders
