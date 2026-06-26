@@ -158,6 +158,15 @@ export default function OsAICommandCenter() {
 
     if (/create .*order|new order/.test(t)) return { intent: "create_order", payload: { service: "", customer_email: email ?? "", amount_gbp: "" } };
     if (/update .*order status|mark order/.test(t)) return { intent: "update_order_status", payload: { order_id: "", status: "" } };
+    // Batch 1 — Financial Core (manual overrides only; never re-sends emails)
+    if (/mark .*invoice .*(paid|void|refunded|issued|draft)|update .*invoice .*status|set invoice status/.test(t)) {
+      const m = t.match(/(paid|void|refunded|issued|draft)/);
+      return { intent: "update_invoice_status", payload: { invoice_id: "", status: m?.[1] ?? "" } };
+    }
+    if (/update .*invoice .*(due|notes|meta)|change .*invoice .*(due|notes)|edit invoice/.test(t)) {
+      return { intent: "update_invoice_meta", payload: { invoice_id: "", due_date: "", notes: "" } };
+    }
+
     if (/update .*(registered )?address|change .*address/.test(t)) return { intent: "update_company_address", payload: { company_id: "", registered_address: "" } };
     if (/update .*(company )?status|set company status/.test(t)) return { intent: "update_company_status", payload: { company_id: "", status: "" } };
     if (/add note|append note|note to company/.test(t)) return { intent: "add_note", payload: { company_id: "", note: text } };
