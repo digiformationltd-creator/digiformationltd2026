@@ -1,5 +1,5 @@
-// AI Workspace — Phase 2 UI upgrade.
-// Professional ChatGPT/Claude/Cursor-style operating surface.
+// AI Command Center — the heart of Business OS.
+// Professional ChatGPT/Claude/Gemini-style operating surface.
 // UI only — no backend, no AI calls, no persistence.
 
 import { useMemo, useRef, useState } from "react";
