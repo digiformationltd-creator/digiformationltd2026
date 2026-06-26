@@ -204,10 +204,65 @@ For complex/legal/unrelated queries: "Sir, I'll forward this to our support team
 
 GOAL: Feel like a real human consultant — one short question at a time, gradually guide the user to the right service.`;
 
+// ───────────────────────────────────────────────────────────────────
+// Per-IP rate limit — 20 messages / hour (sliding window, in-memory).
+// Edge instances are ephemeral so this isn't perfect, but it stops the
+// vast majority of bot-driven Gateway burns from a single source.
+// ───────────────────────────────────────────────────────────────────
+const RATE_LIMIT_MAX = 20;
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1h
+const ipHits = new Map<string, number[]>();
+
+function getClientIp(req: Request): string {
+  const fwd = req.headers.get("x-forwarded-for");
+  if (fwd) return fwd.split(",")[0].trim();
+  return req.headers.get("cf-connecting-ip")
+      || req.headers.get("x-real-ip")
+      || "unknown";
+}
+
+function rateLimit(ip: string): { ok: boolean; retryAfterSec: number } {
+  const now = Date.now();
+  const cutoff = now - RATE_LIMIT_WINDOW_MS;
+  const hits = (ipHits.get(ip) || []).filter((t) => t > cutoff);
+  if (hits.length >= RATE_LIMIT_MAX) {
+    const retryAfterSec = Math.ceil((hits[0] + RATE_LIMIT_WINDOW_MS - now) / 1000);
+    ipHits.set(ip, hits);
+    return { ok: false, retryAfterSec };
+  }
+  hits.push(now);
+  ipHits.set(ip, hits);
+  // Opportunistic cleanup to keep map bounded
+  if (ipHits.size > 5000) {
+    for (const [k, v] of ipHits) {
+      const kept = v.filter((t) => t > cutoff);
+      if (kept.length === 0) ipHits.delete(k);
+      else ipHits.set(k, kept);
+    }
+  }
+  return { ok: true, retryAfterSec: 0 };
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    const ip = getClientIp(req);
+    const rl = rateLimit(ip);
+    if (!rl.ok) {
+      return new Response(
+        JSON.stringify({ error: "Aap ne hourly limit cross kar di hai. Thori der baad try karein." }),
+        {
+          status: 429,
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+            "Retry-After": String(rl.retryAfterSec),
+          },
+        },
+      );
+    }
+
     const { messages } = await req.json();
     if (!Array.isArray(messages)) {
       return new Response(JSON.stringify({ error: "messages array required" }), {
