@@ -76,17 +76,17 @@ export default function OsAutomation() {
             <div>
               <h2 className="text-xl font-bold">Automation</h2>
               <p className="text-sm text-white/50 mt-1 max-w-2xl">
-                A simple overview of what's running. Spend most of your time in the AI Workspace — everything else
-                supports it.
+                A simple overview of what's running. Spend most of your time in the AI Command Center — everything
+                else supports it.
               </p>
             </div>
           </div>
           <NavLink
-            to="/admin/automation/workspace"
+            to="/admin/automation/command-center"
             className="inline-flex items-center gap-2 rounded-xl bg-purple-500/15 text-purple-200 hover:bg-purple-500/25 px-4 py-2 text-sm font-medium transition"
           >
             <Sparkles className="w-4 h-4" />
-            Open AI Workspace
+            Open AI Command Center
             <ArrowRight className="w-3.5 h-3.5" />
           </NavLink>
         </div>
