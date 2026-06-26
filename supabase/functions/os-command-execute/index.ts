@@ -368,10 +368,11 @@ Deno.serve(async (req) => {
       if (act.status === 'executed') return json({ ok: true, action: act, deduped: true })
       if (act.status === 'rejected') throw new Error('Action was rejected')
 
-      // mark approved
+      // mark approved + transition state machine to executing (Phase 3)
       await admin.from('command_actions').update({
         status: 'approved', approved_at: new Date().toISOString(), admin_id: user.id,
       }).eq('id', act.id)
+      await admin.rpc('command_action_mark_executing', { _id: act.id })
 
       let result: any, errMsg: string | null = null
       try {
@@ -406,6 +407,8 @@ Deno.serve(async (req) => {
         error: errMsg,
         after_snapshot: afterSnapshot,
       }).eq('id', act.id)
+      // Phase 3 — sync state machine to terminal state
+      await admin.rpc('command_action_mark_finished', { _id: act.id, _ok: !errMsg })
 
       // Audit
       await admin.from('agent_audit_log').insert({
@@ -419,6 +422,25 @@ Deno.serve(async (req) => {
 
       if (errMsg) return json({ ok: false, error: errMsg }, 400)
       return json({ ok: true, result, action_id: act.id })
+    }
+
+    if (action === 'rollback') {
+      // Call rollback via user-scoped client so auth.uid() resolves to the admin.
+      const authHeader = req.headers.get('Authorization') ?? ''
+      const userClient = createClient(SUPABASE_URL, ANON_KEY, {
+        global: { headers: { Authorization: authHeader } },
+      })
+      const { data, error } = await userClient.rpc('command_action_rollback', { _id: body.id })
+      if (error) return json({ ok: false, error: error.message }, 400)
+      // Audit row for the rollback itself
+      await admin.from('agent_audit_log').insert({
+        agent_name: 'command-center',
+        action: 'rollback',
+        status: 'executed',
+        request_payload: { action_id: body.id },
+        response_payload: data ?? null,
+      })
+      return json({ ok: true, result: data })
     }
 
     return json({ error: 'Unknown action' }, 400)
