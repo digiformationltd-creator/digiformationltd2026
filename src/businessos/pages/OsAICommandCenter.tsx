@@ -465,18 +465,18 @@ export default function OsAICommandCenter() {
           </div>
 
           {/* Composer */}
-          <div className="border-t border-white/5 p-3 space-y-2">
+          <div className="border-t border-white/5 p-3 space-y-2 shrink-0">
             {/* Paste area collapsed inline */}
             <details className="group rounded-xl bg-white/[0.02] border border-white/5">
               <summary className="cursor-pointer list-none flex items-center justify-between px-3 py-2 text-[11px] uppercase tracking-wider text-white/40">
-                <span className="inline-flex items-center gap-2">
-                  <ClipboardPaste className="w-3.5 h-3.5 text-cyan-300" />
-                  Paste area
-                  <span className="text-white/30 normal-case tracking-normal">
+                <span className="inline-flex items-center gap-2 min-w-0">
+                  <ClipboardPaste className="w-3.5 h-3.5 text-cyan-300 shrink-0" />
+                  <span className="truncate">Paste area</span>
+                  <span className="text-white/30 normal-case tracking-normal truncate">
                     {paste ? `· ${paste.length.toLocaleString()} chars` : ""}
                   </span>
                 </span>
-                <ChevronDown className="w-3.5 h-3.5 transition group-open:rotate-180" />
+                <ChevronDown className="w-3.5 h-3.5 transition group-open:rotate-180 shrink-0" />
               </summary>
               <div className="px-3 pb-3">
                 <textarea
@@ -499,7 +499,7 @@ export default function OsAICommandCenter() {
               </div>
             </details>
 
-            <div className="relative rounded-2xl bg-white/5 border border-white/10 focus-within:border-purple-400/40 transition">
+            <div className="flex flex-col rounded-2xl bg-white/5 border border-white/10 focus-within:border-purple-400/40 transition overflow-hidden">
               <textarea
                 ref={taRef}
                 value={input}
@@ -512,27 +512,27 @@ export default function OsAICommandCenter() {
                 }}
                 placeholder="Ask anything, or describe an update…   (Shift+Enter for new line)"
                 rows={3}
-                className="w-full resize-none bg-transparent rounded-2xl px-4 pt-3 pb-10 text-sm text-white placeholder:text-white/30 focus:outline-none"
+                className="w-full resize-none bg-transparent px-4 pt-3 pb-2 text-sm text-white placeholder:text-white/30 focus:outline-none border-0"
               />
-              <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-[11px] text-white/40">
-                  <button className="inline-flex items-center gap-1 hover:text-white/80">
+              <div className="flex items-center justify-between gap-2 px-3 py-2 border-t border-white/5">
+                <div className="flex items-center gap-2 text-[11px] text-white/40 min-w-0">
+                  <button className="inline-flex items-center gap-1 hover:text-white/80 shrink-0">
                     <Paperclip className="w-3.5 h-3.5" />
-                    Attach
+                    <span className="hidden sm:inline">Attach</span>
                   </button>
-                  <span className="text-white/20">·</span>
-                  <span>{input.length}/{MAX_CHARS}</span>
+                  <span className="text-white/20 hidden sm:inline">·</span>
+                  <span className="truncate tabular-nums">{input.length}/{MAX_CHARS}</span>
                 </div>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 shrink-0">
                   <button
                     onClick={clearChat}
                     className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] text-white/50 hover:text-white/80 hover:bg-white/5"
                   >
-                    <Eraser className="w-3 h-3" /> Clear
+                    <Eraser className="w-3 h-3" /> <span className="hidden sm:inline">Clear</span>
                   </button>
                   <button
                     onClick={send}
-                    disabled={!input.trim()}
+                    disabled={!input.trim() || busy}
                     className="h-8 px-3 inline-flex items-center gap-1.5 rounded-lg bg-purple-500/30 text-purple-100 hover:bg-purple-500/40 disabled:opacity-40 transition"
                   >
                     <Send className="w-3.5 h-3.5" />
@@ -543,6 +543,7 @@ export default function OsAICommandCenter() {
             </div>
           </div>
         </section>
+
 
         {/* RIGHT: Context */}
         <aside className={`os-glass p-3 flex-col min-h-0 ${rightOpen ? "flex" : "hidden"} lg:flex`}>
