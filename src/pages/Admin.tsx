@@ -55,6 +55,7 @@ export default function Admin() {
         <Route path="automation/jobs" element={<OsAutomationJobs />} />
         <Route path="automation/workflows" element={<OsAutomationWorkflows />} />
         <Route path="automation/reminders" element={<OsReminderCenter />} />
+        <Route path="automation/analytics" element={<OsAnalytics />} />
         <Route path="email-ops" element={<OsEmailOps />} />
         <Route path="compliance" element={<OsCompliance />} />
         <Route path="settings" element={<OsSettings />} />
