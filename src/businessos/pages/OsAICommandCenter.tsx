@@ -295,10 +295,10 @@ export default function OsAICommandCenter() {
 
 
       {/* Three-pane workspace */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)_300px] gap-3 min-h-0">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)_300px] gap-3 min-h-0 overflow-hidden">
         {/* LEFT: History */}
         <aside
-          className={`os-glass p-3 flex-col min-h-0 ${leftOpen ? "flex" : "hidden"} lg:flex`}
+          className={`os-glass p-3 flex-col min-h-0 min-w-0 ${leftOpen ? "flex" : "hidden"} lg:flex`}
         >
           <button
             onClick={newChat}
