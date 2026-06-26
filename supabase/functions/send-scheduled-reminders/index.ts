@@ -66,9 +66,16 @@ async function sendReminder(
   recipientEmail: string,
   templateData: Record<string, any>,
   idempotencyKey: string,
+  links: { clientUserId?: string | null; orderId?: string | null; invoiceId?: string | null } = {},
 ) {
+  const linkPayload = {
+    clientUserId: links.clientUserId || undefined,
+    orderId: links.orderId || undefined,
+    invoiceId: links.invoiceId || undefined,
+    triggerSource: 'cron',
+  }
   const { error } = await supabase.functions.invoke('send-transactional-email', {
-    body: { templateName, recipientEmail, idempotencyKey, templateData },
+    body: { templateName, recipientEmail, idempotencyKey, templateData, ...linkPayload },
   })
   if (error) console.error('send-transactional-email error', error)
   // Best-effort admin acknowledgement copy so info@digiformation.uk knows who got reminded
@@ -78,6 +85,7 @@ async function sendReminder(
         templateName,
         recipientEmail: ADMIN_EMAIL,
         idempotencyKey: `${idempotencyKey}-admin`,
+        triggerSource: 'cron',
         templateData: {
           ...templateData,
           customerName: `[ADMIN COPY] ${templateData.customerName || ''} <${recipientEmail}>`,
