@@ -608,7 +608,7 @@ export default function OsAICommandCenter() {
               </div>
               <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-white/5 text-white/40">Mock</span>
             </div>
-            <div className="rounded-lg bg-black/30 border border-white/5 p-2.5 min-h-[70px] max-h-[120px] overflow-y-auto text-[11px] text-white/70 leading-relaxed">
+            <div className="rounded-lg bg-black/30 border border-white/5 p-2.5 max-h-[160px] overflow-y-auto text-[11px] text-white/70 leading-relaxed">
               {lastAssistant ? (
                 <MarkdownPreview text={lastAssistant.text} />
               ) : (
