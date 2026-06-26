@@ -116,6 +116,45 @@ export type Database = {
         }
         Relationships: []
       }
+      automation_runs: {
+        Row: {
+          duration_ms: number | null
+          error: string | null
+          finished_at: string | null
+          id: string
+          job_name: string
+          kind: string
+          payload: Json | null
+          started_at: string
+          status: string
+          triggered_by: string | null
+        }
+        Insert: {
+          duration_ms?: number | null
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          job_name: string
+          kind?: string
+          payload?: Json | null
+          started_at?: string
+          status?: string
+          triggered_by?: string | null
+        }
+        Update: {
+          duration_ms?: number | null
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          job_name?: string
+          kind?: string
+          payload?: Json | null
+          started_at?: string
+          status?: string
+          triggered_by?: string | null
+        }
+        Relationships: []
+      }
       cleanup_audit_log: {
         Row: {
           category: string
@@ -527,6 +566,57 @@ export type Database = {
           txn_ref?: string
           txn_type?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      command_actions: {
+        Row: {
+          admin_id: string | null
+          approved_at: string | null
+          created_at: string
+          error: string | null
+          executed_at: string | null
+          id: string
+          intent: string
+          payload: Json | null
+          preview: Json | null
+          prompt: string | null
+          result: Json | null
+          status: string
+          target_id: string | null
+          target_type: string | null
+        }
+        Insert: {
+          admin_id?: string | null
+          approved_at?: string | null
+          created_at?: string
+          error?: string | null
+          executed_at?: string | null
+          id?: string
+          intent: string
+          payload?: Json | null
+          preview?: Json | null
+          prompt?: string | null
+          result?: Json | null
+          status?: string
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Update: {
+          admin_id?: string | null
+          approved_at?: string | null
+          created_at?: string
+          error?: string | null
+          executed_at?: string | null
+          id?: string
+          intent?: string
+          payload?: Json | null
+          preview?: Json | null
+          prompt?: string | null
+          result?: Json | null
+          status?: string
+          target_id?: string | null
+          target_type?: string | null
         }
         Relationships: []
       }
@@ -2020,6 +2110,77 @@ export type Database = {
           source: string
         }[]
       }
+      automation_runs_recent: {
+        Args: { _limit?: number }
+        Returns: {
+          duration_ms: number | null
+          error: string | null
+          finished_at: string | null
+          id: string
+          job_name: string
+          kind: string
+          payload: Json | null
+          started_at: string
+          status: string
+          triggered_by: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "automation_runs"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      command_action_preview: {
+        Args: { _intent: string; _payload: Json; _prompt?: string }
+        Returns: {
+          admin_id: string | null
+          approved_at: string | null
+          created_at: string
+          error: string | null
+          executed_at: string | null
+          id: string
+          intent: string
+          payload: Json | null
+          preview: Json | null
+          prompt: string | null
+          result: Json | null
+          status: string
+          target_id: string | null
+          target_type: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "command_actions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      command_action_reject: {
+        Args: { _id: string }
+        Returns: {
+          admin_id: string | null
+          approved_at: string | null
+          created_at: string
+          error: string | null
+          executed_at: string | null
+          id: string
+          intent: string
+          payload: Json | null
+          preview: Json | null
+          prompt: string | null
+          result: Json | null
+          status: string
+          target_id: string | null
+          target_type: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "command_actions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -2081,10 +2242,37 @@ export type Database = {
         }[]
       }
       record_lead_attribution: { Args: { payload: Json }; Returns: string }
+      reminder_inbox: {
+        Args: { _limit?: number }
+        Returns: {
+          category: string
+          due_date: string
+          payload: Json
+          severity: string
+          source: string
+          target_id: string
+          target_type: string
+          title: string
+        }[]
+      }
       resolve_service_price: { Args: { _title: string }; Returns: number }
       run_temporary_cleanup: {
         Args: { retention_days?: number }
         Returns: Json
+      }
+      scheduled_jobs_status: {
+        Args: never
+        Returns: {
+          active: boolean
+          duration_ms: number
+          failures_24h: number
+          jobname: string
+          last_error: string
+          last_run: string
+          last_status: string
+          run_count_24h: number
+          schedule: string
+        }[]
       }
       upsert_visitor_attribution: {
         Args: { payload: Json }
