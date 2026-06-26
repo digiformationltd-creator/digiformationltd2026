@@ -131,7 +131,7 @@ export default function OsEmailHistoryPanel({ scope, title = "Email History", de
                   <div className="mt-1 mx-2 rounded-md border border-white/10 bg-black/30 p-2 text-[11px] text-white/60 space-y-1">
                     <div><span className="text-white/40">Message ID:</span> {r.message_id || "—"}</div>
                     <div><span className="text-white/40">Created:</span> {new Date(r.created_at).toLocaleString()}</div>
-                    <div><span className="text-white/40">Sent:</span> {r.sent_at ? new Date(r.sent_at).toLocaleString() : "—"}</div>
+                    <div><span className="text-white/40">Status:</span> {r.status || "pending"}</div>
                     {r.error_message && (
                       <div className="text-rose-300"><span className="text-white/40">Error:</span> {r.error_message}</div>
                     )}
