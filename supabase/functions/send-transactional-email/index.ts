@@ -52,7 +52,10 @@ const ADMIN_ONLY_TEMPLATES = new Set([
   'confirmation-statement-reminder',
   'annual-accounts-reminder',
   'email-system-check',
+  'ticket-status-update',
 ])
+
+const VALID_TRIGGER_SOURCES = new Set(['system','admin','automation','cron','agent'])
 
 Deno.serve(async (req) => {
   // Handle CORS preflight
@@ -80,6 +83,11 @@ Deno.serve(async (req) => {
   let idempotencyKey: string
   let messageId: string
   let templateData: Record<string, any> = {}
+  let orderId: string | null = null
+  let invoiceId: string | null = null
+  let ticketId: string | null = null
+  let clientUserId: string | null = null
+  let triggerSource: string | null = null
   try {
     const body = await req.json()
     templateName = body.templateName || body.template_name
@@ -90,6 +98,14 @@ Deno.serve(async (req) => {
     if (body.templateData && typeof body.templateData === 'object') {
       templateData = body.templateData
     }
+    const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    const pickUuid = (v: unknown) => (typeof v === 'string' && uuidRe.test(v) ? v : null)
+    orderId      = pickUuid(body.orderId || body.order_id)
+    invoiceId    = pickUuid(body.invoiceId || body.invoice_id)
+    ticketId     = pickUuid(body.ticketId || body.ticket_id)
+    clientUserId = pickUuid(body.clientUserId || body.client_user_id)
+    const ts = body.triggerSource || body.trigger_source
+    if (typeof ts === 'string' && VALID_TRIGGER_SOURCES.has(ts)) triggerSource = ts
   } catch {
     return new Response(
       JSON.stringify({ error: 'Invalid JSON in request body' }),
@@ -358,6 +374,11 @@ Deno.serve(async (req) => {
       message_id: messageId,
       triggered_by_user_id: authUserId,
       triggered_by_ip: clientIp,
+      order_id: orderId,
+      invoice_id: invoiceId,
+      ticket_id: ticketId,
+      client_user_id: clientUserId,
+      trigger_source: triggerSource,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'suppressed',
@@ -393,6 +414,11 @@ Deno.serve(async (req) => {
       message_id: messageId,
       triggered_by_user_id: authUserId,
       triggered_by_ip: clientIp,
+      order_id: orderId,
+      invoice_id: invoiceId,
+      ticket_id: ticketId,
+      client_user_id: clientUserId,
+      trigger_source: triggerSource,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'failed',
@@ -428,6 +454,11 @@ Deno.serve(async (req) => {
         message_id: messageId,
       triggered_by_user_id: authUserId,
       triggered_by_ip: clientIp,
+      order_id: orderId,
+      invoice_id: invoiceId,
+      ticket_id: ticketId,
+      client_user_id: clientUserId,
+      trigger_source: triggerSource,
         template_name: templateName,
         recipient_email: effectiveRecipient,
         status: 'failed',
@@ -459,6 +490,11 @@ Deno.serve(async (req) => {
         message_id: messageId,
       triggered_by_user_id: authUserId,
       triggered_by_ip: clientIp,
+      order_id: orderId,
+      invoice_id: invoiceId,
+      ticket_id: ticketId,
+      client_user_id: clientUserId,
+      trigger_source: triggerSource,
         template_name: templateName,
         recipient_email: effectiveRecipient,
         status: 'failed',
@@ -483,6 +519,11 @@ Deno.serve(async (req) => {
       message_id: messageId,
       triggered_by_user_id: authUserId,
       triggered_by_ip: clientIp,
+      order_id: orderId,
+      invoice_id: invoiceId,
+      ticket_id: ticketId,
+      client_user_id: clientUserId,
+      trigger_source: triggerSource,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'suppressed',
@@ -521,6 +562,11 @@ Deno.serve(async (req) => {
     message_id: messageId,
       triggered_by_user_id: authUserId,
       triggered_by_ip: clientIp,
+      order_id: orderId,
+      invoice_id: invoiceId,
+      ticket_id: ticketId,
+      client_user_id: clientUserId,
+      trigger_source: triggerSource,
     template_name: templateName,
     recipient_email: effectiveRecipient,
     status: 'pending',
@@ -555,6 +601,11 @@ Deno.serve(async (req) => {
       message_id: messageId,
       triggered_by_user_id: authUserId,
       triggered_by_ip: clientIp,
+      order_id: orderId,
+      invoice_id: invoiceId,
+      ticket_id: ticketId,
+      client_user_id: clientUserId,
+      trigger_source: triggerSource,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'failed',

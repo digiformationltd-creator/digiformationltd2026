@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import OsOrderDrawer from "../components/OsOrderDrawer";
 import OsInvoiceDrawer from "../components/OsInvoiceDrawer";
+import OsEmailHistoryPanel from "../components/OsEmailHistoryPanel";
 
 type TabKey =
   | "company" | "addresses" | "orders" | "invoices" | "documents"
@@ -747,23 +748,8 @@ const EMAIL_TEMPLATES = [
 ];
 
 function EmailsTab({ userId, profile }: { userId: string; profile: any }) {
-  const [log, setLog] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
-
-  const loadLog = async () => {
-    if (!profile?.email) { setLoading(false); return; }
-    setLoading(true);
-    const { data } = await supabase
-      .from("email_send_log")
-      .select("*")
-      .eq("recipient_email", profile.email)
-      .order("created_at", { ascending: false })
-      .limit(50);
-    setLog(data || []);
-    setLoading(false);
-  };
-  useEffect(() => { loadLog(); }, [profile?.email]);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const send = async (template: string) => {
     if (!profile?.email) { toast.error("No client email"); return; }
@@ -773,6 +759,8 @@ function EmailsTab({ userId, profile }: { userId: string; profile: any }) {
         templateName: template,
         recipientEmail: profile.email,
         idempotencyKey: `${template}-${userId}-${Date.now()}`,
+        clientUserId: userId,
+        triggerSource: "admin",
         templateData: {
           customerName: profile.full_name || "",
           companyName: profile.company_name || "",
@@ -781,7 +769,7 @@ function EmailsTab({ userId, profile }: { userId: string; profile: any }) {
     });
     setBusy(null);
     if (error) toast.error(error.message);
-    else { toast.success(`Sent ${template}`); setTimeout(loadLog, 1500); }
+    else { toast.success(`Sent ${template}`); setTimeout(() => setRefreshKey((k) => k + 1), 1500); }
   };
 
   if (!profile?.email) return <div className="os-glass p-8 text-center text-sm text-white/50">No email on file for this client.</div>;
@@ -806,32 +794,17 @@ function EmailsTab({ userId, profile }: { userId: string; profile: any }) {
       </div>
 
       <div className="os-glass p-4">
-        <div className="flex items-center justify-between mb-3">
-          <div className="text-sm font-semibold">Recent emails</div>
-          <button onClick={loadLog} className="h-7 w-7 rounded-lg bg-white/[0.05] hover:bg-white/[0.10] grid place-items-center"><RefreshCw className="w-3.5 h-3.5" /></button>
-        </div>
-        {loading && <div className="text-center py-6"><Loader2 className="w-4 h-4 animate-spin mx-auto text-white/40" /></div>}
-        {!loading && !log.length && <div className="text-sm text-white/50 text-center py-4">No emails logged.</div>}
-        <div className="space-y-1.5">
-          {log.map((l) => (
-            <div key={l.id} className="flex items-center justify-between text-xs bg-white/[0.03] rounded-lg p-2">
-              <div className="min-w-0">
-                <div className="font-mono text-white/80 truncate">{l.template_name}</div>
-                <div className="text-[10px] text-white/40">{new Date(l.created_at).toLocaleString()}</div>
-              </div>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
-                l.status === "sent"      ? "bg-emerald-500/15 text-emerald-200" :
-                l.status === "dlq"       ? "bg-rose-500/15 text-rose-200" :
-                l.status === "suppressed"? "bg-amber-500/15 text-amber-200" :
-                "bg-white/[0.06] text-white/60"
-              }`}>{l.status}</span>
-            </div>
-          ))}
-        </div>
+        <OsEmailHistoryPanel
+          key={refreshKey}
+          scope={{ clientUserId: userId, clientEmail: profile.email }}
+          title="Email history for this client"
+          density="full"
+        />
       </div>
     </div>
   );
 }
+
 
 // ─────────────────────────── helpers ───────────────────────────
 function Field({ label, value, onChange, type, colSpan }: { label: string; value: any; onChange: (v: string) => void; type?: string; colSpan?: number }) {

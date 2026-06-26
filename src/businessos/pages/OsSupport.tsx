@@ -139,6 +139,27 @@ export default function OsSupport() {
     if (error) { toast.error(error.message); return; }
     toast.success(`Marked as ${status}`);
     setSelected(prev => prev && prev.id === t.id ? { ...prev, status } : prev);
+
+    // Notify the client of the new status (no-op if no email on file)
+    const recipient = profiles[t.user_id]?.email;
+    if (recipient) {
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "ticket-status-update",
+          recipientEmail: recipient,
+          idempotencyKey: `ticket-status-${t.id}-${status}-${Date.now()}`,
+          ticketId: t.id,
+          clientUserId: t.user_id,
+          triggerSource: "admin",
+          templateData: {
+            customerName: profiles[t.user_id]?.full_name || "",
+            ticketRef: t.ticket_ref,
+            subject: t.subject,
+            status,
+          },
+        },
+      }).catch((err) => console.error("ticket-status-update failed", err));
+    }
     load();
   };
 

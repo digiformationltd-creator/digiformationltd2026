@@ -212,17 +212,19 @@ export const Contact = () => {
     if (form.email) {
       supabase.functions.invoke("send-transactional-email", {
         body: {
-          templateName: "ticket-received",
+          templateName: "contact-confirmation",
           recipientEmail: form.email,
-          idempotencyKey: `contact-received-${orderRef}`,
+          idempotencyKey: `contact-confirm-${orderRef}`,
+          triggerSource: "system",
           templateData: { customerName: form.fullName, ticketRef: orderRef, subject: form.service || "Inquiry", message: form.message },
         },
-      }).catch((err) => console.error("ticket-received failed", err));
+      }).catch((err) => console.error("contact-confirmation failed", err));
     }
     supabase.functions.invoke("send-transactional-email", {
       body: {
         templateName: "order-notification",
         idempotencyKey: `order-notify-${orderRef}`,
+        triggerSource: "system",
         templateData: { customerName: form.fullName, customerEmail: form.email, whatsapp: form.whatsapp, country: form.country, service: form.service || "Inquiry", orderRef, pagePath: window.location.pathname, notes: form.message },
       },
     }).catch((err) => console.error("order-notification failed", err));

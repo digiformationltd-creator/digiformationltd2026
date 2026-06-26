@@ -12,6 +12,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import OsEmailHistoryPanel from "./OsEmailHistoryPanel";
 import {
   Loader2, Mail, User, PoundSterling, Calendar, FileText, Download,
   Play, CheckCircle2, Ban, Save, RefreshCw, Hash, Phone, Building2,
@@ -142,6 +143,9 @@ export default function OsOrderDrawer({
             templateName: template,
             recipientEmail: email,
             idempotencyKey: `${template}-${order.id}`,
+            orderId: order.id,
+            clientUserId: order.user_id ?? undefined,
+            triggerSource: "admin",
             templateData: {
               customerName: order.customer_name || "",
               orderRef: order.order_ref,
@@ -175,6 +179,9 @@ export default function OsOrderDrawer({
         templateName: template,
         recipientEmail: order.customer_email,
         idempotencyKey: `${template}-${order.id}-${Date.now()}`,
+        orderId: order.id,
+        clientUserId: order.user_id ?? undefined,
+        triggerSource: "admin",
         templateData: {
           customerName: order.customer_name || "",
           orderRef: order.order_ref,
@@ -344,6 +351,11 @@ export default function OsOrderDrawer({
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Email history for this order */}
+            <div className="os-glass p-4">
+              <OsEmailHistoryPanel scope={{ orderId: order.id }} />
             </div>
 
             {isGuest && (

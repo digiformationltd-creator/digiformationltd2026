@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import OsEmailHistoryPanel from "./OsEmailHistoryPanel";
 import {
   Loader2, Mail, User, FileText, Download, CheckCircle2, RotateCcw,
   Save, Hash, Calendar, PoundSterling, Send, AlertTriangle, Clock,
@@ -135,6 +136,10 @@ export default function OsInvoiceDrawer({
         templateName: "invoice-issued",
         recipientEmail: invoice.bill_to_email,
         idempotencyKey: `invoice-issued:${invoice.invoice_number}-resend-${Date.now()}`,
+        invoiceId: invoice.id,
+        orderId: invoice.order_id ?? undefined,
+        clientUserId: invoice.user_id ?? undefined,
+        triggerSource: "admin",
         templateData: {
           customerName: invoice.bill_to_name || "",
           invoiceNumber: invoice.invoice_number,
@@ -168,6 +173,10 @@ export default function OsInvoiceDrawer({
           templateName: "invoice-paid",
           recipientEmail: invoice.bill_to_email,
           idempotencyKey: `invoice-paid-${invoice.id}`,
+          invoiceId: invoice.id,
+          orderId: invoice.order_id ?? undefined,
+          clientUserId: invoice.user_id ?? undefined,
+          triggerSource: "admin",
           templateData: {
             customerName: invoice.bill_to_name || "",
             invoiceNumber: invoice.invoice_number,
@@ -352,6 +361,11 @@ export default function OsInvoiceDrawer({
                 </div>
               </div>
             )}
+
+            {/* Email history for this invoice */}
+            <div className="os-glass p-4">
+              <OsEmailHistoryPanel scope={{ invoiceId: invoice.id }} />
+            </div>
           </div>
         )}
       </SheetContent>

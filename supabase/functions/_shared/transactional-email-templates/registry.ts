@@ -23,6 +23,8 @@ import { template as confirmationStatementReminder } from './confirmation-statem
 import { template as annualAccountsReminder } from './annual-accounts-reminder.tsx'
 import { template as emailSystemCheck } from './email-system-check.tsx'
 import { template as internalCompanyReminder } from './internal-company-reminder.tsx'
+import { template as contactConfirmation } from './contact-confirmation.tsx'
+import { template as ticketStatusUpdate } from './ticket-status-update.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'order-confirmation': orderConfirmation,
@@ -39,4 +41,6 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'annual-accounts-reminder': annualAccountsReminder,
   'email-system-check': emailSystemCheck,
   'internal-company-reminder': internalCompanyReminder,
+  'contact-confirmation': contactConfirmation,
+  'ticket-status-update': ticketStatusUpdate,
 }
