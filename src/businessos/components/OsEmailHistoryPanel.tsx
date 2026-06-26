@@ -101,7 +101,8 @@ export default function OsEmailHistoryPanel({ scope, title = "Email History", de
         <ul className="divide-y divide-white/5">
           {rows.map((r) => {
             const sp = statusPill(r.status);
-            const ts = r.sent_at || r.created_at;
+            const ts = r.created_at;
+            const subject = (r.metadata && (r.metadata.subject as string)) || r.template_name;
             const isOpen = expanded === r.id;
             return (
               <li key={r.id} className="py-2">
@@ -110,7 +111,7 @@ export default function OsEmailHistoryPanel({ scope, title = "Email History", de
                   className="w-full text-left grid grid-cols-12 gap-2 items-center hover:bg-white/[0.03] rounded-md px-2 py-1.5"
                 >
                   <div className="col-span-4 min-w-0">
-                    <div className="text-[13px] text-white/90 truncate">{r.subject || r.template_name}</div>
+                    <div className="text-[13px] text-white/90 truncate">{subject}</div>
                     <div className="text-[11px] text-white/40 truncate">{r.template_name}</div>
                   </div>
                   <div className="col-span-4 text-[12px] text-white/60 truncate">{r.recipient_email}</div>
