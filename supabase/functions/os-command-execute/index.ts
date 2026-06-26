@@ -216,6 +216,43 @@ async function executeIntent(admin: any, action: any, user: any) {
       return { order_id: data.id, status: data.status }
     }
 
+    // ---------- Batch 1: Financial Core (manual overrides only) ----------
+    // 🔒 These intents do NOT re-send invoice/order emails — that path is system-owned.
+    case 'update_invoice_status': {
+      const allowed = new Set(['draft', 'issued', 'paid', 'void', 'refunded'])
+      if (!payload.invoice_id) throw new Error('invoice_id required')
+      const status = String(payload.status ?? '').toLowerCase().trim()
+      if (!allowed.has(status)) {
+        throw new Error(`status must be one of: ${[...allowed].join(', ')}`)
+      }
+      const { data, error } = await admin.from('invoices')
+        .update({ status })
+        .eq('id', payload.invoice_id).select().single()
+      if (error) throw new Error(error.message)
+      return { invoice_id: data.id, status: data.status }
+    }
+    case 'update_invoice_meta': {
+      if (!payload.invoice_id) throw new Error('invoice_id required')
+      // Strict allowlist — immutable fields (amount, invoice_number, issue_date) blocked.
+      const ALLOWED_META = new Set(['due_date', 'notes'])
+      const upd: Record<string, unknown> = {}
+      for (const k of Object.keys(payload ?? {})) {
+        if (k === 'invoice_id') continue
+        if (!ALLOWED_META.has(k)) {
+          throw new Error(`Field "${k}" not writable via CC. Allowed: ${[...ALLOWED_META].join(', ')}`)
+        }
+        const v = (payload as any)[k]
+        if (v === '' || v == null) continue
+        upd[k] = v
+      }
+      if (Object.keys(upd).length === 0) throw new Error('No writable fields provided')
+      const { data, error } = await admin.from('invoices')
+        .update(upd).eq('id', payload.invoice_id).select().single()
+      if (error) throw new Error(error.message)
+      return { invoice_id: data.id, updated: Object.keys(upd) }
+    }
+
+
     // ---------- Read-only lookups (preview-as-result) ----------
     case 'lookup_company': {
       const q = String(payload.query ?? '').trim()
