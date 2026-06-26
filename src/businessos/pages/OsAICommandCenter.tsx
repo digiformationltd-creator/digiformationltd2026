@@ -179,7 +179,7 @@ export default function OsAICommandCenter() {
   const send = async () => {
     const t = input.trim();
     if (!t || busy) return;
-    setBusy(true);
+    machine.set("parsing");
     const uid = crypto.randomUUID();
     setMessages((p) => [...p, { id: uid, role: "user", text: t, at: "just now" }]);
     setInput("");
@@ -193,20 +193,23 @@ export default function OsAICommandCenter() {
         id: uid + "-err", role: "assistant", at: "just now",
         text: `Preview failed: ${error?.message ?? data?.error ?? "unknown error"}`,
       }]);
+      machine.set("error", null);
+      // auto-recover to idle so composer is usable again
+      setTimeout(() => machine.reset(), 1200);
     } else {
-      setPendingAction(data.action);
+      // Backend creates the row already in awaiting_approval.
+      machine.hydrate(data.action as CommandAction);
       setMessages((p) => [...p, {
         id: uid + "-a", role: "assistant", at: "just now",
-        text: `**Preview ready.** Intent: \`${intent}\`\n\n\`\`\`json\n${JSON.stringify(data.action.preview, null, 2)}\n\`\`\`\n\nReview the preview, then press **Execute** to run it.`,
+        text: `**Preview ready.** Intent: \`${intent}\` · Risk: \`${data.action.risk_tier ?? "safe"}\`\n\n\`\`\`json\n${JSON.stringify(data.action.preview, null, 2)}\n\`\`\`\n\nReview the preview, then press **Execute** to run it.`,
       }]);
     }
-    setBusy(false);
     taRef.current?.focus();
   };
 
   const executePending = async () => {
-    if (!pendingAction || busy) return;
-    setBusy(true);
+    if (!pendingAction || !canApprove) return;
+    machine.set("executing");
     const { data, error } = await supabase.functions.invoke("os-command-execute", {
       body: { action: "execute", id: pendingAction.id },
     });
@@ -217,12 +220,12 @@ export default function OsAICommandCenter() {
         ? `✅ Executed.\n\n\`\`\`json\n${JSON.stringify(data.result, null, 2)}\n\`\`\``
         : `❌ Execution failed: ${error?.message ?? data?.error ?? "unknown"}`,
     }]);
-    setPendingAction(null);
-    setBusy(false);
+    machine.set(ok ? "success" : "error", null);
+    setTimeout(() => machine.reset(), 1500);
   };
 
   const rejectPending = async () => {
-    if (!pendingAction) return;
+    if (!pendingAction || !canCancel) return;
     await supabase.functions.invoke("os-command-execute", {
       body: { action: "reject", id: pendingAction.id },
     });
@@ -230,13 +233,16 @@ export default function OsAICommandCenter() {
       id: crypto.randomUUID(), role: "assistant", at: "just now",
       text: "Action cancelled.",
     }]);
-    setPendingAction(null);
+    machine.set("rejected", null);
+    setTimeout(() => machine.reset(), 800);
   };
 
   const clearChat = () => {
     setMessages([{ id: "seed", role: "assistant", text: "Workspace cleared. Ready for a new instruction.", at: "now" }]);
-    setPendingAction(null);
+    machine.reset();
   };
+
+
 
   const newChat = () => {
     clearChat();
