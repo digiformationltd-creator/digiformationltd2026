@@ -20,16 +20,11 @@ import OsWhatsAppCRM from "@/businessos/pages/whatsapp/OsWhatsAppCRM";
 import OsWhatsAppContactDetail from "@/businessos/pages/whatsapp/OsWhatsAppContactDetail";
 import OsGrowthIntelligence from "@/businessos/pages/OsGrowthIntelligence";
 import OsAutomation from "@/businessos/pages/OsAutomation";
-import OsAutomationAgents from "@/businessos/pages/OsAutomationAgents";
 import OsAutomationWorkflows from "@/businessos/pages/OsAutomationWorkflows";
 import OsAutomationJobs from "@/businessos/pages/OsAutomationJobs";
 import OsSettings from "@/businessos/pages/OsSettings";
 import OsEmailMarketing from "@/businessos/pages/OsEmailMarketing";
-import OsReminderCenter from "@/businessos/pages/OsReminderCenter";
-import OsAutomationAgentDetail from "@/businessos/pages/OsAutomationAgentDetail";
-import OsOcrCenter from "@/businessos/pages/OsOcrCenter";
-import OsKnowledgeCenter from "@/businessos/pages/OsKnowledgeCenter";
-import OsAIWorkspace from "@/businessos/pages/OsAIWorkspace";
+import OsAICommandCenter from "@/businessos/pages/OsAICommandCenter";
 import LegacyAdmin from "@/pages/LegacyAdmin";
 
 export default function Admin() {
