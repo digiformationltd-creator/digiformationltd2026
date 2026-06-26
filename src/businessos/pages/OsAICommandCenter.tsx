@@ -153,7 +153,9 @@ export default function OsAICommandCenter() {
     if (/assign .*task/.test(t)) return { intent: "assign_task", payload: { task_id: "", assigned_to: "" } };
     if (/draft .*email|write .*email|compose .*email/.test(t)) return { intent: "draft_email", payload: { subject: "", body: text, recipient_email: email ?? "" } };
     if (/send email|send .*reminder email|email template/.test(t)) return { intent: "send_email_template", payload: { template: "", recipient_email: email ?? "" } };
-    if (/generate invoice|create invoice|issue invoice/.test(t)) return { intent: "create_invoice", payload: { order_id: "", customer_email: email ?? "" } };
+    // 🔒 create_invoice intentionally NOT mapped — invoices are auto-generated
+    // by the order-creation trigger. CC must not duplicate system automations.
+
     if (/create .*order|new order/.test(t)) return { intent: "create_order", payload: { service: "", customer_email: email ?? "", amount_gbp: "" } };
     if (/update .*order status|mark order/.test(t)) return { intent: "update_order_status", payload: { order_id: "", status: "" } };
     if (/update .*(registered )?address|change .*address/.test(t)) return { intent: "update_company_address", payload: { company_id: "", registered_address: "" } };
