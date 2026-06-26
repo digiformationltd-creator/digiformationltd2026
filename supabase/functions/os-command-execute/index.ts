@@ -67,18 +67,39 @@ async function recordRun(admin: any, jobName: string, fn: () => Promise<any>) {
   }
 }
 
-// Deterministic dispatcher.
+// Helper: call an existing edge function with service-role auth.
+async function callFn(name: string, body: unknown) {
+  const resp = await fetch(`${SUPABASE_URL}/functions/v1/${name}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json',
+               Authorization: `Bearer ${SERVICE_KEY}`, apikey: SERVICE_KEY },
+    body: JSON.stringify(body),
+  })
+  const out = await resp.json().catch(() => ({}))
+  if (!resp.ok) throw new Error(out?.error ?? `HTTP ${resp.status}`)
+  return out
+}
+
+// Allowed managed_companies columns the Command Center may write.
+const ALLOWED_COMPANY_FIELDS = new Set([
+  'notes', 'status', 'director', 'registered_address',
+  'company_name', 'company_number', 'incorporation_date',
+])
+
+// Deterministic dispatcher. Reuses existing tables, RPCs and Edge Functions.
 async function executeIntent(admin: any, action: any, user: any) {
   const { intent, payload } = action
   switch (intent) {
+    // ---------- Tasks / reminders ----------
     case 'create_task':
-    case 'create_reminder': {
+    case 'create_reminder':
+    case 'create_followup': {
       const { data, error } = await admin.from('tasks').insert({
         title: payload.title,
         description: payload.description ?? null,
         priority: payload.priority ?? (intent === 'create_reminder' ? 'high' : 'normal'),
         status: 'todo',
-        due_date: payload.due_date ?? null,
+        due_date: payload.due_date ?? (intent === 'create_followup' ? null : null),
         related_order_id: payload.related_order_id ?? null,
         related_lead_id: payload.related_lead_id ?? null,
         created_by: user.id,
@@ -87,33 +108,157 @@ async function executeIntent(admin: any, action: any, user: any) {
       if (error) throw new Error(error.message)
       return { task_id: data.id }
     }
-    case 'send_email_template': {
-      const resp = await fetch(`${SUPABASE_URL}/functions/v1/send-transactional-email`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json',
-                   Authorization: `Bearer ${SERVICE_KEY}`, apikey: SERVICE_KEY },
-        body: JSON.stringify({
-          template: payload.template,
-          recipient_email: payload.recipient_email,
-          data: payload.data ?? {},
-        }),
-      })
-      const out = await resp.json().catch(() => ({}))
-      if (!resp.ok) throw new Error(out?.error ?? `HTTP ${resp.status}`)
-      return out
+    case 'assign_task': {
+      if (!payload.task_id || !payload.assigned_to) throw new Error('task_id and assigned_to required')
+      const { data, error } = await admin.from('tasks')
+        .update({ assigned_to: payload.assigned_to })
+        .eq('id', payload.task_id).select().single()
+      if (error) throw new Error(error.message)
+      return { task_id: data.id, assigned_to: data.assigned_to }
     }
-    case 'update_company_field': {
-      const allowed = ['notes', 'status', 'director', 'registered_address']
-      if (!allowed.includes(payload.field)) {
+
+    // ---------- Email ----------
+    case 'send_email_template':
+    case 'send_email': {
+      return await callFn('send-transactional-email', {
+        template: payload.template,
+        recipient_email: payload.recipient_email,
+        data: payload.data ?? {},
+      })
+    }
+    case 'draft_email': {
+      // No external call — return the draft for the admin to review/edit.
+      return {
+        kind: 'draft',
+        subject: payload.subject ?? '',
+        body: payload.body ?? '',
+        recipient: payload.recipient_email ?? null,
+      }
+    }
+
+    // ---------- Companies ----------
+    case 'update_company_field':
+    case 'update_company': {
+      if (!ALLOWED_COMPANY_FIELDS.has(payload.field)) {
         throw new Error(`Field "${payload.field}" not permitted via Command Center`)
       }
-      const upd: any = {}
-      upd[payload.field] = payload.value
+      const upd: Record<string, unknown> = { [payload.field]: payload.value }
       const { data, error } = await admin.from('managed_companies')
         .update(upd).eq('id', payload.company_id).select().single()
       if (error) throw new Error(error.message)
       return { company_id: data.id, field: payload.field }
     }
+    case 'update_company_address': {
+      const { data, error } = await admin.from('managed_companies')
+        .update({ registered_address: payload.registered_address })
+        .eq('id', payload.company_id).select().single()
+      if (error) throw new Error(error.message)
+      return { company_id: data.id, registered_address: data.registered_address }
+    }
+    case 'update_company_status': {
+      const { data, error } = await admin.from('managed_companies')
+        .update({ status: payload.status })
+        .eq('id', payload.company_id).select().single()
+      if (error) throw new Error(error.message)
+      return { company_id: data.id, status: data.status }
+    }
+    case 'add_note': {
+      const { data: row, error: e1 } = await admin.from('managed_companies')
+        .select('notes').eq('id', payload.company_id).single()
+      if (e1) throw new Error(e1.message)
+      const stamp = new Date().toISOString().slice(0, 16).replace('T', ' ')
+      const combined = `${row?.notes ? row.notes + '\n\n' : ''}[${stamp}] ${payload.note ?? ''}`.trim()
+      const { error: e2 } = await admin.from('managed_companies')
+        .update({ notes: combined }).eq('id', payload.company_id)
+      if (e2) throw new Error(e2.message)
+      return { company_id: payload.company_id, appended: true }
+    }
+
+    // ---------- Orders / invoices ----------
+    case 'create_invoice': {
+      return await callFn('generate-invoice', {
+        order_id: payload.order_id,
+        customer_email: payload.customer_email,
+      })
+    }
+    case 'create_order': {
+      return await callFn('agent-create-order', payload)
+    }
+    case 'update_order_status': {
+      if (!payload.order_id || !payload.status) throw new Error('order_id and status required')
+      const { data, error } = await admin.from('client_orders')
+        .update({ status: payload.status })
+        .eq('id', payload.order_id).select().single()
+      if (error) throw new Error(error.message)
+      return { order_id: data.id, status: data.status }
+    }
+
+    // ---------- Read-only lookups (preview-as-result) ----------
+    case 'lookup_company': {
+      const q = String(payload.query ?? '').trim()
+      if (!q) throw new Error('query required')
+      const { data, error } = await admin.from('managed_companies')
+        .select('id,company_name,company_number,status,registered_address,incorporation_date')
+        .or(`company_name.ilike.%${q}%,company_number.ilike.%${q}%`)
+        .limit(20)
+      if (error) throw new Error(error.message)
+      return { results: data }
+    }
+    case 'lookup_customer': {
+      const q = String(payload.query ?? '').trim()
+      if (!q) throw new Error('query required')
+      const { data, error } = await admin.from('profiles')
+        .select('user_id,full_name,email,whatsapp,created_at')
+        .or(`full_name.ilike.%${q}%,email.ilike.%${q}%`)
+        .limit(20)
+      if (error) throw new Error(error.message)
+      return { results: data }
+    }
+    case 'show_client_history': {
+      const email = String(payload.customer_email ?? '').trim().toLowerCase()
+      if (!email) throw new Error('customer_email required')
+      const [orders, invoices] = await Promise.all([
+        admin.from('client_orders')
+          .select('id,order_ref,service,amount_gbp,status,created_at')
+          .ilike('customer_email', email).order('created_at', { ascending: false }).limit(50),
+        admin.from('invoices')
+          .select('id,invoice_number,total_amount,status,issued_at')
+          .ilike('bill_to_email', email).order('issued_at', { ascending: false }).limit(50),
+      ])
+      if (orders.error) throw new Error(orders.error.message)
+      if (invoices.error) throw new Error(invoices.error.message)
+      return { customer_email: email, orders: orders.data, invoices: invoices.data }
+    }
+    case 'show_pending_compliance': {
+      const { data, error } = await admin.rpc('reminder_inbox', { _limit: 200 })
+      if (error) throw new Error(error.message)
+      return { items: (data ?? []).filter((r: any) => r.source === 'compliance') }
+    }
+    case 'show_reminders': {
+      const { data, error } = await admin.rpc('reminder_inbox', { _limit: 100 })
+      if (error) throw new Error(error.message)
+      return { items: data }
+    }
+    case 'show_jobs': {
+      const { data, error } = await admin.rpc('scheduled_jobs_status')
+      if (error) throw new Error(error.message)
+      return { jobs: data }
+    }
+    case 'show_recent_activity': {
+      const limit = Math.min(Number(payload.limit ?? 25), 100)
+      const { data, error } = await admin.rpc('automation_runs_recent', { _limit: limit })
+      if (error) throw new Error(error.message)
+      return { runs: data }
+    }
+    case 'summarize_company': {
+      if (!payload.company_id) throw new Error('company_id required')
+      const [mc, ccd] = await Promise.all([
+        admin.from('managed_companies').select('*').eq('id', payload.company_id).maybeSingle(),
+        admin.from('client_company_details').select('*').eq('id', payload.company_id).maybeSingle(),
+      ])
+      return { managed_company: mc.data ?? null, client_company_details: ccd.data ?? null }
+    }
+
     default:
       throw new Error(`Unknown intent: ${intent}`)
   }
