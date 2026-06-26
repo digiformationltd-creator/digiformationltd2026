@@ -251,8 +251,10 @@ export default function OsAICommandCenter() {
           >
             <PanelRightClose className="w-4 h-4" />
           </button>
-          <span className="hidden sm:inline text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-md bg-purple-500/10 text-purple-300 border border-purple-500/20">
-            UI Preview
+          <span className={`hidden sm:inline text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-md border ${
+            pendingAction ? "bg-amber-500/15 text-amber-200 border-amber-500/20"
+                          : "bg-purple-500/10 text-purple-300 border-purple-500/20"}`}>
+            {pendingAction ? "Awaiting approval" : "Ready"}
           </span>
         </div>
       </div>
@@ -591,9 +593,9 @@ export default function OsAICommandCenter() {
           <span>Agent: <span className="text-white/70">{agent}</span></span>
         </div>
         <div className="flex items-center gap-1.5 flex-wrap">
-          <ActionBtn icon={CheckCircle2} label="Approve" tint="bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25" />
-          <ActionBtn icon={Play}         label="Execute" tint="bg-purple-500/20 text-purple-200 hover:bg-purple-500/30" />
-          <ActionBtn icon={XCircle}      label="Cancel"  tint="bg-red-500/10 text-red-300 hover:bg-red-500/20" />
+          <ActionBtn icon={CheckCircle2} label="Approve & Execute" disabled={!pendingAction || busy} onClick={executePending} tint="bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25" />
+          <ActionBtn icon={Play}         label="Execute" disabled={!pendingAction || busy} onClick={executePending} tint="bg-purple-500/20 text-purple-200 hover:bg-purple-500/30" />
+          <ActionBtn icon={XCircle}      label="Cancel"  disabled={!pendingAction || busy} onClick={rejectPending} tint="bg-red-500/10 text-red-300 hover:bg-red-500/20" />
           <ActionBtn icon={RotateCcw}    label="Run Again" tint="bg-white/5 text-white/70 hover:bg-white/10" />
           <ActionBtn icon={Eraser}       label="Clear"    tint="bg-white/5 text-white/70 hover:bg-white/10" onClick={clearChat} />
           <ActionBtn icon={Save}         label="Save Prompt" tint="bg-white/5 text-white/70 hover:bg-white/10" />
