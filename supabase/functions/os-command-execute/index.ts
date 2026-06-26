@@ -424,6 +424,12 @@ Deno.serve(async (req) => {
       return json({ ok: true, result, action_id: act.id })
     }
 
+    if (action === 'rollback') {
+      const { data, error } = await admin.rpc('command_action_rollback', { _id: body.id })
+      if (error) return json({ ok: false, error: error.message }, 400)
+      return json({ ok: true, result: data })
+    }
+
     return json({ error: 'Unknown action' }, 400)
   } catch (e) {
     return json({ error: (e as Error).message }, 400)
