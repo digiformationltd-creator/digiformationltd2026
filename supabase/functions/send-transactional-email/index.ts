@@ -83,6 +83,11 @@ Deno.serve(async (req) => {
   let idempotencyKey: string
   let messageId: string
   let templateData: Record<string, any> = {}
+  let orderId: string | null = null
+  let invoiceId: string | null = null
+  let ticketId: string | null = null
+  let clientUserId: string | null = null
+  let triggerSource: string | null = null
   try {
     const body = await req.json()
     templateName = body.templateName || body.template_name
@@ -93,6 +98,14 @@ Deno.serve(async (req) => {
     if (body.templateData && typeof body.templateData === 'object') {
       templateData = body.templateData
     }
+    const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    const pickUuid = (v: unknown) => (typeof v === 'string' && uuidRe.test(v) ? v : null)
+    orderId      = pickUuid(body.orderId || body.order_id)
+    invoiceId    = pickUuid(body.invoiceId || body.invoice_id)
+    ticketId     = pickUuid(body.ticketId || body.ticket_id)
+    clientUserId = pickUuid(body.clientUserId || body.client_user_id)
+    const ts = body.triggerSource || body.trigger_source
+    if (typeof ts === 'string' && VALID_TRIGGER_SOURCES.has(ts)) triggerSource = ts
   } catch {
     return new Response(
       JSON.stringify({ error: 'Invalid JSON in request body' }),
