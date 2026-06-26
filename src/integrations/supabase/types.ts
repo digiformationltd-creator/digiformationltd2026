@@ -2149,6 +2149,14 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      command_action_mark_executing: {
+        Args: { _id: string }
+        Returns: undefined
+      }
+      command_action_mark_finished: {
+        Args: { _id: string; _ok: boolean }
+        Returns: undefined
+      }
       command_action_preview: {
         Args: { _intent: string; _payload: Json; _prompt?: string }
         Returns: {
@@ -2211,6 +2219,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      command_action_rollback: { Args: { _id: string }; Returns: Json }
       command_action_set_after_snapshot: {
         Args: { _after: Json; _id: string }
         Returns: undefined
