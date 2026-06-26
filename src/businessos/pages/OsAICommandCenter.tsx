@@ -4,6 +4,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import { useCommandMachine, STATE_LABELS, STATE_TINT, type CommandAction } from "@/businessos/lib/useCommandMachine";
+import { PreviewDiff } from "@/businessos/components/PreviewDiff";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Sparkles, Send, Paperclip, Bot, User, Eraser, RotateCcw,
