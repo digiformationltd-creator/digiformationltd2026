@@ -48,7 +48,6 @@ export default function Admin() {
         <Route path="legacy/*" element={<LegacyAdmin />} />
         <Route element={<BusinessOSLayout />}>
           <Route index element={<OsDashboard />} />
-          <Route path="leads" element={<OsLeads />} />
           <Route path="clients" element={<OsClients />} />
           <Route path="clients/:id" element={<OsClientDetail />} />
           <Route path="companies" element={<OsCompanies />} />
@@ -56,8 +55,6 @@ export default function Admin() {
           <Route path="managed-companies/:id" element={<OsManagedCompanyDetail />} />
           <Route path="orders" element={<OsOrders />} />
           <Route path="invoices" element={<OsInvoices />} />
-          <Route path="whatsapp" element={<OsWhatsAppCRM />} />
-          <Route path="whatsapp/:id" element={<OsWhatsAppContactDetail />} />
           <Route path="attribution" element={<OsGrowthIntelligence />} />
           <Route path="support" element={<OsSupport />} />
           <Route path="documents" element={<OsDocuments />} />
@@ -68,6 +65,13 @@ export default function Admin() {
           <Route path="automation/workflows" element={<OsAutomationWorkflows />} />
           <Route path="automation/reminders" element={<OsReminderCenter />} />
           <Route path="automation/analytics" element={<OsAnalytics />} />
+          <Route path="automation/leads" element={<OsLeads />} />
+          <Route path="automation/whatsapp" element={<OsWhatsAppCRM />} />
+          <Route path="automation/whatsapp/:id" element={<OsWhatsAppContactDetail />} />
+          {/* Legacy redirects — preserve old links */}
+          <Route path="leads" element={<Navigate to="/admin/automation/leads" replace />} />
+          <Route path="whatsapp" element={<Navigate to="/admin/automation/whatsapp" replace />} />
+          <Route path="whatsapp/:id" element={<RedirectWhatsAppContact />} />
           <Route path="email-ops" element={<Navigate to="/admin/automation/email-marketing?tab=operations" replace />} />
           <Route path="compliance" element={<OsCompliance />} />
           <Route path="settings" element={<OsSettings />} />
