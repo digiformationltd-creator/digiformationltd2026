@@ -332,6 +332,12 @@ Deno.serve(async (req) => {
   if (!user) return json({ error: 'Unauthorized' }, 401)
 
   const admin = createClient(SUPABASE_URL, SERVICE_KEY)
+  // User-scoped client so SECURITY DEFINER RPCs that gate on `has_role(auth.uid(),'admin')`
+  // see the real admin user (auth.uid() is NULL under the service-role client).
+  const authHeader = req.headers.get('Authorization') ?? ''
+  const userClient = createClient(SUPABASE_URL, ANON_KEY, {
+    global: { headers: { Authorization: authHeader } },
+  })
   let body: any
   try { body = await req.json() } catch { return json({ error: 'Bad JSON' }, 400) }
   const action = body?.action
@@ -344,12 +350,11 @@ Deno.serve(async (req) => {
         }, 400)
       }
 
-      const { data, error } = await admin.rpc('command_action_preview', {
+      // Call via user client so auth.uid() resolves to the admin → has_role passes.
+      const { data, error } = await userClient.rpc('command_action_preview', {
         _intent: body.intent, _payload: body.payload ?? {}, _prompt: body.prompt ?? null,
       }).single()
-      if (error) throw new Error(error.message)
-      // Note: SECURITY DEFINER + service-role client bypasses auth.uid(); patch admin_id.
-      await admin.from('command_actions').update({ admin_id: user.id }).eq('id', (data as any).id)
+      if (error) return json({ ok: false, error: error.message }, 400)
       return json({ ok: true, action: data })
     }
 
