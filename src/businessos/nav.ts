@@ -18,10 +18,10 @@ export const NAV: NavItem[] = [
   { label: "Orders",              to: "/admin/orders",          icon: ShoppingBag,     glow: "green" },
   { label: "Invoices",            to: "/admin/invoices",        icon: FileText,        glow: "lime" },
   { label: "Growth Intelligence", to: "/admin/attribution",     icon: Sparkles,        glow: "purple" },
-  { label: "Support",             to: "/admin/support",         icon: LifeBuoy,        glow: "red" },
   { label: "Documents",           to: "/admin/documents",       icon: FolderOpen,      glow: "cyan" },
   { label: "Compliance",          to: "/admin/compliance",      icon: CalendarClock,   glow: "amber" },
 
   { label: "Automation",          to: "/admin/automation",      icon: Zap,             glow: "lime" },
+  { label: "Support",             to: "/admin/support",         icon: LifeBuoy,        glow: "red" },
   { label: "Settings",            to: "/admin/settings",        icon: Settings,        glow: "blue" },
 ];
