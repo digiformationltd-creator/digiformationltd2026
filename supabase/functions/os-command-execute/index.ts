@@ -377,7 +377,8 @@ Deno.serve(async (req) => {
       await admin.from('command_actions').update({
         status: 'approved', approved_at: new Date().toISOString(), admin_id: user.id,
       }).eq('id', act.id)
-      await admin.rpc('command_action_mark_executing', { _id: act.id })
+      // user-scoped so auth.uid() satisfies has_role()
+      await userClient.rpc('command_action_mark_executing', { _id: act.id })
 
       let result: any, errMsg: string | null = null
       try {
