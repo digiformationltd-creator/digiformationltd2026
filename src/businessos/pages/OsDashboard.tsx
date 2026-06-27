@@ -101,6 +101,17 @@ export default function OsDashboard() {
         ...o.slice(0,4).map(x=>({type:"order",text:`New order ${x.order_ref} — ${x.service}`,at:x.created_at})),
         ...l.slice(0,4).map(x=>({type:"lead",text:`Lead: ${x.name} interested in ${x.service||"a service"}`,at:x.created_at})),
       ].sort((a,b)=> (b.at||"").localeCompare(a.at||"")).slice(0,8));
+
+      // Global Pending Company Tasks — scan every managed company and
+      // collect missing/overdue items, sorted by priority. Read-only.
+      const cs = (companies.data || []) as ManagedCompanyRow[];
+      const tasks: { company: ManagedCompanyRow; item: PendingItem }[] = [];
+      for (const c of cs) {
+        for (const it of analyzePending(c)) tasks.push({ company: c, item: it });
+      }
+      tasks.sort((a, b) => a.item.priority - b.item.priority);
+      setPendingTasks(tasks.slice(0, 12));
+
       setLoading(false);
     };
 
