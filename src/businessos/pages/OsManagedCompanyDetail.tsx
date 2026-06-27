@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, Save, Trash2, Loader2, CalendarClock, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Save, Trash2, Loader2, CalendarClock, AlertTriangle, Sparkles } from "lucide-react";
+import { analyzePending, commandCenterUrl } from "@/businessos/lib/pendingCompany";
 
 type Status = "available" | "reserved" | "sold_out" | "unavailable";
 
