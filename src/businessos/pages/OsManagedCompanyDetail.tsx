@@ -159,3 +159,53 @@ function Field({ label, value, onChange, type = "text", multiline = false }: any
     </div>
   );
 }
+
+// Pending Information panel — analyses the company profile and lists only
+// missing / overdue items. Each row offers a one-click AI Quick Action that
+// opens the AI Command Center with the correct command pre-filled. Nothing
+// executes automatically — the existing approval flow is unchanged.
+function PendingPanel({ row }: { row: any }) {
+  const items = useMemo(() => analyzePending(row), [row]);
+  if (items.length === 0) {
+    return (
+      <div className="rounded-xl border border-emerald-600/30 bg-emerald-500/5 p-4 text-sm text-emerald-300 flex items-center gap-2">
+        <Sparkles className="w-4 h-4" /> No pending information — this company profile is complete.
+      </div>
+    );
+  }
+  return (
+    <div className="rounded-xl border border-zinc-800 bg-zinc-950/40 p-6 space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 text-amber-300" /> Pending Information
+          <span className="text-xs text-zinc-500 font-normal">({items.length})</span>
+        </h2>
+        <span className="text-xs text-zinc-500 flex items-center gap-1">
+          <Sparkles className="w-3 h-3" /> Suggested AI actions
+        </span>
+      </div>
+      <ul className="space-y-2">
+        {items.map((it) => (
+          <li key={it.key}
+            className="flex items-center justify-between gap-3 rounded-lg border border-zinc-800/80 bg-zinc-900/40 px-3 py-2">
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-amber-300">⚠</span>
+              <span>{it.label}</span>
+            </div>
+            <Link
+              to={commandCenterUrl(it.prompt)}
+              className="text-xs px-3 py-1.5 rounded-md bg-blue-600/20 hover:bg-blue-600/30 border border-blue-600/40 text-blue-200 flex items-center gap-1.5 whitespace-nowrap"
+              title="Open AI Command Center with this command prepared"
+            >
+              <span>{it.icon}</span> {it.action}
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <p className="text-[11px] text-zinc-500">
+        Clicking an action opens the AI Command Center with the command prepared.
+        You still review the preview and approve before anything is saved.
+      </p>
+    </div>
+  );
+}
