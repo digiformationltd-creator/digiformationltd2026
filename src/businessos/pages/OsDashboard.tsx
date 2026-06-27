@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  TrendingUp, ShoppingBag, Clock, Users, UserPlus, FileWarning, BadgePoundSterling,
+  TrendingUp, ShoppingBag, Clock, Users, UserPlus, FileWarning, BadgePoundSterling, AlertTriangle,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from "recharts";
 import { KpiGridSkeleton, ChartSkeleton, ListSkeleton } from "../components/Skeletons";
+import { analyzePending, commandCenterUrl, type PendingItem, type ManagedCompanyRow } from "@/businessos/lib/pendingCompany";
+
 
 
 type Glow = "blue"|"purple"|"green"|"amber"|"red"|"cyan"|"pink"|"lime";
