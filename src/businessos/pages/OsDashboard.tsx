@@ -227,6 +227,45 @@ export default function OsDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Global Pending Company Tasks — read-only scan. Each row deep-links
+          to the AI Command Center with a prepared command; nothing executes
+          automatically (the approval flow is unchanged). */}
+      <div className="os-glass os-glow-amber p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-amber-300" /> Pending Company Tasks
+            <span className="text-xs text-white/40 font-normal">({pendingTasks.length})</span>
+          </h3>
+          <Link to="/admin/managed-companies" className="text-xs text-white/50 hover:text-white">View all</Link>
+        </div>
+        {pendingTasks.length === 0 ? (
+          <div className="text-white/40 text-sm">All company profiles are complete.</div>
+        ) : (
+          <div className="divide-y divide-white/5">
+            {pendingTasks.map((t, i) => (
+              <div key={i} className="flex items-center justify-between gap-3 py-2 text-sm">
+                <div className="flex-1 min-w-0">
+                  <Link to={`/admin/managed-companies/${t.company.id}`}
+                    className="font-medium hover:text-blue-300 truncate block">
+                    {t.company.company_name || "Unnamed company"}
+                  </Link>
+                  <div className="text-xs text-white/40">Missing {t.item.label}</div>
+                </div>
+                <span className={`text-[10px] px-2 py-0.5 rounded ${
+                  t.item.priority <= 1 ? "bg-rose-500/15 text-rose-300"
+                  : t.item.priority <= 2 ? "bg-amber-500/15 text-amber-300"
+                  : "bg-zinc-500/15 text-zinc-300"
+                }`}>P{t.item.priority}</span>
+                <Link to={commandCenterUrl(t.item.prompt)}
+                  className="text-xs px-2.5 py-1 rounded-md bg-blue-600/20 hover:bg-blue-600/30 border border-blue-600/40 text-blue-200 flex items-center gap-1 whitespace-nowrap">
+                  <span>{t.item.icon}</span> {t.item.action}
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
