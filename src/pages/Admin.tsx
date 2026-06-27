@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import BusinessOSLayout from "@/businessos/BusinessOSLayout";
 
 // Eagerly load the most-used landing page (Dashboard) to avoid an extra
@@ -17,7 +17,7 @@ const OsSupport = lazy(() => import("@/businessos/pages/OsSupport"));
 const OsCompanies = lazy(() => import("@/businessos/pages/OsCompanies"));
 const OsManagedCompanies = lazy(() => import("@/businessos/pages/OsManagedCompanies"));
 const OsManagedCompanyDetail = lazy(() => import("@/businessos/pages/OsManagedCompanyDetail"));
-const OsEmailOps = lazy(() => import("@/businessos/pages/OsEmailOps"));
+
 const OsCompliance = lazy(() => import("@/businessos/pages/OsCompliance"));
 const OsWhatsAppCRM = lazy(() => import("@/businessos/pages/whatsapp/OsWhatsAppCRM"));
 const OsWhatsAppContactDetail = lazy(() => import("@/businessos/pages/whatsapp/OsWhatsAppContactDetail"));
@@ -68,7 +68,7 @@ export default function Admin() {
           <Route path="automation/workflows" element={<OsAutomationWorkflows />} />
           <Route path="automation/reminders" element={<OsReminderCenter />} />
           <Route path="automation/analytics" element={<OsAnalytics />} />
-          <Route path="email-ops" element={<OsEmailOps />} />
+          <Route path="email-ops" element={<Navigate to="/admin/automation/email-marketing?tab=operations" replace />} />
           <Route path="compliance" element={<OsCompliance />} />
           <Route path="settings" element={<OsSettings />} />
           <Route path="settings/services" element={<OsServices />} />
