@@ -3,14 +3,16 @@ import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
   Sparkles, Bell, Activity, ShieldCheck, Mail, Clock, Zap,
-  ArrowRight, Database, Cpu, RefreshCw, BarChart3,
+  ArrowRight, Database, Cpu, RefreshCw, BarChart3, UserCheck, MessageCircle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const MODULES = [
   { label: "AI Command Center",    to: "/admin/automation/command-center",  icon: Sparkles, desc: "Talk to Business OS. Approve actions.", tint: "bg-purple-500/10 text-purple-300", featured: true },
   { label: "Reminder Center",      to: "/admin/automation/reminders",       icon: Bell,     desc: "Deterministic reminders from your data.", tint: "bg-amber-500/10 text-amber-300" },
-  { label: "Email Marketing",      to: "/admin/automation/email-marketing", icon: Mail,     desc: "Campaigns and outreach.",              tint: "bg-pink-500/10 text-pink-300" },
+  { label: "Email Marketing",      to: "/admin/automation/email-marketing", icon: Mail,     desc: "Campaigns, templates and operations.", tint: "bg-pink-500/10 text-pink-300" },
+  { label: "Leads",                to: "/admin/automation/leads",           icon: UserCheck, desc: "Pipeline, kanban and lead activity.", tint: "bg-purple-500/10 text-purple-300" },
+  { label: "WhatsApp CRM",         to: "/admin/automation/whatsapp",        icon: MessageCircle, desc: "Contacts, conversations and messages.", tint: "bg-green-500/10 text-green-300" },
   { label: "Scheduled Jobs",       to: "/admin/automation/jobs",            icon: Clock,    desc: "Cron and recurring tasks.",            tint: "bg-cyan-500/10 text-cyan-300" },
   { label: "Business Automations", to: "/admin/automation/workflows",       icon: Zap,      desc: "Rule-based workflows + history.",      tint: "bg-lime-500/10 text-lime-300" },
   { label: "Operations Analytics", to: "/admin/automation/analytics",       icon: BarChart3, desc: "Read-only metrics, health & audit.",  tint: "bg-blue-500/10 text-blue-300" },
