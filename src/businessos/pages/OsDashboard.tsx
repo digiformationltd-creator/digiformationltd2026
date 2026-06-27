@@ -41,6 +41,9 @@ export default function OsDashboard() {
   const [payments, setPayments] = useState<any[]>([]);
   const [followups, setFollowups] = useState<any[]>([]);
   const [activity, setActivity] = useState<any[]>([]);
+  const [pendingTasks, setPendingTasks] = useState<
+    { company: ManagedCompanyRow; item: PendingItem }[]
+  >([]);
 
   useEffect(() => {
     let cancelled = false;
