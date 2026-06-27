@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useParams } from "react-router-dom";
 import BusinessOSLayout from "@/businessos/BusinessOSLayout";
 
 // Eagerly load the most-used landing page (Dashboard) to avoid an extra
@@ -39,6 +39,11 @@ function RouteFallback() {
       Loading…
     </div>
   );
+}
+
+function RedirectWhatsAppContact() {
+  const { id } = useParams();
+  return <Navigate to={`/admin/automation/whatsapp/${id}`} replace />;
 }
 
 export default function Admin() {
