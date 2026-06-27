@@ -10,6 +10,7 @@ import {
   Megaphone, TrendingUp, RefreshCw, AlertCircle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import EmailTemplateManager from "../components/EmailTemplateManager";
 
 type Tab =
   | "overview" | "campaigns" | "templates"
@@ -187,7 +188,7 @@ export default function OsEmailMarketing() {
 
       {tab === "overview"  && <Overview counts={counts} loading={loading} />}
       {tab === "campaigns" && <Campaigns campaigns={campaigns} loading={loading} />}
-      {tab === "templates" && <Templates logs={dedupLogs} />}
+      {tab === "templates" && <EmailTemplateManager />}
       {tab === "queue"     && <Queue logs={dedupLogs} pending={counts.pending} sent={counts.sent} failed={counts.failed} />}
       {tab === "logs"      && <Logs logs={dedupLogs} loading={loading} />}
       {tab === "analytics" && <Analytics campaigns={campaigns} counts={counts} />}
