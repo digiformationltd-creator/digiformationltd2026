@@ -887,6 +887,104 @@ export type Database = {
         }
         Relationships: []
       }
+      email_template_versions: {
+        Row: {
+          change_note: string | null
+          created_at: string
+          html_body: string
+          id: string
+          modified_by: string | null
+          plain_body: string
+          subject: string
+          template_id: string
+          variables: Json
+          version: number
+        }
+        Insert: {
+          change_note?: string | null
+          created_at?: string
+          html_body?: string
+          id?: string
+          modified_by?: string | null
+          plain_body?: string
+          subject?: string
+          template_id: string
+          variables?: Json
+          version: number
+        }
+        Update: {
+          change_note?: string | null
+          created_at?: string
+          html_body?: string
+          id?: string
+          modified_by?: string | null
+          plain_body?: string
+          subject?: string
+          template_id?: string
+          variables?: Json
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_template_versions_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "email_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_templates: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          current_version: number
+          html_body: string
+          id: string
+          is_active: boolean
+          linked_template: string | null
+          name: string
+          plain_body: string
+          subject: string
+          updated_at: string
+          updated_by: string | null
+          variables: Json
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          current_version?: number
+          html_body?: string
+          id?: string
+          is_active?: boolean
+          linked_template?: string | null
+          name: string
+          plain_body?: string
+          subject?: string
+          updated_at?: string
+          updated_by?: string | null
+          variables?: Json
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          current_version?: number
+          html_body?: string
+          id?: string
+          is_active?: boolean
+          linked_template?: string | null
+          name?: string
+          plain_body?: string
+          subject?: string
+          updated_at?: string
+          updated_by?: string | null
+          variables?: Json
+        }
+        Relationships: []
+      }
       email_unsubscribe_tokens: {
         Row: {
           created_at: string
