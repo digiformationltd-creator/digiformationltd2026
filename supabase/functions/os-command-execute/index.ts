@@ -332,6 +332,12 @@ Deno.serve(async (req) => {
   if (!user) return json({ error: 'Unauthorized' }, 401)
 
   const admin = createClient(SUPABASE_URL, SERVICE_KEY)
+  // User-scoped client so SECURITY DEFINER RPCs that gate on `has_role(auth.uid(),'admin')`
+  // see the real admin user (auth.uid() is NULL under the service-role client).
+  const authHeader = req.headers.get('Authorization') ?? ''
+  const userClient = createClient(SUPABASE_URL, ANON_KEY, {
+    global: { headers: { Authorization: authHeader } },
+  })
   let body: any
   try { body = await req.json() } catch { return json({ error: 'Bad JSON' }, 400) }
   const action = body?.action
@@ -344,12 +350,11 @@ Deno.serve(async (req) => {
         }, 400)
       }
 
-      const { data, error } = await admin.rpc('command_action_preview', {
+      // Call via user client so auth.uid() resolves to the admin → has_role passes.
+      const { data, error } = await userClient.rpc('command_action_preview', {
         _intent: body.intent, _payload: body.payload ?? {}, _prompt: body.prompt ?? null,
       }).single()
-      if (error) throw new Error(error.message)
-      // Note: SECURITY DEFINER + service-role client bypasses auth.uid(); patch admin_id.
-      await admin.from('command_actions').update({ admin_id: user.id }).eq('id', (data as any).id)
+      if (error) return json({ ok: false, error: error.message }, 400)
       return json({ ok: true, action: data })
     }
 
@@ -372,7 +377,8 @@ Deno.serve(async (req) => {
       await admin.from('command_actions').update({
         status: 'approved', approved_at: new Date().toISOString(), admin_id: user.id,
       }).eq('id', act.id)
-      await admin.rpc('command_action_mark_executing', { _id: act.id })
+      // user-scoped so auth.uid() satisfies has_role()
+      await userClient.rpc('command_action_mark_executing', { _id: act.id })
 
       let result: any, errMsg: string | null = null
       try {
@@ -407,8 +413,8 @@ Deno.serve(async (req) => {
         error: errMsg,
         after_snapshot: afterSnapshot,
       }).eq('id', act.id)
-      // Phase 3 — sync state machine to terminal state
-      await admin.rpc('command_action_mark_finished', { _id: act.id, _ok: !errMsg })
+      // Phase 3 — sync state machine to terminal state (user-scoped for has_role)
+      await userClient.rpc('command_action_mark_finished', { _id: act.id, _ok: !errMsg })
 
       // Audit
       await admin.from('agent_audit_log').insert({
@@ -425,11 +431,6 @@ Deno.serve(async (req) => {
     }
 
     if (action === 'rollback') {
-      // Call rollback via user-scoped client so auth.uid() resolves to the admin.
-      const authHeader = req.headers.get('Authorization') ?? ''
-      const userClient = createClient(SUPABASE_URL, ANON_KEY, {
-        global: { headers: { Authorization: authHeader } },
-      })
       const { data, error } = await userClient.rpc('command_action_rollback', { _id: body.id })
       if (error) return json({ ok: false, error: error.message }, 400)
       // Audit row for the rollback itself

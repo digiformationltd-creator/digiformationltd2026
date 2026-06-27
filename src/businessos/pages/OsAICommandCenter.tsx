@@ -136,6 +136,17 @@ export default function OsAICommandCenter() {
 
   useCommandPaletteHotkey(useCallback(() => setPaletteOpen((v) => !v), []));
 
+  // Allow other pages (Company Detail, Pending widget) to deep-link with a
+  // prepared command via `?q=...`. The prompt is only PREFILLED; the admin
+  // must still send → preview → approve. The approval flow is unchanged.
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("q");
+    if (q && q.trim()) {
+      setInput(q);
+      setTimeout(() => taRef.current?.focus(), 50);
+    }
+  }, []);
+
   const insertPrompt = useCallback((prompt: string) => {
     setInput(prompt);
     // give the textarea a moment to receive the value, then focus

@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  TrendingUp, ShoppingBag, Clock, Users, UserPlus, FileWarning, BadgePoundSterling,
+  TrendingUp, ShoppingBag, Clock, Users, UserPlus, FileWarning, BadgePoundSterling, AlertTriangle,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from "recharts";
 import { KpiGridSkeleton, ChartSkeleton, ListSkeleton } from "../components/Skeletons";
+import { analyzePending, commandCenterUrl, type PendingItem, type ManagedCompanyRow } from "@/businessos/lib/pendingCompany";
+
 
 
 type Glow = "blue"|"purple"|"green"|"amber"|"red"|"cyan"|"pink"|"lime";
@@ -38,6 +41,9 @@ export default function OsDashboard() {
   const [payments, setPayments] = useState<any[]>([]);
   const [followups, setFollowups] = useState<any[]>([]);
   const [activity, setActivity] = useState<any[]>([]);
+  const [pendingTasks, setPendingTasks] = useState<
+    { company: ManagedCompanyRow; item: PendingItem }[]
+  >([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -46,10 +52,11 @@ export default function OsDashboard() {
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
       const yearStart = new Date(now.getFullYear(), 0, 1).toISOString();
 
-      const [orders, leads, invoices] = await Promise.all([
+      const [orders, leads, invoices, companies] = await Promise.all([
         supabase.from("client_orders").select("amount_gbp,status,created_at,service,order_ref,customer_name").order("created_at",{ascending:false}).limit(500),
         supabase.from("leads").select("source,stage,follow_up_date,name,whatsapp,service,created_at").order("created_at",{ascending:false}).limit(500),
         supabase.from("invoices").select("total_gbp,status,issue_date,created_at,bill_to_name,invoice_number").order("created_at",{ascending:false}).limit(500),
+        supabase.from("managed_companies").select("id,company_name,company_number,registered_address,director,sic_code,incorporation_date,confirmation_due,accounts_filing_due,address_expire,utr_number,auth_code,status").limit(500),
       ]);
       if (cancelled) return;
 
@@ -94,6 +101,17 @@ export default function OsDashboard() {
         ...o.slice(0,4).map(x=>({type:"order",text:`New order ${x.order_ref} — ${x.service}`,at:x.created_at})),
         ...l.slice(0,4).map(x=>({type:"lead",text:`Lead: ${x.name} interested in ${x.service||"a service"}`,at:x.created_at})),
       ].sort((a,b)=> (b.at||"").localeCompare(a.at||"")).slice(0,8));
+
+      // Global Pending Company Tasks — scan every managed company and
+      // collect missing/overdue items, sorted by priority. Read-only.
+      const cs = (companies.data || []) as ManagedCompanyRow[];
+      const tasks: { company: ManagedCompanyRow; item: PendingItem }[] = [];
+      for (const c of cs) {
+        for (const it of analyzePending(c)) tasks.push({ company: c, item: it });
+      }
+      tasks.sort((a, b) => a.item.priority - b.item.priority);
+      setPendingTasks(tasks.slice(0, 12));
+
       setLoading(false);
     };
 
@@ -208,6 +226,45 @@ export default function OsDashboard() {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Global Pending Company Tasks — read-only scan. Each row deep-links
+          to the AI Command Center with a prepared command; nothing executes
+          automatically (the approval flow is unchanged). */}
+      <div className="os-glass os-glow-amber p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-amber-300" /> Pending Company Tasks
+            <span className="text-xs text-white/40 font-normal">({pendingTasks.length})</span>
+          </h3>
+          <Link to="/admin/managed-companies" className="text-xs text-white/50 hover:text-white">View all</Link>
+        </div>
+        {pendingTasks.length === 0 ? (
+          <div className="text-white/40 text-sm">All company profiles are complete.</div>
+        ) : (
+          <div className="divide-y divide-white/5">
+            {pendingTasks.map((t, i) => (
+              <div key={i} className="flex items-center justify-between gap-3 py-2 text-sm">
+                <div className="flex-1 min-w-0">
+                  <Link to={`/admin/managed-companies/${t.company.id}`}
+                    className="font-medium hover:text-blue-300 truncate block">
+                    {t.company.company_name || "Unnamed company"}
+                  </Link>
+                  <div className="text-xs text-white/40">Missing {t.item.label}</div>
+                </div>
+                <span className={`text-[10px] px-2 py-0.5 rounded ${
+                  t.item.priority <= 1 ? "bg-rose-500/15 text-rose-300"
+                  : t.item.priority <= 2 ? "bg-amber-500/15 text-amber-300"
+                  : "bg-zinc-500/15 text-zinc-300"
+                }`}>P{t.item.priority}</span>
+                <Link to={commandCenterUrl(t.item.prompt)}
+                  className="text-xs px-2.5 py-1 rounded-md bg-blue-600/20 hover:bg-blue-600/30 border border-blue-600/40 text-blue-200 flex items-center gap-1 whitespace-nowrap">
+                  <span>{t.item.icon}</span> {t.item.action}
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
