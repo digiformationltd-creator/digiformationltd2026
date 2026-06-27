@@ -4,17 +4,20 @@
 // "No live data available" empty states. NO fake/mock data.
 
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   Mail, Users, Send, Inbox, Clock, Search,
   Sparkles, FileText, Activity, BarChart3, Compass, ListChecks,
-  Megaphone, TrendingUp, RefreshCw, AlertCircle,
+  Megaphone, TrendingUp, RefreshCw, AlertCircle, Wrench,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import EmailTemplateManager from "../components/EmailTemplateManager";
+import OsEmailOps from "./OsEmailOps";
 
 type Tab =
   | "overview" | "campaigns" | "templates"
-  | "queue" | "logs" | "analytics" | "discovery" | "review";
+  | "queue" | "logs" | "analytics" | "operations"
+  | "discovery" | "review";
 
 const TABS: { id: Tab; label: string; icon: any }[] = [
   { id: "overview",   label: "Overview",       icon: BarChart3 },
@@ -23,6 +26,7 @@ const TABS: { id: Tab; label: string; icon: any }[] = [
   { id: "queue",      label: "Queue",          icon: Clock },
   { id: "logs",       label: "Logs",           icon: Activity },
   { id: "analytics",  label: "Analytics",      icon: TrendingUp },
+  { id: "operations", label: "Operations",     icon: Wrench },
   { id: "discovery",  label: "Lead Discovery", icon: Compass },
   { id: "review",     label: "Lead Review",    icon: ListChecks },
 ];
@@ -64,7 +68,15 @@ type Counts = {
 };
 
 export default function OsEmailMarketing() {
-  const [tab, setTab] = useState<Tab>("overview");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialTab = (searchParams.get("tab") as Tab) || "overview";
+  const [tab, setTabState] = useState<Tab>(initialTab);
+  const setTab = (t: Tab) => {
+    setTabState(t);
+    const next = new URLSearchParams(searchParams);
+    if (t === "overview") next.delete("tab"); else next.set("tab", t);
+    setSearchParams(next, { replace: true });
+  };
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
   const [logs, setLogs] = useState<LogRow[]>([]);
@@ -192,6 +204,7 @@ export default function OsEmailMarketing() {
       {tab === "queue"     && <Queue logs={dedupLogs} pending={counts.pending} sent={counts.sent} failed={counts.failed} />}
       {tab === "logs"      && <Logs logs={dedupLogs} loading={loading} />}
       {tab === "analytics" && <Analytics campaigns={campaigns} counts={counts} />}
+      {tab === "operations" && <OsEmailOps />}
       {tab === "discovery" && <NoBackend title="Lead Discovery" detail="No lead-discovery backend is connected. Categories, scans, and quality scoring will appear here once an outbound discovery service is wired in." />}
       {tab === "review"    && <NoBackend title="Lead Review" detail="No lead-review queue exists yet. When a discovery engine populates candidate leads, they will appear here for approval." />}
     </div>
