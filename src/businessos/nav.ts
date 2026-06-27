@@ -18,7 +18,6 @@ export const NAV: NavItem[] = [
   { label: "Companies",           to: "/admin/companies",       icon: Building2,       glow: "blue" },
   { label: "Orders",              to: "/admin/orders",          icon: ShoppingBag,     glow: "green" },
   { label: "Invoices",            to: "/admin/invoices",        icon: FileText,        glow: "lime" },
-  { label: "Growth Intelligence", to: "/admin/attribution",     icon: Sparkles,        glow: "purple" },
   { label: "Documents",           to: "/admin/documents",       icon: FolderOpen,      glow: "cyan" },
   { label: "Compliance",          to: "/admin/compliance",      icon: CalendarClock,   glow: "amber" },
 
