@@ -413,8 +413,8 @@ Deno.serve(async (req) => {
         error: errMsg,
         after_snapshot: afterSnapshot,
       }).eq('id', act.id)
-      // Phase 3 — sync state machine to terminal state
-      await admin.rpc('command_action_mark_finished', { _id: act.id, _ok: !errMsg })
+      // Phase 3 — sync state machine to terminal state (user-scoped for has_role)
+      await userClient.rpc('command_action_mark_finished', { _id: act.id, _ok: !errMsg })
 
       // Audit
       await admin.from('agent_audit_log').insert({
