@@ -68,7 +68,15 @@ type Counts = {
 };
 
 export default function OsEmailMarketing() {
-  const [tab, setTab] = useState<Tab>("overview");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialTab = (searchParams.get("tab") as Tab) || "overview";
+  const [tab, setTabState] = useState<Tab>(initialTab);
+  const setTab = (t: Tab) => {
+    setTabState(t);
+    const next = new URLSearchParams(searchParams);
+    if (t === "overview") next.delete("tab"); else next.set("tab", t);
+    setSearchParams(next, { replace: true });
+  };
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
   const [logs, setLogs] = useState<LogRow[]>([]);
