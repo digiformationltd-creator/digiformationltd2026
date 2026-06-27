@@ -8,11 +8,19 @@ import WelcomeTour, { shouldShowTourOnMount } from "./components/WelcomeTour";
 export default function Topbar() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const current = NAV.find((n) => n.to === "/admin"
-    ? pathname === "/admin"
-    : pathname.startsWith(n.to)
-  );
-  const title = current?.label || "Dashboard";
+  function findTitle(items: typeof NAV): string | undefined {
+    const flat: { label: string; to: string }[] = [];
+    for (const n of items) {
+      flat.push({ label: n.label, to: n.to });
+      if (n.children) flat.push(...n.children.map((c) => ({ label: c.label, to: c.to })));
+    }
+    const sorted = flat.sort((a, b) => b.to.length - a.to.length);
+    const match = sorted.find((f) =>
+      f.to === "/admin" ? pathname === "/admin" : pathname === f.to || pathname.startsWith(f.to + "/")
+    );
+    return match?.label;
+  }
+  const title = findTitle(NAV) || "Dashboard";
   const isRoot = pathname === "/admin" || pathname === "/admin/";
 
   const [tourOpen, setTourOpen] = useState(false);
