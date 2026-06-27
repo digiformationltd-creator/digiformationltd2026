@@ -28,16 +28,12 @@ type Msg = {
 
 type Thread = { id: string; title: string; updatedAt: string; pinned?: boolean };
 
-const QUICK_PROMPTS = [
-  { label: "Update Company Details",    icon: Building2,    tint: "bg-blue-500/10 text-blue-300" },
-  { label: "Extract Company Info",      icon: FileSearch,   tint: "bg-cyan-500/10 text-cyan-300" },
-  { label: "Create Reminder",           icon: Bell,         tint: "bg-amber-500/10 text-amber-300" },
-  { label: "Generate Email",            icon: Mail,         tint: "bg-pink-500/10 text-pink-300" },
-  { label: "Update Customer",           icon: UserCog,      tint: "bg-purple-500/10 text-purple-300" },
-  { label: "Summarise Website",         icon: Globe,        tint: "bg-green-500/10 text-green-300" },
-  { label: "Draft Reply",               icon: MessageSquare,tint: "bg-lime-500/10 text-lime-300" },
-  { label: "Check Missing Information", icon: ListChecks,   tint: "bg-red-500/10 text-red-300" },
-];
+// Static quick prompts have been removed by design. The Command Center
+// opens with a clean composer. Context-aware suggestions are surfaced
+// from live pending data on Company Detail / Dashboard and deep-link
+// here with `?q=...` already prefilled.
+
+
 
 const AGENTS = ["Auto (default)", "Reminder Agent", "Email Agent", "Company Agent", "Customer Agent"];
 
