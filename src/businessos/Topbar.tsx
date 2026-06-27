@@ -9,20 +9,16 @@ export default function Topbar() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   function findTitle(items: typeof NAV): string | undefined {
+    const flat: { label: string; to: string }[] = [];
     for (const n of items) {
-      if (n.to === "/admin" ? pathname === "/admin" : pathname.startsWith(n.to)) {
-        if (n.children) {
-          const exact = n.children.find((c) => pathname === c.to);
-          if (exact) return exact.label;
-        }
-        return n.label;
-      }
-      if (n.children) {
-        const child = n.children.find((c) => pathname === c.to || pathname.startsWith(c.to + "/"));
-        if (child) return child.label;
-      }
+      flat.push({ label: n.label, to: n.to });
+      if (n.children) flat.push(...n.children.map((c) => ({ label: c.label, to: c.to })));
     }
-    return undefined;
+    const sorted = flat.sort((a, b) => b.to.length - a.to.length);
+    const match = sorted.find((f) =>
+      f.to === "/admin" ? pathname === "/admin" : pathname === f.to || pathname.startsWith(f.to + "/")
+    );
+    return match?.label;
   }
   const title = findTitle(NAV) || "Dashboard";
   const isRoot = pathname === "/admin" || pathname === "/admin/";
