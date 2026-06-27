@@ -30,7 +30,7 @@ export const MODULES: ModuleEntry[] = [
   { name: "Support",              path: "/admin/support",            what: "Customer support tickets.",                      when: "Reply, update status, internal notes." },
   { name: "Documents",            path: "/admin/documents",          what: "Customer-uploaded and issued documents.",        when: "Verify uploads, share files." },
   { name: "Compliance",           path: "/admin/compliance",         what: "Filing deadlines and statutory reminders.",      when: "Plan upcoming filings, monitor risk." },
-  { name: "Email Ops",            path: "/admin/email-ops",          what: "Operational email log and metadata.",            when: "Trace a specific message that went out." },
+  { name: "Email Marketing",      path: "/admin/automation/email-marketing", what: "Campaigns, templates, queue, logs, analytics, and operations.", when: "Send, monitor, retry, or audit any outbound email." },
   { name: "Automation",           path: "/admin/automation",         what: "Hub for Command Center, Workflows, Jobs and Reminders.", when: "Run manual commands or review automation health." },
   { name: "Settings",             path: "/admin/settings",           what: "Configuration, services catalog and team.",      when: "Adjust pricing, services or roles." },
 ];
@@ -57,6 +57,6 @@ export const TROUBLESHOOTING = [
   { problem: "I sent a prompt but nothing happens.", fix: "Wait for the Preview card to render. If it stays blank, your prompt was likely ambiguous — try rephrasing with explicit names or IDs." },
   { problem: "The Undo button disappeared.",         fix: "Undo is available for ~10s after execution. After that the action is permanent; use the relevant module to make a correcting change." },
   { problem: "An automation didn't fire.",           fix: "Check Automation → Jobs for the latest run. System-owned jobs (invoices, reminders) run on schedule, not on demand." },
-  { problem: "A customer didn't receive their email.", fix: "Open Email Ops and search by recipient. The status column shows queued / sent / bounced / suppressed." },
+  { problem: "A customer didn't receive their email.", fix: "Open Email Marketing → Operations and search by recipient. The status column shows queued / sent / bounced / suppressed." },
   { problem: "A module is empty.",                   fix: "That's expected before data exists. The empty state explains how to seed the module." },
 ];
