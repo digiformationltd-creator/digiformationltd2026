@@ -28,16 +28,12 @@ type Msg = {
 
 type Thread = { id: string; title: string; updatedAt: string; pinned?: boolean };
 
-const QUICK_PROMPTS = [
-  { label: "Update Company Details",    icon: Building2,    tint: "bg-blue-500/10 text-blue-300" },
-  { label: "Extract Company Info",      icon: FileSearch,   tint: "bg-cyan-500/10 text-cyan-300" },
-  { label: "Create Reminder",           icon: Bell,         tint: "bg-amber-500/10 text-amber-300" },
-  { label: "Generate Email",            icon: Mail,         tint: "bg-pink-500/10 text-pink-300" },
-  { label: "Update Customer",           icon: UserCog,      tint: "bg-purple-500/10 text-purple-300" },
-  { label: "Summarise Website",         icon: Globe,        tint: "bg-green-500/10 text-green-300" },
-  { label: "Draft Reply",               icon: MessageSquare,tint: "bg-lime-500/10 text-lime-300" },
-  { label: "Check Missing Information", icon: ListChecks,   tint: "bg-red-500/10 text-red-300" },
-];
+// Static quick prompts have been removed by design. The Command Center
+// opens with a clean composer. Context-aware suggestions are surfaced
+// from live pending data on Company Detail / Dashboard and deep-link
+// here with `?q=...` already prefilled.
+
+
 
 const AGENTS = ["Auto (default)", "Reminder Agent", "Email Agent", "Company Agent", "Customer Agent"];
 
@@ -488,41 +484,13 @@ export default function OsAICommandCenter() {
 
         {/* CENTER: Conversation */}
         <section className="os-glass p-0 flex flex-col min-h-0 min-w-0">
-          {/* Quick prompts */}
-          <div className="p-3 border-b border-white/5 shrink-0">
-            <div className="flex items-center justify-between gap-2 mb-2">
-              <div className="flex items-center gap-2 min-w-0">
-                <Zap className="w-3.5 h-3.5 text-amber-300 shrink-0" />
-                <div className="text-[11px] uppercase tracking-wider text-white/40 truncate">Quick prompts</div>
-              </div>
-              <button
-                onClick={() => setPaletteOpen(true)}
-                className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] px-2 py-0.5 text-[10.5px] text-white/70 shrink-0"
-                title="Open Command Library"
-              >
-                <BookOpen className="w-3 h-3 text-purple-300" />
-                <span className="hidden sm:inline">Library</span>
-                <kbd className="font-mono text-[9.5px] bg-black/40 border border-white/10 rounded px-1 py-0.5">⌘K</kbd>
-              </button>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-1.5">
-              {QUICK_PROMPTS.map((q) => {
-                const Icon = q.icon;
-                return (
-                  <button
-                    key={q.label}
-                    onClick={() => setInput(q.label)}
-                    className="group inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20 px-2.5 py-1.5 text-[11px] text-white/80 transition min-w-0"
-                  >
-                    <span className={`w-4 h-4 rounded grid place-items-center shrink-0 ${q.tint}`}>
-                      <Icon className="w-2.5 h-2.5" />
-                    </span>
-                    <span className="truncate">{q.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          {/* Quick prompts removed — the Command Center now opens with a clean
+              chat surface. Contextual suggestions (e.g. "Fill Address",
+              "Find Website") are surfaced from live pending data on the
+              Company Detail page and Dashboard's Pending Company Tasks
+              widget, which deep-link here with the prompt pre-filled.
+              The Command Library is still reachable via the ⌘K hotkey. */}
+
 
 
           {/* Messages */}
