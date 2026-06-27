@@ -52,10 +52,11 @@ export default function OsDashboard() {
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
       const yearStart = new Date(now.getFullYear(), 0, 1).toISOString();
 
-      const [orders, leads, invoices] = await Promise.all([
+      const [orders, leads, invoices, companies] = await Promise.all([
         supabase.from("client_orders").select("amount_gbp,status,created_at,service,order_ref,customer_name").order("created_at",{ascending:false}).limit(500),
         supabase.from("leads").select("source,stage,follow_up_date,name,whatsapp,service,created_at").order("created_at",{ascending:false}).limit(500),
         supabase.from("invoices").select("total_gbp,status,issue_date,created_at,bill_to_name,invoice_number").order("created_at",{ascending:false}).limit(500),
+        supabase.from("managed_companies").select("id,company_name,company_number,registered_address,director,sic_code,incorporation_date,confirmation_due,accounts_filing_due,address_expire,utr_number,auth_code,status").limit(500),
       ]);
       if (cancelled) return;
 
