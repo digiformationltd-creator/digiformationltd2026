@@ -4,17 +4,20 @@
 // "No live data available" empty states. NO fake/mock data.
 
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   Mail, Users, Send, Inbox, Clock, Search,
   Sparkles, FileText, Activity, BarChart3, Compass, ListChecks,
-  Megaphone, TrendingUp, RefreshCw, AlertCircle,
+  Megaphone, TrendingUp, RefreshCw, AlertCircle, Wrench,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import EmailTemplateManager from "../components/EmailTemplateManager";
+import OsEmailOps from "./OsEmailOps";
 
 type Tab =
   | "overview" | "campaigns" | "templates"
-  | "queue" | "logs" | "analytics" | "discovery" | "review";
+  | "queue" | "logs" | "analytics" | "operations"
+  | "discovery" | "review";
 
 const TABS: { id: Tab; label: string; icon: any }[] = [
   { id: "overview",   label: "Overview",       icon: BarChart3 },
@@ -23,6 +26,7 @@ const TABS: { id: Tab; label: string; icon: any }[] = [
   { id: "queue",      label: "Queue",          icon: Clock },
   { id: "logs",       label: "Logs",           icon: Activity },
   { id: "analytics",  label: "Analytics",      icon: TrendingUp },
+  { id: "operations", label: "Operations",     icon: Wrench },
   { id: "discovery",  label: "Lead Discovery", icon: Compass },
   { id: "review",     label: "Lead Review",    icon: ListChecks },
 ];
