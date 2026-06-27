@@ -77,6 +77,7 @@ export default function Admin() {
           <Route path="leads" element={<Navigate to="/admin/automation/leads" replace />} />
           <Route path="whatsapp" element={<Navigate to="/admin/automation/whatsapp" replace />} />
           <Route path="whatsapp/:id" element={<RedirectWhatsAppContact />} />
+          <Route path="whatsapp-crm" element={<Navigate to="/admin/automation/whatsapp" replace />} />
           <Route path="email-ops" element={<Navigate to="/admin/automation/email-marketing?tab=operations" replace />} />
           <Route path="compliance" element={<OsCompliance />} />
           <Route path="settings" element={<OsSettings />} />

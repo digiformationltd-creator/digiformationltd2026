@@ -282,7 +282,7 @@ export default function OsGrowthIntelligence() {
           {/* Quick actions */}
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             <QuickAction icon={ShoppingBag} label="View Orders" onClick={() => navigate("/admin/orders")} />
-            <QuickAction icon={UserCheck} label="View Leads" onClick={() => navigate("/admin/leads")} />
+            <QuickAction icon={UserCheck} label="View Leads" onClick={() => navigate("/admin/automation/leads")} />
             <QuickAction icon={Download} label="Export CSV" onClick={exportCSV} disabled={!ov} />
           </div>
         </div>
@@ -378,7 +378,7 @@ export default function OsGrowthIntelligence() {
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold">Top Sources</h3>
           <button
-            onClick={() => navigate("/admin/leads")}
+            onClick={() => navigate("/admin/automation/leads")}
             className="text-[11px] text-white/50 hover:text-white/80 inline-flex items-center gap-1"
           >
             Open all leads <ArrowRight className="w-3 h-3" />
@@ -434,7 +434,7 @@ export default function OsGrowthIntelligence() {
           until={until}
           onClose={() => setDrill(null)}
           onOpenOrder={(id) => navigate(`/admin/orders?focus=${id}`)}
-          onOpenInquiry={(id) => navigate(`/admin/leads?focus=${id}`)}
+          onOpenInquiry={(id) => navigate(`/admin/automation/leads?focus=${id}`)}
         />
       )}
     </div>

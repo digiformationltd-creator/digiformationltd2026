@@ -86,7 +86,7 @@ export default function Topbar() {
           <Bell className="w-4 h-4" />
         </button>
         <button
-          onClick={() => navigate("/admin/leads?new=1")}
+          onClick={() => navigate("/admin/automation/leads?new=1")}
           className="h-10 w-10 sm:w-auto sm:px-4 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:opacity-90"
           title="New Lead">
           <Plus className="w-4 h-4" /> <span className="hidden sm:inline">New Lead</span>

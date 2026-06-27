@@ -207,7 +207,7 @@ function DashboardView({ stats, contacts, broadcasts }: any) {
         <div className="divide-y divide-white/5">
           {recent.length === 0 && <div className="text-sm text-white/40 py-6 text-center">No contacts yet.</div>}
           {recent.map((c: Contact) => (
-            <Link key={c.id} to={`/admin/whatsapp/${c.id}`} className="flex items-center justify-between py-3 hover:bg-white/5 -mx-2 px-2 rounded-lg">
+            <Link key={c.id} to={`/admin/automation/whatsapp/${c.id}`} className="flex items-center justify-between py-3 hover:bg-white/5 -mx-2 px-2 rounded-lg">
               <div>
                 <div className="font-medium text-sm">{c.display_name || "Unnamed"}</div>
                 <div className="mono text-xs text-white/45">{c.phone_e164}</div>
@@ -334,7 +334,7 @@ function ContactsView({ contacts, companies, orders }: any) {
                 return (
                   <tr key={c.id} className="hover:bg-white/5">
                     <td className="px-4 py-3">
-                      <Link to={`/admin/whatsapp/${c.id}`} className="font-medium hover:underline">
+                      <Link to={`/admin/automation/whatsapp/${c.id}`} className="font-medium hover:underline">
                         {c.display_name || lo?.customer_email || "Unnamed"}
                       </Link>
                       <div className="text-[10px] text-white/40">{c.user_id ? "Portal client" : "Guest"}</div>
@@ -590,7 +590,7 @@ function RemindersView({ companies, contacts }: any) {
               <td className="px-4 py-3 mono text-xs">{r.date}</td>
               <td className="px-4 py-3 text-xs">{r.company}</td>
               <td className="px-4 py-3 text-xs">
-                <Link to={`/admin/whatsapp/${r.contact!.id}`} className="hover:underline">
+                <Link to={`/admin/automation/whatsapp/${r.contact!.id}`} className="hover:underline">
                   {r.contact!.display_name || r.contact!.phone_e164}
                 </Link>
               </td>

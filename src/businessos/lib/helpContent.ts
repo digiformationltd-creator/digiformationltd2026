@@ -19,13 +19,13 @@ export const FAQS: FaqEntry[] = [
 
 export const MODULES: ModuleEntry[] = [
   { name: "Dashboard",            path: "/admin",                    what: "KPIs and recent activity across the business.", when: "Daily check-in." },
-  { name: "Leads",                path: "/admin/leads",              what: "Inbound enquiries before they become orders.",  when: "Triage new leads and move them through stages." },
+  { name: "Leads",                path: "/admin/automation/leads",              what: "Inbound enquiries before they become orders.",  when: "Triage new leads and move them through stages." },
   { name: "Clients",              path: "/admin/clients",            what: "All customers and their full journey.",          when: "Look up a customer, view history, send email." },
   { name: "Companies",            path: "/admin/companies",          what: "Customer-owned company records.",                when: "Update registered details or company status." },
   { name: "Managed Companies",    path: "/admin/managed-companies",  what: "Internal inventory of UK shelf companies.",      when: "Allocate, retire or update a managed entity." },
   { name: "Orders",               path: "/admin/orders",             what: "All service orders.",                            when: "Track fulfilment, mark complete, cancel." },
   { name: "Invoices",             path: "/admin/invoices",           what: "Generated invoices (auto-issued with orders).",  when: "Review status, download PDF, manual overrides." },
-  { name: "WhatsApp CRM",         path: "/admin/whatsapp",           what: "WhatsApp conversations with leads & clients.",   when: "Reply, tag, link to a client." },
+  { name: "WhatsApp CRM",         path: "/admin/automation/whatsapp",           what: "WhatsApp conversations with leads & clients.",   when: "Reply, tag, link to a client." },
   { name: "Growth Intelligence",  path: "/admin/attribution",        what: "Lead attribution and growth analytics.",         when: "Weekly performance review." },
   { name: "Support",              path: "/admin/support",            what: "Customer support tickets.",                      when: "Reply, update status, internal notes." },
   { name: "Documents",            path: "/admin/documents",          what: "Customer-uploaded and issued documents.",        when: "Verify uploads, share files." },
