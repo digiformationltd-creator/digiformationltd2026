@@ -89,6 +89,9 @@ export default function OsManagedCompanyDetail() {
         </div>
       )}
 
+      <PendingPanel row={row} />
+
+
       <div className="grid md:grid-cols-2 gap-4 rounded-xl border border-zinc-800 bg-zinc-950/40 p-6">
         <Field label="Company Name" value={row.company_name} onChange={v => setRow({...row, company_name: v})} />
         <Field label="Company Number" value={row.company_number} onChange={v => setRow({...row, company_number: v})} />
