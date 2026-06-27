@@ -38,6 +38,7 @@ export const NAV: NavItem[] = [
       { label: "Analytics",          to: "/admin/automation/analytics" },
     ],
   },
+  { label: "Growth Intelligence", to: "/admin/attribution",     icon: Sparkles,        glow: "purple" },
   { label: "Support",             to: "/admin/support",         icon: LifeBuoy,        glow: "red" },
   { label: "Settings",            to: "/admin/settings",        icon: Settings,        glow: "blue" },
 ];
