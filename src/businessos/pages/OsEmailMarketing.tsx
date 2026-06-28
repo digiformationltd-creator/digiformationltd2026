@@ -198,14 +198,13 @@ export default function OsEmailMarketing() {
       )}
 
       {tab === "overview"  && <Overview counts={counts} loading={loading} />}
+      {tab === "prospects" && <ProspectsPanel />}
       {tab === "campaigns" && <Campaigns campaigns={campaigns} loading={loading} />}
       {tab === "templates" && <EmailTemplateManager />}
       {tab === "queue"     && <Queue logs={dedupLogs} pending={counts.pending} sent={counts.sent} failed={counts.failed} />}
       {tab === "logs"      && <Logs logs={dedupLogs} loading={loading} />}
       {tab === "analytics" && <Analytics campaigns={campaigns} counts={counts} />}
       {tab === "operations" && <OsEmailOps />}
-      {tab === "discovery" && <NoBackend title="Lead Discovery" detail="No lead-discovery backend is connected. Categories, scans, and quality scoring will appear here once an outbound discovery service is wired in." />}
-      {tab === "review"    && <NoBackend title="Lead Review" detail="No lead-review queue exists yet. When a discovery engine populates candidate leads, they will appear here for approval." />}
     </div>
   );
 }
