@@ -8,27 +8,26 @@ import { useSearchParams } from "react-router-dom";
 import {
   Mail, Users, Send, Inbox, Clock, Search,
   Sparkles, FileText, Activity, BarChart3, Compass, ListChecks,
-  Megaphone, TrendingUp, RefreshCw, AlertCircle, Wrench,
+  Megaphone, TrendingUp, RefreshCw, AlertCircle, Wrench, Target,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import EmailTemplateManager from "../components/EmailTemplateManager";
+import ProspectsPanel from "../components/ProspectsPanel";
 import OsEmailOps from "./OsEmailOps";
 
 type Tab =
-  | "overview" | "campaigns" | "templates"
-  | "queue" | "logs" | "analytics" | "operations"
-  | "discovery" | "review";
+  | "overview" | "prospects" | "campaigns" | "templates"
+  | "queue" | "logs" | "analytics" | "operations";
 
 const TABS: { id: Tab; label: string; icon: any }[] = [
-  { id: "overview",   label: "Overview",       icon: BarChart3 },
-  { id: "campaigns",  label: "Campaigns",      icon: Megaphone },
-  { id: "templates",  label: "Templates",      icon: FileText },
-  { id: "queue",      label: "Queue",          icon: Clock },
-  { id: "logs",       label: "Logs",           icon: Activity },
-  { id: "analytics",  label: "Analytics",      icon: TrendingUp },
-  { id: "operations", label: "Operations",     icon: Wrench },
-  { id: "discovery",  label: "Lead Discovery", icon: Compass },
-  { id: "review",     label: "Lead Review",    icon: ListChecks },
+  { id: "overview",   label: "Overview",   icon: BarChart3 },
+  { id: "prospects",  label: "Prospects",  icon: Target },
+  { id: "campaigns",  label: "Campaigns",  icon: Megaphone },
+  { id: "templates",  label: "Templates",  icon: FileText },
+  { id: "queue",      label: "Queue",      icon: Clock },
+  { id: "logs",       label: "Logs",       icon: Activity },
+  { id: "analytics",  label: "Analytics",  icon: TrendingUp },
+  { id: "operations", label: "Operations", icon: Wrench },
 ];
 
 const TINT: Record<string, string> = {
@@ -199,14 +198,13 @@ export default function OsEmailMarketing() {
       )}
 
       {tab === "overview"  && <Overview counts={counts} loading={loading} />}
+      {tab === "prospects" && <ProspectsPanel />}
       {tab === "campaigns" && <Campaigns campaigns={campaigns} loading={loading} />}
       {tab === "templates" && <EmailTemplateManager />}
       {tab === "queue"     && <Queue logs={dedupLogs} pending={counts.pending} sent={counts.sent} failed={counts.failed} />}
       {tab === "logs"      && <Logs logs={dedupLogs} loading={loading} />}
       {tab === "analytics" && <Analytics campaigns={campaigns} counts={counts} />}
       {tab === "operations" && <OsEmailOps />}
-      {tab === "discovery" && <NoBackend title="Lead Discovery" detail="No lead-discovery backend is connected. Categories, scans, and quality scoring will appear here once an outbound discovery service is wired in." />}
-      {tab === "review"    && <NoBackend title="Lead Review" detail="No lead-review queue exists yet. When a discovery engine populates candidate leads, they will appear here for approval." />}
     </div>
   );
 }

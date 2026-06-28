@@ -745,6 +745,120 @@ export type Database = {
         }
         Relationships: []
       }
+      email_prospect_imports: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          filename: string | null
+          id: string
+          inserted_count: number
+          notes: string | null
+          row_count: number
+          skipped_count: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          filename?: string | null
+          id?: string
+          inserted_count?: number
+          notes?: string | null
+          row_count?: number
+          skipped_count?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          filename?: string | null
+          id?: string
+          inserted_count?: number
+          notes?: string | null
+          row_count?: number
+          skipped_count?: number
+        }
+        Relationships: []
+      }
+      email_prospects: {
+        Row: {
+          ai_classification: Json | null
+          assigned_campaign:
+            | Database["public"]["Enums"]["email_prospect_campaign"]
+            | null
+          business_name: string
+          business_type: string | null
+          contact_email: string | null
+          contact_name: string | null
+          country: string | null
+          created_at: string
+          created_by: string | null
+          has_website: boolean | null
+          id: string
+          imported_batch: string | null
+          industry: string | null
+          is_existing_customer: boolean
+          location: string | null
+          notes: string | null
+          size_category: Database["public"]["Enums"]["email_prospect_size"]
+          source: string
+          status: Database["public"]["Enums"]["email_prospect_status"]
+          tags: string[]
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          ai_classification?: Json | null
+          assigned_campaign?:
+            | Database["public"]["Enums"]["email_prospect_campaign"]
+            | null
+          business_name: string
+          business_type?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          country?: string | null
+          created_at?: string
+          created_by?: string | null
+          has_website?: boolean | null
+          id?: string
+          imported_batch?: string | null
+          industry?: string | null
+          is_existing_customer?: boolean
+          location?: string | null
+          notes?: string | null
+          size_category?: Database["public"]["Enums"]["email_prospect_size"]
+          source?: string
+          status?: Database["public"]["Enums"]["email_prospect_status"]
+          tags?: string[]
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          ai_classification?: Json | null
+          assigned_campaign?:
+            | Database["public"]["Enums"]["email_prospect_campaign"]
+            | null
+          business_name?: string
+          business_type?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          country?: string | null
+          created_at?: string
+          created_by?: string | null
+          has_website?: boolean | null
+          id?: string
+          imported_batch?: string | null
+          industry?: string | null
+          is_existing_customer?: boolean
+          location?: string | null
+          notes?: string | null
+          size_category?: Database["public"]["Enums"]["email_prospect_size"]
+          source?: string
+          status?: Database["public"]["Enums"]["email_prospect_status"]
+          tags?: string[]
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       email_reminder_log: {
         Row: {
           due_date: string
@@ -2492,6 +2606,26 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "client"
+      email_prospect_campaign:
+        | "idv_acsp"
+        | "uk_formation"
+        | "banking"
+        | "compliance"
+        | "ai_dashboard"
+        | "website_dev"
+      email_prospect_size:
+        | "micro"
+        | "small"
+        | "medium"
+        | "established"
+        | "unknown"
+      email_prospect_status:
+        | "new"
+        | "qualified"
+        | "rejected"
+        | "enrolled"
+        | "replied"
+        | "completed"
       lead_stage:
         | "new"
         | "contacted"
@@ -2650,6 +2784,29 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "client"],
+      email_prospect_campaign: [
+        "idv_acsp",
+        "uk_formation",
+        "banking",
+        "compliance",
+        "ai_dashboard",
+        "website_dev",
+      ],
+      email_prospect_size: [
+        "micro",
+        "small",
+        "medium",
+        "established",
+        "unknown",
+      ],
+      email_prospect_status: [
+        "new",
+        "qualified",
+        "rejected",
+        "enrolled",
+        "replied",
+        "completed",
+      ],
       lead_stage: [
         "new",
         "contacted",
