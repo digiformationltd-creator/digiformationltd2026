@@ -169,7 +169,10 @@ export default function ProspectsPanel() {
 
   return (
     <div className="space-y-5">
-      {/* KPIs */}
+      {/* Live AI dashboard */}
+      <ProspectDashboardWidgets />
+
+      {/* Pipeline counts (this loaded set) */}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
         <Stat label="Total"     value={counts.total}     tint="bg-white/5 text-white/70" />
         <Stat label="New"       value={counts.new}       tint="bg-cyan-500/10 text-cyan-300" />
