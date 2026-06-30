@@ -7,7 +7,14 @@ import { useCommandMachine, STATE_LABELS, STATE_TINT, type CommandAction } from 
 import { PreviewDiff } from "@/businessos/components/PreviewDiff";
 import { CommandPalette, useCommandPaletteHotkey } from "@/businessos/components/CommandPalette";
 import { CommandLibraryPanel } from "@/businessos/components/CommandLibraryPanel";
+import { BusinessPreviewCard, type AgentPlan } from "@/businessos/components/BusinessPreviewCard";
 import { pushRecent } from "@/businessos/lib/commandLibrary";
+import {
+  getActiveCompany, setActiveCompany,
+  getActiveCustomer, setActiveCustomer,
+  clearBusinessMemory,
+  type ActiveCompany, type ActiveCustomer,
+} from "@/businessos/lib/businessMemory";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Sparkles, Send, Paperclip, Bot, User, Eraser, RotateCcw,
@@ -15,7 +22,7 @@ import {
   Pin, MessageSquarePlus, Copy, Pencil, Play, Save, Building2, FileSearch,
   Bell, Mail, UserCog, Globe, MessageSquare, ListChecks, Briefcase, Receipt,
   Brain, History, Zap, PanelLeftClose, PanelRightClose, Undo2, ShieldAlert,
-  BookOpen, Command as CommandIcon,
+  BookOpen, Command as CommandIcon, Languages, Wand2, Code2, X,
 } from "lucide-react";
 
 type Msg = {
@@ -24,6 +31,8 @@ type Msg = {
   text: string;
   at: string;
   kind?: "text" | "code" | "table";
+  plan?: AgentPlan;
+  intent?: string;
 };
 
 type Thread = { id: string; title: string; updatedAt: string; pinned?: boolean };
