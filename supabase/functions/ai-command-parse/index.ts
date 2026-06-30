@@ -27,6 +27,7 @@ const SUPPORTED_INTENTS = [
   "send_email_template", "send_email", "draft_email",
   "update_company", "update_company_field", "update_company_address",
   "update_company_status", "add_note",
+  "fill_company_dashboard",
   "create_order", "update_order_status",
   "update_invoice_status", "update_invoice_meta",
   "lookup_company", "lookup_customer", "show_client_history",
@@ -76,6 +77,19 @@ INTENT FIELD CONTRACTS:
 - update_company_address: { company_id, registered_address }
 - update_company_status:  { company_id, status }
 - add_note: { company_id, note }
+- fill_company_dashboard: {
+    company_name,                       // mandatory — used to resolve the client
+    fields: {                           // any subset; omit unknown fields
+      company_number?, director_name?, sic_code?, utr_number?, auth_code?,
+      activation_code?, companies_house_personal_code?, registered_address?,
+      correspondence_address?, incorporation_date?, address_start?,
+      address_expire?, confirmation_due?, accounts_filing_due?
+    },
+    confidence?: { [field]: "high"|"medium"|"low" }   // per-field confidence
+  }
+  // Use when the user says "fill / complete / update <Company> details/dashboard",
+  // "X ki tafseelat bhar do", "X ki details complete kar do", or pastes a CH
+  // record and asks for it to be saved. Risk: "sensitive". Required: ["company_name"].
 - create_order: { service, customer_email, amount_gbp }
 - update_order_status: { order_id, status }
 - update_invoice_status: { invoice_id, status }   // draft|issued|paid|void|refunded

@@ -16,6 +16,11 @@ import {
   type ActiveCompany, type ActiveCustomer,
 } from "@/businessos/lib/businessMemory";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import {
+  buildDraft, saveDraft, resolveCompanyUserId,
+  type Confidence as DraftConfidence,
+} from "@/businessos/lib/companyDraft";
 import {
   Sparkles, Send, Paperclip, Bot, User, Eraser, RotateCcw,
   CheckCircle2, XCircle, ClipboardPaste, ChevronDown, Plus, Search,
@@ -140,6 +145,7 @@ export default function OsAICommandCenter() {
   const machine = useCommandMachine();
   const { state: ccState, action: pendingAction, isBusy: busy, canApprove, canCancel } = machine;
   const taRef = useRef<HTMLTextAreaElement>(null);
+  const navigate = useNavigate();
 
   // Phase 6 — Business Agent additions
   const [devMode, setDevMode] = useState(false);
@@ -309,6 +315,54 @@ export default function OsAICommandCenter() {
       message = "AI parser unavailable — using deterministic fallback.";
     }
     setLastPlan({ intent, plan, message });
+
+    // 2a) Phase 6 — Company Dashboard draft preview. Instead of returning
+    //     raw JSON, resolve the company to its user_id, stage proposed values
+    //     in sessionStorage, then navigate the admin to the real Company
+    //     Dashboard with `?draft=<id>`. Nothing is written until Execute.
+    if (intent === "fill_company_dashboard") {
+      const cname = String(payload.company_name ?? activeCompany?.company_name ?? "").trim();
+      if (!cname) {
+        setMessages((p) => [...p, {
+          id: uid + "-a", role: "assistant", at: "just now",
+          text: "Which company should I fill? Please give me the company name.",
+          intent, plan,
+        }]);
+        machine.reset(); taRef.current?.focus(); return;
+      }
+      const resolved = await resolveCompanyUserId(cname);
+      if (!resolved) {
+        setMessages((p) => [...p, {
+          id: uid + "-a", role: "assistant", at: "just now",
+          text: `I couldn't find a client whose company name matches **${cname}**. ` +
+                `Please open that client's dashboard first, or check the spelling.`,
+          intent, plan,
+        }]);
+        machine.reset(); taRef.current?.focus(); return;
+      }
+      const fields = (payload.fields ?? {}) as Record<string, string>;
+      const conf  = (payload.confidence ?? {}) as Record<string, DraftConfidence>;
+      const draft = buildDraft({
+        userId: resolved.userId,
+        companyName: resolved.companyName,
+        source: "Prepared by AI Command Center",
+        fields, confidence: conf,
+        missing: Array.isArray(plan.missing) ? plan.missing : [],
+        warnings: [],
+      });
+      saveDraft(draft);
+      updateActiveCompany({ id: resolved.userId, company_name: resolved.companyName });
+      setMessages((p) => [...p, {
+        id: uid + "-a", role: "assistant", at: "just now",
+        text: `Opening **${resolved.companyName}** in the Company Dashboard with a draft preview. ` +
+              `Every changed field is highlighted — review then click **Execute** to save.`,
+        intent, plan,
+      }]);
+      machine.reset();
+      navigate(`/admin/clients/${resolved.userId}?tab=company&draft=${draft.id}`);
+      return;
+    }
+
 
     // 2) Clarification — no preview, no execution.
     if (intent === "clarify") {

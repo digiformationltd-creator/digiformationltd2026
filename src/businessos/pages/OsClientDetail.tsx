@@ -10,10 +10,15 @@ import {
   ArrowLeft, Building2, MapPin, FileText, Wallet, LifeBuoy, Mail,
   Loader2, Save, Plus, Upload, Trash2, Send, Download, CreditCard,
   Calendar, User, Phone, RefreshCw, ShoppingBag, Receipt,
+  Sparkles, AlertTriangle, CheckCircle2, X as XIcon, Pencil,
 } from "lucide-react";
 import OsOrderDrawer from "../components/OsOrderDrawer";
 import OsInvoiceDrawer from "../components/OsInvoiceDrawer";
 import OsEmailHistoryPanel from "../components/OsEmailHistoryPanel";
+import {
+  getDraft, clearDraft, fieldDraftStatus,
+  DRAFT_FIELDS, type CompanyDraft, type DraftField,
+} from "@/businessos/lib/companyDraft";
 
 type TabKey =
   | "company" | "addresses" | "orders" | "invoices" | "documents"
@@ -120,18 +125,45 @@ export default function OsClientDetail() {
 }
 
 // ─────────────────────────── COMPANY ───────────────────────────
+// Supports in-place AI draft preview. When the URL carries `?draft=<id>`,
+// the live record is overlaid with proposals from sessionStorage and every
+// changed/new field is highlighted in green (new) or amber (changed). The
+// admin reviews the dashboard exactly as they normally see it and only on
+// Execute does the merge commit to the database.
 function CompanyTab({ userId }: { userId: string }) {
-  const [row, setRow] = useState<any>(null);
+  const [params, setParams] = useSearchParams();
+  const draftId = params.get("draft");
+
+  const [liveRow, setLiveRow] = useState<any>(null);   // server copy
+  const [row, setRow] = useState<any>(null);           // currently displayed (live ∪ draft overlays)
+  const [draft, setDraft] = useState<CompanyDraft | null>(null);
+  const [editDraft, setEditDraft] = useState(false);   // when true, fields become editable mid-draft
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   const load = async () => {
     setLoading(true);
     const { data } = await supabase.from("client_company_details").select("*").eq("user_id", userId).maybeSingle();
-    setRow(data || { user_id: userId });
+    const base = data || { user_id: userId };
+    setLiveRow(base);
+
+    // Apply draft overlay if present
+    const d = draftId ? getDraft(draftId) : null;
+    setDraft(d);
+    if (d && d.userId === userId) {
+      const merged: any = { ...base };
+      for (const [k, p] of Object.entries(d.proposed)) {
+        if (p?.value != null && String(p.value).trim() !== "") merged[k] = p.value;
+      }
+      setRow(merged);
+      setEditDraft(false);
+    } else {
+      setRow(base);
+    }
     setLoading(false);
   };
-  useEffect(() => { load(); }, [userId]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { load(); }, [userId, draftId]);
 
   const save = async () => {
     setSaving(true);
@@ -142,41 +174,173 @@ function CompanyTab({ userId }: { userId: string }) {
     setSaving(false);
     if (error) { toast.error(error.message); return; }
     toast.success("Company saved");
+    if (draftId) {
+      clearDraft(draftId);
+      params.delete("draft");
+      setParams(params, { replace: true });
+      setDraft(null);
+    }
     load();
+  };
+
+  const cancelDraft = () => {
+    if (!draftId) return;
+    clearDraft(draftId);
+    params.delete("draft");
+    setParams(params, { replace: true });
+    setDraft(null);
+    setEditDraft(false);
+    setRow(liveRow);
+    toast.message("Draft discarded");
   };
 
   const f = (k: string) => row?.[k] ?? "";
   const set = (k: string, v: string) => setRow({ ...row, [k]: v });
   const setDate = (k: string, v: string) => setRow({ ...row, [k]: v || null });
 
+  // Field tone: derive from draft proposal vs live value.
+  const toneFor = (k: string): "default" | "new" | "changed" | "warn" => {
+    if (!draft) return "default";
+    const liveVal = liveRow?.[k];
+    const prop = (draft.proposed as any)?.[k];
+    const status = fieldDraftStatus(liveVal, prop);
+    if (status === "unchanged") return "default";
+    if (prop?.confidence === "low") return "warn";
+    return status === "new" ? "new" : "changed";
+  };
+
+  const fieldsLocked = Boolean(draft) && !editDraft;
+
   if (loading) return <div className="os-glass p-8 text-center"><Loader2 className="w-5 h-5 animate-spin mx-auto text-white/40" /></div>;
 
+  // Compute review-panel metrics from the draft.
+  const reviewMetrics = (() => {
+    if (!draft) return null;
+    const changes: { field: string; from: string; to: string; confidence?: string }[] = [];
+    for (const k of DRAFT_FIELDS) {
+      const prop = (draft.proposed as any)?.[k] as { value: string | null; confidence?: "high" | "medium" | "low" } | undefined;
+      const status = fieldDraftStatus(liveRow?.[k], prop as any);
+      if (status !== "unchanged" && prop) {
+        changes.push({
+          field: k,
+          from: liveRow?.[k] ? String(liveRow[k]) : "",
+          to: String(prop.value ?? ""),
+          confidence: prop.confidence,
+        });
+      }
+    }
+    const low = changes.filter((c) => c.confidence === "low").length;
+    const high = changes.filter((c) => c.confidence === "high").length;
+    const score = changes.length === 0 ? 0 : Math.round((high / changes.length) * 100);
+    return { changes, low, high, score };
+  })();
+
   return (
-    <div className="os-glass p-5 space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <Field label="Company name"        value={f("company_name")}        onChange={(v) => set("company_name", v)} />
-        <Field label="Company number"      value={f("company_number")}      onChange={(v) => set("company_number", v)} />
-        <Field label="Director name"       value={f("director_name")}       onChange={(v) => set("director_name", v)} />
-        <Field label="SIC code"            value={f("sic_code")}            onChange={(v) => set("sic_code", v)} />
-        <Field label="UTR number"          value={f("utr_number")}          onChange={(v) => set("utr_number", v)} />
-        <Field label="Auth code"           value={f("auth_code")}           onChange={(v) => set("auth_code", v)} />
-        <Field label="Activation code"     value={f("activation_code")}     onChange={(v) => set("activation_code", v)} />
-        <Field label="CH personal code"    value={f("companies_house_personal_code")} onChange={(v) => set("companies_house_personal_code", v)} />
-        <Field label="Registered address"  value={f("registered_address")}  onChange={(v) => set("registered_address", v)} colSpan={2} />
-        <Field label="Correspondence address" value={f("correspondence_address")} onChange={(v) => set("correspondence_address", v)} colSpan={2} />
-        <DateField label="Incorporation date"      value={f("incorporation_date")}      onChange={(v) => setDate("incorporation_date", v)} />
-        <DateField label="Address start"           value={f("address_start")}           onChange={(v) => setDate("address_start", v)} />
-        <DateField label="Address expire"          value={f("address_expire")}          onChange={(v) => setDate("address_expire", v)} />
-        <DateField label="Confirmation due"        value={f("confirmation_due")}        onChange={(v) => setDate("confirmation_due", v)} />
-        <DateField label="Accounts filing due"     value={f("accounts_filing_due")}     onChange={(v) => setDate("accounts_filing_due", v)} />
+    <div className="space-y-3">
+      {/* Draft Review Banner */}
+      {draft && reviewMetrics && (
+        <div className="os-glass p-4 ring-1 ring-purple-400/40 bg-purple-500/[0.04]">
+          <div className="flex flex-wrap items-start gap-3">
+            <div className="w-9 h-9 rounded-xl grid place-items-center bg-purple-500/15 text-purple-200 shrink-0">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-sm font-semibold">
+                AI draft for <span className="text-purple-100">{draft.companyName}</span>
+              </div>
+              <div className="text-[11px] text-white/55 mt-0.5">
+                {draft.source} · prepared {new Date(draft.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                {editDraft && <span className="ml-2 text-amber-200">· editing</span>}
+              </div>
+              <div className="flex flex-wrap gap-2 mt-2 text-[11px]">
+                <span className="px-2 py-0.5 rounded-full bg-white/[0.06] text-white/80">
+                  {reviewMetrics.changes.length} field{reviewMetrics.changes.length === 1 ? "" : "s"} updated
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-200">
+                  Confidence {reviewMetrics.score}%
+                </span>
+                {draft.missing.length > 0 && (
+                  <span className="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-200 inline-flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3" />
+                    {draft.missing.length} missing
+                  </span>
+                )}
+                {reviewMetrics.low > 0 && (
+                  <span className="px-2 py-0.5 rounded-full bg-yellow-500/15 text-yellow-200">
+                    {reviewMetrics.low} low confidence
+                  </span>
+                )}
+                {draft.warnings.map((w, i) => (
+                  <span key={i} className="px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-200">{w}</span>
+                ))}
+              </div>
+              {(draft.missing.length > 0 || draft.warnings.length > 0) && (
+                <ul className="mt-2 text-[11px] text-amber-200/90 space-y-0.5">
+                  {draft.missing.slice(0, 6).map((m) => (
+                    <li key={m} className="inline-flex items-center gap-1.5 mr-3">
+                      <AlertTriangle className="w-3 h-3" /> {m.split("_").join(" ")} missing
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2 shrink-0">
+              <button
+                onClick={save}
+                disabled={saving || reviewMetrics.changes.length === 0}
+                className="px-3 h-9 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-100 text-xs font-semibold inline-flex items-center gap-1.5 disabled:opacity-40"
+              >
+                {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
+                Execute
+              </button>
+              <button
+                onClick={() => setEditDraft((v) => !v)}
+                className={`px-3 h-9 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 ${editDraft ? "bg-amber-500/20 text-amber-100" : "bg-white/[0.06] hover:bg-white/[0.12] text-white/80"}`}
+              >
+                <Pencil className="w-3.5 h-3.5" />
+                {editDraft ? "Stop editing" : "Edit draft"}
+              </button>
+              <button
+                onClick={cancelDraft}
+                className="px-3 h-9 rounded-lg bg-white/[0.05] hover:bg-rose-500/20 hover:text-rose-100 text-white/70 text-xs font-semibold inline-flex items-center gap-1.5"
+              >
+                <XIcon className="w-3.5 h-3.5" /> Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="os-glass p-5 space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <Field label="Company name"        value={f("company_name")}        onChange={(v) => set("company_name", v)}        tone={toneFor("company_name")}        readOnly={fieldsLocked} />
+          <Field label="Company number"      value={f("company_number")}      onChange={(v) => set("company_number", v)}      tone={toneFor("company_number")}      readOnly={fieldsLocked} />
+          <Field label="Director name"       value={f("director_name")}       onChange={(v) => set("director_name", v)}       tone={toneFor("director_name")}       readOnly={fieldsLocked} />
+          <Field label="SIC code"            value={f("sic_code")}            onChange={(v) => set("sic_code", v)}            tone={toneFor("sic_code")}            readOnly={fieldsLocked} />
+          <Field label="UTR number"          value={f("utr_number")}          onChange={(v) => set("utr_number", v)}          tone={toneFor("utr_number")}          readOnly={fieldsLocked} />
+          <Field label="Auth code"           value={f("auth_code")}           onChange={(v) => set("auth_code", v)}           tone={toneFor("auth_code")}           readOnly={fieldsLocked} />
+          <Field label="Activation code"     value={f("activation_code")}     onChange={(v) => set("activation_code", v)}     tone={toneFor("activation_code")}     readOnly={fieldsLocked} />
+          <Field label="CH personal code"    value={f("companies_house_personal_code")} onChange={(v) => set("companies_house_personal_code", v)} tone={toneFor("companies_house_personal_code")} readOnly={fieldsLocked} />
+          <Field label="Registered address"  value={f("registered_address")}  onChange={(v) => set("registered_address", v)}  tone={toneFor("registered_address")}  readOnly={fieldsLocked} colSpan={2} />
+          <Field label="Correspondence address" value={f("correspondence_address")} onChange={(v) => set("correspondence_address", v)} tone={toneFor("correspondence_address")} readOnly={fieldsLocked} colSpan={2} />
+          <DateField label="Incorporation date"  value={f("incorporation_date")}  onChange={(v) => setDate("incorporation_date", v)}  tone={toneFor("incorporation_date")}  readOnly={fieldsLocked} />
+          <DateField label="Address start"       value={f("address_start")}       onChange={(v) => setDate("address_start", v)}       tone={toneFor("address_start")}       readOnly={fieldsLocked} />
+          <DateField label="Address expire"      value={f("address_expire")}      onChange={(v) => setDate("address_expire", v)}      tone={toneFor("address_expire")}      readOnly={fieldsLocked} />
+          <DateField label="Confirmation due"    value={f("confirmation_due")}    onChange={(v) => setDate("confirmation_due", v)}    tone={toneFor("confirmation_due")}    readOnly={fieldsLocked} />
+          <DateField label="Accounts filing due" value={f("accounts_filing_due")} onChange={(v) => setDate("accounts_filing_due", v)} tone={toneFor("accounts_filing_due")} readOnly={fieldsLocked} />
+        </div>
+
+        {/* Plain Save button is hidden while a draft is active — the banner owns Execute. */}
+        {!draft && (
+          <button
+            onClick={save}
+            disabled={saving}
+            className="px-4 py-2 rounded-lg bg-white/[0.08] hover:bg-white/[0.14] text-sm font-semibold inline-flex items-center gap-2 disabled:opacity-50"
+          >
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save company
+          </button>
+        )}
       </div>
-      <button
-        onClick={save}
-        disabled={saving}
-        className="px-4 py-2 rounded-lg bg-white/[0.08] hover:bg-white/[0.14] text-sm font-semibold inline-flex items-center gap-2 disabled:opacity-50"
-      >
-        {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save company
-      </button>
     </div>
   );
 }
@@ -805,28 +969,54 @@ function EmailsTab({ userId, profile }: { userId: string; profile: any }) {
 
 
 // ─────────────────────────── helpers ───────────────────────────
-function Field({ label, value, onChange, type, colSpan }: { label: string; value: any; onChange: (v: string) => void; type?: string; colSpan?: number }) {
+type FieldTone = "default" | "new" | "changed" | "warn";
+
+function toneClasses(tone: FieldTone | undefined) {
+  switch (tone) {
+    case "new":
+      return "border-emerald-400/50 bg-emerald-500/10 ring-1 ring-emerald-400/30";
+    case "changed":
+      return "border-amber-400/50 bg-amber-500/10 ring-1 ring-amber-400/30";
+    case "warn":
+      return "border-yellow-400/50 bg-yellow-500/10 ring-1 ring-yellow-400/30";
+    default:
+      return "border-white/10 bg-white/[0.04]";
+  }
+}
+function toneBadge(tone: FieldTone | undefined) {
+  if (!tone || tone === "default") return null;
+  const label = tone === "new" ? "New" : tone === "changed" ? "Changed" : "Review";
+  const cls =
+    tone === "new" ? "bg-emerald-500/20 text-emerald-100" :
+    tone === "changed" ? "bg-amber-500/20 text-amber-100" :
+                          "bg-yellow-500/20 text-yellow-100";
+  return <span className={`ml-2 text-[10px] px-1.5 py-0.5 rounded-full ${cls}`}>{label}</span>;
+}
+
+function Field({ label, value, onChange, type, colSpan, tone, readOnly }: { label: string; value: any; onChange: (v: string) => void; type?: string; colSpan?: number; tone?: FieldTone; readOnly?: boolean }) {
   return (
     <label className={`block text-xs text-white/60 ${colSpan === 2 ? "md:col-span-2" : ""}`}>
-      <div className="mb-1">{label}</div>
+      <div className="mb-1 flex items-center">{label}{toneBadge(tone)}</div>
       <input
         type={type || "text"}
         value={value ?? ""}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg bg-white/[0.04] border border-white/10 px-3 py-2 text-sm focus:outline-none focus:border-white/30"
+        readOnly={readOnly}
+        className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:border-white/30 ${toneClasses(tone)} ${readOnly ? "cursor-default" : ""}`}
       />
     </label>
   );
 }
-function DateField({ label, value, onChange }: { label: string; value: any; onChange: (v: string) => void }) {
+function DateField({ label, value, onChange, tone, readOnly }: { label: string; value: any; onChange: (v: string) => void; tone?: FieldTone; readOnly?: boolean }) {
   return (
     <label className="block text-xs text-white/60">
-      <div className="mb-1">{label}</div>
+      <div className="mb-1 flex items-center">{label}{toneBadge(tone)}</div>
       <input
         type="date"
         value={value || ""}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg bg-white/[0.04] border border-white/10 px-3 py-2 text-sm focus:outline-none focus:border-white/30"
+        readOnly={readOnly}
+        className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:border-white/30 ${toneClasses(tone)} ${readOnly ? "cursor-default" : ""}`}
       />
     </label>
   );
