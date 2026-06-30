@@ -5,10 +5,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Upload, Plus, Search, Filter, Trash2, Users, CheckCircle2,
-  XCircle, FileSpreadsheet, Download, Loader2,
+  XCircle, FileSpreadsheet, Download, Loader2, Sparkles, Activity, RefreshCw,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { ProspectDashboardWidgets, ProspectTimelineDrawer } from "./ProspectIntelligence";
 
 type Campaign =
   | "idv_acsp" | "uk_formation" | "banking"
