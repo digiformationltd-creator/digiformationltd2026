@@ -342,7 +342,7 @@ export default function OsAICommandCenter() {
   const filteredRecent = RECENT.filter((t) => t.title.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="os-fade-in h-[calc(100vh-9rem)] min-h-[640px] flex flex-col gap-3 overflow-hidden">
+    <div className="os-fade-in h-[calc(100dvh-10rem)] md:h-[calc(100vh-9rem)] min-h-[560px] flex flex-col gap-3 overflow-hidden">
       {/* Compact header */}
       <div className="os-glass os-glow-purple px-4 py-3 flex items-center justify-between gap-3 shrink-0">
         <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -751,16 +751,18 @@ export default function OsAICommandCenter() {
 
       {/* Destructive typed-confirmation strip (Phase 3) */}
       {isDestructive && canApprove && (
-        <div className="os-glass px-3 py-2 flex items-center gap-3 shrink-0 border border-red-500/30">
-          <ShieldAlert className="w-4 h-4 text-red-300 shrink-0" />
-          <div className="text-[11px] text-red-200 shrink-0">
-            Destructive action — type <code className="px-1 rounded bg-black/40 text-red-100">{confirmRequired}</code> to enable execute
+        <div className="os-glass px-3 py-2 flex flex-wrap items-center gap-2 sm:gap-3 shrink-0 border border-red-500/30">
+          <div className="flex items-center gap-2 min-w-0">
+            <ShieldAlert className="w-4 h-4 text-red-300 shrink-0" />
+            <div className="text-[11px] text-red-200">
+              Destructive action — type <code className="px-1 rounded bg-black/40 text-red-100">{confirmRequired}</code> to enable execute
+            </div>
           </div>
           <input
             value={confirmText}
             onChange={(e) => setConfirmText(e.target.value)}
             placeholder={confirmRequired ?? ""}
-            className="flex-1 min-w-0 bg-black/30 border border-red-500/30 focus:border-red-400/60 rounded-md px-2 py-1 text-xs text-white placeholder:text-white/30 focus:outline-none"
+            className="flex-1 min-w-[140px] bg-black/30 border border-red-500/30 focus:border-red-400/60 rounded-md px-2 py-1 text-xs text-white placeholder:text-white/30 focus:outline-none"
           />
         </div>
       )}
@@ -797,14 +799,11 @@ export default function OsAICommandCenter() {
           <span className="text-white/20 hidden md:inline">·</span>
           <span className="hidden md:inline truncate">Agent: <span className="text-white/70">{agent}</span></span>
         </div>
-        <div className="flex items-center gap-1.5 overflow-x-auto min-w-0">
-          <ActionBtn icon={CheckCircle2} label="Approve & Execute" disabled={!canApprove || (isDestructive && !confirmOk)} onClick={executePending} tint="bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25" />
-          <ActionBtn icon={Play}         label="Execute" disabled={!canApprove || (isDestructive && !confirmOk)} onClick={executePending} tint="bg-purple-500/20 text-purple-200 hover:bg-purple-500/30" />
+        <div className="flex items-center gap-1.5 flex-wrap justify-end min-w-0">
+          <ActionBtn icon={Play}         label="Execute" disabled={!canApprove || (isDestructive && !confirmOk)} onClick={executePending} tint="bg-emerald-500/20 text-emerald-200 hover:bg-emerald-500/30" />
           <ActionBtn icon={XCircle}      label="Cancel"  disabled={!canCancel} onClick={rejectPending} tint="bg-red-500/10 text-red-300 hover:bg-red-500/20" />
           <ActionBtn icon={Undo2}        label={undoableId && undoLeft > 0 ? `Undo (${undoLeft}s)` : "Undo"} disabled={!undoableId || undoLeft <= 0 || rolling} onClick={undoLast} tint="bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25" />
-          <ActionBtn icon={RotateCcw}    label="Run Again" tint="bg-white/5 text-white/70 hover:bg-white/10" />
           <ActionBtn icon={Eraser}       label="Clear"    tint="bg-white/5 text-white/70 hover:bg-white/10" onClick={clearChat} />
-          <ActionBtn icon={Save}         label="Save Prompt" tint="bg-white/5 text-white/70 hover:bg-white/10" />
         </div>
       </div>
 
