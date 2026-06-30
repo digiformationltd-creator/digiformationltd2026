@@ -38,7 +38,7 @@ export default function Sidebar() {
     item.children?.some((c) => pathname === c.to || pathname.startsWith(c.to + "/")) ?? false;
 
   return (
-    <aside className="os-sidebar-bg hidden md:flex w-[260px] shrink-0 border-r border-white/5 h-screen sticky top-0 flex-col">
+    <aside className="os-sidebar-bg hidden md:flex w-[260px] shrink-0 border-r border-white/5 h-dvh sticky top-0 flex-col">
       <div className="px-4 py-4 border-b border-white/5">
         <NavLink to="/" className="flex items-center gap-3 group min-w-0" title="DigiFormation home">
           <img
