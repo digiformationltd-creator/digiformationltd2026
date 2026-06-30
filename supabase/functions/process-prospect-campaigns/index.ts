@@ -312,6 +312,24 @@ Deno.serve(async (req) => {
       }
       await supabase.from('prospect_campaign_runs').update(update).eq('id', run.id)
 
+      // Timeline: record this send
+      await supabase.from('prospect_timeline').insert({
+        prospect_id: prospect.id,
+        event_type: `email_${stepToSend}`,
+        title: `Email #${stepToSend} sent`,
+        detail: ai.subject,
+        payload: { campaign: run.campaign, message_id: send.messageId, subject: ai.subject },
+      })
+      if (!next) {
+        await supabase.from('prospect_timeline').insert({
+          prospect_id: prospect.id,
+          event_type: 'completed',
+          title: 'Sequence completed',
+          detail: 'All 3 emails delivered, no reply.',
+          payload: { campaign: run.campaign },
+        })
+      }
+
       // Mark prospect status if first send
       if (stepToSend === 1) {
         await supabase.from('email_prospects').update({ status: 'enrolled' }).eq('id', prospect.id)
