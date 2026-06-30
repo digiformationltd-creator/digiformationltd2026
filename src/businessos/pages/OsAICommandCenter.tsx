@@ -342,7 +342,7 @@ export default function OsAICommandCenter() {
   const filteredRecent = RECENT.filter((t) => t.title.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="os-fade-in h-[calc(100vh-9rem)] min-h-[640px] flex flex-col gap-3 overflow-hidden">
+    <div className="os-fade-in h-[calc(100dvh-10rem)] md:h-[calc(100vh-9rem)] min-h-[560px] flex flex-col gap-3 overflow-hidden">
       {/* Compact header */}
       <div className="os-glass os-glow-purple px-4 py-3 flex items-center justify-between gap-3 shrink-0">
         <div className="flex items-center gap-3 min-w-0 flex-1">
