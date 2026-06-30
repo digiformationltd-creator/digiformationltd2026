@@ -16,6 +16,11 @@ import {
   type ActiveCompany, type ActiveCustomer,
 } from "@/businessos/lib/businessMemory";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import {
+  buildDraft, saveDraft, resolveCompanyUserId,
+  type Confidence as DraftConfidence,
+} from "@/businessos/lib/companyDraft";
 import {
   Sparkles, Send, Paperclip, Bot, User, Eraser, RotateCcw,
   CheckCircle2, XCircle, ClipboardPaste, ChevronDown, Plus, Search,
