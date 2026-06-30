@@ -211,51 +211,74 @@ export default function OsAICommandCenter() {
     : null;
   const confirmOk = !confirmRequired || confirmText.trim() === confirmRequired;
 
-  // Deterministic intent parser — no AI. Maps natural-language hints to
-  // typed intents supported by `os-command-execute`. Defaults to create_task.
-  // "Reuse first": every intent listed here is handled by an existing table,
-  // RPC or edge function — no new backend is added.
-  const parseIntent = (text: string): { intent: string; payload: Record<string, any> } => {
+  // Deterministic fallback parser — used only when the AI service is
+  // unreachable. Maps obvious natural-language hints to typed intents
+  // supported by `os-command-execute`. Defaults to create_task.
+  const fallbackParse = (text: string): { intent: string; payload: Record<string, any> } => {
     const t = text.toLowerCase().trim();
     const emailMatch = text.match(/[\w.+-]+@[\w-]+\.[\w.-]+/);
     const email = emailMatch?.[0];
-
-    // Read-only "show / lookup / summarize" commands
     if (/^show .*reminder/.test(t) || t === "show reminders") return { intent: "show_reminders", payload: {} };
     if (/show .*(pending )?compliance|compliance due/.test(t)) return { intent: "show_pending_compliance", payload: {} };
     if (/show .*(scheduled )?jobs|cron status/.test(t)) return { intent: "show_jobs", payload: {} };
     if (/show .*(recent )?activity|automation runs|recent runs/.test(t)) return { intent: "show_recent_activity", payload: { limit: 25 } };
     if (/show .*history|client history|customer history/.test(t) && email) return { intent: "show_client_history", payload: { customer_email: email } };
-    if (/summari[sz]e .*company/.test(t)) return { intent: "summarize_company", payload: { company_id: "" } };
     if (/^(find|lookup|search) .*company/.test(t)) return { intent: "lookup_company", payload: { query: text.replace(/^(find|lookup|search)\s+(a\s+)?company\s*/i, "").trim() } };
-    if (/^(find|lookup|search) .*(customer|client)/.test(t)) return { intent: "lookup_customer", payload: { query: text.replace(/^(find|lookup|search)\s+(a\s+)?(customer|client)\s*/i, "").trim() || email || "" } };
-
-    // Mutations
-    if (/^remind|reminder|follow.?up tomorrow/.test(t)) return { intent: "create_reminder", payload: { title: text, priority: "high" } };
-    if (/^create .*follow.?up|follow.?up task/.test(t)) return { intent: "create_followup", payload: { title: text } };
-    if (/assign .*task/.test(t)) return { intent: "assign_task", payload: { task_id: "", assigned_to: "" } };
-    if (/draft .*email|write .*email|compose .*email/.test(t)) return { intent: "draft_email", payload: { subject: "", body: text, recipient_email: email ?? "" } };
-    if (/send email|send .*reminder email|email template/.test(t)) return { intent: "send_email_template", payload: { template: "", recipient_email: email ?? "" } };
-    // 🔒 create_invoice intentionally NOT mapped — invoices are auto-generated
-    // by the order-creation trigger. CC must not duplicate system automations.
-
-    if (/create .*order|new order/.test(t)) return { intent: "create_order", payload: { service: "", customer_email: email ?? "", amount_gbp: "" } };
-    if (/update .*order status|mark order/.test(t)) return { intent: "update_order_status", payload: { order_id: "", status: "" } };
-    // Batch 1 — Financial Core (manual overrides only; never re-sends emails)
-    if (/mark .*invoice .*(paid|void|refunded|issued|draft)|update .*invoice .*status|set invoice status/.test(t)) {
-      const m = t.match(/(paid|void|refunded|issued|draft)/);
-      return { intent: "update_invoice_status", payload: { invoice_id: "", status: m?.[1] ?? "" } };
-    }
-    if (/update .*invoice .*(due|notes|meta)|change .*invoice .*(due|notes)|edit invoice/.test(t)) {
-      return { intent: "update_invoice_meta", payload: { invoice_id: "", due_date: "", notes: "" } };
-    }
-
-    if (/update .*(registered )?address|change .*address/.test(t)) return { intent: "update_company_address", payload: { company_id: "", registered_address: "" } };
-    if (/update .*(company )?status|set company status/.test(t)) return { intent: "update_company_status", payload: { company_id: "", status: "" } };
-    if (/add note|append note|note to company/.test(t)) return { intent: "add_note", payload: { company_id: "", note: text } };
-    if (/update company|company field|change company/.test(t)) return { intent: "update_company", payload: { company_id: "", field: "notes", value: text } };
-
     return { intent: "create_task", payload: { title: text, priority: "normal" } };
+  };
+
+  // Phase 6 — Business Agent NLU. Calls the new `ai-command-parse` edge
+  // function which uses Lovable AI Gateway (Gemini) for multilingual intent
+  // parsing (English / Urdu / Roman Urdu / mixed) and produces a full
+  // execution plan { goal, required, missing, steps, modules, risk }.
+  const aiParse = async (text: string, paste: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke("ai-command-parse", {
+        body: {
+          mode: "parse_intent",
+          text,
+          paste: paste || undefined,
+          activeCompany,
+          activeCustomer,
+        },
+      });
+      if (error || !data?.ok) return null;
+      return data as {
+        ok: true; intent: string;
+        payload: Record<string, any>;
+        plan: AgentPlan; message: string;
+      };
+    } catch { return null; }
+  };
+
+  // Extract company fields from messy paste (Companies House, email, PDF text).
+  const runExtraction = async () => {
+    if (!paste.trim() || extracting) return;
+    setExtracting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("ai-command-parse", {
+        body: { mode: "extract_company", text: paste },
+      });
+      if (error || !data?.ok) {
+        setMessages((p) => [...p, {
+          id: crypto.randomUUID(), role: "assistant", at: "just now",
+          text: `❌ Extraction failed: ${error?.message ?? data?.error ?? "unknown"}`,
+        }]);
+        return;
+      }
+      const fields = data.fields ?? {};
+      const filled = Object.entries(fields).filter(([, v]) => v && String(v).trim());
+      const summary = filled.length
+        ? "**Extracted from paste:**\n\n" + filled.map(([k, v]) => `- **${k}**: ${v}`).join("\n") +
+          (Array.isArray(data.missing) && data.missing.length
+            ? `\n\n_Missing:_ ${data.missing.join(", ")}`
+            : "") +
+          `\n\nTell me what to do with these (e.g. *“create company with these details”* or *“update ${activeCompany?.company_name ?? "this company"}”*).`
+        : "I couldn't find any structured company data in the paste. Try a Companies House export or a fuller block of text.";
+      setMessages((p) => [...p, {
+        id: crypto.randomUUID(), role: "assistant", at: "just now", text: summary,
+      }]);
+    } finally { setExtracting(false); }
   };
 
   const send = async () => {
@@ -267,24 +290,72 @@ export default function OsAICommandCenter() {
     setInput("");
     pushRecent(t);
 
-    const { intent, payload } = parseIntent(t);
+    // 1) Ask the AI agent to understand the instruction.
+    const ai = await aiParse(t, paste);
+    let intent: string;
+    let payload: Record<string, any>;
+    let plan: AgentPlan;
+    let message: string;
+    if (ai) {
+      intent = ai.intent; payload = ai.payload ?? {}; plan = ai.plan; message = ai.message;
+    } else {
+      // AI unreachable — degrade to deterministic regex so the surface still works.
+      const f = fallbackParse(t);
+      intent = f.intent; payload = f.payload;
+      plan = {
+        goal: t, required: [], missing: [], steps: [`Run ${intent}`],
+        modules: ["Business OS"], risk: "safe",
+      };
+      message = "AI parser unavailable — using deterministic fallback.";
+    }
+    setLastPlan({ intent, plan, message });
+
+    // 2) Clarification — no preview, no execution.
+    if (intent === "clarify") {
+      setMessages((p) => [...p, {
+        id: uid + "-a", role: "assistant", at: "just now",
+        text: message || "Could you clarify what you'd like me to do?",
+        intent, plan,
+      }]);
+      machine.reset();
+      taRef.current?.focus();
+      return;
+    }
+
+    // 3) Missing required info — show the plan, don't call backend preview.
+    if (plan.missing.length > 0) {
+      setMessages((p) => [...p, {
+        id: uid + "-a", role: "assistant", at: "just now",
+        text: message || "I need a bit more information before I can prepare this.",
+        intent, plan,
+      }]);
+      machine.reset();
+      taRef.current?.focus();
+      return;
+    }
+
+    // 4) Hand off to the existing execution dispatcher for a real preview.
     const { data, error } = await supabase.functions.invoke("os-command-execute", {
       body: { action: "preview", intent, payload, prompt: t },
     });
     if (error || !data?.ok) {
       setMessages((p) => [...p, {
         id: uid + "-err", role: "assistant", at: "just now",
-        text: `Preview failed: ${error?.message ?? data?.error ?? "unknown error"}`,
+        text: `❌ Preview failed: ${error?.message ?? data?.error ?? "unknown error"}`,
+        intent, plan,
       }]);
       machine.set("error", null);
-      // auto-recover to idle so composer is usable again
       setTimeout(() => machine.reset(), 1200);
     } else {
-      // Backend creates the row already in awaiting_approval.
       machine.hydrate(data.action as CommandAction);
+      const baseText = message || `Ready to ${plan.goal || intent}.`;
+      const devBlock = devMode
+        ? `\n\n\`\`\`json\n${JSON.stringify(data.action.preview, null, 2)}\n\`\`\``
+        : "";
       setMessages((p) => [...p, {
         id: uid + "-a", role: "assistant", at: "just now",
-        text: `**Preview ready.** Intent: \`${intent}\` · Risk: \`${data.action.risk_tier ?? "safe"}\`\n\n\`\`\`json\n${JSON.stringify(data.action.preview, null, 2)}\n\`\`\`\n\nReview the preview, then press **Execute** to run it.`,
+        text: baseText + devBlock,
+        intent, plan,
       }]);
     }
     taRef.current?.focus();
@@ -300,10 +371,24 @@ export default function OsAICommandCenter() {
       body: { action: "execute", id: actionId },
     });
     const ok = !error && data?.ok;
+    // Update business memory after successful company-scoped action.
+    if (ok && pendingAction?.payload?.company_id) {
+      const cid = pendingAction.payload.company_id as string;
+      const cname = (data?.result?.company_name ?? activeCompany?.company_name ?? "Company") as string;
+      updateActiveCompany({ id: cid, company_name: cname });
+    }
+    if (ok && pendingAction?.intent === "lookup_company" && Array.isArray(data?.result?.results) && data.result.results.length === 1) {
+      const r = data.result.results[0];
+      updateActiveCompany({ id: r.id, company_name: r.company_name, company_number: r.company_number });
+    }
+    if (ok && (pendingAction?.payload?.customer_email || pendingAction?.payload?.recipient_email)) {
+      const em = (pendingAction.payload.customer_email ?? pendingAction.payload.recipient_email) as string;
+      updateActiveCustomer({ email: em });
+    }
     setMessages((p) => [...p, {
       id: crypto.randomUUID(), role: "assistant", at: "just now",
       text: ok
-        ? `✅ Executed.\n\n\`\`\`json\n${JSON.stringify(data.result, null, 2)}\n\`\`\``
+        ? `✅ Done.${devMode ? `\n\n\`\`\`json\n${JSON.stringify(data.result, null, 2)}\n\`\`\`` : ""}`
         : `❌ Execution failed: ${error?.message ?? data?.error ?? "unknown"}`,
     }]);
     machine.set(ok ? "success" : "error", null);
