@@ -1578,6 +1578,65 @@ export type Database = {
         }
         Relationships: []
       }
+      prospect_campaign_runs: {
+        Row: {
+          campaign: Database["public"]["Enums"]["email_prospect_campaign"]
+          completed_at: string | null
+          created_at: string
+          current_step: number
+          id: string
+          last_error: string | null
+          last_message_id: string | null
+          last_subject: string | null
+          next_send_at: string | null
+          prospect_id: string
+          started_at: string
+          status: string
+          stopped_reason: string | null
+          updated_at: string
+        }
+        Insert: {
+          campaign: Database["public"]["Enums"]["email_prospect_campaign"]
+          completed_at?: string | null
+          created_at?: string
+          current_step?: number
+          id?: string
+          last_error?: string | null
+          last_message_id?: string | null
+          last_subject?: string | null
+          next_send_at?: string | null
+          prospect_id: string
+          started_at?: string
+          status?: string
+          stopped_reason?: string | null
+          updated_at?: string
+        }
+        Update: {
+          campaign?: Database["public"]["Enums"]["email_prospect_campaign"]
+          completed_at?: string | null
+          created_at?: string
+          current_step?: number
+          id?: string
+          last_error?: string | null
+          last_message_id?: string | null
+          last_subject?: string | null
+          next_send_at?: string | null
+          prospect_id?: string
+          started_at?: string
+          status?: string
+          stopped_reason?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prospect_campaign_runs_prospect_id_fkey"
+            columns: ["prospect_id"]
+            isOneToOne: true
+            referencedRelation: "email_prospects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       services: {
         Row: {
           category: string | null

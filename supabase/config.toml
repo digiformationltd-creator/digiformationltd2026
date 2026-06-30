@@ -17,3 +17,8 @@ project_id = "ltxopeehtajwxpbwbqfr"
     verify_jwt = true
   [functions.cleanup-temporary-artifacts]
     verify_jwt = true
+  [functions.process-prospect-campaigns]
+    verify_jwt = true
+  [functions.prospect-campaign-control]
+    verify_jwt = false
+
