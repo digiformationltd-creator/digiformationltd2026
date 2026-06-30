@@ -11,12 +11,20 @@ import {
 type Stats = {
   awaiting_qualification: number;
   qualified_today: number;
+  imported_today: number;
+  active_campaigns: number;
   auto_campaigns_assigned: number;
   reply_rate: number;
+  replies_today: number;
+  meetings_today: number;
+  orders_today: number;
   meetings_booked: number;
   orders_generated: number;
+  conversion_rate: number;
   avg_confidence: number;
   rejected_total: number;
+  top_campaign: string | null;
+  best_industry: string | null;
 };
 
 export function ProspectDashboardWidgets() {
@@ -34,32 +42,129 @@ export function ProspectDashboardWidgets() {
 
   const items: { label: string; value: string | number; tint: string }[] = s
     ? [
-        { label: "Awaiting AI Qualification", value: s.awaiting_qualification, tint: "bg-amber-500/10 text-amber-300" },
-        { label: "AI Qualified Today",        value: s.qualified_today,        tint: "bg-cyan-500/10 text-cyan-300" },
-        { label: "Auto Campaigns Assigned",   value: s.auto_campaigns_assigned, tint: "bg-indigo-500/10 text-indigo-300" },
-        { label: "Reply Rate",                value: `${s.reply_rate}%`,       tint: "bg-purple-500/10 text-purple-300" },
-        { label: "Meetings Booked",           value: s.meetings_booked,        tint: "bg-emerald-500/10 text-emerald-300" },
-        { label: "Orders Generated",          value: s.orders_generated,       tint: "bg-emerald-500/10 text-emerald-300" },
-        { label: "Avg Confidence",            value: s.avg_confidence ? `${Math.round(Number(s.avg_confidence) * 100)}%` : "—", tint: "bg-white/5 text-white/70" },
-        { label: "Rejected",                  value: s.rejected_total,         tint: "bg-red-500/10 text-red-300" },
+        { label: "Imported Today",          value: s.imported_today,          tint: "bg-cyan-500/10 text-cyan-300" },
+        { label: "Qualified Today",         value: s.qualified_today,         tint: "bg-cyan-500/10 text-cyan-300" },
+        { label: "Active Campaigns",        value: s.active_campaigns,        tint: "bg-indigo-500/10 text-indigo-300" },
+        { label: "Replies Today",           value: s.replies_today,           tint: "bg-purple-500/10 text-purple-300" },
+        { label: "Meetings Today",          value: s.meetings_today,          tint: "bg-emerald-500/10 text-emerald-300" },
+        { label: "Orders Today",            value: s.orders_today,            tint: "bg-emerald-500/10 text-emerald-300" },
+        { label: "Conversion Rate",         value: `${s.conversion_rate}%`,   tint: "bg-amber-500/10 text-amber-300" },
+        { label: "AI Confidence",           value: s.avg_confidence ? `${Math.round(Number(s.avg_confidence) * 100)}%` : "—", tint: "bg-white/5 text-white/70" },
+        { label: "Awaiting Qualification",  value: s.awaiting_qualification,  tint: "bg-amber-500/10 text-amber-300" },
+        { label: "Reply Rate",              value: `${s.reply_rate}%`,        tint: "bg-purple-500/10 text-purple-300" },
+        { label: "Top Performing Campaign", value: s.top_campaign ?? "—",     tint: "bg-indigo-500/10 text-indigo-300" },
+        { label: "Best Industry",           value: s.best_industry ?? "—",    tint: "bg-emerald-500/10 text-emerald-300" },
       ]
     : [];
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       {!s
-        ? Array.from({ length: 8 }).map((_, i) => (
+        ? Array.from({ length: 12 }).map((_, i) => (
             <div key={i} className="os-glass p-3 animate-pulse h-[78px]" />
           ))
         : items.map((it) => (
             <div key={it.label} className="os-glass p-3">
               <div className={`inline-flex text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${it.tint}`}>{it.label}</div>
-              <div className="text-2xl font-bold mt-2">{typeof it.value === "number" ? it.value.toLocaleString() : it.value}</div>
+              <div className="text-2xl font-bold mt-2 truncate" title={String(it.value)}>{typeof it.value === "number" ? it.value.toLocaleString() : it.value}</div>
             </div>
           ))}
     </div>
   );
 }
+
+/* ---------------- AI Insights & Smart Recommendations ---------------- */
+
+type Insights = {
+  top_campaigns: { campaign: string; enrolled: number; replies: number; orders: number; conv_rate: number }[];
+  best_industries: { industry: string; enrolled: number; replies: number }[];
+  worst_industries: { industry: string; enrolled: number; replies: number }[];
+  best_subjects: { subject: string; sent: number; replies: number; reply_rate: number }[];
+  best_hours_utc: { hour_utc: number; sends: number; replies: number }[];
+  trend_14d: { day: string; replies: number; meetings: number; orders: number }[];
+};
+
+export function ProspectInsightsPanel() {
+  const [data, setData] = useState<Insights | null>(null);
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    (async () => {
+      const { data: d } = await supabase.rpc("prospect_insights");
+      setData(d as Insights);
+    })();
+  }, [open]);
+
+  return (
+    <div className="os-glass p-4">
+      <button onClick={() => setOpen((v) => !v)} className="w-full flex items-center justify-between text-left">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-cyan-300" />
+          <span className="font-semibold">AI Insights & Recommendations</span>
+          <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-400/20">Live</span>
+        </div>
+        <span className="text-xs text-white/40">{open ? "Hide" : "Show"}</span>
+      </button>
+
+      {open && (
+        <div className="mt-4 space-y-4">
+          {!data ? (
+            <div className="text-center py-6 text-white/40"><Loader2 className="w-4 h-4 animate-spin mx-auto" /></div>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-4">
+              <InsightTable title="Highest converting campaigns"
+                cols={["Campaign","Enrolled","Replies","Orders","Reply rate"]}
+                rows={data.top_campaigns.map((r) => [r.campaign, r.enrolled, r.replies, r.orders, `${r.conv_rate}%`])} />
+              <InsightTable title="Best performing industries"
+                cols={["Industry","Enrolled","Replies"]}
+                rows={data.best_industries.map((r) => [r.industry, r.enrolled, r.replies])} />
+              <InsightTable title="Lowest reply industries"
+                cols={["Industry","Enrolled","Replies"]}
+                rows={data.worst_industries.map((r) => [r.industry, r.enrolled, r.replies])} />
+              <InsightTable title="Best subject lines"
+                cols={["Subject","Sent","Replies","Reply rate"]}
+                rows={data.best_subjects.map((r) => [r.subject, r.sent, r.replies, `${r.reply_rate}%`])} />
+              <InsightTable title="Best sending hours (UTC)"
+                cols={["Hour","Sends","Replies"]}
+                rows={data.best_hours_utc.map((r) => [`${r.hour_utc}:00`, r.sends, r.replies])} />
+              <InsightTable title="14-day conversion trend"
+                cols={["Day","Replies","Meetings","Orders"]}
+                rows={data.trend_14d.map((r) => [new Date(r.day).toLocaleDateString(), r.replies, r.meetings, r.orders])} />
+            </div>
+          )}
+          <div className="text-[11px] text-white/40">
+            Recommendations are advisory only — they never modify existing campaigns automatically.
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function InsightTable({ title, cols, rows }: { title: string; cols: string[]; rows: (string | number)[][] }) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
+      <div className="text-xs uppercase tracking-wider text-white/50 mb-2">{title}</div>
+      {rows.length === 0 ? (
+        <div className="text-xs text-white/30 py-2">No data yet.</div>
+      ) : (
+        <table className="w-full text-xs">
+          <thead className="text-white/40">
+            <tr>{cols.map((c) => <th key={c} className="text-left font-normal pb-1">{c}</th>)}</tr>
+          </thead>
+          <tbody>
+            {rows.map((row, i) => (
+              <tr key={i} className="border-t border-white/5">
+                {row.map((v, j) => <td key={j} className="py-1 pr-2 truncate max-w-[160px]">{String(v)}</td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+}
+
 
 const EVENT_ICON: Record<string, ReactNode> = {
   qualified: <Sparkles className="w-4 h-4" />,
