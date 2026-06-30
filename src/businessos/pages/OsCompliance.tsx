@@ -94,7 +94,7 @@ export default function OsCompliance() {
     (compRes.data || []).forEach((c: any) => {
       const prof = profById.get(c.user_id);
       if (c.confirmation_due) {
-        const rem = remByTarget.get(`${c.id}:cs`) || { count: 0, last: null };
+        const rem = remByTarget.get(`${c.id}::confirmation_statement`) || { count: 0, last: null };
         out.push({
           kind: "confirmation_due",
           user_id: c.user_id,
@@ -108,7 +108,7 @@ export default function OsCompliance() {
         });
       }
       if (c.accounts_filing_due) {
-        const rem = remByTarget.get(`${c.id}:af`) || { count: 0, last: null };
+        const rem = remByTarget.get(`${c.id}::annual_accounts`) || { count: 0, last: null };
         out.push({
           kind: "accounts_filing_due",
           user_id: c.user_id,
