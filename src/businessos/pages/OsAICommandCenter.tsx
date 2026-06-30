@@ -65,7 +65,9 @@ const SEED_MESSAGES: Msg[] = [
     id: "seed-1",
     role: "assistant",
     text:
-      "Hi. Paste any text — a website, an email, Companies House data — and tell me what to do. I'll prepare a preview for you to approve before anything is saved.",
+      "Hi 👋 — I'm your Business Agent. Tell me what to do in English, Urdu, or Roman Urdu. " +
+      "Examples: *“Haventon Ltd ki details fill kar do”*, *“update Acme address to 10 Downing St”*, *“show pending compliance”*. " +
+      "I'll prepare a plan and wait for your approval before changing anything.",
     at: "now",
   },
 ];
