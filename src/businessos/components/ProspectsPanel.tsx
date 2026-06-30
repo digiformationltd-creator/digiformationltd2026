@@ -212,6 +212,10 @@ export default function ProspectsPanel() {
           className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-sm border border-white/10">
           <Plus className="w-4 h-4" /> Add
         </button>
+        <button onClick={runQualifierNow}
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-200 text-sm border border-indigo-400/20">
+          <Sparkles className="w-4 h-4" /> Run AI qualifier
+        </button>
         <button onClick={() => setShowImport(true)}
           className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-200 text-sm border border-cyan-400/20">
           <Upload className="w-4 h-4" /> Import CSV
