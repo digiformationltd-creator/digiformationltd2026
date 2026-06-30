@@ -781,6 +781,7 @@ export type Database = {
       email_prospects: {
         Row: {
           ai_classification: Json | null
+          ai_notes: string | null
           assigned_campaign:
             | Database["public"]["Enums"]["email_prospect_campaign"]
             | null
@@ -791,13 +792,19 @@ export type Database = {
           country: string | null
           created_at: string
           created_by: string | null
+          crm_lead_id: string | null
           has_website: boolean | null
           id: string
           imported_batch: string | null
           industry: string | null
           is_existing_customer: boolean
+          last_qualified_at: string | null
           location: string | null
           notes: string | null
+          qualification_confidence: number | null
+          qualification_status: string
+          qualified_at: string | null
+          recommended_campaigns: string[]
           size_category: Database["public"]["Enums"]["email_prospect_size"]
           source: string
           status: Database["public"]["Enums"]["email_prospect_status"]
@@ -807,6 +814,7 @@ export type Database = {
         }
         Insert: {
           ai_classification?: Json | null
+          ai_notes?: string | null
           assigned_campaign?:
             | Database["public"]["Enums"]["email_prospect_campaign"]
             | null
@@ -817,13 +825,19 @@ export type Database = {
           country?: string | null
           created_at?: string
           created_by?: string | null
+          crm_lead_id?: string | null
           has_website?: boolean | null
           id?: string
           imported_batch?: string | null
           industry?: string | null
           is_existing_customer?: boolean
+          last_qualified_at?: string | null
           location?: string | null
           notes?: string | null
+          qualification_confidence?: number | null
+          qualification_status?: string
+          qualified_at?: string | null
+          recommended_campaigns?: string[]
           size_category?: Database["public"]["Enums"]["email_prospect_size"]
           source?: string
           status?: Database["public"]["Enums"]["email_prospect_status"]
@@ -833,6 +847,7 @@ export type Database = {
         }
         Update: {
           ai_classification?: Json | null
+          ai_notes?: string | null
           assigned_campaign?:
             | Database["public"]["Enums"]["email_prospect_campaign"]
             | null
@@ -843,13 +858,19 @@ export type Database = {
           country?: string | null
           created_at?: string
           created_by?: string | null
+          crm_lead_id?: string | null
           has_website?: boolean | null
           id?: string
           imported_batch?: string | null
           industry?: string | null
           is_existing_customer?: boolean
+          last_qualified_at?: string | null
           location?: string | null
           notes?: string | null
+          qualification_confidence?: number | null
+          qualification_status?: string
+          qualified_at?: string | null
+          recommended_campaigns?: string[]
           size_category?: Database["public"]["Enums"]["email_prospect_size"]
           source?: string
           status?: Database["public"]["Enums"]["email_prospect_status"]
@@ -857,7 +878,15 @@ export type Database = {
           updated_at?: string
           website?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "email_prospects_crm_lead_id_fkey"
+            columns: ["crm_lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_reminder_log: {
         Row: {
@@ -1632,6 +1661,44 @@ export type Database = {
             foreignKeyName: "prospect_campaign_runs_prospect_id_fkey"
             columns: ["prospect_id"]
             isOneToOne: true
+            referencedRelation: "email_prospects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prospect_timeline: {
+        Row: {
+          created_at: string
+          detail: string | null
+          event_type: string
+          id: string
+          payload: Json
+          prospect_id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          detail?: string | null
+          event_type: string
+          id?: string
+          payload?: Json
+          prospect_id: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          detail?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json
+          prospect_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prospect_timeline_prospect_id_fkey"
+            columns: ["prospect_id"]
+            isOneToOne: false
             referencedRelation: "email_prospects"
             referencedColumns: ["id"]
           },
@@ -2597,6 +2664,7 @@ export type Database = {
       }
       next_order_number: { Args: never; Returns: number }
       ops_dashboard_summary: { Args: never; Returns: Json }
+      prospect_dashboard_stats: { Args: never; Returns: Json }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
         Returns: {

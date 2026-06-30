@@ -5,10 +5,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Upload, Plus, Search, Filter, Trash2, Users, CheckCircle2,
-  XCircle, FileSpreadsheet, Download, Loader2,
+  XCircle, FileSpreadsheet, Download, Loader2, Sparkles, Activity, RefreshCw,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { ProspectDashboardWidgets, ProspectTimelineDrawer } from "./ProspectIntelligence";
 
 type Campaign =
   | "idv_acsp" | "uk_formation" | "banking"
@@ -36,6 +37,10 @@ type Prospect = {
   notes: string | null;
   tags: string[];
   created_at: string;
+  qualification_status?: "pending" | "qualified" | "needs_review" | "rejected" | "skipped";
+  qualification_confidence?: number | null;
+  ai_notes?: string | null;
+  recommended_campaigns?: string[] | null;
 };
 
 const CAMPAIGNS: { id: Campaign; label: string; hint: string }[] = [
@@ -69,6 +74,51 @@ export default function ProspectsPanel() {
   const [campF, setCampF] = useState<Campaign | "all" | "none">("all");
   const [showImport, setShowImport] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
+  const [timelineFor, setTimelineFor] = useState<Prospect | null>(null);
+  const [requalifying, setRequalifying] = useState<string | null>(null);
+
+  const callControl = async (prospect_id: string, action: string, extra: any = {}) => {
+    const { data: sess } = await supabase.auth.getSession();
+    const token = sess.session?.access_token;
+    if (!token) { toast({ title: "Sign-in required", variant: "destructive" }); return null; }
+    const res = await fetch(`https://ltxopeehtajwxpbwbqfr.supabase.co/functions/v1/prospect-campaign-control`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ prospect_id, action, ...extra }),
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) { toast({ title: "Action failed", description: json.error || `HTTP ${res.status}`, variant: "destructive" }); return null; }
+    return json;
+  };
+
+  const requalify = async (id: string) => {
+    setRequalifying(id);
+    const r = await callControl(id, "requalify");
+    setRequalifying(null);
+    if (r) {
+      toast({ title: "Re-queued for AI qualification", description: "Runs on the next cron tick (≤10m)." });
+      setRows((rs) => rs.map((x) => x.id === id ? { ...x, qualification_status: "pending" } as any : x));
+    }
+  };
+
+  const runQualifierNow = async () => {
+    const { data: sess } = await supabase.auth.getSession();
+    const token = sess.session?.access_token;
+    if (!token) { toast({ title: "Sign-in required", variant: "destructive" }); return; }
+    toast({ title: "Running AI qualifier…" });
+    const res = await fetch(`https://ltxopeehtajwxpbwbqfr.supabase.co/functions/v1/qualify-prospects`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: "{}",
+    });
+    const j = await res.json().catch(() => ({}));
+    if (res.ok) {
+      toast({ title: "Qualifier complete", description: `Processed ${j?.summary?.processed ?? 0}, qualified ${j?.summary?.qualified ?? 0}` });
+      await load();
+    } else {
+      toast({ title: "Qualifier failed", description: j?.error || `HTTP ${res.status}`, variant: "destructive" });
+    }
+  };
 
   const load = async () => {
     setLoading(true);
@@ -119,7 +169,10 @@ export default function ProspectsPanel() {
 
   return (
     <div className="space-y-5">
-      {/* KPIs */}
+      {/* Live AI dashboard */}
+      <ProspectDashboardWidgets />
+
+      {/* Pipeline counts (this loaded set) */}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
         <Stat label="Total"     value={counts.total}     tint="bg-white/5 text-white/70" />
         <Stat label="New"       value={counts.new}       tint="bg-cyan-500/10 text-cyan-300" />
@@ -159,6 +212,10 @@ export default function ProspectsPanel() {
           className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-sm border border-white/10">
           <Plus className="w-4 h-4" /> Add
         </button>
+        <button onClick={runQualifierNow}
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-200 text-sm border border-indigo-400/20">
+          <Sparkles className="w-4 h-4" /> Run AI qualifier
+        </button>
         <button onClick={() => setShowImport(true)}
           className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-200 text-sm border border-cyan-400/20">
           <Upload className="w-4 h-4" /> Import CSV
@@ -197,9 +254,24 @@ export default function ProspectsPanel() {
                   <tr key={r.id} className="border-t border-white/5 hover:bg-white/[0.02]">
                     <td className="px-4 py-3">
                       <div className="font-medium text-white/90 truncate max-w-[200px]">{r.business_name}</div>
-                      {r.is_existing_customer && (
-                        <span className="text-[10px] uppercase tracking-wider text-emerald-300/80">Existing customer</span>
-                      )}
+                      <div className="flex items-center gap-1 flex-wrap mt-0.5">
+                        {r.is_existing_customer && (
+                          <span className="text-[10px] uppercase tracking-wider text-emerald-300/80">Existing</span>
+                        )}
+                        {r.qualification_status && r.qualification_status !== "skipped" && (
+                          <span className={`text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                            r.qualification_status === "qualified" ? "bg-cyan-500/15 text-cyan-300"
+                            : r.qualification_status === "needs_review" ? "bg-amber-500/15 text-amber-300"
+                            : r.qualification_status === "rejected" ? "bg-red-500/15 text-red-300"
+                            : "bg-white/5 text-white/50"
+                          }`}>
+                            AI: {r.qualification_status}
+                            {r.qualification_confidence != null && r.qualification_status === "qualified"
+                              ? ` ${Math.round(Number(r.qualification_confidence) * 100)}%`
+                              : ""}
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-4 py-3 text-white/70">
                       <div className="truncate max-w-[200px]">{r.contact_email ?? "—"}</div>
@@ -248,10 +320,25 @@ export default function ProspectsPanel() {
                       </select>
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <button onClick={() => removeProspect(r.id)}
-                        className="text-white/30 hover:text-red-300 p-1">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <div className="inline-flex items-center gap-0.5">
+                        <button
+                          onClick={() => setTimelineFor(r)}
+                          title="View timeline & AI notes"
+                          className="text-white/40 hover:text-cyan-300 p-1">
+                          <Activity className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => requalify(r.id)}
+                          disabled={requalifying === r.id}
+                          title="Re-run AI qualification"
+                          className="text-white/40 hover:text-indigo-300 p-1 disabled:opacity-40">
+                          {requalifying === r.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+                        </button>
+                        <button onClick={() => removeProspect(r.id)}
+                          className="text-white/30 hover:text-red-300 p-1">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -281,6 +368,15 @@ export default function ProspectsPanel() {
 
       {showImport && <ImportModal onClose={() => setShowImport(false)} onDone={load} />}
       {showAdd && <AddModal onClose={() => setShowAdd(false)} onDone={load} />}
+      {timelineFor && (
+        <ProspectTimelineDrawer
+          prospectId={timelineFor.id}
+          businessName={timelineFor.business_name}
+          aiNotes={timelineFor.ai_notes ?? null}
+          confidence={timelineFor.qualification_confidence ?? null}
+          onClose={() => setTimelineFor(null)}
+        />
+      )}
     </div>
   );
 }
