@@ -166,25 +166,45 @@ export default function OsCompliance() {
     const key = `${r.kind}-${r.target_id}`;
     setSending(key);
     try {
+      const meta = KIND_META[r.kind];
+      const days = daysUntil(r.due_date);
+      // Build templateData in the shape the registered templates expect
+      // (same fields the cron scheduler passes — see send-scheduled-reminders).
+      const templateData: Record<string, any> =
+        r.kind === "address_expire"
+          ? {
+              customerName: r.client_name,
+              address: r.label,
+              expireDate: r.due_date,
+              daysRemaining: days,
+            }
+          : {
+              customerName: r.client_name,
+              companyName: r.label,
+              dueDate: r.due_date,
+              daysRemaining: days,
+            };
+
       const { error } = await supabase.functions.invoke("send-transactional-email", {
         body: {
-          template: KIND_META[r.kind].template,
-          to: r.client_email,
-          data: {
-            client_name: r.client_name,
-            label: r.label,
-            due_date: r.due_date,
-            days_remaining: daysUntil(r.due_date),
-          },
-          idempotency_key: `manual-${r.kind}-${r.target_id}-${Date.now()}`,
-          purpose: "transactional",
+          templateName: meta.template,
+          recipientEmail: r.client_email,
+          templateData,
+          // Manual sends bypass the per-stage cron idempotency slot by tagging
+          // the key with a timestamp — the cron-stage rows stay reserved.
+          idempotencyKey: `manual-${meta.reminderType}-${r.target_id}-${Date.now()}`,
+          clientUserId: r.user_id,
+          triggerSource: "manual-compliance-page",
         },
       });
       if (error) throw error;
+      // Write the log row with the SAME shape as the cron scheduler so the
+      // compliance dashboard's "reminders sent" counts reconcile across
+      // manual + automated sends.
       await supabase.from("email_reminder_log").insert({
-        target_id: r.kind === "address_expire" ? r.target_id : `${r.target_id}:${r.kind === "confirmation_due" ? "cs" : "af"}`,
-        target_type: r.kind,
-        reminder_type: KIND_META[r.kind].template,
+        target_id: r.target_id,
+        target_type: r.kind === "address_expire" ? "address" : "company",
+        reminder_type: meta.reminderType,
         user_id: r.user_id,
         stage: r.reminders_sent + 1,
         due_date: r.due_date,
