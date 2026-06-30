@@ -22,6 +22,10 @@ import {
   type Confidence as DraftConfidence,
 } from "@/businessos/lib/companyDraft";
 import {
+  buildAddressDraft, saveAddressDraft, resolveCompanyForAddress,
+  type Confidence as AddrConfidence,
+} from "@/businessos/lib/addressDraft";
+import {
   Sparkles, Send, Paperclip, Bot, User, Eraser, RotateCcw,
   CheckCircle2, XCircle, ClipboardPaste, ChevronDown, Plus, Search,
   Pin, MessageSquarePlus, Copy, Pencil, Play, Save, Building2, FileSearch,
@@ -362,6 +366,69 @@ export default function OsAICommandCenter() {
       navigate(`/admin/clients/${resolved.userId}?tab=company&draft=${draft.id}`);
       return;
     }
+
+    // 2b) Phase 7 — Address Auto-Fill. Stage proposed address fields and
+    //     open the existing AddressesTab with `?draft_addr=<id>`. No DB
+    //     writes until Execute (which uses the existing save path).
+    if (intent === "fill_address") {
+      const cname = String(payload.company_name ?? activeCompany?.company_name ?? "").trim();
+      if (!cname) {
+        setMessages((p) => [...p, {
+          id: uid + "-a", role: "assistant", at: "just now",
+          text: "Which client is this address for? Please give me the company name.",
+          intent, plan,
+        }]);
+        machine.reset(); taRef.current?.focus(); return;
+      }
+      const resolved = await resolveCompanyForAddress(cname);
+      if (!resolved) {
+        setMessages((p) => [...p, {
+          id: uid + "-a", role: "assistant", at: "just now",
+          text: `I couldn't find a client matching **${cname}**. Open that client first or double-check the name.`,
+          intent, plan,
+        }]);
+        machine.reset(); taRef.current?.focus(); return;
+      }
+      // Try to match an existing address of the same service_type so we
+      // present old vs new instead of always creating a new row.
+      const desiredType = String((payload.fields as any)?.service_type ?? "").trim() || null;
+      let matchId: string | null = null;
+      if (desiredType) {
+        const { data: existing } = await supabase
+          .from("client_addresses")
+          .select("id")
+          .eq("user_id", resolved.userId)
+          .eq("service_type", desiredType)
+          .order("created_at", { ascending: false })
+          .limit(1);
+        matchId = existing?.[0]?.id ?? null;
+      }
+      const fields = (payload.fields ?? {}) as Record<string, string>;
+      const conf  = (payload.confidence ?? {}) as Record<string, AddrConfidence>;
+      const adraft = buildAddressDraft({
+        userId: resolved.userId,
+        companyName: resolved.companyName,
+        matchAddressId: matchId,
+        source: "Prepared by AI Command Center",
+        fields, confidence: conf,
+        missing: Array.isArray(plan.missing) ? plan.missing : [],
+        warnings: [],
+      });
+      saveAddressDraft(adraft);
+      updateActiveCompany({ id: resolved.userId, company_name: resolved.companyName });
+      setMessages((p) => [...p, {
+        id: uid + "-a", role: "assistant", at: "just now",
+        text: `Opening **${resolved.companyName}**'s Addresses with a draft preview. ` +
+              (matchId ? `I matched an existing **${desiredType}** address — review the highlighted changes and click **Execute** to save.`
+                       : `I'll add this as a new address — review the highlighted fields and click **Execute** to save.`),
+        intent, plan,
+      }]);
+      machine.reset();
+      navigate(`/admin/clients/${resolved.userId}?tab=addresses&draft_addr=${adraft.id}`);
+      return;
+    }
+
+
 
 
     // 2) Clarification — no preview, no execution.

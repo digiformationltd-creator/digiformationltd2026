@@ -27,7 +27,7 @@ const SUPPORTED_INTENTS = [
   "send_email_template", "send_email", "draft_email",
   "update_company", "update_company_field", "update_company_address",
   "update_company_status", "add_note",
-  "fill_company_dashboard",
+  "fill_company_dashboard", "fill_address",
   "create_order", "update_order_status",
   "update_invoice_status", "update_invoice_meta",
   "lookup_company", "lookup_customer", "show_client_history",
@@ -90,6 +90,22 @@ INTENT FIELD CONTRACTS:
   // Use when the user says "fill / complete / update <Company> details/dashboard",
   // "X ki tafseelat bhar do", "X ki details complete kar do", or pastes a CH
   // record and asks for it to be saved. Risk: "sensitive". Required: ["company_name"].
+- fill_address: {
+    company_name,                       // mandatory — which client this address belongs to
+    fields: {                           // any subset; omit unknown fields
+      label?,                           // e.g. "Registered Office", "Director Service Address"
+      service_type?,                    // one of: registered_office | director_service | correspondence | trading
+      building_name?, building_number?, street?,   // folded into address_line1 if line1 missing
+      address_line1?, address_line2?,
+      city?, county?, postcode?, country?,
+      start_date?, expire_date?         // ISO yyyy-mm-dd
+    },
+    confidence?: { [field]: "high"|"medium"|"low" }
+  }
+  // Use when the user pastes an address block or says "address bhar do",
+  // "registered address update karo", "fill the correspondence address from this".
+  // Risk: "sensitive". Required: ["company_name"]. NEVER invent postcodes or
+  // building numbers — leave the field empty and list it in plan.missing.
 - create_order: { service, customer_email, amount_gbp }
 - update_order_status: { order_id, status }
 - update_invoice_status: { invoice_id, status }   // draft|issued|paid|void|refunded
