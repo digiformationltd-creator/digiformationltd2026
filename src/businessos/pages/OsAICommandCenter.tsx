@@ -797,14 +797,11 @@ export default function OsAICommandCenter() {
           <span className="text-white/20 hidden md:inline">·</span>
           <span className="hidden md:inline truncate">Agent: <span className="text-white/70">{agent}</span></span>
         </div>
-        <div className="flex items-center gap-1.5 overflow-x-auto min-w-0">
-          <ActionBtn icon={CheckCircle2} label="Approve & Execute" disabled={!canApprove || (isDestructive && !confirmOk)} onClick={executePending} tint="bg-emerald-500/15 text-emerald-300 hover:bg-emerald-500/25" />
-          <ActionBtn icon={Play}         label="Execute" disabled={!canApprove || (isDestructive && !confirmOk)} onClick={executePending} tint="bg-purple-500/20 text-purple-200 hover:bg-purple-500/30" />
+        <div className="flex items-center gap-1.5 flex-wrap justify-end min-w-0">
+          <ActionBtn icon={Play}         label="Execute" disabled={!canApprove || (isDestructive && !confirmOk)} onClick={executePending} tint="bg-emerald-500/20 text-emerald-200 hover:bg-emerald-500/30" />
           <ActionBtn icon={XCircle}      label="Cancel"  disabled={!canCancel} onClick={rejectPending} tint="bg-red-500/10 text-red-300 hover:bg-red-500/20" />
           <ActionBtn icon={Undo2}        label={undoableId && undoLeft > 0 ? `Undo (${undoLeft}s)` : "Undo"} disabled={!undoableId || undoLeft <= 0 || rolling} onClick={undoLast} tint="bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25" />
-          <ActionBtn icon={RotateCcw}    label="Run Again" tint="bg-white/5 text-white/70 hover:bg-white/10" />
           <ActionBtn icon={Eraser}       label="Clear"    tint="bg-white/5 text-white/70 hover:bg-white/10" onClick={clearChat} />
-          <ActionBtn icon={Save}         label="Save Prompt" tint="bg-white/5 text-white/70 hover:bg-white/10" />
         </div>
       </div>
 
