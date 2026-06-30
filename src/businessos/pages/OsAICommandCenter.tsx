@@ -7,7 +7,14 @@ import { useCommandMachine, STATE_LABELS, STATE_TINT, type CommandAction } from 
 import { PreviewDiff } from "@/businessos/components/PreviewDiff";
 import { CommandPalette, useCommandPaletteHotkey } from "@/businessos/components/CommandPalette";
 import { CommandLibraryPanel } from "@/businessos/components/CommandLibraryPanel";
+import { BusinessPreviewCard, type AgentPlan } from "@/businessos/components/BusinessPreviewCard";
 import { pushRecent } from "@/businessos/lib/commandLibrary";
+import {
+  getActiveCompany, setActiveCompany,
+  getActiveCustomer, setActiveCustomer,
+  clearBusinessMemory,
+  type ActiveCompany, type ActiveCustomer,
+} from "@/businessos/lib/businessMemory";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Sparkles, Send, Paperclip, Bot, User, Eraser, RotateCcw,
@@ -15,7 +22,7 @@ import {
   Pin, MessageSquarePlus, Copy, Pencil, Play, Save, Building2, FileSearch,
   Bell, Mail, UserCog, Globe, MessageSquare, ListChecks, Briefcase, Receipt,
   Brain, History, Zap, PanelLeftClose, PanelRightClose, Undo2, ShieldAlert,
-  BookOpen, Command as CommandIcon,
+  BookOpen, Command as CommandIcon, Languages, Wand2, Code2, X,
 } from "lucide-react";
 
 type Msg = {
@@ -24,6 +31,8 @@ type Msg = {
   text: string;
   at: string;
   kind?: "text" | "code" | "table";
+  plan?: AgentPlan;
+  intent?: string;
 };
 
 type Thread = { id: string; title: string; updatedAt: string; pinned?: boolean };
@@ -56,7 +65,9 @@ const SEED_MESSAGES: Msg[] = [
     id: "seed-1",
     role: "assistant",
     text:
-      "Hi. Paste any text — a website, an email, Companies House data — and tell me what to do. I'll prepare a preview for you to approve before anything is saved.",
+      "Hi 👋 — I'm your Business Agent. Tell me what to do in English, Urdu, or Roman Urdu. " +
+      "Examples: *“Haventon Ltd ki details fill kar do”*, *“update Acme address to 10 Downing St”*, *“show pending compliance”*. " +
+      "I'll prepare a plan and wait for your approval before changing anything.",
     at: "now",
   },
 ];
@@ -130,6 +141,15 @@ export default function OsAICommandCenter() {
   const { state: ccState, action: pendingAction, isBusy: busy, canApprove, canCancel } = machine;
   const taRef = useRef<HTMLTextAreaElement>(null);
 
+  // Phase 6 — Business Agent additions
+  const [devMode, setDevMode] = useState(false);
+  const [extracting, setExtracting] = useState(false);
+  const [lastPlan, setLastPlan] = useState<{ intent: string; plan: AgentPlan; message: string } | null>(null);
+  const [activeCompany, setActiveCompanyState] = useState<ActiveCompany>(() => getActiveCompany());
+  const [activeCustomer, setActiveCustomerState] = useState<ActiveCustomer>(() => getActiveCustomer());
+  const updateActiveCompany = (c: ActiveCompany) => { setActiveCompany(c); setActiveCompanyState(c); };
+  const updateActiveCustomer = (c: ActiveCustomer) => { setActiveCustomer(c); setActiveCustomerState(c); };
+
   useCommandPaletteHotkey(useCallback(() => setPaletteOpen((v) => !v), []));
 
   // Allow other pages (Company Detail, Pending widget) to deep-link with a
@@ -191,51 +211,74 @@ export default function OsAICommandCenter() {
     : null;
   const confirmOk = !confirmRequired || confirmText.trim() === confirmRequired;
 
-  // Deterministic intent parser — no AI. Maps natural-language hints to
-  // typed intents supported by `os-command-execute`. Defaults to create_task.
-  // "Reuse first": every intent listed here is handled by an existing table,
-  // RPC or edge function — no new backend is added.
-  const parseIntent = (text: string): { intent: string; payload: Record<string, any> } => {
+  // Deterministic fallback parser — used only when the AI service is
+  // unreachable. Maps obvious natural-language hints to typed intents
+  // supported by `os-command-execute`. Defaults to create_task.
+  const fallbackParse = (text: string): { intent: string; payload: Record<string, any> } => {
     const t = text.toLowerCase().trim();
     const emailMatch = text.match(/[\w.+-]+@[\w-]+\.[\w.-]+/);
     const email = emailMatch?.[0];
-
-    // Read-only "show / lookup / summarize" commands
     if (/^show .*reminder/.test(t) || t === "show reminders") return { intent: "show_reminders", payload: {} };
     if (/show .*(pending )?compliance|compliance due/.test(t)) return { intent: "show_pending_compliance", payload: {} };
     if (/show .*(scheduled )?jobs|cron status/.test(t)) return { intent: "show_jobs", payload: {} };
     if (/show .*(recent )?activity|automation runs|recent runs/.test(t)) return { intent: "show_recent_activity", payload: { limit: 25 } };
     if (/show .*history|client history|customer history/.test(t) && email) return { intent: "show_client_history", payload: { customer_email: email } };
-    if (/summari[sz]e .*company/.test(t)) return { intent: "summarize_company", payload: { company_id: "" } };
     if (/^(find|lookup|search) .*company/.test(t)) return { intent: "lookup_company", payload: { query: text.replace(/^(find|lookup|search)\s+(a\s+)?company\s*/i, "").trim() } };
-    if (/^(find|lookup|search) .*(customer|client)/.test(t)) return { intent: "lookup_customer", payload: { query: text.replace(/^(find|lookup|search)\s+(a\s+)?(customer|client)\s*/i, "").trim() || email || "" } };
-
-    // Mutations
-    if (/^remind|reminder|follow.?up tomorrow/.test(t)) return { intent: "create_reminder", payload: { title: text, priority: "high" } };
-    if (/^create .*follow.?up|follow.?up task/.test(t)) return { intent: "create_followup", payload: { title: text } };
-    if (/assign .*task/.test(t)) return { intent: "assign_task", payload: { task_id: "", assigned_to: "" } };
-    if (/draft .*email|write .*email|compose .*email/.test(t)) return { intent: "draft_email", payload: { subject: "", body: text, recipient_email: email ?? "" } };
-    if (/send email|send .*reminder email|email template/.test(t)) return { intent: "send_email_template", payload: { template: "", recipient_email: email ?? "" } };
-    // 🔒 create_invoice intentionally NOT mapped — invoices are auto-generated
-    // by the order-creation trigger. CC must not duplicate system automations.
-
-    if (/create .*order|new order/.test(t)) return { intent: "create_order", payload: { service: "", customer_email: email ?? "", amount_gbp: "" } };
-    if (/update .*order status|mark order/.test(t)) return { intent: "update_order_status", payload: { order_id: "", status: "" } };
-    // Batch 1 — Financial Core (manual overrides only; never re-sends emails)
-    if (/mark .*invoice .*(paid|void|refunded|issued|draft)|update .*invoice .*status|set invoice status/.test(t)) {
-      const m = t.match(/(paid|void|refunded|issued|draft)/);
-      return { intent: "update_invoice_status", payload: { invoice_id: "", status: m?.[1] ?? "" } };
-    }
-    if (/update .*invoice .*(due|notes|meta)|change .*invoice .*(due|notes)|edit invoice/.test(t)) {
-      return { intent: "update_invoice_meta", payload: { invoice_id: "", due_date: "", notes: "" } };
-    }
-
-    if (/update .*(registered )?address|change .*address/.test(t)) return { intent: "update_company_address", payload: { company_id: "", registered_address: "" } };
-    if (/update .*(company )?status|set company status/.test(t)) return { intent: "update_company_status", payload: { company_id: "", status: "" } };
-    if (/add note|append note|note to company/.test(t)) return { intent: "add_note", payload: { company_id: "", note: text } };
-    if (/update company|company field|change company/.test(t)) return { intent: "update_company", payload: { company_id: "", field: "notes", value: text } };
-
     return { intent: "create_task", payload: { title: text, priority: "normal" } };
+  };
+
+  // Phase 6 — Business Agent NLU. Calls the new `ai-command-parse` edge
+  // function which uses Lovable AI Gateway (Gemini) for multilingual intent
+  // parsing (English / Urdu / Roman Urdu / mixed) and produces a full
+  // execution plan { goal, required, missing, steps, modules, risk }.
+  const aiParse = async (text: string, paste: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke("ai-command-parse", {
+        body: {
+          mode: "parse_intent",
+          text,
+          paste: paste || undefined,
+          activeCompany,
+          activeCustomer,
+        },
+      });
+      if (error || !data?.ok) return null;
+      return data as {
+        ok: true; intent: string;
+        payload: Record<string, any>;
+        plan: AgentPlan; message: string;
+      };
+    } catch { return null; }
+  };
+
+  // Extract company fields from messy paste (Companies House, email, PDF text).
+  const runExtraction = async () => {
+    if (!paste.trim() || extracting) return;
+    setExtracting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("ai-command-parse", {
+        body: { mode: "extract_company", text: paste },
+      });
+      if (error || !data?.ok) {
+        setMessages((p) => [...p, {
+          id: crypto.randomUUID(), role: "assistant", at: "just now",
+          text: `❌ Extraction failed: ${error?.message ?? data?.error ?? "unknown"}`,
+        }]);
+        return;
+      }
+      const fields = data.fields ?? {};
+      const filled = Object.entries(fields).filter(([, v]) => v && String(v).trim());
+      const summary = filled.length
+        ? "**Extracted from paste:**\n\n" + filled.map(([k, v]) => `- **${k}**: ${v}`).join("\n") +
+          (Array.isArray(data.missing) && data.missing.length
+            ? `\n\n_Missing:_ ${data.missing.join(", ")}`
+            : "") +
+          `\n\nTell me what to do with these (e.g. *“create company with these details”* or *“update ${activeCompany?.company_name ?? "this company"}”*).`
+        : "I couldn't find any structured company data in the paste. Try a Companies House export or a fuller block of text.";
+      setMessages((p) => [...p, {
+        id: crypto.randomUUID(), role: "assistant", at: "just now", text: summary,
+      }]);
+    } finally { setExtracting(false); }
   };
 
   const send = async () => {
@@ -247,24 +290,72 @@ export default function OsAICommandCenter() {
     setInput("");
     pushRecent(t);
 
-    const { intent, payload } = parseIntent(t);
+    // 1) Ask the AI agent to understand the instruction.
+    const ai = await aiParse(t, paste);
+    let intent: string;
+    let payload: Record<string, any>;
+    let plan: AgentPlan;
+    let message: string;
+    if (ai) {
+      intent = ai.intent; payload = ai.payload ?? {}; plan = ai.plan; message = ai.message;
+    } else {
+      // AI unreachable — degrade to deterministic regex so the surface still works.
+      const f = fallbackParse(t);
+      intent = f.intent; payload = f.payload;
+      plan = {
+        goal: t, required: [], missing: [], steps: [`Run ${intent}`],
+        modules: ["Business OS"], risk: "safe",
+      };
+      message = "AI parser unavailable — using deterministic fallback.";
+    }
+    setLastPlan({ intent, plan, message });
+
+    // 2) Clarification — no preview, no execution.
+    if (intent === "clarify") {
+      setMessages((p) => [...p, {
+        id: uid + "-a", role: "assistant", at: "just now",
+        text: message || "Could you clarify what you'd like me to do?",
+        intent, plan,
+      }]);
+      machine.reset();
+      taRef.current?.focus();
+      return;
+    }
+
+    // 3) Missing required info — show the plan, don't call backend preview.
+    if (plan.missing.length > 0) {
+      setMessages((p) => [...p, {
+        id: uid + "-a", role: "assistant", at: "just now",
+        text: message || "I need a bit more information before I can prepare this.",
+        intent, plan,
+      }]);
+      machine.reset();
+      taRef.current?.focus();
+      return;
+    }
+
+    // 4) Hand off to the existing execution dispatcher for a real preview.
     const { data, error } = await supabase.functions.invoke("os-command-execute", {
       body: { action: "preview", intent, payload, prompt: t },
     });
     if (error || !data?.ok) {
       setMessages((p) => [...p, {
         id: uid + "-err", role: "assistant", at: "just now",
-        text: `Preview failed: ${error?.message ?? data?.error ?? "unknown error"}`,
+        text: `❌ Preview failed: ${error?.message ?? data?.error ?? "unknown error"}`,
+        intent, plan,
       }]);
       machine.set("error", null);
-      // auto-recover to idle so composer is usable again
       setTimeout(() => machine.reset(), 1200);
     } else {
-      // Backend creates the row already in awaiting_approval.
       machine.hydrate(data.action as CommandAction);
+      const baseText = message || `Ready to ${plan.goal || intent}.`;
+      const devBlock = devMode
+        ? `\n\n\`\`\`json\n${JSON.stringify(data.action.preview, null, 2)}\n\`\`\``
+        : "";
       setMessages((p) => [...p, {
         id: uid + "-a", role: "assistant", at: "just now",
-        text: `**Preview ready.** Intent: \`${intent}\` · Risk: \`${data.action.risk_tier ?? "safe"}\`\n\n\`\`\`json\n${JSON.stringify(data.action.preview, null, 2)}\n\`\`\`\n\nReview the preview, then press **Execute** to run it.`,
+        text: baseText + devBlock,
+        intent, plan,
       }]);
     }
     taRef.current?.focus();
@@ -280,10 +371,24 @@ export default function OsAICommandCenter() {
       body: { action: "execute", id: actionId },
     });
     const ok = !error && data?.ok;
+    // Update business memory after successful company-scoped action.
+    const pl = (pendingAction?.payload ?? {}) as Record<string, any>;
+    const res = (data?.result ?? {}) as Record<string, any>;
+    if (ok && pl.company_id) {
+      const cname = (res.company_name ?? activeCompany?.company_name ?? "Company") as string;
+      updateActiveCompany({ id: String(pl.company_id), company_name: cname });
+    }
+    if (ok && pendingAction?.intent === "lookup_company" && Array.isArray(res.results) && res.results.length === 1) {
+      const r = res.results[0];
+      updateActiveCompany({ id: r.id, company_name: r.company_name, company_number: r.company_number });
+    }
+    if (ok && (pl.customer_email || pl.recipient_email)) {
+      updateActiveCustomer({ email: String(pl.customer_email ?? pl.recipient_email) });
+    }
     setMessages((p) => [...p, {
       id: crypto.randomUUID(), role: "assistant", at: "just now",
       text: ok
-        ? `✅ Executed.\n\n\`\`\`json\n${JSON.stringify(data.result, null, 2)}\n\`\`\``
+        ? `✅ Done.${devMode ? `\n\n\`\`\`json\n${JSON.stringify(data.result, null, 2)}\n\`\`\`` : ""}`
         : `❌ Execution failed: ${error?.message ?? data?.error ?? "unknown"}`,
     }]);
     machine.set(ok ? "success" : "error", null);
@@ -338,7 +443,7 @@ export default function OsAICommandCenter() {
     setActiveThread("new");
   };
 
-  const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant");
+  // (lastAssistant previously powered the right-pane raw preview; replaced by BusinessPreviewCard.)
   const filteredRecent = RECENT.filter((t) => t.title.toLowerCase().includes(search.toLowerCase()));
 
   return (
@@ -539,7 +644,12 @@ export default function OsAICommandCenter() {
                         </div>
                       </div>
                     ) : (
-                      <MarkdownPreview text={m.text} />
+                      <div className="space-y-2">
+                        <MarkdownPreview text={m.text} />
+                        {m.role === "assistant" && m.plan && m.intent && (
+                          <BusinessPreviewCard intent={m.intent} plan={m.plan} />
+                        )}
+                      </div>
                     )}
                   </div>
                   <div className="flex items-center gap-2 px-1 opacity-0 group-hover:opacity-100 transition">
@@ -602,15 +712,25 @@ export default function OsAICommandCenter() {
                   rows={4}
                   className="w-full resize-none bg-black/30 border border-white/10 focus:border-cyan-400/40 rounded-lg px-3 py-2 text-xs text-white placeholder:text-white/30 focus:outline-none"
                 />
-                <div className="flex items-center justify-between mt-1.5">
+                <div className="flex items-center justify-between mt-1.5 gap-2 flex-wrap">
                   <span className="text-[10px] text-white/40">{paste.length.toLocaleString()} characters</span>
-                  <button
-                    onClick={() => setPaste("")}
-                    disabled={!paste}
-                    className="text-[11px] text-white/50 hover:text-white/80 disabled:opacity-30"
-                  >
-                    Clear
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={runExtraction}
+                      disabled={!paste.trim() || extracting}
+                      className="inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-md bg-cyan-500/15 text-cyan-100 hover:bg-cyan-500/25 disabled:opacity-30"
+                    >
+                      <Wand2 className="w-3 h-3" />
+                      {extracting ? "Extracting…" : "Extract company info"}
+                    </button>
+                    <button
+                      onClick={() => setPaste("")}
+                      disabled={!paste}
+                      className="text-[11px] text-white/50 hover:text-white/80 disabled:opacity-30"
+                    >
+                      Clear
+                    </button>
+                  </div>
                 </div>
               </div>
             </details>
@@ -664,54 +784,57 @@ export default function OsAICommandCenter() {
         {/* RIGHT: Context */}
         <aside className={`os-glass p-3 flex-col min-h-0 min-w-0 ${rightOpen ? "flex" : "hidden"} lg:flex`}>
           <div className="flex items-center justify-between mb-2">
-            <div className="text-[11px] uppercase tracking-wider text-white/40">Context</div>
-            <button className="text-[10px] text-white/40 hover:text-white/80 inline-flex items-center gap-1">
-              <Plus className="w-3 h-3" /> Attach
+            <div className="text-[11px] uppercase tracking-wider text-white/40 inline-flex items-center gap-1.5">
+              <Brain className="w-3 h-3" /> Business Memory
+            </div>
+            <button
+              onClick={() => {
+                clearBusinessMemory();
+                setActiveCompanyState(null);
+                setActiveCustomerState(null);
+              }}
+              disabled={!activeCompany && !activeCustomer}
+              className="text-[10px] text-white/40 hover:text-white/80 inline-flex items-center gap-1 disabled:opacity-30"
+              title="Clear active company/customer"
+            >
+              <X className="w-3 h-3" /> Clear
             </button>
           </div>
 
           <div className="flex-1 overflow-y-auto -mr-1 pr-1 space-y-2 min-h-0">
             <ContextCard
-              icon={User}
-              label="Current Customer"
-              title="Sarah Johnson"
-              subtitle="sarah@acme.co.uk · UK"
-              tint="bg-cyan-500/10 text-cyan-300"
-            />
-            <ContextCard
               icon={Building2}
-              label="Current Company"
-              title="Acme Holdings Ltd"
-              subtitle="#14829203 · Active"
+              label="Active Company"
+              title={activeCompany?.company_name ?? "— none —"}
+              subtitle={activeCompany ? `${activeCompany.company_number ?? ""}`.trim() || activeCompany.id.slice(0, 8) : "Run a command on a company to pin it here"}
               tint="bg-blue-500/10 text-blue-300"
             />
             <ContextCard
-              icon={Briefcase}
-              label="Selected Order"
-              title="ORD-2026-0481"
-              subtitle="UK LTD Formation · £170"
-              tint="bg-purple-500/10 text-purple-300"
-            />
-            <ContextCard
-              icon={Bell}
-              label="Current Reminder"
-              title="Confirmation Statement due"
-              subtitle="In 12 days · Acme Holdings Ltd"
-              tint="bg-amber-500/10 text-amber-300"
-            />
-            <ContextCard
-              icon={Receipt}
-              label="Recent Invoice"
-              title="INV-2026-0931"
-              subtitle="£204 · Paid"
-              tint="bg-emerald-500/10 text-emerald-300"
+              icon={User}
+              label="Active Customer"
+              title={activeCustomer?.full_name ?? activeCustomer?.email ?? "— none —"}
+              subtitle={activeCustomer?.email ?? "Pinned when you email or look up a customer"}
+              tint="bg-cyan-500/10 text-cyan-300"
             />
 
             <div className="pt-2">
-              <div className="text-[10px] uppercase tracking-wider text-white/30 mb-1.5 px-1">Future</div>
-              <FuturePill icon={Brain} label="Memory" desc="Persistent agent recall" />
-              <FuturePill icon={Sparkles} label="Context" desc="Auto-injected entities" />
-              <FuturePill icon={Play} label="Actions" desc="One-click executions" />
+              <div className="flex items-center justify-between mb-1.5 px-1">
+                <div className="text-[10px] uppercase tracking-wider text-white/30 inline-flex items-center gap-1">
+                  <Languages className="w-3 h-3" /> Agent
+                </div>
+                <button
+                  onClick={() => setDevMode((v) => !v)}
+                  className={`text-[10px] inline-flex items-center gap-1 px-1.5 py-0.5 rounded ${devMode ? "bg-amber-500/15 text-amber-200" : "bg-white/5 text-white/40 hover:text-white/70"}`}
+                  title="Toggle developer JSON in messages"
+                >
+                  <Code2 className="w-3 h-3" /> Dev {devMode ? "on" : "off"}
+                </button>
+              </div>
+              <div className="rounded-lg bg-white/[0.02] border border-white/5 p-2 text-[11px] text-white/60 leading-relaxed">
+                Understands English, Urdu, Roman Urdu &amp; mixed.
+                Prepares an action plan and waits for your approval.
+                Never invents missing data.
+              </div>
             </div>
           </div>
 
@@ -728,23 +851,21 @@ export default function OsAICommandCenter() {
             </div>
           )}
 
-          {/* Preview */}
-          <div className="mt-3 pt-3 border-t border-white/5">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-purple-300" />
-                <h3 className="text-[11px] uppercase tracking-wider text-white/40">Preview</h3>
+          {/* Action plan preview */}
+          {lastPlan && (
+            <div className="mt-3 pt-3 border-t border-white/5">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-purple-300" />
+                  <h3 className="text-[11px] uppercase tracking-wider text-white/40">Action Plan</h3>
+                </div>
+                {pendingAction && (
+                  <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-200">Awaiting</span>
+                )}
               </div>
-              <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-white/5 text-white/40">Live</span>
+              <BusinessPreviewCard intent={lastPlan.intent} plan={lastPlan.plan} message={lastPlan.message} />
             </div>
-            <div className="rounded-lg bg-black/30 border border-white/5 p-2.5 max-h-[160px] overflow-y-auto text-[11px] text-white/70 leading-relaxed">
-              {lastAssistant ? (
-                <MarkdownPreview text={lastAssistant.text} />
-              ) : (
-                "Run a prompt to see the preview here."
-              )}
-            </div>
-          </div>
+          )}
 
         </aside>
       </div>
