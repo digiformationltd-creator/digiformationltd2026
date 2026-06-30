@@ -368,6 +368,15 @@ export default function ProspectsPanel() {
 
       {showImport && <ImportModal onClose={() => setShowImport(false)} onDone={load} />}
       {showAdd && <AddModal onClose={() => setShowAdd(false)} onDone={load} />}
+      {timelineFor && (
+        <ProspectTimelineDrawer
+          prospectId={timelineFor.id}
+          businessName={timelineFor.business_name}
+          aiNotes={timelineFor.ai_notes ?? null}
+          confidence={timelineFor.qualification_confidence ?? null}
+          onClose={() => setTimelineFor(null)}
+        />
+      )}
     </div>
   );
 }
