@@ -254,9 +254,24 @@ export default function ProspectsPanel() {
                   <tr key={r.id} className="border-t border-white/5 hover:bg-white/[0.02]">
                     <td className="px-4 py-3">
                       <div className="font-medium text-white/90 truncate max-w-[200px]">{r.business_name}</div>
-                      {r.is_existing_customer && (
-                        <span className="text-[10px] uppercase tracking-wider text-emerald-300/80">Existing customer</span>
-                      )}
+                      <div className="flex items-center gap-1 flex-wrap mt-0.5">
+                        {r.is_existing_customer && (
+                          <span className="text-[10px] uppercase tracking-wider text-emerald-300/80">Existing</span>
+                        )}
+                        {r.qualification_status && r.qualification_status !== "skipped" && (
+                          <span className={`text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                            r.qualification_status === "qualified" ? "bg-cyan-500/15 text-cyan-300"
+                            : r.qualification_status === "needs_review" ? "bg-amber-500/15 text-amber-300"
+                            : r.qualification_status === "rejected" ? "bg-red-500/15 text-red-300"
+                            : "bg-white/5 text-white/50"
+                          }`}>
+                            AI: {r.qualification_status}
+                            {r.qualification_confidence != null && r.qualification_status === "qualified"
+                              ? ` ${Math.round(Number(r.qualification_confidence) * 100)}%`
+                              : ""}
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-4 py-3 text-white/70">
                       <div className="truncate max-w-[200px]">{r.contact_email ?? "—"}</div>
