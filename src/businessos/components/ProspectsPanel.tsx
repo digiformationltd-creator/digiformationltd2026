@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { ProspectDashboardWidgets, ProspectTimelineDrawer } from "./ProspectIntelligence";
+import { ProspectDashboardWidgets, ProspectTimelineDrawer, ProspectInsightsPanel } from "./ProspectIntelligence";
 
 type Campaign =
   | "idv_acsp" | "uk_formation" | "banking"
