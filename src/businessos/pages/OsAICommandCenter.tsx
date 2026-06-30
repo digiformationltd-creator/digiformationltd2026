@@ -22,6 +22,10 @@ import {
   type Confidence as DraftConfidence,
 } from "@/businessos/lib/companyDraft";
 import {
+  buildAddressDraft, saveAddressDraft, resolveCompanyForAddress,
+  type Confidence as AddrConfidence,
+} from "@/businessos/lib/addressDraft";
+import {
   Sparkles, Send, Paperclip, Bot, User, Eraser, RotateCcw,
   CheckCircle2, XCircle, ClipboardPaste, ChevronDown, Plus, Search,
   Pin, MessageSquarePlus, Copy, Pencil, Play, Save, Building2, FileSearch,
