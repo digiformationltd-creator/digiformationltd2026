@@ -2665,6 +2665,7 @@ export type Database = {
       next_order_number: { Args: never; Returns: number }
       ops_dashboard_summary: { Args: never; Returns: Json }
       prospect_dashboard_stats: { Args: never; Returns: Json }
+      prospect_insights: { Args: never; Returns: Json }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
         Returns: {

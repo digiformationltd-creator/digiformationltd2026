@@ -23,4 +23,8 @@ project_id = "ltxopeehtajwxpbwbqfr"
     verify_jwt = false
   [functions.qualify-prospects]
     verify_jwt = true
+  [functions.qualify-prospect-now]
+    verify_jwt = false
+  [functions.prospect-inbound-reply]
+    verify_jwt = false
 
