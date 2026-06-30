@@ -37,6 +37,10 @@ type Prospect = {
   notes: string | null;
   tags: string[];
   created_at: string;
+  qualification_status?: "pending" | "qualified" | "needs_review" | "rejected" | "skipped";
+  qualification_confidence?: number | null;
+  ai_notes?: string | null;
+  recommended_campaigns?: string[] | null;
 };
 
 const CAMPAIGNS: { id: Campaign; label: string; hint: string }[] = [
