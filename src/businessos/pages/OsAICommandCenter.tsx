@@ -141,6 +141,15 @@ export default function OsAICommandCenter() {
   const { state: ccState, action: pendingAction, isBusy: busy, canApprove, canCancel } = machine;
   const taRef = useRef<HTMLTextAreaElement>(null);
 
+  // Phase 6 — Business Agent additions
+  const [devMode, setDevMode] = useState(false);
+  const [extracting, setExtracting] = useState(false);
+  const [lastPlan, setLastPlan] = useState<{ intent: string; plan: AgentPlan; message: string } | null>(null);
+  const [activeCompany, setActiveCompanyState] = useState<ActiveCompany>(() => getActiveCompany());
+  const [activeCustomer, setActiveCustomerState] = useState<ActiveCustomer>(() => getActiveCustomer());
+  const updateActiveCompany = (c: ActiveCompany) => { setActiveCompany(c); setActiveCompanyState(c); };
+  const updateActiveCustomer = (c: ActiveCustomer) => { setActiveCustomer(c); setActiveCustomerState(c); };
+
   useCommandPaletteHotkey(useCallback(() => setPaletteOpen((v) => !v), []));
 
   // Allow other pages (Company Detail, Pending widget) to deep-link with a
