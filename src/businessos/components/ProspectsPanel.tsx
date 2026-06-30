@@ -320,10 +320,25 @@ export default function ProspectsPanel() {
                       </select>
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <button onClick={() => removeProspect(r.id)}
-                        className="text-white/30 hover:text-red-300 p-1">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <div className="inline-flex items-center gap-0.5">
+                        <button
+                          onClick={() => setTimelineFor(r)}
+                          title="View timeline & AI notes"
+                          className="text-white/40 hover:text-cyan-300 p-1">
+                          <Activity className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => requalify(r.id)}
+                          disabled={requalifying === r.id}
+                          title="Re-run AI qualification"
+                          className="text-white/40 hover:text-indigo-300 p-1 disabled:opacity-40">
+                          {requalifying === r.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+                        </button>
+                        <button onClick={() => removeProspect(r.id)}
+                          className="text-white/30 hover:text-red-300 p-1">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
