@@ -74,6 +74,51 @@ export default function ProspectsPanel() {
   const [campF, setCampF] = useState<Campaign | "all" | "none">("all");
   const [showImport, setShowImport] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
+  const [timelineFor, setTimelineFor] = useState<Prospect | null>(null);
+  const [requalifying, setRequalifying] = useState<string | null>(null);
+
+  const callControl = async (prospect_id: string, action: string, extra: any = {}) => {
+    const { data: sess } = await supabase.auth.getSession();
+    const token = sess.session?.access_token;
+    if (!token) { toast({ title: "Sign-in required", variant: "destructive" }); return null; }
+    const res = await fetch(`https://ltxopeehtajwxpbwbqfr.supabase.co/functions/v1/prospect-campaign-control`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ prospect_id, action, ...extra }),
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) { toast({ title: "Action failed", description: json.error || `HTTP ${res.status}`, variant: "destructive" }); return null; }
+    return json;
+  };
+
+  const requalify = async (id: string) => {
+    setRequalifying(id);
+    const r = await callControl(id, "requalify");
+    setRequalifying(null);
+    if (r) {
+      toast({ title: "Re-queued for AI qualification", description: "Runs on the next cron tick (≤10m)." });
+      setRows((rs) => rs.map((x) => x.id === id ? { ...x, qualification_status: "pending" } as any : x));
+    }
+  };
+
+  const runQualifierNow = async () => {
+    const { data: sess } = await supabase.auth.getSession();
+    const token = sess.session?.access_token;
+    if (!token) { toast({ title: "Sign-in required", variant: "destructive" }); return; }
+    toast({ title: "Running AI qualifier…" });
+    const res = await fetch(`https://ltxopeehtajwxpbwbqfr.supabase.co/functions/v1/qualify-prospects`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: "{}",
+    });
+    const j = await res.json().catch(() => ({}));
+    if (res.ok) {
+      toast({ title: "Qualifier complete", description: `Processed ${j?.summary?.processed ?? 0}, qualified ${j?.summary?.qualified ?? 0}` });
+      await load();
+    } else {
+      toast({ title: "Qualifier failed", description: j?.error || `HTTP ${res.status}`, variant: "destructive" });
+    }
+  };
 
   const load = async () => {
     setLoading(true);
