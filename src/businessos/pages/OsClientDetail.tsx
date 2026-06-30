@@ -351,24 +351,69 @@ function CompanyTab({ userId }: { userId: string }) {
 }
 
 // ─────────────────────────── ADDRESSES ───────────────────────────
+// Supports in-place AI draft preview. When the URL carries `?draft_addr=<id>`
+// the existing editor is opened pre-populated with proposed values and every
+// new/changed field is highlighted. No write occurs until "Execute" — which
+// routes through the existing `client_addresses` insert/update path.
 function AddressesTab({ userId }: { userId: string }) {
+  const [params, setParams] = useSearchParams();
+  const draftId = params.get("draft_addr");
+
   const [rows, setRows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<any | null>(null);
+  const [baseline, setBaseline] = useState<any | null>(null);  // live row before draft merge
   const [saving, setSaving] = useState(false);
+  const [draft, setDraft] = useState<AddressDraft | null>(null);
+  const [editDraftMode, setEditDraftMode] = useState(false);
 
   const load = async () => {
     setLoading(true);
     const { data } = await supabase.from("client_addresses").select("*").eq("user_id", userId).order("created_at", { ascending: false });
     setRows(data || []);
     setLoading(false);
+    return data || [];
   };
-  useEffect(() => { load(); }, [userId]);
 
-  const blank = () => setEditing({
-    user_id: userId, label: "Registered Office", service_type: "registered_office",
-    country: "United Kingdom", status: "active",
-  });
+  // Apply a draft from sessionStorage (AI Command Center handoff).
+  const applyDraft = (d: AddressDraft, list: any[]) => {
+    const match = d.matchAddressId ? list.find((r) => r.id === d.matchAddressId) : null;
+    const base: any = match ? { ...match } : {
+      user_id: userId,
+      label: "Registered Office",
+      service_type: "registered_office",
+      country: "United Kingdom",
+      status: "active",
+    };
+    setBaseline(match ? { ...match } : null);
+    const merged: any = { ...base };
+    for (const [k, p] of Object.entries(d.proposed)) {
+      if (p?.value != null && String(p.value).trim() !== "") merged[k] = p.value;
+    }
+    setEditing(merged);
+    setDraft(d);
+    setEditDraftMode(false);
+  };
+
+  useEffect(() => {
+    (async () => {
+      const list = await load();
+      if (draftId) {
+        const d = getAddressDraft(draftId);
+        if (d && d.userId === userId) applyDraft(d, list);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId, draftId]);
+
+  const blank = () => {
+    setBaseline(null);
+    setDraft(null);
+    setEditing({
+      user_id: userId, label: "Registered Office", service_type: "registered_office",
+      country: "United Kingdom", status: "active",
+    });
+  };
 
   const save = async () => {
     if (!editing) return;
@@ -379,9 +424,23 @@ function AddressesTab({ userId }: { userId: string }) {
       : await supabase.from("client_addresses").insert(payload);
     setSaving(false);
     if (error) { toast.error(error.message); return; }
-    toast.success("Address saved");
+    toast.success(draft ? "Address saved from AI draft" : "Address saved");
+    if (draft) {
+      clearAddressDraft(draft.id);
+      const next = new URLSearchParams(params); next.delete("draft_addr"); setParams(next, { replace: true });
+      setDraft(null); setBaseline(null);
+    }
     setEditing(null);
+    setEditDraftMode(false);
     load();
+  };
+
+  const cancelDraft = () => {
+    if (draft) {
+      clearAddressDraft(draft.id);
+      const next = new URLSearchParams(params); next.delete("draft_addr"); setParams(next, { replace: true });
+    }
+    setDraft(null); setBaseline(null); setEditing(null); setEditDraftMode(false);
   };
 
   const remove = async (id: string) => {
@@ -395,19 +454,127 @@ function AddressesTab({ userId }: { userId: string }) {
   const f = (k: string) => editing?.[k] ?? "";
   const set = (k: string, v: any) => setEditing({ ...editing, [k]: v });
 
+  // Tone for a given field while a draft is active.
+  const toneFor = (k: AddressDraftField): FieldTone => {
+    if (!draft) return "default";
+    const prop = (draft.proposed as any)?.[k];
+    if (!prop) return "default";
+    const status = addressFieldStatus(baseline?.[k], prop);
+    if (status === "new") return "new";
+    if (status === "changed") return "changed";
+    if (prop.confidence === "low") return "warn";
+    return "default";
+  };
+
+  // While a draft is active the editor is locked for review; "Edit draft" unlocks it.
+  const locked = !!draft && !editDraftMode;
+
+  // Live validation hints (advisory, never invents data).
+  const validation = useMemo(() => {
+    if (!editing) return { errors: [] as string[], warnings: [] as string[] };
+    const errors: string[] = [];
+    const warnings: string[] = [];
+    if (!editing.address_line1) errors.push("Address line 1 is required");
+    if (!editing.postcode) errors.push("Postcode is required");
+    else if ((editing.country ?? "").toLowerCase().includes("united kingdom") && !isValidUkPostcode(editing.postcode)) {
+      warnings.push("Postcode doesn't match the UK format (e.g. SW1A 1AA)");
+    }
+    if (!editing.country) warnings.push("Country missing — defaulting to United Kingdom");
+    // Duplicate detection (case-insensitive line1 + postcode match)
+    const dupe = rows.find((r) =>
+      r.id !== editing.id &&
+      (r.address_line1 ?? "").toLowerCase().trim() === (editing.address_line1 ?? "").toLowerCase().trim() &&
+      (r.postcode ?? "").toLowerCase().trim() === (editing.postcode ?? "").toLowerCase().trim()
+    );
+    if (dupe) warnings.push(`An address with the same line 1 and postcode already exists (${dupe.label})`);
+    return { errors, warnings };
+  }, [editing, rows]);
+
   if (loading) return <div className="os-glass p-8 text-center"><Loader2 className="w-5 h-5 animate-spin mx-auto text-white/40" /></div>;
+
+  const changedCount = draft
+    ? Object.entries(draft.proposed).filter(([k, p]) =>
+        addressFieldStatus(baseline?.[k], p) !== "unchanged"
+      ).length
+    : 0;
+  const confCounts = draft
+    ? Object.values(draft.proposed).reduce<Record<string, number>>((m, p) => {
+        const c = p?.confidence || "medium"; m[c] = (m[c] || 0) + 1; return m;
+      }, {})
+    : {};
 
   return (
     <div className="space-y-4">
+      {/* AI Draft Review Banner */}
+      {draft && (
+        <div className="os-glass p-4 ring-1 ring-emerald-400/30 bg-emerald-500/[0.04]">
+          <div className="flex items-start gap-3">
+            <div className="h-9 w-9 rounded-lg bg-emerald-500/15 grid place-items-center shrink-0">
+              <Sparkles className="w-4 h-4 text-emerald-200" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-semibold text-emerald-50">
+                AI Address Draft · {draft.companyName ?? "this client"}
+              </div>
+              <div className="text-xs text-white/60 mt-0.5">
+                {changedCount} field{changedCount === 1 ? "" : "s"} to apply
+                {confCounts.high ? ` · ${confCounts.high} high` : ""}
+                {confCounts.medium ? ` · ${confCounts.medium} medium` : ""}
+                {confCounts.low ? ` · ${confCounts.low} low` : ""}
+                {baseline ? " · updating existing address" : " · creating new address"}
+              </div>
+              {draft.source && <div className="text-[11px] text-white/40 mt-0.5">Source: {draft.source}</div>}
+              {draft.missing.length > 0 && (
+                <div className="mt-2 text-[11px] text-yellow-200/90 inline-flex items-center gap-1.5">
+                  <AlertTriangle className="w-3 h-3" /> Missing: {draft.missing.join(", ")}
+                </div>
+              )}
+              {validation.errors.length > 0 && (
+                <div className="mt-2 text-[11px] text-rose-200 inline-flex items-center gap-1.5">
+                  <AlertTriangle className="w-3 h-3" /> {validation.errors.join(" · ")}
+                </div>
+              )}
+              {validation.warnings.length > 0 && (
+                <div className="mt-1 text-[11px] text-yellow-200/80">⚠ {validation.warnings.join(" · ")}</div>
+              )}
+            </div>
+            <div className="flex gap-1.5 shrink-0">
+              <button
+                onClick={save}
+                disabled={saving || validation.errors.length > 0}
+                className="h-8 px-3 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-50 text-xs font-semibold inline-flex items-center gap-1.5 disabled:opacity-40"
+              >
+                {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
+                Execute
+              </button>
+              <button
+                onClick={() => setEditDraftMode((v) => !v)}
+                className="h-8 px-3 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-xs inline-flex items-center gap-1.5"
+              >
+                <Pencil className="w-3.5 h-3.5" /> {editDraftMode ? "Lock" : "Edit draft"}
+              </button>
+              <button
+                onClick={cancelDraft}
+                className="h-8 px-3 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-100 text-xs inline-flex items-center gap-1.5"
+              >
+                <XIcon className="w-3.5 h-3.5" /> Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex justify-between items-center">
         <div className="text-sm text-white/60">{rows.length} address{rows.length === 1 ? "" : "es"}</div>
-        <button onClick={blank} className="px-3 py-2 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-xs font-semibold inline-flex items-center gap-1.5">
-          <Plus className="w-3.5 h-3.5" /> Add address
-        </button>
+        {!draft && (
+          <button onClick={blank} className="px-3 py-2 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-xs font-semibold inline-flex items-center gap-1.5">
+            <Plus className="w-3.5 h-3.5" /> Add address
+          </button>
+        )}
       </div>
 
       {rows.map((a) => (
-        <div key={a.id} className="os-glass p-4 flex items-start justify-between gap-3">
+        <div key={a.id} className={`os-glass p-4 flex items-start justify-between gap-3 ${draft?.matchAddressId === a.id ? "ring-1 ring-emerald-400/30" : ""}`}>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <span className="text-sm font-semibold">{a.label}</span>
@@ -421,44 +588,52 @@ function AddressesTab({ userId }: { userId: string }) {
               Start {fmtDate(a.start_date)} · Expire {fmtDate(a.expire_date)}
             </div>
           </div>
-          <div className="flex gap-1 shrink-0">
-            <button onClick={() => setEditing(a)} className="h-8 px-3 rounded-lg bg-white/[0.05] hover:bg-white/[0.10] text-xs">Edit</button>
-            <button onClick={() => remove(a.id)} className="h-8 w-8 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-200 grid place-items-center"><Trash2 className="w-3.5 h-3.5" /></button>
-          </div>
+          {!draft && (
+            <div className="flex gap-1 shrink-0">
+              <button onClick={() => setEditing(a)} className="h-8 px-3 rounded-lg bg-white/[0.05] hover:bg-white/[0.10] text-xs">Edit</button>
+              <button onClick={() => remove(a.id)} className="h-8 w-8 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-200 grid place-items-center"><Trash2 className="w-3.5 h-3.5" /></button>
+            </div>
+          )}
         </div>
       ))}
 
       {editing && (
         <div className="os-glass p-5 space-y-3 ring-1 ring-blue-400/30">
-          <div className="text-sm font-semibold">{editing.id ? "Edit address" : "New address"}</div>
+          <div className="text-sm font-semibold">
+            {draft ? "AI draft preview" : editing.id ? "Edit address" : "New address"}
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Field label="Label" value={f("label")} onChange={(v) => set("label", v)} />
-            <SelectField label="Service type" value={f("service_type")} onChange={(v) => set("service_type", v)} options={["registered_office", "director_service", "correspondence", "trading"]} />
-            <Field label="Address line 1" value={f("address_line1")} onChange={(v) => set("address_line1", v)} colSpan={2} />
-            <Field label="Address line 2" value={f("address_line2")} onChange={(v) => set("address_line2", v)} colSpan={2} />
-            <Field label="City" value={f("city")} onChange={(v) => set("city", v)} />
-            <Field label="County" value={f("county")} onChange={(v) => set("county", v)} />
-            <Field label="Postcode" value={f("postcode")} onChange={(v) => set("postcode", v)} />
-            <Field label="Country" value={f("country")} onChange={(v) => set("country", v)} />
-            <DateField label="Start date" value={f("start_date")} onChange={(v) => set("start_date", v || null)} />
-            <DateField label="Expire date" value={f("expire_date")} onChange={(v) => set("expire_date", v || null)} />
-            <SelectField label="Status" value={f("status")} onChange={(v) => set("status", v)} options={["active", "expired", "pending"]} />
-            <Field label="UTR number" value={f("utr_number")} onChange={(v) => set("utr_number", v)} />
-            <Field label="Auth code" value={f("auth_code")} onChange={(v) => set("auth_code", v)} />
-            <Field label="Activation code" value={f("activation_code")} onChange={(v) => set("activation_code", v)} />
-            <Field label="Notes" value={f("notes")} onChange={(v) => set("notes", v)} colSpan={2} />
+            <Field label="Label" value={f("label")} onChange={(v) => set("label", v)} tone={toneFor("label")} readOnly={locked} />
+            <SelectField label="Service type" value={f("service_type")} onChange={(v) => set("service_type", v)} options={["registered_office", "director_service", "correspondence", "trading"]} tone={toneFor("service_type")} disabled={locked} />
+            <Field label="Address line 1" value={f("address_line1")} onChange={(v) => set("address_line1", v)} colSpan={2} tone={toneFor("address_line1")} readOnly={locked} />
+            <Field label="Address line 2" value={f("address_line2")} onChange={(v) => set("address_line2", v)} colSpan={2} tone={toneFor("address_line2")} readOnly={locked} />
+            <Field label="City" value={f("city")} onChange={(v) => set("city", v)} tone={toneFor("city")} readOnly={locked} />
+            <Field label="County" value={f("county")} onChange={(v) => set("county", v)} tone={toneFor("county")} readOnly={locked} />
+            <Field label="Postcode" value={f("postcode")} onChange={(v) => set("postcode", v)} tone={toneFor("postcode")} readOnly={locked} />
+            <Field label="Country" value={f("country")} onChange={(v) => set("country", v)} tone={toneFor("country")} readOnly={locked} />
+            <DateField label="Start date" value={f("start_date")} onChange={(v) => set("start_date", v || null)} tone={toneFor("start_date")} readOnly={locked} />
+            <DateField label="Expire date" value={f("expire_date")} onChange={(v) => set("expire_date", v || null)} tone={toneFor("expire_date")} readOnly={locked} />
+            <SelectField label="Status" value={f("status")} onChange={(v) => set("status", v)} options={["active", "expired", "pending"]} disabled={locked} />
+            <Field label="UTR number" value={f("utr_number")} onChange={(v) => set("utr_number", v)} readOnly={locked} />
+            <Field label="Auth code" value={f("auth_code")} onChange={(v) => set("auth_code", v)} readOnly={locked} />
+            <Field label="Activation code" value={f("activation_code")} onChange={(v) => set("activation_code", v)} readOnly={locked} />
+            <Field label="Notes" value={f("notes")} onChange={(v) => set("notes", v)} colSpan={2} readOnly={locked} />
           </div>
-          <div className="flex gap-2">
-            <button onClick={save} disabled={saving} className="px-4 py-2 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-100 text-sm font-semibold inline-flex items-center gap-2 disabled:opacity-50">
-              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save
-            </button>
-            <button onClick={() => setEditing(null)} className="px-4 py-2 rounded-lg bg-white/[0.05] hover:bg-white/[0.10] text-sm">Cancel</button>
-          </div>
+          {!draft && (
+            <div className="flex gap-2">
+              <button onClick={save} disabled={saving} className="px-4 py-2 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-100 text-sm font-semibold inline-flex items-center gap-2 disabled:opacity-50">
+                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save
+              </button>
+              <button onClick={() => setEditing(null)} className="px-4 py-2 rounded-lg bg-white/[0.05] hover:bg-white/[0.10] text-sm">Cancel</button>
+            </div>
+          )}
         </div>
       )}
     </div>
   );
 }
+
+
 
 // ─────────────────────────── ORDERS ───────────────────────────
 function OrdersTab({ userId, email }: { userId: string; email?: string | null }) {
