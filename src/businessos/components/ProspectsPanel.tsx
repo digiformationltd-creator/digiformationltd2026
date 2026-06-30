@@ -172,6 +172,9 @@ export default function ProspectsPanel() {
       {/* Live AI dashboard */}
       <ProspectDashboardWidgets />
 
+      {/* AI Insights — collapsible advisory panel */}
+      <ProspectInsightsPanel />
+
       {/* Pipeline counts (this loaded set) */}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
         <Stat label="Total"     value={counts.total}     tint="bg-white/5 text-white/70" />
