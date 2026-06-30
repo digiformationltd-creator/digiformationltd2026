@@ -62,10 +62,14 @@ export default function OsCompliance() {
 
     const remByTarget = new Map<string, { count: number; last: string | null }>();
     (remRes.data || []).forEach((r: any) => {
-      const cur = remByTarget.get(r.target_id) || { count: 0, last: null };
+      // Key by (target_id, reminder_type) so confirmation_statement and
+      // annual_accounts rows on the same company stay separate, and manual
+      // sends (which now write the same shape as the cron scheduler) line up.
+      const key = `${r.target_id}::${r.reminder_type}`;
+      const cur = remByTarget.get(key) || { count: 0, last: null };
       cur.count++;
       if (!cur.last || new Date(r.sent_at) > new Date(cur.last)) cur.last = r.sent_at;
-      remByTarget.set(r.target_id, cur);
+      remByTarget.set(key, cur);
     });
 
     const out: Row[] = [];
