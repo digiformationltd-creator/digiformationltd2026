@@ -27,7 +27,7 @@ const SUPPORTED_INTENTS = [
   "send_email_template", "send_email", "draft_email",
   "update_company", "update_company_field", "update_company_address",
   "update_company_status", "add_note",
-  "fill_company_dashboard",
+  "fill_company_dashboard", "fill_address",
   "create_order", "update_order_status",
   "update_invoice_status", "update_invoice_meta",
   "lookup_company", "lookup_customer", "show_client_history",
