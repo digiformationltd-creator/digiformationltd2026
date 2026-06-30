@@ -19,6 +19,11 @@ import {
   getDraft, clearDraft, fieldDraftStatus,
   DRAFT_FIELDS, type CompanyDraft, type DraftField,
 } from "@/businessos/lib/companyDraft";
+import {
+  getAddressDraft, clearAddressDraft, addressFieldStatus,
+  isValidUkPostcode, ADDRESS_DRAFT_FIELDS,
+  type AddressDraft, type AddressDraftField,
+} from "@/businessos/lib/addressDraft";
 
 type TabKey =
   | "company" | "addresses" | "orders" | "invoices" | "documents"
