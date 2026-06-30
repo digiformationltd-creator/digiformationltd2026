@@ -22,6 +22,9 @@ import { template as annualAccountsReminder } from './annual-accounts-reminder.t
 import { template as internalCompanyReminder } from './internal-company-reminder.tsx'
 import { template as contactConfirmation } from './contact-confirmation.tsx'
 import { template as ticketStatusUpdate } from './ticket-status-update.tsx'
+import { template as marketingOutreach } from './marketing-outreach.tsx'
+
+
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'order-confirmation': orderConfirmation,
@@ -37,4 +40,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'internal-company-reminder': internalCompanyReminder,
   'contact-confirmation': contactConfirmation,
   'ticket-status-update': ticketStatusUpdate,
+  'marketing-outreach': marketingOutreach,
 }
