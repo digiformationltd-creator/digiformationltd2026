@@ -219,7 +219,8 @@ function CompanyTab({ userId }: { userId: string }) {
     const changes: { field: string; from: string; to: string; confidence?: string }[] = [];
     for (const k of DRAFT_FIELDS) {
       const prop = (draft.proposed as any)?.[k] as { value: string | null; confidence?: string } | undefined;
-      const status = fieldDraftStatus(liveRow?.[k], prop);
+      const prop = (draft.proposed as any)?.[k] as { value: string | null; confidence?: "high" | "medium" | "low" } | undefined;
+      const status = fieldDraftStatus(liveRow?.[k], prop as any);
       if (status !== "unchanged" && prop) {
         changes.push({
           field: k,
