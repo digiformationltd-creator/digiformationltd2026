@@ -751,16 +751,18 @@ export default function OsAICommandCenter() {
 
       {/* Destructive typed-confirmation strip (Phase 3) */}
       {isDestructive && canApprove && (
-        <div className="os-glass px-3 py-2 flex items-center gap-3 shrink-0 border border-red-500/30">
-          <ShieldAlert className="w-4 h-4 text-red-300 shrink-0" />
-          <div className="text-[11px] text-red-200 shrink-0">
-            Destructive action — type <code className="px-1 rounded bg-black/40 text-red-100">{confirmRequired}</code> to enable execute
+        <div className="os-glass px-3 py-2 flex flex-wrap items-center gap-2 sm:gap-3 shrink-0 border border-red-500/30">
+          <div className="flex items-center gap-2 min-w-0">
+            <ShieldAlert className="w-4 h-4 text-red-300 shrink-0" />
+            <div className="text-[11px] text-red-200">
+              Destructive action — type <code className="px-1 rounded bg-black/40 text-red-100">{confirmRequired}</code> to enable execute
+            </div>
           </div>
           <input
             value={confirmText}
             onChange={(e) => setConfirmText(e.target.value)}
             placeholder={confirmRequired ?? ""}
-            className="flex-1 min-w-0 bg-black/30 border border-red-500/30 focus:border-red-400/60 rounded-md px-2 py-1 text-xs text-white placeholder:text-white/30 focus:outline-none"
+            className="flex-1 min-w-[140px] bg-black/30 border border-red-500/30 focus:border-red-400/60 rounded-md px-2 py-1 text-xs text-white placeholder:text-white/30 focus:outline-none"
           />
         </div>
       )}
