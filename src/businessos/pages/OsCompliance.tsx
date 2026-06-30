@@ -77,7 +77,7 @@ export default function OsCompliance() {
     (addrRes.data || []).forEach((a: any) => {
       if (!a.expire_date) return;
       const prof = profById.get(a.user_id);
-      const rem = remByTarget.get(a.id) || { count: 0, last: null };
+      const rem = remByTarget.get(`${a.id}::address_expiry`) || { count: 0, last: null };
       out.push({
         kind: "address_expire",
         user_id: a.user_id,
