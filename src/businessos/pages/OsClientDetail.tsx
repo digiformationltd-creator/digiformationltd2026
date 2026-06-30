@@ -969,28 +969,54 @@ function EmailsTab({ userId, profile }: { userId: string; profile: any }) {
 
 
 // ─────────────────────────── helpers ───────────────────────────
-function Field({ label, value, onChange, type, colSpan }: { label: string; value: any; onChange: (v: string) => void; type?: string; colSpan?: number }) {
+type FieldTone = "default" | "new" | "changed" | "warn";
+
+function toneClasses(tone: FieldTone | undefined) {
+  switch (tone) {
+    case "new":
+      return "border-emerald-400/50 bg-emerald-500/10 ring-1 ring-emerald-400/30";
+    case "changed":
+      return "border-amber-400/50 bg-amber-500/10 ring-1 ring-amber-400/30";
+    case "warn":
+      return "border-yellow-400/50 bg-yellow-500/10 ring-1 ring-yellow-400/30";
+    default:
+      return "border-white/10 bg-white/[0.04]";
+  }
+}
+function toneBadge(tone: FieldTone | undefined) {
+  if (!tone || tone === "default") return null;
+  const label = tone === "new" ? "New" : tone === "changed" ? "Changed" : "Review";
+  const cls =
+    tone === "new" ? "bg-emerald-500/20 text-emerald-100" :
+    tone === "changed" ? "bg-amber-500/20 text-amber-100" :
+                          "bg-yellow-500/20 text-yellow-100";
+  return <span className={`ml-2 text-[10px] px-1.5 py-0.5 rounded-full ${cls}`}>{label}</span>;
+}
+
+function Field({ label, value, onChange, type, colSpan, tone, readOnly }: { label: string; value: any; onChange: (v: string) => void; type?: string; colSpan?: number; tone?: FieldTone; readOnly?: boolean }) {
   return (
     <label className={`block text-xs text-white/60 ${colSpan === 2 ? "md:col-span-2" : ""}`}>
-      <div className="mb-1">{label}</div>
+      <div className="mb-1 flex items-center">{label}{toneBadge(tone)}</div>
       <input
         type={type || "text"}
         value={value ?? ""}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg bg-white/[0.04] border border-white/10 px-3 py-2 text-sm focus:outline-none focus:border-white/30"
+        readOnly={readOnly}
+        className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:border-white/30 ${toneClasses(tone)} ${readOnly ? "cursor-default" : ""}`}
       />
     </label>
   );
 }
-function DateField({ label, value, onChange }: { label: string; value: any; onChange: (v: string) => void }) {
+function DateField({ label, value, onChange, tone, readOnly }: { label: string; value: any; onChange: (v: string) => void; tone?: FieldTone; readOnly?: boolean }) {
   return (
     <label className="block text-xs text-white/60">
-      <div className="mb-1">{label}</div>
+      <div className="mb-1 flex items-center">{label}{toneBadge(tone)}</div>
       <input
         type="date"
         value={value || ""}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg bg-white/[0.04] border border-white/10 px-3 py-2 text-sm focus:outline-none focus:border-white/30"
+        readOnly={readOnly}
+        className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:border-white/30 ${toneClasses(tone)} ${readOnly ? "cursor-default" : ""}`}
       />
     </label>
   );
