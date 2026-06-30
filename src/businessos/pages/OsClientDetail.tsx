@@ -10,10 +10,15 @@ import {
   ArrowLeft, Building2, MapPin, FileText, Wallet, LifeBuoy, Mail,
   Loader2, Save, Plus, Upload, Trash2, Send, Download, CreditCard,
   Calendar, User, Phone, RefreshCw, ShoppingBag, Receipt,
+  Sparkles, AlertTriangle, CheckCircle2, X as XIcon, Pencil,
 } from "lucide-react";
 import OsOrderDrawer from "../components/OsOrderDrawer";
 import OsInvoiceDrawer from "../components/OsInvoiceDrawer";
 import OsEmailHistoryPanel from "../components/OsEmailHistoryPanel";
+import {
+  getDraft, clearDraft, fieldDraftStatus,
+  DRAFT_FIELDS, type CompanyDraft, type DraftField,
+} from "@/businessos/lib/companyDraft";
 
 type TabKey =
   | "company" | "addresses" | "orders" | "invoices" | "documents"
