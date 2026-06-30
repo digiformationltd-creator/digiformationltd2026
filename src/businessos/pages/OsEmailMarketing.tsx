@@ -13,15 +13,17 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import EmailTemplateManager from "../components/EmailTemplateManager";
 import ProspectsPanel from "../components/ProspectsPanel";
+import SequencesPanel from "../components/SequencesPanel";
 import OsEmailOps from "./OsEmailOps";
 
 type Tab =
-  | "overview" | "prospects" | "campaigns" | "templates"
+  | "overview" | "prospects" | "sequences" | "campaigns" | "templates"
   | "queue" | "logs" | "analytics" | "operations";
 
 const TABS: { id: Tab; label: string; icon: any }[] = [
   { id: "overview",   label: "Overview",   icon: BarChart3 },
   { id: "prospects",  label: "Prospects",  icon: Target },
+  { id: "sequences",  label: "Sequences",  icon: Sparkles },
   { id: "campaigns",  label: "Campaigns",  icon: Megaphone },
   { id: "templates",  label: "Templates",  icon: FileText },
   { id: "queue",      label: "Queue",      icon: Clock },
@@ -29,6 +31,7 @@ const TABS: { id: Tab; label: string; icon: any }[] = [
   { id: "analytics",  label: "Analytics",  icon: TrendingUp },
   { id: "operations", label: "Operations", icon: Wrench },
 ];
+
 
 const TINT: Record<string, string> = {
   cyan:    "bg-cyan-500/10 text-cyan-300",
@@ -199,6 +202,8 @@ export default function OsEmailMarketing() {
 
       {tab === "overview"  && <Overview counts={counts} loading={loading} />}
       {tab === "prospects" && <ProspectsPanel />}
+      {tab === "sequences" && <SequencesPanel />}
+
       {tab === "campaigns" && <Campaigns campaigns={campaigns} loading={loading} />}
       {tab === "templates" && <EmailTemplateManager />}
       {tab === "queue"     && <Queue logs={dedupLogs} pending={counts.pending} sent={counts.sent} failed={counts.failed} />}
