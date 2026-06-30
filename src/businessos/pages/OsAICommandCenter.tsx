@@ -784,54 +784,57 @@ export default function OsAICommandCenter() {
         {/* RIGHT: Context */}
         <aside className={`os-glass p-3 flex-col min-h-0 min-w-0 ${rightOpen ? "flex" : "hidden"} lg:flex`}>
           <div className="flex items-center justify-between mb-2">
-            <div className="text-[11px] uppercase tracking-wider text-white/40">Context</div>
-            <button className="text-[10px] text-white/40 hover:text-white/80 inline-flex items-center gap-1">
-              <Plus className="w-3 h-3" /> Attach
+            <div className="text-[11px] uppercase tracking-wider text-white/40 inline-flex items-center gap-1.5">
+              <Brain className="w-3 h-3" /> Business Memory
+            </div>
+            <button
+              onClick={() => {
+                clearBusinessMemory();
+                setActiveCompanyState(null);
+                setActiveCustomerState(null);
+              }}
+              disabled={!activeCompany && !activeCustomer}
+              className="text-[10px] text-white/40 hover:text-white/80 inline-flex items-center gap-1 disabled:opacity-30"
+              title="Clear active company/customer"
+            >
+              <X className="w-3 h-3" /> Clear
             </button>
           </div>
 
           <div className="flex-1 overflow-y-auto -mr-1 pr-1 space-y-2 min-h-0">
             <ContextCard
-              icon={User}
-              label="Current Customer"
-              title="Sarah Johnson"
-              subtitle="sarah@acme.co.uk · UK"
-              tint="bg-cyan-500/10 text-cyan-300"
-            />
-            <ContextCard
               icon={Building2}
-              label="Current Company"
-              title="Acme Holdings Ltd"
-              subtitle="#14829203 · Active"
+              label="Active Company"
+              title={activeCompany?.company_name ?? "— none —"}
+              subtitle={activeCompany ? `${activeCompany.company_number ?? ""}`.trim() || activeCompany.id.slice(0, 8) : "Run a command on a company to pin it here"}
               tint="bg-blue-500/10 text-blue-300"
             />
             <ContextCard
-              icon={Briefcase}
-              label="Selected Order"
-              title="ORD-2026-0481"
-              subtitle="UK LTD Formation · £170"
-              tint="bg-purple-500/10 text-purple-300"
-            />
-            <ContextCard
-              icon={Bell}
-              label="Current Reminder"
-              title="Confirmation Statement due"
-              subtitle="In 12 days · Acme Holdings Ltd"
-              tint="bg-amber-500/10 text-amber-300"
-            />
-            <ContextCard
-              icon={Receipt}
-              label="Recent Invoice"
-              title="INV-2026-0931"
-              subtitle="£204 · Paid"
-              tint="bg-emerald-500/10 text-emerald-300"
+              icon={User}
+              label="Active Customer"
+              title={activeCustomer?.full_name ?? activeCustomer?.email ?? "— none —"}
+              subtitle={activeCustomer?.email ?? "Pinned when you email or look up a customer"}
+              tint="bg-cyan-500/10 text-cyan-300"
             />
 
             <div className="pt-2">
-              <div className="text-[10px] uppercase tracking-wider text-white/30 mb-1.5 px-1">Future</div>
-              <FuturePill icon={Brain} label="Memory" desc="Persistent agent recall" />
-              <FuturePill icon={Sparkles} label="Context" desc="Auto-injected entities" />
-              <FuturePill icon={Play} label="Actions" desc="One-click executions" />
+              <div className="flex items-center justify-between mb-1.5 px-1">
+                <div className="text-[10px] uppercase tracking-wider text-white/30 inline-flex items-center gap-1">
+                  <Languages className="w-3 h-3" /> Agent
+                </div>
+                <button
+                  onClick={() => setDevMode((v) => !v)}
+                  className={`text-[10px] inline-flex items-center gap-1 px-1.5 py-0.5 rounded ${devMode ? "bg-amber-500/15 text-amber-200" : "bg-white/5 text-white/40 hover:text-white/70"}`}
+                  title="Toggle developer JSON in messages"
+                >
+                  <Code2 className="w-3 h-3" /> Dev {devMode ? "on" : "off"}
+                </button>
+              </div>
+              <div className="rounded-lg bg-white/[0.02] border border-white/5 p-2 text-[11px] text-white/60 leading-relaxed">
+                Understands English, Urdu, Roman Urdu &amp; mixed.
+                Prepares an action plan and waits for your approval.
+                Never invents missing data.
+              </div>
             </div>
           </div>
 
@@ -848,23 +851,21 @@ export default function OsAICommandCenter() {
             </div>
           )}
 
-          {/* Preview */}
-          <div className="mt-3 pt-3 border-t border-white/5">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-purple-300" />
-                <h3 className="text-[11px] uppercase tracking-wider text-white/40">Preview</h3>
+          {/* Action plan preview */}
+          {lastPlan && (
+            <div className="mt-3 pt-3 border-t border-white/5">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-purple-300" />
+                  <h3 className="text-[11px] uppercase tracking-wider text-white/40">Action Plan</h3>
+                </div>
+                {pendingAction && (
+                  <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-200">Awaiting</span>
+                )}
               </div>
-              <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-white/5 text-white/40">Live</span>
+              <BusinessPreviewCard intent={lastPlan.intent} plan={lastPlan.plan} message={lastPlan.message} />
             </div>
-            <div className="rounded-lg bg-black/30 border border-white/5 p-2.5 max-h-[160px] overflow-y-auto text-[11px] text-white/70 leading-relaxed">
-              {lastAssistant ? (
-                <MarkdownPreview text={lastAssistant.text} />
-              ) : (
-                "Run a prompt to see the preview here."
-              )}
-            </div>
-          </div>
+          )}
 
         </aside>
       </div>
