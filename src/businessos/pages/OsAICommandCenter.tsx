@@ -145,6 +145,7 @@ export default function OsAICommandCenter() {
   const machine = useCommandMachine();
   const { state: ccState, action: pendingAction, isBusy: busy, canApprove, canCancel } = machine;
   const taRef = useRef<HTMLTextAreaElement>(null);
+  const navigate = useNavigate();
 
   // Phase 6 — Business Agent additions
   const [devMode, setDevMode] = useState(false);
