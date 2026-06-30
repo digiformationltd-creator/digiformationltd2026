@@ -278,7 +278,7 @@ function CompanyTab({ userId }: { userId: string }) {
                 <ul className="mt-2 text-[11px] text-amber-200/90 space-y-0.5">
                   {draft.missing.slice(0, 6).map((m) => (
                     <li key={m} className="inline-flex items-center gap-1.5 mr-3">
-                      <AlertTriangle className="w-3 h-3" /> {m.replaceAll("_", " ")} missing
+                      <AlertTriangle className="w-3 h-3" /> {m.split("_").join(" ")} missing
                     </li>
                   ))}
                 </ul>
