@@ -16,10 +16,13 @@ type Row = {
   last_sent_at: string | null;
 };
 
-const KIND_META: Record<Row["kind"], { label: string; color: string; template: string }> = {
-  address_expire:     { label: "Address renewal",       color: "bg-blue-500/15 text-blue-300 border-blue-500/30",      template: "address-renewal-reminder" },
-  confirmation_due:   { label: "Confirmation statement", color: "bg-amber-500/15 text-amber-300 border-amber-500/30",  template: "confirmation-statement-reminder" },
-  accounts_filing_due:{ label: "Annual accounts",        color: "bg-purple-500/15 text-purple-300 border-purple-500/30", template: "annual-accounts-reminder" },
+// reminderType values must match send-scheduled-reminders so manual + cron rows
+// in email_reminder_log share the same (target_id, reminder_type) and counts
+// reconcile.
+const KIND_META: Record<Row["kind"], { label: string; color: string; template: string; reminderType: "confirmation_statement" | "annual_accounts" | "address_expiry" }> = {
+  address_expire:     { label: "Address renewal",        color: "bg-blue-500/15 text-blue-300 border-blue-500/30",       template: "address-renewal-reminder",         reminderType: "address_expiry" },
+  confirmation_due:   { label: "Confirmation statement", color: "bg-amber-500/15 text-amber-300 border-amber-500/30",    template: "confirmation-statement-reminder",  reminderType: "confirmation_statement" },
+  accounts_filing_due:{ label: "Annual accounts",        color: "bg-purple-500/15 text-purple-300 border-purple-500/30", template: "annual-accounts-reminder",         reminderType: "annual_accounts" },
 };
 
 function daysUntil(date: string): number {
@@ -59,10 +62,14 @@ export default function OsCompliance() {
 
     const remByTarget = new Map<string, { count: number; last: string | null }>();
     (remRes.data || []).forEach((r: any) => {
-      const cur = remByTarget.get(r.target_id) || { count: 0, last: null };
+      // Key by (target_id, reminder_type) so confirmation_statement and
+      // annual_accounts rows on the same company stay separate, and manual
+      // sends (which now write the same shape as the cron scheduler) line up.
+      const key = `${r.target_id}::${r.reminder_type}`;
+      const cur = remByTarget.get(key) || { count: 0, last: null };
       cur.count++;
       if (!cur.last || new Date(r.sent_at) > new Date(cur.last)) cur.last = r.sent_at;
-      remByTarget.set(r.target_id, cur);
+      remByTarget.set(key, cur);
     });
 
     const out: Row[] = [];
@@ -70,7 +77,7 @@ export default function OsCompliance() {
     (addrRes.data || []).forEach((a: any) => {
       if (!a.expire_date) return;
       const prof = profById.get(a.user_id);
-      const rem = remByTarget.get(a.id) || { count: 0, last: null };
+      const rem = remByTarget.get(`${a.id}::address_expiry`) || { count: 0, last: null };
       out.push({
         kind: "address_expire",
         user_id: a.user_id,
@@ -87,7 +94,7 @@ export default function OsCompliance() {
     (compRes.data || []).forEach((c: any) => {
       const prof = profById.get(c.user_id);
       if (c.confirmation_due) {
-        const rem = remByTarget.get(`${c.id}:cs`) || { count: 0, last: null };
+        const rem = remByTarget.get(`${c.id}::confirmation_statement`) || { count: 0, last: null };
         out.push({
           kind: "confirmation_due",
           user_id: c.user_id,
@@ -101,7 +108,7 @@ export default function OsCompliance() {
         });
       }
       if (c.accounts_filing_due) {
-        const rem = remByTarget.get(`${c.id}:af`) || { count: 0, last: null };
+        const rem = remByTarget.get(`${c.id}::annual_accounts`) || { count: 0, last: null };
         out.push({
           kind: "accounts_filing_due",
           user_id: c.user_id,
@@ -159,25 +166,45 @@ export default function OsCompliance() {
     const key = `${r.kind}-${r.target_id}`;
     setSending(key);
     try {
+      const meta = KIND_META[r.kind];
+      const days = daysUntil(r.due_date);
+      // Build templateData in the shape the registered templates expect
+      // (same fields the cron scheduler passes — see send-scheduled-reminders).
+      const templateData: Record<string, any> =
+        r.kind === "address_expire"
+          ? {
+              customerName: r.client_name,
+              address: r.label,
+              expireDate: r.due_date,
+              daysRemaining: days,
+            }
+          : {
+              customerName: r.client_name,
+              companyName: r.label,
+              dueDate: r.due_date,
+              daysRemaining: days,
+            };
+
       const { error } = await supabase.functions.invoke("send-transactional-email", {
         body: {
-          template: KIND_META[r.kind].template,
-          to: r.client_email,
-          data: {
-            client_name: r.client_name,
-            label: r.label,
-            due_date: r.due_date,
-            days_remaining: daysUntil(r.due_date),
-          },
-          idempotency_key: `manual-${r.kind}-${r.target_id}-${Date.now()}`,
-          purpose: "transactional",
+          templateName: meta.template,
+          recipientEmail: r.client_email,
+          templateData,
+          // Manual sends bypass the per-stage cron idempotency slot by tagging
+          // the key with a timestamp — the cron-stage rows stay reserved.
+          idempotencyKey: `manual-${meta.reminderType}-${r.target_id}-${Date.now()}`,
+          clientUserId: r.user_id,
+          triggerSource: "manual-compliance-page",
         },
       });
       if (error) throw error;
+      // Write the log row with the SAME shape as the cron scheduler so the
+      // compliance dashboard's "reminders sent" counts reconcile across
+      // manual + automated sends.
       await supabase.from("email_reminder_log").insert({
-        target_id: r.kind === "address_expire" ? r.target_id : `${r.target_id}:${r.kind === "confirmation_due" ? "cs" : "af"}`,
-        target_type: r.kind,
-        reminder_type: KIND_META[r.kind].template,
+        target_id: r.target_id,
+        target_type: r.kind === "address_expire" ? "address" : "company",
+        reminder_type: meta.reminderType,
         user_id: r.user_id,
         stage: r.reminders_sent + 1,
         due_date: r.due_date,
