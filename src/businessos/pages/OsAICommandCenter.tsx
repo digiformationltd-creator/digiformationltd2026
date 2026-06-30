@@ -644,7 +644,12 @@ export default function OsAICommandCenter() {
                         </div>
                       </div>
                     ) : (
-                      <MarkdownPreview text={m.text} />
+                      <div className="space-y-2">
+                        <MarkdownPreview text={m.text} />
+                        {m.role === "assistant" && m.plan && m.intent && (
+                          <BusinessPreviewCard intent={m.intent} plan={m.plan} />
+                        )}
+                      </div>
                     )}
                   </div>
                   <div className="flex items-center gap-2 px-1 opacity-0 group-hover:opacity-100 transition">
