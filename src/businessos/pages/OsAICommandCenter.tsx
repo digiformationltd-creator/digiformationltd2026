@@ -712,15 +712,25 @@ export default function OsAICommandCenter() {
                   rows={4}
                   className="w-full resize-none bg-black/30 border border-white/10 focus:border-cyan-400/40 rounded-lg px-3 py-2 text-xs text-white placeholder:text-white/30 focus:outline-none"
                 />
-                <div className="flex items-center justify-between mt-1.5">
+                <div className="flex items-center justify-between mt-1.5 gap-2 flex-wrap">
                   <span className="text-[10px] text-white/40">{paste.length.toLocaleString()} characters</span>
-                  <button
-                    onClick={() => setPaste("")}
-                    disabled={!paste}
-                    className="text-[11px] text-white/50 hover:text-white/80 disabled:opacity-30"
-                  >
-                    Clear
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={runExtraction}
+                      disabled={!paste.trim() || extracting}
+                      className="inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-md bg-cyan-500/15 text-cyan-100 hover:bg-cyan-500/25 disabled:opacity-30"
+                    >
+                      <Wand2 className="w-3 h-3" />
+                      {extracting ? "Extracting…" : "Extract company info"}
+                    </button>
+                    <button
+                      onClick={() => setPaste("")}
+                      disabled={!paste}
+                      className="text-[11px] text-white/50 hover:text-white/80 disabled:opacity-30"
+                    >
+                      Clear
+                    </button>
+                  </div>
                 </div>
               </div>
             </details>
