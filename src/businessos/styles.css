@@ -164,16 +164,40 @@
   .businessos .os-fade-in { animation: none; }
 }
 
+/* ── Shared layout utilities ─────────────────────────────────────── */
+/* Consistent KPI grid: 2 → 3 → 4 columns across breakpoints. */
+.businessos .os-kpi-grid { display: grid; gap: .75rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 640px) { .businessos .os-kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; } }
+@media (min-width: 1024px) { .businessos .os-kpi-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+/* Responsive table wrapper: horizontal scroll without row break. */
+.businessos .os-table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; }
+.businessos .os-table-wrap > table { min-width: 640px; width: 100%; border-collapse: separate; border-spacing: 0; }
+.businessos .os-table-wrap > table > thead th {
+  position: sticky; top: 0; z-index: 1;
+  background: hsla(222, 36%, 7%, 0.92);
+  backdrop-filter: blur(8px);
+}
+
 /* ── Mobile polish ───────────────────────────────────────────────── */
 @media (max-width: 767px) {
   .businessos main { padding-bottom: 5rem; }
-  /* Tables: allow horizontal scroll instead of breaking layout */
-  .businessos table { display: block; max-width: 100%; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
-  /* Make any wide content scrollable cleanly */
   .businessos .os-glass { border-radius: 14px; }
-  /* Comfortable tap targets */
-  .businessos button, .businessos a, .businessos [role="button"] { min-height: 40px; }
-  /* Prevent any nested element from forcing horizontal scroll */
-  .businessos * { max-width: 100%; }
+  /* Comfortable tap targets, but don't bloat inline icon-only controls. */
+  .businessos button:not(.os-tight),
+  .businessos a[role="button"]:not(.os-tight) { min-height: 40px; }
+  /* Prevent text/media from forcing horizontal overflow without breaking
+     absolutely-positioned dropdowns, portals, or shrink-0 icons. */
+  .businessos p, .businessos h1, .businessos h2, .businessos h3,
+  .businessos h4, .businessos pre, .businessos code,
+  .businessos input, .businessos textarea, .businessos select,
+  .businessos img { max-width: 100%; }
+  .businessos pre, .businessos code { word-break: break-word; }
+  /* Tables not explicitly opted-out: scroll horizontally instead of breaking. */
+  .businessos table:not(.os-table-raw) {
+    display: block; max-width: 100%;
+    overflow-x: auto; white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
