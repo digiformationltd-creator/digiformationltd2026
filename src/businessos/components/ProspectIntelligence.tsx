@@ -61,7 +61,7 @@ export function ProspectDashboardWidgets() {
   );
 }
 
-const EVENT_ICON: Record<string, JSX.Element> = {
+const EVENT_ICON: Record<string, ReactNode> = {
   qualified: <Sparkles className="w-4 h-4" />,
   campaign_selected: <Target className="w-4 h-4" />,
   email_1: <Send className="w-4 h-4" />, email_2: <Send className="w-4 h-4" />, email_3: <Send className="w-4 h-4" />,
