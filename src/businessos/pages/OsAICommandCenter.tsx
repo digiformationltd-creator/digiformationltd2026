@@ -372,18 +372,18 @@ export default function OsAICommandCenter() {
     });
     const ok = !error && data?.ok;
     // Update business memory after successful company-scoped action.
-    if (ok && pendingAction?.payload?.company_id) {
-      const cid = pendingAction.payload.company_id as string;
-      const cname = (data?.result?.company_name ?? activeCompany?.company_name ?? "Company") as string;
-      updateActiveCompany({ id: cid, company_name: cname });
+    const pl = (pendingAction?.payload ?? {}) as Record<string, any>;
+    const res = (data?.result ?? {}) as Record<string, any>;
+    if (ok && pl.company_id) {
+      const cname = (res.company_name ?? activeCompany?.company_name ?? "Company") as string;
+      updateActiveCompany({ id: String(pl.company_id), company_name: cname });
     }
-    if (ok && pendingAction?.intent === "lookup_company" && Array.isArray(data?.result?.results) && data.result.results.length === 1) {
-      const r = data.result.results[0];
+    if (ok && pendingAction?.intent === "lookup_company" && Array.isArray(res.results) && res.results.length === 1) {
+      const r = res.results[0];
       updateActiveCompany({ id: r.id, company_name: r.company_name, company_number: r.company_number });
     }
-    if (ok && (pendingAction?.payload?.customer_email || pendingAction?.payload?.recipient_email)) {
-      const em = (pendingAction.payload.customer_email ?? pendingAction.payload.recipient_email) as string;
-      updateActiveCustomer({ email: em });
+    if (ok && (pl.customer_email || pl.recipient_email)) {
+      updateActiveCustomer({ email: String(pl.customer_email ?? pl.recipient_email) });
     }
     setMessages((p) => [...p, {
       id: crypto.randomUUID(), role: "assistant", at: "just now",
