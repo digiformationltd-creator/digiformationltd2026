@@ -443,7 +443,7 @@ export default function OsAICommandCenter() {
     setActiveThread("new");
   };
 
-  const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant");
+  // (lastAssistant previously powered the right-pane raw preview; replaced by BusinessPreviewCard.)
   const filteredRecent = RECENT.filter((t) => t.title.toLowerCase().includes(search.toLowerCase()));
 
   return (
