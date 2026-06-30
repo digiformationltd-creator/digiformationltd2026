@@ -16,10 +16,13 @@ type Row = {
   last_sent_at: string | null;
 };
 
-const KIND_META: Record<Row["kind"], { label: string; color: string; template: string }> = {
-  address_expire:     { label: "Address renewal",       color: "bg-blue-500/15 text-blue-300 border-blue-500/30",      template: "address-renewal-reminder" },
-  confirmation_due:   { label: "Confirmation statement", color: "bg-amber-500/15 text-amber-300 border-amber-500/30",  template: "confirmation-statement-reminder" },
-  accounts_filing_due:{ label: "Annual accounts",        color: "bg-purple-500/15 text-purple-300 border-purple-500/30", template: "annual-accounts-reminder" },
+// reminderType values must match send-scheduled-reminders so manual + cron rows
+// in email_reminder_log share the same (target_id, reminder_type) and counts
+// reconcile.
+const KIND_META: Record<Row["kind"], { label: string; color: string; template: string; reminderType: "confirmation_statement" | "annual_accounts" | "address_expiry" }> = {
+  address_expire:     { label: "Address renewal",        color: "bg-blue-500/15 text-blue-300 border-blue-500/30",       template: "address-renewal-reminder",         reminderType: "address_expiry" },
+  confirmation_due:   { label: "Confirmation statement", color: "bg-amber-500/15 text-amber-300 border-amber-500/30",    template: "confirmation-statement-reminder",  reminderType: "confirmation_statement" },
+  accounts_filing_due:{ label: "Annual accounts",        color: "bg-purple-500/15 text-purple-300 border-purple-500/30", template: "annual-accounts-reminder",         reminderType: "annual_accounts" },
 };
 
 function daysUntil(date: string): number {
