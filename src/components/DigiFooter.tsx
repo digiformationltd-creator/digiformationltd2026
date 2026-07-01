@@ -41,9 +41,10 @@ const DigiFooter = () => {
     priceRange: "££",
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Lahore",
-      addressRegion: "Punjab",
-      addressCountry: "PK",
+      streetAddress: "Office 1006, 85 Dunstall Hill",
+      addressLocality: "Wolverhampton",
+      postalCode: "WV6 0SR",
+      addressCountry: "GB",
     },
     openingHoursSpecification: [
       {
