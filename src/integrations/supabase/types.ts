@@ -2616,6 +2616,7 @@ export type Database = {
         Returns: boolean
       }
       delete_visitor_data: { Args: { _visitor_id: string }; Returns: Json }
+      email_queue_dispatch: { Args: never; Returns: undefined }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
