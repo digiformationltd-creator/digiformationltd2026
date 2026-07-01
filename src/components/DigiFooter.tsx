@@ -191,8 +191,8 @@ const DigiFooter = () => {
             <li className="flex items-start gap-3">
               <MapPin className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
               <span>
-                Bedian Road, Bhatta Chowk,<br />
-                Lahore, Punjab, Pakistan
+                Office 1006, 85 Dunstall Hill,<br />
+                Wolverhampton, United Kingdom, WV6 0SR
               </span>
             </li>
           </ul>
